@@ -37,5 +37,5 @@ if (UserIsAdmin()) {
 
 And that's it!  
 Of course this script only works if you can execute stuff on your host.  
-You can give it it's own page, or make it a part of a bigger one.  
+You can give it its own page, or make it a part of a bigger one.  
 Enjoy!
