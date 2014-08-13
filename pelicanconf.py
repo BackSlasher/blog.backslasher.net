@@ -11,7 +11,7 @@ EXTRA_PATH_METADATA = {'extra/CNAME': {'path': 'CNAME'},}
 PLUGIN_PATHS = ["pelican-plugins"]
 PLUGINS = ["summary"]
 
-OUTPUT_RETENTION = '.git'
+OUTPUT_RETENTION = ['.git']
 PYGMENTS_STYLE = 'default'
 
 THEME = 'theme'

@@ -27,6 +27,8 @@ DROPBOX_DIR=~/Dropbox/Public/
 
 GITHUB_PAGES_BRANCH=master
 
+#NITZ
+GIT_REPO=git@github.com:BackSlasher/backslasher.github.io.git
 
 DEBUG ?= 0
 ifeq ($(DEBUG), 1)
@@ -51,6 +53,7 @@ help:
 	@echo '   make s3_upload                   upload the web site via S3         '
 	@echo '   make cf_upload                   upload the web site via Cloud Files'
 #	@echo '   make github                      upload the web site via gh-pages   '
+	@echo '   make mygit-prepare               prepare git repository for upload  '
 	@echo '   make mygit                       upload the web site to my github   '
 	@echo '   make update_externals            update submodules'
 	@echo '                                                                       '
@@ -110,9 +113,18 @@ cf_upload: publish
 #	ghp-import -b $(GITHUB_PAGES_BRANCH) $(OUTPUTDIR)
 #	git push origin $(GITHUB_PAGES_BRANCH)
 
+mygit-prepare:
+	git -C $(OUTPUTDIR) init
+	git -C $(OUTPUTDIR) add -A
+	git -C $(OUTPUTDIR) commit -m 'Initial commit' --allow-empty
+	git -C $(OUTPUTDIR) remote add export $(GIT_REPO)
+
 mygit: publish
-	ghp-import -b $(GITHUB_PAGES_BRANCH) $(OUTPUTDIR)
-	git push export $(GITHUB_PAGES_BRANCH)
+#	ghp-import -b $(GITHUB_PAGES_BRANCH) $(OUTPUTDIR)
+#	git push export $(GITHUB_PAGES_BRANCH)
+	git -C $(OUTPUTDIR) add -A
+	git -C $(OUTPUTDIR) commit -m 'pelican' --allow-empty --amend
+	git -C $(OUTPUTDIR) push -f export master
 #	git -C $(OUTPUTDIR) init
 #	git -C $(OUTPUTDIR) add :/
 #	git -C $(OUTPUTDIR) commit -m 'pelican'
@@ -122,4 +134,4 @@ mygit: publish
 update_externals:
 	git submodule update --recursive
 
-.PHONY: html help clean regenerate serve devserver publish ssh_upload rsync_upload dropbox_upload ftp_upload s3_upload cf_upload github mygit update_externals
+.PHONY: html help clean regenerate serve devserver publish ssh_upload rsync_upload dropbox_upload ftp_upload s3_upload cf_upload github mygit-prepare mygit update_externals
