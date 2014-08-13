@@ -1,0 +1,48 @@
+Title: Listing Unity's Scopes and Originating Package
+Date: 2014-04-14 09:36
+Author: Nitzan Raz (noreply@blogger.com)
+Tags: Unity, Scripts, Linux, Parallel, Ubuntu, Bash
+Slug: listing-unitys-scopes-and-originating
+
+I recently upgraded to Ubuntu 14.04 (beta2), and I got all of my
+"lenses" (searching additional items in the dash menu), that look like
+this:  
+
+<div class="separator" style="clear: both; text-align: center;">
+
+[![](http://1.bp.blogspot.com/-52D9Ua-2Nj0/U0uQnUMIIGI/AAAAAAAAEuQ/Z7rdR3XP7uE/s1600/Screenshot+from+2014-04-14+10:33:46.png)](http://1.bp.blogspot.com/-52D9Ua-2Nj0/U0uQnUMIIGI/AAAAAAAAEuQ/Z7rdR3XP7uE/s1600/Screenshot+from+2014-04-14+10:33:46.png)
+
+</div>
+
+Of course there's a way to disable those lenses, but I actually want to
+remove those I'll never use (like flickr).  
+The problem  - lenses are installed using packages that don't always
+match the lens' name. Using apt-file (a utiltiy for finding files inside
+packages) and parallel, I built a little script.  
+First, install parallel and apt-file, and update apt-file's cache:  
+
+~~~~ {.prettyprint}
+sudo apt-get install parallel apt-filesudo apt-file update
+~~~~
+
+Then execute this script:  
+
+~~~~ {.prettyprint}
+find /usr/share/unity/scopes/ -name \*.scope | parallel ' ROW=$(apt-file search {}); FILE=$(echo $ROW | cut -f 2 -d ":"); PACK=$(echo $ROW | cut -f 1 -d ":"); NAME=$(cat $FILE | grep ^Name | head -1 | sed "s/^Name\=//"); echo "$PACK: $NAME"' | sort
+~~~~
+
+you'll see a list of lens friendly names, sorted by containing package,
+like this:  
+
+~~~~ {.prettyprint}
+...unity-scope-gourmet: Gourmetunity-scope-guayadeque: Guayadequeunity-scope-manpages: Manpagesunity-scope-musicstores: Music storeunity-scope-musique: Musiqueunity-scope-openclipart: OpenClipArtunity-scopes-master-default: Applicationsunity-scopes-master-default: Books...
+~~~~
+
+That way you can see which lenses you'll never use and remove the
+matching package. Of course, if you remove a package you'll lose access
+to all lenses inside it, so think it through!  
+  
+  
+
+</p>
+
