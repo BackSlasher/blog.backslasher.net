@@ -1,7 +1,7 @@
 Title:  Linux and SSDs - Should You TRIM?
 Date: 2014-07-16 14:54
 Tags: Debian, FileSystem, Linux, Mysteries Solved, Performance, Ramblings, Ubuntu
-Category: Linux
+Category: FOSS
 
 **Note**: Although my experience is with Debian, I think this post helps anyone using some modern Linux distribution.  
 # What is TRIM?
