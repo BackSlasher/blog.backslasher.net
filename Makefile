@@ -120,16 +120,9 @@ mygit-prepare:
 	git -C $(OUTPUTDIR) remote add export $(GIT_REPO)
 
 mygit: publish
-#	ghp-import -b $(GITHUB_PAGES_BRANCH) $(OUTPUTDIR)
-#	git push export $(GITHUB_PAGES_BRANCH)
 	git -C $(OUTPUTDIR) add -A
 	git -C $(OUTPUTDIR) commit -m 'pelican' --allow-empty --amend
 	git -C $(OUTPUTDIR) push -f export master
-#	git -C $(OUTPUTDIR) init
-#	git -C $(OUTPUTDIR) add :/
-#	git -C $(OUTPUTDIR) commit -m 'pelican'
-#	git -C $(OUTPUTDIR) remote add export $(GITHUB_PAGES_URL)
-#	git -C $(OUTPUTDIR) push export -f master
 
 update_externals:
 	git submodule update --recursive
