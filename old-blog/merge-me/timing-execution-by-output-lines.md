@@ -1,6 +1,5 @@
 Title: Timing Execution By Output Lines
 Date: 2014-06-22 12:12
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Programming, Perl, Scripts, Linux, One-Liner, Bash
 Slug: timing-execution-by-output-lines
 OldSlug: timing-execution-by-output-lines

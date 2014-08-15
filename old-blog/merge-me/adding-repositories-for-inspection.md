@@ -1,6 +1,5 @@
 Title: Adding Repositories for Inspection
 Date: 2014-06-22 09:03
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Scripts, Linux, Debian, Apt Pinning, One-Liner, Apt
 Slug: adding-repositories-for-inspection
 OldSlug: adding-repositories-for-inspection

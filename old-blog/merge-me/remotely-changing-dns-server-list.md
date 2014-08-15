@@ -1,6 +1,5 @@
 Title: Remotely changing DNS server list through registry
 Date: 2013-06-21 09:51
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Kerberos, DNS, Mysteries Solved, Exchange, Registry, Active Directory
 Slug: remotely-changing-dns-server-list
 OldSlug: remotely-changing-dns-server-list

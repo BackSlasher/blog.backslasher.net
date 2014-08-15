@@ -1,6 +1,5 @@
 Title: Event Log Permissions, With Scripts!
 Date: 2011-01-15 14:44
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Security, Scripts, PowerShell, Registry, Event Log
 Slug: event-log-permissions-with-scripts
 OldSlug: event-log-permissions-with-scripts

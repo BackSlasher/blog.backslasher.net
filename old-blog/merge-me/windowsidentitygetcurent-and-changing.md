@@ -1,6 +1,5 @@
 Title: WindowsIdentity.GetCurent and changing usernames
 Date: 2014-01-26 10:02
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Programming, Active Directory
 Slug: windowsidentitygetcurent-and-changing
 OldSlug: windowsidentitygetcurent-and-changing

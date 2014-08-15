@@ -1,6 +1,5 @@
 Title: Auto-Sorting Computers in WSUS
 Date: 2010-08-04 05:03
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Scripts, PowerShell, WSUS
 Slug: auto-sorting-computers-in-wsus
 OldSlug: auto-sorting-computers-in-wsus

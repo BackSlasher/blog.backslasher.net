@@ -1,6 +1,5 @@
 Title: Creating a common Yii code directory
 Date: 2012-03-23 20:51
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: PHP, Yii
 Slug: creating-common-yii-code-directory
 OldSlug: creating-common-yii-code-directory

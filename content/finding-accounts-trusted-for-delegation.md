@@ -1,6 +1,5 @@
 Title: Finding Accounts Trusted for Delegation
 Date: 2014-06-23 13:10
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Kerberos, Security, Scripts, Windows, Delegation, PowerShell, One-Liner, Active Directory
 Slug: finding-accounts-trusted-for-delegation
 OldSlug: finding-accounts-trusted-for-delegation

@@ -1,6 +1,5 @@
 Title: Setting Dynamic RPC Port Ranges
 Date: 2012-12-04 20:51
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Group Policy, Firewall, Registry
 Slug: setting-dynamic-rpc-port-ranges
 OldSlug: setting-dynamic-rpc-port-ranges

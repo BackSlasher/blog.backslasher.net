@@ -1,6 +1,5 @@
 Title: Wget in PowerShell v3
 Date: 2013-03-14 21:20
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: HTTP, SharePoint, Scripts, PowerShell, HTML
 Slug: wget-in-powershell-v3
 OldSlug: wget-in-powershell-v3

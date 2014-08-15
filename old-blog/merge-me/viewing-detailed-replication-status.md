@@ -1,6 +1,5 @@
 Title: Viewing detailed replication status using Repadmin and PowerShell
 Date: 2013-05-03 11:46
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Scripts, PowerShell, One-Liner, Active Directory
 Slug: viewing-detailed-replication-status
 OldSlug: viewing-detailed-replication-status

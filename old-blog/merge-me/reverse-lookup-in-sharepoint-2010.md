@@ -1,6 +1,5 @@
 Title: Reverse Lookup in SharePoint 2010
 Date: 2012-12-29 15:34
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Mysteries Solved, SharePoint, Office
 Slug: reverse-lookup-in-sharepoint-2010
 OldSlug: reverse-lookup-in-sharepoint-2010

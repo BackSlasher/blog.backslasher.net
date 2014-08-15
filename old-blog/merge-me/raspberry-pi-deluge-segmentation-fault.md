@@ -1,6 +1,5 @@
 Title: Raspberry Pi + Deluge = Segmentation Fault
 Date: 2014-04-14 15:43
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Mysteries Solved, Linux, BitTorrent, Raspberry Pi, raspberrySeed, Ramblings, Deluge
 Slug: raspberry-pi-deluge-segmentation-fault
 OldSlug: raspberry-pi-deluge-segmentation-fault

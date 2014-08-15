@@ -1,6 +1,5 @@
 Title: Changing php settings without .htaccess or php.ini
 Date: 2011-02-04 14:06
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Programming, PHP
 Slug: changing-php-settings-without-htaccess
 OldSlug: changing-php-settings-without-htaccess

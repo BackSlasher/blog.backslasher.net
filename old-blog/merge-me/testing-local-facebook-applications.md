@@ -1,6 +1,5 @@
 Title: Testing Local Facebook Applications with ABE
 Date: 2014-06-23 12:59
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Security, Facebook, Development, NoScript, Firefox
 Slug: testing-local-facebook-applications
 OldSlug: testing-local-facebook-applications

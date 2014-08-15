@@ -1,6 +1,5 @@
 Title: Adding languages to Prettify
 Date: 2014-01-10 20:23
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Prettify, HTML, Blog
 Slug: adding-languages-to-prettify
 OldSlug: adding-languages-to-prettify

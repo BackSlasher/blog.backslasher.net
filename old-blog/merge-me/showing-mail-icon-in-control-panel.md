@@ -1,6 +1,5 @@
 Title: Showing "Mail" icon in control panel through Group Policy
 Date: 2011-06-05 12:40
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Group Policy, Terminal Server, Office
 Slug: showing-mail-icon-in-control-panel
 OldSlug: showing-mail-icon-in-control-panel

@@ -1,6 +1,5 @@
 Title: Google Friendly Apache Domain Migration
 Date: 2011-07-26 15:10
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Apache
 Slug: google-friendly-apache-domain-migration
 OldSlug: google-friendly-apache-domain-migration

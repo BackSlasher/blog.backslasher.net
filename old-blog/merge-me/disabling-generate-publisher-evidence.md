@@ -1,6 +1,5 @@
 Title: Disabling "generate Publisher Evidence" using scripts
 Date: 2014-06-23 13:08
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Scripts, Windows, Power Management, .NET framework, XML, PowerShell
 Slug: disabling-generate-publisher-evidence
 OldSlug: disabling-generate-publisher-evidence

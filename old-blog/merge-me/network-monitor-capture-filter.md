@@ -1,6 +1,5 @@
 Title: Network Monitor capture filter limitations
 Date: 2013-08-30 09:11
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: TCP, Mysteries Solved, Firewall, Network Monitor
 Slug: network-monitor-capture-filter
 OldSlug: network-monitor-capture-filter

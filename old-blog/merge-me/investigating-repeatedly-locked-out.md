@@ -1,6 +1,5 @@
 Title: Investigating Repeatedly Locked Out Users
 Date: 2013-05-14 09:44
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Kerberos, Security, Mysteries Solved, Scripts, PowerShell, Event Log, Active Directory
 Slug: investigating-repeatedly-locked-out
 OldSlug: investigating-repeatedly-locked-out

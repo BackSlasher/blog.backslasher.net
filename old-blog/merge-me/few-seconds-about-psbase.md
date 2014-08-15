@@ -1,6 +1,5 @@
 Title: A few seconds about psbase
 Date: 2010-10-03 22:04
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Scripts, PowerShell
 Slug: few-seconds-about-psbase
 OldSlug: few-seconds-about-psbase

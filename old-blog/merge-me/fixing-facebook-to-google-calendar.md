@@ -1,6 +1,5 @@
 Title: Fixing Facebook to Google Calendar synchronization
 Date: 2012-03-24 17:39
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Mysteries Solved, Facebook, iCal, Calendar, Yii
 Slug: fixing-facebook-to-google-calendar
 OldSlug: fixing-facebook-to-google-calendar

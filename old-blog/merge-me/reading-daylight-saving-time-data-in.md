@@ -1,6 +1,5 @@
 Title: Reading Daylight Saving Time Data in Windows
 Date: 2013-09-04 16:48
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: WMI, Calendar, Windows, W32tm, PowerShell, DST
 Slug: reading-daylight-saving-time-data-in
 OldSlug: reading-daylight-saving-time-data-in

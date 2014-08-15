@@ -1,6 +1,5 @@
 Title: Group Policy Security Filtering and Loopback
 Date: 2013-03-19 18:13
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Group Policy, Security, Mysteries Solved, Active Directory
 Slug: group-policy-security-filtering-and
 OldSlug: group-policy-security-filtering-and

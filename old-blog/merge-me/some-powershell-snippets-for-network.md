@@ -1,6 +1,5 @@
 Title: Some PowerShell Snippets for Network Scanning
 Date: 2014-06-23 13:11
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: TCP, Security, HTTP, Scripts, Windows, PowerShell, One-Liner
 Slug: some-powershell-snippets-for-network
 OldSlug: some-powershell-snippets-for-network

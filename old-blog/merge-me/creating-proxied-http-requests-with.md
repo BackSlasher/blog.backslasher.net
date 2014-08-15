@@ -1,6 +1,5 @@
 Title: Creating proxied http requests with PowerShell
 Date: 2012-04-09 21:45
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: HTTP, Scripts, Proxy, PowerShell
 Slug: creating-proxied-http-requests-with
 OldSlug: creating-proxied-http-requests-with

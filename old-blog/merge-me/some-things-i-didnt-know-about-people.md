@@ -1,6 +1,5 @@
 Title: Some Things I Didn't Know About People Picker
 Date: 2012-09-27 19:20
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: SharePoint, PowerShell, Active Directory
 Slug: some-things-i-didnt-know-about-people
 OldSlug: some-things-i-didnt-know-about-people

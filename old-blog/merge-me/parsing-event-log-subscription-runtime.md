@@ -1,6 +1,5 @@
 Title: Parsing Event Log Subscription Runtime Status using PowerShell and Regex
 Date: 2013-10-12 16:00
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Scripts, Regular Expressions, Windows, PowerShell, Event Log
 Slug: parsing-event-log-subscription-runtime
 OldSlug: parsing-event-log-subscription-runtime

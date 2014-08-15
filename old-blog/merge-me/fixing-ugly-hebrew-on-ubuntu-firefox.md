@@ -1,6 +1,5 @@
 Title: Fixing Ugly Hebrew on Ubuntu + Firefox
 Date: 2014-06-23 13:01
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Linux, Fonts, HTML, Ubuntu, Firefox
 Slug: fixing-ugly-hebrew-on-ubuntu-firefox
 OldSlug: fixing-ugly-hebrew-on-ubuntu-firefox

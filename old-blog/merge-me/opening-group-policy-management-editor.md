@@ -1,6 +1,5 @@
 Title: Opening Group Policy Management Editor from the Command Line
 Date: 2013-03-19 18:12
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Group Policy, Programming, Scripts, PowerShell, Active Directory
 Slug: opening-group-policy-management-editor
 OldSlug: opening-group-policy-management-editor

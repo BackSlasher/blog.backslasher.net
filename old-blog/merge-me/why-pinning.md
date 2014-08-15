@@ -1,6 +1,5 @@
 Title: Why Pinning
 Date: 2014-06-22 09:05
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Security, Linux, Debian, Apt
 Slug: why-pinning
 OldSlug: why-pinning

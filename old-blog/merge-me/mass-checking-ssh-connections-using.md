@@ -1,6 +1,5 @@
 Title: Mass-Checking SSH Connections using Parallel
 Date: 2014-04-13 12:23
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Scripts, SSH, One-Liner, Bash
 Slug: mass-checking-ssh-connections-using
 OldSlug: mass-checking-ssh-connections-using

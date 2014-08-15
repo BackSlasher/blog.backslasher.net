@@ -1,6 +1,5 @@
 Title: Filtering Windows Event Log using XPath
 Date: 2013-06-13 15:24
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Security, Scripts, Windows, PowerShell, Ramblings, Event Log
 Slug: filtering-windows-event-log-using-xpath
 OldSlug: filtering-windows-event-log-using-xpath

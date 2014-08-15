@@ -1,6 +1,5 @@
 Title: Installing WSUS Prerequisites Easily in a Disconnected Server
 Date: 2012-04-27 08:08
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Scripts, PowerShell, WSUS
 Slug: installing-wsus-prerequisites-easily-in
 OldSlug: installing-wsus-prerequisites-easily-in

@@ -1,6 +1,5 @@
 Title: Finding WSUS Clients by SusClientId
 Date: 2013-01-02 11:41
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Mysteries Solved, Scripts, PowerShell, WSUS, Registry
 Slug: finding-wsus-clients-by-susclientid
 OldSlug: finding-wsus-clients-by-susclientid

@@ -1,6 +1,5 @@
 Title: Avoiding Text Overflow with Prettify on Blogger
 Date: 2014-01-10 20:24
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Prettify, CSS, HTML, Blog
 Slug: avoiding-text-overflow-with-prettify-on
 OldSlug: avoiding-text-overflow-with-prettify-on

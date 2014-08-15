@@ -1,6 +1,5 @@
 Title: Making sure your Audit Collection Server is collecting
 Date: 2011-10-22 21:23
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: ACS, PowerShell, SCOM, SQL
 Slug: making-sure-your-audit-collection
 OldSlug: making-sure-your-audit-collection

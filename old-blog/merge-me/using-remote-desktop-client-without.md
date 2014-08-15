@@ -1,6 +1,5 @@
 Title: Using Remote Desktop Client without Network Level Authentication
 Date: 2013-11-12 18:07
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Security, Windows, Terminal Server
 Slug: using-remote-desktop-client-without
 OldSlug: using-remote-desktop-client-without

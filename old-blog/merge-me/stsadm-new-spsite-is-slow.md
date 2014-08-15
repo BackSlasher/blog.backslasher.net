@@ -1,6 +1,5 @@
 Title: Stsadm / new SPSite is slow
 Date: 2014-06-22 12:54
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Programming, PKI, Mysteries Solved, SharePoint, Scripts, PowerShell, Performance
 Slug: stsadm-new-spsite-is-slow
 OldSlug: stsadm-new-spsite-is-slow

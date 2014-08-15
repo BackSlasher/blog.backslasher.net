@@ -1,6 +1,5 @@
 Title: Mass Setting Permissions on Remote Shares
 Date: 2013-02-24 07:26
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Security, Scripts, NetApp, FileSystem, PowerShell
 Slug: mass-setting-permissions-on-remote
 OldSlug: mass-setting-permissions-on-remote

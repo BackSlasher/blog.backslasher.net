@@ -1,6 +1,5 @@
 Title: Solving and preventing "Topology Discovery failed, error 0x80040a02"
 Date: 2011-06-05 19:00
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Group Policy, Exchange, Active Directory
 Slug: solving-and-preventing-topology
 OldSlug: solving-and-preventing-topology

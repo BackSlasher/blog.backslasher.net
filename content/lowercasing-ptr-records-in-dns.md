@@ -1,7 +1,6 @@
 Title: Lowercasing PTR records in DNS
 Category: Microsoft
 Date: 2011-02-26 18:51
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: DNS, Scripts, PowerShell
 Slug: lowercasing-ptr-records-in-dns
 OldSlug: lowercasing-ptr-records-in-dns

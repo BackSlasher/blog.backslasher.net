@@ -1,6 +1,5 @@
 Title: Listing Unity's Scopes and Originating Package
 Date: 2014-04-14 09:36
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Unity, Scripts, Linux, Parallel, Ubuntu, Bash
 Slug: listing-unitys-scopes-and-originating
 OldSlug: listing-unitys-scopes-and-originating

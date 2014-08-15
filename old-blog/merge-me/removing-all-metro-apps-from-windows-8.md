@@ -1,6 +1,5 @@
 Title: Removing all Metro Apps from Windows 8
 Date: 2013-03-19 13:59
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Scripts, PowerShell, One-Liner
 Slug: removing-all-metro-apps-from-windows-8
 OldSlug: removing-all-metro-apps-from-windows-8

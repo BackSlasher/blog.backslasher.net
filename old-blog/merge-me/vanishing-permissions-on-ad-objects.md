@@ -1,6 +1,5 @@
 Title: Vanishing permissions on AD objects
 Date: 2010-12-24 22:14
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Mysteries Solved, Active Directory
 Slug: vanishing-permissions-on-ad-objects
 OldSlug: vanishing-permissions-on-ad-objects

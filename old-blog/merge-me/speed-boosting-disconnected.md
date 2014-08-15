@@ -1,6 +1,5 @@
 Title: Speed boosting disconnected environments
 Date: 2011-01-06 20:42
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: SCOM, Ramblings, SQL
 Slug: speed-boosting-disconnected
 OldSlug: speed-boosting-disconnected

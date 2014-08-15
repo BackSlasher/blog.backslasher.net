@@ -1,6 +1,5 @@
 Title: Preventing Users from Adding Computers to a Domain
 Date: 2013-09-19 09:32
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Group Policy, Security, Mysteries Solved, Scripts, PowerShell, Active Directory
 Slug: preventing-users-from-adding-computesr
 OldSlug: preventing-users-from-adding-computesr

@@ -1,6 +1,5 @@
 Title: Enabling Remote Desktop Remotely
 Date: 2013-11-01 20:52
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Security, Scripts, Windows, PowerShell, Terminal Server, Registry, One-Liner
 Slug: enabling-remote-desktop-remotely
 OldSlug: enabling-remote-desktop-remotely

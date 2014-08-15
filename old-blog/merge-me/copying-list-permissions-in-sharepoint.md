@@ -1,6 +1,5 @@
 Title: Copying List Permissions in SharePoint 2010
 Date: 2013-01-05 17:31
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: SharePoint, Scripts, PowerShell
 Slug: copying-list-permissions-in-sharepoint
 OldSlug: copying-list-permissions-in-sharepoint

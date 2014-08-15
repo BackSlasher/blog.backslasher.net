@@ -1,6 +1,5 @@
 Title: Linux and SSDs - Should You TRIM?
 Date: 2014-07-16 15:46
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Mysteries Solved, Linux, FileSystem, Debian, Ramblings, Ubuntu, Performance
 Slug: linux-and-ssds-should-you-trim
 OldSlug: linux-and-ssds-should-you-trim

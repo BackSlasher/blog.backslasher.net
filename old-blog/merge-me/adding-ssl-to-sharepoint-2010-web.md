@@ -1,6 +1,5 @@
 Title: Adding SSL to a SharePoint 2010 Web Application, the Right Way
 Date: 2013-11-12 18:08
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Security, HTTP, SharePoint, Scripts, IIS, PowerShell, One-Liner
 Slug: adding-ssl-to-sharepoint-2010-web
 OldSlug: adding-ssl-to-sharepoint-2010-web

@@ -1,6 +1,5 @@
 Title: Checking for conflicting oIDs
 Date: 2010-12-24 22:16
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Scripts, PowerShell, Active Directory
 Slug: checking-for-conflicting-oids
 OldSlug: checking-for-conflicting-oids

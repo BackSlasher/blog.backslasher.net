@@ -1,6 +1,5 @@
 Title: Setting a Primary Monitor in Ubuntu - The Static Way
 Date: 2014-05-14 18:04
-Author: Nitzan Raz (noreply@blogger.com)
 Slug: tag:blogger.com,1999:blog-314585727957171669
 OldSlug: tag:blogger.com,1999:blog-314585727957171669
 

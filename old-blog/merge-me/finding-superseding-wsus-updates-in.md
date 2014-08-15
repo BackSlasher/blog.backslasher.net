@@ -1,6 +1,5 @@
 Title: Finding Superseding WSUS updates in PowerShell
 Date: 2013-09-25 16:11
-Author: Nitzan Raz (noreply@blogger.com)
 Tags: Scripts, PowerShell, WSUS, One-Liner
 Slug: finding-superseding-wsus-updates-in
 OldSlug: finding-superseding-wsus-updates-in
