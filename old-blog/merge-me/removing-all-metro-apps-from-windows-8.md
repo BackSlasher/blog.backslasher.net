@@ -3,6 +3,7 @@ Date: 2013-03-19 13:59
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Scripts, PowerShell, One-Liner
 Slug: removing-all-metro-apps-from-windows-8
+OldSlug: removing-all-metro-apps-from-windows-8
 
 <p>
 I wanted to open some photos today (to add to my blog) on my Windows 8

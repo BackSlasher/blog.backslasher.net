@@ -3,6 +3,7 @@ Date: 2010-08-18 16:13
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Group Policy, NTFRS, PowerShell, Active Directory
 Slug: testing-stranded-group-policies
+OldSlug: testing-stranded-group-policies
 
 <p>
 Hello.  

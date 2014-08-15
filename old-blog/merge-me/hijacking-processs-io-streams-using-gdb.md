@@ -3,6 +3,7 @@ Date: 2014-06-22 12:13
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Scripts, Linux, gdb, Debugging, Bash
 Slug: hijacking-processs-io-streams-using-gdb
+OldSlug: hijacking-processs-io-streams-using-gdb
 
 <p>
 <span style="font-size: x-large;">The Story</span>  

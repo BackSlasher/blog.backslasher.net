@@ -3,6 +3,7 @@ Date: 2011-06-05 19:00
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Group Policy, Exchange, Active Directory
 Slug: solving-and-preventing-topology
+OldSlug: solving-and-preventing-topology
 
 Hi.  
 Recently our Exchange 2003 environment broke down when we demoted our

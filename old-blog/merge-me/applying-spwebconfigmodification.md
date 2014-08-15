@@ -3,6 +3,7 @@ Date: 2013-03-01 18:47
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: ASP.net, SharePoint, Scripts, Web.Config, PowerShell
 Slug: applying-spwebconfigmodification
+OldSlug: applying-spwebconfigmodification
 
 Hi.  
 My SharePoint team and I wanted to move to

@@ -3,6 +3,7 @@ Date: 2012-09-27 19:20
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: SharePoint, PowerShell, Active Directory
 Slug: some-things-i-didnt-know-about-people
+OldSlug: some-things-i-didnt-know-about-people
 
 Recently I got to mess with SharePoint 2010's People Picker - a control
 that emulates Windows' "Directory Object Picker", allowing the user to

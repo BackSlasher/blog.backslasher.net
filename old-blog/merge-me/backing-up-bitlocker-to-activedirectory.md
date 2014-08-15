@@ -3,6 +3,7 @@ Date: 2013-11-25 20:14
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Security, BitLocker, Scripts, Windows, FileSystem, PowerShell, Ramblings, Active Directory
 Slug: backing-up-bitlocker-to-activedirectory
+OldSlug: backing-up-bitlocker-to-activedirectory
 
 <span style="font-size: x-large;">The Story</span>  
 If you thought about deploying BitLocker in your enterprise, you

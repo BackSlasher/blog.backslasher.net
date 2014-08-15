@@ -3,6 +3,7 @@ Date: 2013-05-14 09:44
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Kerberos, Security, Mysteries Solved, Scripts, PowerShell, Event Log, Active Directory
 Slug: investigating-repeatedly-locked-out
+OldSlug: investigating-repeatedly-locked-out
 
 I often get asked by some other IT guy "why does user XXXXX keep on
 getting locked out?"  

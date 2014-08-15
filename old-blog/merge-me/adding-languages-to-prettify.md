@@ -3,6 +3,7 @@ Date: 2014-01-10 20:23
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Prettify, HTML, Blog
 Slug: adding-languages-to-prettify
+OldSlug: adding-languages-to-prettify
 
 <p>
 Since there is no documentation on how to add languages to Prettify, I

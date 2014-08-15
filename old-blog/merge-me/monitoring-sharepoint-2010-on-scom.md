@@ -3,6 +3,7 @@ Date: 2011-07-18 13:15
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: SharePoint, SCOM
 Slug: monitoring-sharepoint-2010-on-scom
+OldSlug: monitoring-sharepoint-2010-on-scom
 
 Hi.  
 I've recently started monitoring my new SharePoint 2010 farms on SCOM,

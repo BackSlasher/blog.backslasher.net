@@ -3,6 +3,7 @@ Date: 2010-07-26 21:42
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Ramblings
 Slug: new-blog-yay
+OldSlug: new-blog-yay
 
 Hi.  
 My name is Nitzan, and I'm a MS-IT guy.  

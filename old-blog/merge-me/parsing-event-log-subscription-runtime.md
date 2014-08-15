@@ -3,6 +3,7 @@ Date: 2013-10-12 16:00
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Scripts, Regular Expressions, Windows, PowerShell, Event Log
 Slug: parsing-event-log-subscription-runtime
+OldSlug: parsing-event-log-subscription-runtime
 
 <span style="font-size: large;">The Story</span>   
 Since Event Log Subscription doesn't have a module or a .NET class,

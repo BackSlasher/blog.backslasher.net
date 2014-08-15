@@ -3,6 +3,7 @@ Date: 2012-12-29 15:34
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Mysteries Solved, SharePoint, Office
 Slug: reverse-lookup-in-sharepoint-2010
+OldSlug: reverse-lookup-in-sharepoint-2010
 
 Every SharePoint noob knows that one can create list lookup
 relationships, like specifying that a book belongs in a specific

@@ -3,6 +3,7 @@ Date: 2011-01-12 19:32
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Failover Cluster, Active Directory
 Slug: 2008-clusters-cant-change-password
+OldSlug: 2008-clusters-cant-change-password
 
 Hi.  
 Last week MS's PFE Moti Bani and me solved a problem that bugged me for

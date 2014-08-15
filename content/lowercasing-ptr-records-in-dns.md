@@ -4,6 +4,7 @@ Date: 2011-02-26 18:51
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: DNS, Scripts, PowerShell
 Slug: lowercasing-ptr-records-in-dns
+OldSlug: lowercasing-ptr-records-in-dns
 
 Recently, one of the IT crowd informed me that he can't delete some of
 his PTR records through the DNS management console (dnsmgmt.msc). The

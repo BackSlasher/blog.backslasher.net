@@ -3,6 +3,7 @@ Date: 2014-04-13 12:23
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Scripts, SSH, One-Liner, Bash
 Slug: mass-checking-ssh-connections-using
+OldSlug: mass-checking-ssh-connections-using
 
 <p>
 Today I wanted to make sure I have SSH access to about 100 servers.  

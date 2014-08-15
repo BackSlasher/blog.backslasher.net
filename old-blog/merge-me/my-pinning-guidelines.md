@@ -3,6 +3,7 @@ Date: 2014-06-22 12:10
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Security, Linux, Debian, Apt
 Slug: my-pinning-guidelines
+OldSlug: my-pinning-guidelines
 
 <p>
 In my [previous

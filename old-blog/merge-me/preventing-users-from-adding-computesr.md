@@ -3,6 +3,7 @@ Date: 2013-09-19 09:32
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Group Policy, Security, Mysteries Solved, Scripts, PowerShell, Active Directory
 Slug: preventing-users-from-adding-computesr
+OldSlug: preventing-users-from-adding-computesr
 
 Some time ago, we've come to the conclusion that the computer accounts
 in the domain are disorganized. After doing the tedious job of sorting

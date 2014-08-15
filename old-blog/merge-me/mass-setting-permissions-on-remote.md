@@ -3,6 +3,7 @@ Date: 2013-02-24 07:26
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Security, Scripts, NetApp, FileSystem, PowerShell
 Slug: mass-setting-permissions-on-remote
+OldSlug: mass-setting-permissions-on-remote
 
 I was recently asked by one of my teammates to add several NTFS
 permissions to the root folders of a bunch of shares. Seems easy, but I

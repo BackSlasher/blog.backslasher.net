@@ -3,6 +3,7 @@ Date: 2014-06-23 13:12
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Samba, Security, Linux, SMB, Raspberry Pi, raspberrySeed
 Slug: setting-up-samba-on-raspberry-pi
+OldSlug: setting-up-samba-on-raspberry-pi
 
 After setting up my rPi TorrentBox, I wanted to let my family access the
 downloaded files.  

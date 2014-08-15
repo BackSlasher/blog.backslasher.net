@@ -3,6 +3,7 @@ Date: 2013-11-12 18:07
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Security, Windows, Terminal Server
 Slug: using-remote-desktop-client-without
+OldSlug: using-remote-desktop-client-without
 
 Whenever I use Remote Desktop to connect to an NT6+ (Windows Vista /
 Windows Server 2008 and later) machine, I use Network Level

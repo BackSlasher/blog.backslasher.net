@@ -3,6 +3,7 @@ Date: 2014-01-09 17:06
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Kerberos, Security, Scripts, Windows, Power Management, One-Liner, Event Log, Active Directory
 Slug: setspn-duplicates-and-case-sensitivity
+OldSlug: setspn-duplicates-and-case-sensitivity
 
 <p>
 Today I found out that the command I use to find duplicate SPNs which

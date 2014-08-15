@@ -3,6 +3,7 @@ Date: 2014-06-23 13:04
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Mysteries Solved, Scripts, Linux, FileSystem, Raspberry Pi, raspberrySeed, udev
 Slug: automatically-mounting-usb-drives-and
+OldSlug: automatically-mounting-usb-drives-and
 
 <p>
 Today I solved a problem that has been bothering me for a while - being

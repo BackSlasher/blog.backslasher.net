@@ -3,6 +3,7 @@ Date: 2012-03-24 18:01
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: PHP, Yii
 Slug: extending-yiis-web-application-creation
+OldSlug: extending-yiis-web-application-creation
 
 I found out that after creating my Yii Applications through Yiic.bat, I
 tend to modify the same things in all of them (adding ".htaccess" files

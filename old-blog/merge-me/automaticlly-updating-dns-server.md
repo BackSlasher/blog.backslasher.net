@@ -3,6 +3,7 @@ Date: 2012-10-06 20:50
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: DNS, Scripts, PowerShell, Active Directory
 Slug: automaticlly-updating-dns-server
+OldSlug: automaticlly-updating-dns-server
 
 <span style="font-size: large;">The Problem</span>   
 I was recently requested to make sure that our machine's network

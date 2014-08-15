@@ -3,6 +3,7 @@ Date: 2012-04-11 07:15
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Scripts, SQL
 Slug: determining-size-of-all-tables-in
+OldSlug: determining-size-of-all-tables-in
 
 <p>
 Just a quick SQL script to get the rowcount and size data of every table

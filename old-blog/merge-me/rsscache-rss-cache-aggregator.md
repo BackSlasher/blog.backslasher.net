@@ -3,6 +3,7 @@ Date: 2012-03-09 19:28
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: MySQL, Programming, PHP, RSS, BitTorrent, Ramblings, SQL
 Slug: rsscache-rss-cache-aggregator
+OldSlug: rsscache-rss-cache-aggregator
 
 <p>
 Hi.  

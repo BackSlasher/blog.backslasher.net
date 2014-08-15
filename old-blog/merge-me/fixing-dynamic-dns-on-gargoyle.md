@@ -3,6 +3,7 @@ Date: 2014-06-23 13:07
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: DNS, Mysteries Solved, Gargoyle, Scripts, Linux, Networking, DDNS, Bash
 Slug: fixing-dynamic-dns-on-gargoyle
+OldSlug: fixing-dynamic-dns-on-gargoyle
 
 I was digging through the logs of my latest
 [Gargoyle](http://www.gargoyle-router.com/) installation (a router

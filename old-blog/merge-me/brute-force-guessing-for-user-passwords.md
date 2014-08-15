@@ -3,6 +3,7 @@ Date: 2012-12-16 17:26
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Security, Scripts, PowerShell, Active Directory
 Slug: brute-force-guessing-for-user-passwords
+OldSlug: brute-force-guessing-for-user-passwords
 
 <p>
 Hi.  

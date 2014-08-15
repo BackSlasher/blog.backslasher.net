@@ -3,6 +3,7 @@ Date: 2011-06-05 12:40
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Group Policy, Terminal Server, Office
 Slug: showing-mail-icon-in-control-panel
+OldSlug: showing-mail-icon-in-control-panel
 
 Hi.  
 I recently had to lock down a Windows 2008R2 remote desktop server

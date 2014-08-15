@@ -3,6 +3,7 @@ Date: 2013-04-09 13:06
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Security, WinRM, Registry, Event Log
 Slug: solving-event-log-subscription-error
+OldSlug: solving-event-log-subscription-error
 
 <p>
 Today I saw some collector-initiated event log subscriptions that

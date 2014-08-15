@@ -3,6 +3,7 @@ Date: 2012-04-14 20:17
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Scripts, BitTorrent, PowerShell
 Slug: automaticlly-extracting-downloaded
+OldSlug: automaticlly-extracting-downloaded
 
 <p>
 As every average geek, I too download torrents (containing only legal,

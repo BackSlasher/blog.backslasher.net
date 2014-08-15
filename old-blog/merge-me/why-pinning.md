@@ -3,6 +3,7 @@ Date: 2014-06-22 09:05
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Security, Linux, Debian, Apt
 Slug: why-pinning
+OldSlug: why-pinning
 
 There are plenty of guides about apt pinning, but no one really explains
 the motivation to do so. It took me some time to understand that, so I

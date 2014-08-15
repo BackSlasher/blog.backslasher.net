@@ -3,6 +3,7 @@ Date: 2014-06-23 13:05
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Programming, Scripts, Raspberry Pi, raspberrySeed, Ramblings, Python, Deluge
 Slug: python-library-for-deluge-torrent
+OldSlug: python-library-for-deluge-torrent
 
 **Update:** I added [this
 project](https://github.com/BackSlasher/deluge_framework) as my first

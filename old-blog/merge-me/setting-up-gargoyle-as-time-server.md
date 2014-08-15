@@ -3,6 +3,7 @@ Date: 2014-06-22 12:12
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Mysteries Solved, Gargoyle, Linux, Raspberry Pi, Debian, raspberrySeed, NTP
 Slug: setting-up-gargoyle-as-time-server
+OldSlug: setting-up-gargoyle-as-time-server
 
 <span style="font-size: x-large;">The Story</span>   
 For reasons unknown to me, Debian's NTP daemon only works on udp port

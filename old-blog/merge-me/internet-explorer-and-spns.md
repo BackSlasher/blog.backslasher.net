@@ -3,6 +3,7 @@ Date: 2011-01-06 20:33
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Kerberos, Mysteries Solved, Internet Explorer, SharePoint
 Slug: internet-explorer-and-spns
+OldSlug: internet-explorer-and-spns
 
 Hi.  
 After learning how SPNs work (read my ["Who? Why?

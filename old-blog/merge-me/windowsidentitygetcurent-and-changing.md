@@ -3,6 +3,7 @@ Date: 2014-01-26 10:02
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Programming, Active Directory
 Slug: windowsidentitygetcurent-and-changing
+OldSlug: windowsidentitygetcurent-and-changing
 
 We've recently encountered an interesting problem:  
 One of our applications had a service using .net remoting with

@@ -3,6 +3,7 @@ Date: 2011-04-03 16:44
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Facebook, HTML
 Slug: making-your-pages-more-facebook
+OldSlug: making-your-pages-more-facebook
 
 Hi.  
 I'm working on a project involving [Gallery

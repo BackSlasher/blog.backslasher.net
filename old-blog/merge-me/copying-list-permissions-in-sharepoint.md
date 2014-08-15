@@ -3,6 +3,7 @@ Date: 2013-01-05 17:31
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: SharePoint, Scripts, PowerShell
 Slug: copying-list-permissions-in-sharepoint
+OldSlug: copying-list-permissions-in-sharepoint
 
 I just wrote a small script to copy permissions from one SharePoint list
 to the other.  

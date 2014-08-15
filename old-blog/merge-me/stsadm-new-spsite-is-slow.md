@@ -3,6 +3,7 @@ Date: 2014-06-22 12:54
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Programming, PKI, Mysteries Solved, SharePoint, Scripts, PowerShell, Performance
 Slug: stsadm-new-spsite-is-slow
+OldSlug: stsadm-new-spsite-is-slow
 
 **Update:** Get the script
 [here](http://blog.oneboredadmin.com/2014/01/disabling-generate-publisher-evidence.html)  

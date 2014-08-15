@@ -3,6 +3,7 @@ Date: 2012-04-09 21:45
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: HTTP, Scripts, Proxy, PowerShell
 Slug: creating-proxied-http-requests-with
+OldSlug: creating-proxied-http-requests-with
 
 <p>
 I'm working on some sort of HTTP proxy (more details about it later),

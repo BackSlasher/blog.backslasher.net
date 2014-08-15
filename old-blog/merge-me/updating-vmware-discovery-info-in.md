@@ -3,6 +3,7 @@ Date: 2012-10-02 14:54
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: VMware, Scripts, PowerShell, Active Directory
 Slug: updating-vmware-discovery-info-in
+OldSlug: updating-vmware-discovery-info-in
 
 Recently I decided I want to store physical discovery data (name,
 physical location, host if it's a VM) on the machine's account in Active

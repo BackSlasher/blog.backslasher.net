@@ -3,6 +3,7 @@ Date: 2012-04-14 20:18
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Security, PKI, Mysteries Solved, PowerShell, Active Directory
 Slug: remotley-viewing-machine-certificates
+OldSlug: remotley-viewing-machine-certificates
 
 <p>
 We've started remotely monitoring our certificate stores on critical

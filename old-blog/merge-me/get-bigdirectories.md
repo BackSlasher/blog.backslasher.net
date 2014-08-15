@@ -3,6 +3,7 @@ Date: 2010-07-30 10:23
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Scripts, FileSystem, PowerShell
 Slug: get-bigdirectories
+OldSlug: get-bigdirectories
 
 <p>
 Hello.  

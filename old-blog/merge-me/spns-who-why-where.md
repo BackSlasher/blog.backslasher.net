@@ -3,6 +3,7 @@ Date: 2010-12-24 22:01
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Kerberos, SharePoint, Active Directory
 Slug: spns-who-why-where
+OldSlug: spns-who-why-where
 
 Howdy.  
 I was making an introduction to a new teammate about SharePoint

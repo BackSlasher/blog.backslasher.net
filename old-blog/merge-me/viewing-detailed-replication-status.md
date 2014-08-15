@@ -3,6 +3,7 @@ Date: 2013-05-03 11:46
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Scripts, PowerShell, One-Liner, Active Directory
 Slug: viewing-detailed-replication-status
+OldSlug: viewing-detailed-replication-status
 
 <p>
 Whenever I want to view the replication status in my domain, I use

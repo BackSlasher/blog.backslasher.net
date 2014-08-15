@@ -3,6 +3,7 @@ Date: 2013-02-14 07:52
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Mysteries Solved, Scripts, NetApp, SMB, FileSystem, PowerShell, CIFS, Performance
 Slug: testing-actual-smb-version
+OldSlug: testing-actual-smb-version
 
 Ever since I got employed in my present company, I've been told that our
 NetApp Filer supports SMB2 when used as NAS.   

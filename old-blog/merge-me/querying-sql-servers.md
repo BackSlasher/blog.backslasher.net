@@ -3,6 +3,7 @@ Date: 2010-07-29 20:55
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Scripts, PowerShell, SQL
 Slug: querying-sql-servers
+OldSlug: querying-sql-servers
 
 <p>
 Hi.  

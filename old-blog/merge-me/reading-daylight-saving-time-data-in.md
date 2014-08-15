@@ -3,6 +3,7 @@ Date: 2013-09-04 16:48
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: WMI, Calendar, Windows, W32tm, PowerShell, DST
 Slug: reading-daylight-saving-time-data-in
+OldSlug: reading-daylight-saving-time-data-in
 
 When it comes to DST complexity, Israel has it worst (I think). We have
 our DST definition changed on a yearly basis, and consequently we have

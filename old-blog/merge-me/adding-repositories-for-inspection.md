@@ -3,6 +3,7 @@ Date: 2014-06-22 09:03
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Scripts, Linux, Debian, Apt Pinning, One-Liner, Apt
 Slug: adding-repositories-for-inspection
+OldSlug: adding-repositories-for-inspection
 
 <p>
 Sometime I want to inspect software repositories. However, I don't want

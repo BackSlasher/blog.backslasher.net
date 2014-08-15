@@ -3,6 +3,7 @@ Date: 2013-08-10 13:01
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Group Policy, Mysteries Solved, Windows, Power Management, Ramblings, Registry, Performance
 Slug: putting-your-windows-to-sleep
+OldSlug: putting-your-windows-to-sleep
 
   --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   [![](http://4.bp.blogspot.com/-8PyZINszJyU/UgQHOqnHl2I/AAAAAAAADzQ/eilcSG-5EPE/s320/PowerZoe.jpg)](http://4.bp.blogspot.com/-8PyZINszJyU/UgQHOqnHl2I/AAAAAAAADzQ/eilcSG-5EPE/s1600/PowerZoe.jpg)

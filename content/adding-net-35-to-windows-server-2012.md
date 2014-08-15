@@ -3,6 +3,7 @@ Date: 2013-06-28 10:48
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Scripts, Windows, Virtualization, PowerShell
 Slug: adding-net-35-to-windows-server-2012
+OldSlug: adding-net-35-to-windows-server-2012
 Category: Microsoft
 
 I was approached by some colleagues building a new VM template for

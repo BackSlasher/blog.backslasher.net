@@ -3,6 +3,7 @@ Date: 2014-04-14 09:36
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Unity, Scripts, Linux, Parallel, Ubuntu, Bash
 Slug: listing-unitys-scopes-and-originating
+OldSlug: listing-unitys-scopes-and-originating
 
 I recently upgraded to Ubuntu 14.04 (beta2), and I got all of my
 "lenses" (searching additional items in the dash menu), that look like

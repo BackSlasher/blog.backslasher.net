@@ -3,6 +3,7 @@ Date: 2014-06-23 13:01
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Linux, Fonts, HTML, Ubuntu, Firefox
 Slug: fixing-ugly-hebrew-on-ubuntu-firefox
+OldSlug: fixing-ugly-hebrew-on-ubuntu-firefox
 
 The default viewing experience, when visiting some Hebrew sites when
 using Firefox on Ubuntu, is quite unsightly.  

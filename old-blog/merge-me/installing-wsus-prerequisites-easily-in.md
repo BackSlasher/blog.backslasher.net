@@ -3,6 +3,7 @@ Date: 2012-04-27 08:08
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Scripts, PowerShell, WSUS
 Slug: installing-wsus-prerequisites-easily-in
+OldSlug: installing-wsus-prerequisites-easily-in
 
 <p>
 Our company has an internet-isolated environment, and I was requested to

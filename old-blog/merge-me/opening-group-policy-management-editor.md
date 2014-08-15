@@ -3,6 +3,7 @@ Date: 2013-03-19 18:12
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Group Policy, Programming, Scripts, PowerShell, Active Directory
 Slug: opening-group-policy-management-editor
+OldSlug: opening-group-policy-management-editor
 
 <p>
 Yesterday I wanted to open the Group Policy editor (or "Group Policy

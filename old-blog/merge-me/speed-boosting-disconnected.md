@@ -3,6 +3,7 @@ Date: 2011-01-06 20:42
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: SCOM, Ramblings, SQL
 Slug: speed-boosting-disconnected
+OldSlug: speed-boosting-disconnected
 
 Hi there.  
 Not a while ago, I've created a post about [stsadm.exe / new SPSite()

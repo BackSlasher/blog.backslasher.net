@@ -3,6 +3,7 @@ Date: 2011-05-28 12:54
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: PHP, SQL, Backups
 Slug: dumping-your-mysql-db-using-php
+OldSlug: dumping-your-mysql-db-using-php
 Category: Foss
 
 Hi.  

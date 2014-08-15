@@ -3,6 +3,7 @@ Date: 2013-11-12 18:08
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Security, HTTP, SharePoint, Scripts, IIS, PowerShell, One-Liner
 Slug: adding-ssl-to-sharepoint-2010-web
+OldSlug: adding-ssl-to-sharepoint-2010-web
 
 <span style="font-size: large;">The Story</span>   
 I haven't touched SharePoint in a while, but I've been asked by a friend

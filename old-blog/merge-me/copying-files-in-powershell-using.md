@@ -3,6 +3,7 @@ Date: 2014-07-16 09:02
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Scripts, FileSystem, PowerShell
 Slug: copying-files-in-powershell-using
+OldSlug: copying-files-in-powershell-using
 
 <p>
 I know this trick is widely known, but I thought it's worth mentioning

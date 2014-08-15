@@ -3,6 +3,7 @@ Date: 2011-01-15 14:44
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Security, Scripts, PowerShell, Registry, Event Log
 Slug: event-log-permissions-with-scripts
+OldSlug: event-log-permissions-with-scripts
 
 Hi.  
 I'm going to keep it short, because there's a lot of technical

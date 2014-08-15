@@ -3,6 +3,7 @@ Date: 2014-01-10 20:25
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Group Policy, Scripts, Windows, PowerShell, Registry, One-Liner, Active Directory
 Slug: list-all-group-policy-extensions
+OldSlug: list-all-group-policy-extensions
 
 <p>
 I use this script to see all GP extensions that my computer can

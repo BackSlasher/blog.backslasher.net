@@ -3,6 +3,7 @@ Date: 2011-11-24 09:36
 Author: Nitzan Raz (noreply@blogger.com)
 Tags: Security, Scripts, PowerShell, Active Directory
 Slug: active-directorys-object-specific-aces
+OldSlug: active-directorys-object-specific-aces
 
 I recently checked the option of handing out AD permissions through
 PowerShell scripts, and I found out that setting object-specific ACEs is
