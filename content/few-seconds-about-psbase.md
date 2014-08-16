@@ -1,6 +1,6 @@
 Title: A few seconds about psbase
 Date: 2010-10-03 22:04
-Category: Mictosoft
+Category: Microsoft
 Tags: Scripts, PowerShell
 Slug: few-seconds-about-psbase
 OldSlug: few-seconds-about-psbase
