@@ -5,7 +5,10 @@ Tags: Security, Scripts, Windows, PowerShell, Terminal Server, Registry, One-Lin
 Slug: enabling-remote-desktop-remotely
 OldSlug: enabling-remote-desktop-remotely
 
-According to [this Technet article](http://technet.microsoft.com/en-us/library/cc782195%28v=ws.10%29.aspx), to enable remote desktop remotely by using the registry you need to set the key `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server:fDenyTSConnections=0`
+According to [this Technet article](http://technet.microsoft.com/en-us/library/cc782195%28v=ws.10%29.aspx), to enable remote desktop remotely by using the registry you need to set the key
+~~~registry
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server:fDenyTSConnections=0
+~~~
 and then reboot the server.  
 Rebooting is actually unnecessary - you can just restart the service `TermService`  
 If you'd like to script it all:  
