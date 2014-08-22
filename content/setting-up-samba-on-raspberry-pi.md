@@ -1,5 +1,6 @@
 Title: Setting Up Samba on Raspberry Pi
 Date: 2014-06-23 13:12
+Category: FOSS
 Tags: Samba, Security, Linux, SMB, Raspberry Pi, raspberrySeed
 Slug: setting-up-samba-on-raspberry-pi
 OldSlug: setting-up-samba-on-raspberry-pi
@@ -12,7 +13,7 @@ NFS), I wanted to install Samba on the rPi and create a read-only share
 I found a lot of guides for setting up Samba, but every one was missing
 something, so I documented my own procedure:  
   
-<span style="font-size: large;">1. Plan Configuration</span>  
+### 1. Plan Configuration
 Answer these questions before you start:  
 
 -   Shares:
@@ -22,9 +23,6 @@ Answer these questions before you start:
     -   What is the share name? (best to keep it in lower-case)
     -   What is the physical path the share is pointing to? Is it always
         mounted or on a removable drive?
-
-    .
-
 -   Users / authentication:
     -   Do you need to change the workgroup's name?
     -   Do you need to disable password encryption (VERY old clients)?
@@ -34,153 +32,82 @@ Answer these questions before you start:
 
 It's much easier working with a clear understanding of the desired
 configuration.  
-<a name="more"></a>  
-<span style="font-size: large;">2. Prepare Access User</span>  
+### 2. Prepare Access User
 Create the linux user you want to use (in my case "theothers"). You can
 use this command:  
-
-~~~~ {.prettyprint}
+~~~~bash
 adduser --shell /bin/false --no-create-home
 ~~~~
 
 **Note that:**  
 
--   Shell is set to /bin/false to help prevent the user from actually
+-   Shell is set to `/bin/false` to help prevent the user from actually
     logging in
 -   No home directory is created, because the user isn't supposed to
     login anyway
 
-<span style="font-size: large;">3. Prepare Permissions</span>  
+### 3. Prepare Permissions
 Make sure the access user can't do too much damage, because it might be
 abused. I limited its permissions to read (since I don't want my family
 messing about the directory anyway).  
 I won't go into the POSIX permissions model, but the best way to test
 the user's permissions is to impersonate that user using   
-
-~~~~ {.prettyprint}
+~~~~bash
 sudo su -s /bin/bash theothers
 ~~~~
-
 Note that the terminal prompt changes to show the impersonated user,
 like "theothers@bestrpi". Try and test everything:  
 
-<table>
-<tbody>
-<tr>
-<th>
-Command
+- `touch`: Creating files
+- `mkdir`: Creating directories
+- `ls`: Listing directories
+- `tail`: Reading files
 
-</th>
-<th>
-Access tested
-
-</th>
-</tr>
-<tr>
-<td>
-touch
-
-</td>
-<td>
-Creating files
-
-</td>
-</tr>
-<tr>
-<td>
-mkdir
-
-</td>
-<td>
-Creating directories
-
-</td>
-</tr>
-<tr>
-<td>
-ls
-
-</td>
-<td>
-Listing directories
-
-</td>
-</tr>
-<tr>
-<td>
-tail
-
-</td>
-<td>
-Reading files
-
-</td>
-</tr>
-</tbody>
-</table>
-Use "exit" when finished to return to your own user  
-<span style="font-size: large;">  
-</span><span style="font-size: large;">4. Install Samba</span>  
+Use `exit` when finished to return to your own user  
+### 4. Install Samba
 As always, you should update & upgrade before:  
-
-~~~~ {.prettyprint}
+~~~~bash
 sudo apt-get update ; sudo apt-get upgrade
 ~~~~
-
 The installation couldn't be simpler:  
-
-~~~~ {.prettyprint}
+~~~~bash
 sudo apt-get install samba
 ~~~~
-
-  
-<span style="font-size: large;">5. Create User Mapping</span>  
+### 5. Create User Mapping
 Assuming you're using the default authentication method (you should!),
 any user accessing Samba should be imported to the Samba user database.  
 Use this command to add the user. I'm not sure about password
 synchronization, so I just gave it the same password as the "real"
 user.  
-\* sudo pdbedit -a -u theothers  
-  
-<span style="font-size: large;">6. Edit Configuration File</span>  
+~~~bash
+sudo pdbedit -a -u theothers
+~~~
+### 6. Edit Configuration File
 This is the hardest part. I'd back up the configuration file to
 somewhere safe and start fresh.  
-Refer to [this
-site](http://www.samba.org/samba/docs/using_samba/ch06.html) and [this
-one](http://www.samba.org/samba/docs/man/manpages/smb.conf.5.html) for
+Refer to [this site](http://www.samba.org/samba/docs/using_samba/ch06.html) and [this one](http://www.samba.org/samba/docs/man/manpages/smb.conf.5.html) for
 how the configuration file should look like.  
 After modifying the configuration, restart the Samba service to apply:  
-\* sudo service samba restart  
+~~~bash
+sudo service samba restart
+~~~
 You can test your shares from gnome, using "connect to server" and using
 the "smb" initial  
 
-<div class="separator" style="clear: both; text-align: center;">
+![](images/setting-up-samba-on-raspberry-pi/ConnectToServer.png)
 
-[![](http://1.bp.blogspot.com/-Xwz02QA65Fg/UtOjRqKCLDI/AAAAAAAAETM/sU4YBuwimHY/s1600/ConnectToServer.png)](http://1.bp.blogspot.com/-Xwz02QA65Fg/UtOjRqKCLDI/AAAAAAAAETM/sU4YBuwimHY/s1600/ConnectToServer.png)
-
-</div>
-
-  
-<span style="font-size: large;">7. Apply to Clients</span>  
+### 7. Apply to Clients
 Make sure everything works. I find it best to restart all involved
 machines and testing again, to make sure all settings are persistent.  
 When accessing the shares from Windows, I find it best to use network
 drives. Check "reconnect at sign-in" to make the drive "permanent" and
 check "Connect using different credentials".  
 
-<div class="separator" style="clear: both; text-align: center;">
+![](images/setting-up-samba-on-raspberry-pi/NetworkDrive.png)
 
-[![](http://2.bp.blogspot.com/-3Y-MfLzAv4c/UtOjdRqzKdI/AAAAAAAAETU/1_Lz45jeJBs/s320/NetworkDrive.png)](http://2.bp.blogspot.com/-3Y-MfLzAv4c/UtOjdRqzKdI/AAAAAAAAETU/1_Lz45jeJBs/s1600/NetworkDrive.png)
-
-</div>
-
-(photo
-from [techynotes](http://techynotes.net/question-how-do-i-map-a-network-drive-in-windows-8/))
+(photo from [techynotes](http://techynotes.net/question-how-do-i-map-a-network-drive-in-windows-8/))
   
 Use the workgroup from the Samba configuration as a domain, e..g
-"WORKGROUP\\theothers".  
+`WORKGROUP\theothers`.  
   
 Enjoy your Samba server!
-
-</p>
-
