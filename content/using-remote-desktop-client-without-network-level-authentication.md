@@ -1,7 +1,8 @@
 Title: Using Remote Desktop Client without Network Level Authentication
 Date: 2013-11-12 18:07
+Category: Microsoft
 Tags: Security, Windows, Terminal Server
-Slug: using-remote-desktop-client-without
+Slug: using-remote-desktop-client-without-network-level-authentication
 OldSlug: using-remote-desktop-client-without
 
 Whenever I use Remote Desktop to connect to an NT6+ (Windows Vista /
@@ -13,34 +14,21 @@ behavior, saving me from man-in-the-middle attacks.
 However, sometimes I wish to disable it at the client level, usually for
 troubleshooting.  
 Turns out it's not that easy. One can mandate NLA by using the
-"Advanced" tab, under "Server Authentication":  
+`Advanced` tab, under `Server Authentication`:  
 
-<div class="separator" style="clear: both; text-align: center;">
-
-[![](http://1.bp.blogspot.com/-DOIXiA-KCYA/UoEPKHcWHuI/AAAAAAAAEEs/bebkNw2lao0/s320/RDPwithoutNLA1.png)](http://1.bp.blogspot.com/-DOIXiA-KCYA/UoEPKHcWHuI/AAAAAAAAEEs/bebkNw2lao0/s1600/RDPwithoutNLA1.png)
-
-</div>
-
+![](images/using-remote-desktop-client-without-network-level-authentication/RDPwithoutNLA1.png)
   
 but in order to avoid using it completely, you have to save your
 connection as an RDP file using "Save As":  
 
-<div class="separator" style="clear: both; text-align: center;">
+![](images/using-remote-desktop-client-without-network-level-authentication/RDPwithoutNLA2.png)
 
-[![](http://3.bp.blogspot.com/-5bsp4obbkjs/UoEPKHChLNI/AAAAAAAAEE4/_Wx3oAriwNY/s320/RDPwithoutNLA2.png)](http://3.bp.blogspot.com/-5bsp4obbkjs/UoEPKHChLNI/AAAAAAAAEE4/_Wx3oAriwNY/s1600/RDPwithoutNLA2.png)
-
-</div>
-
-  
 And then edit the file using notepad and add the line:
 
-~~~~ {.brush:text}
+~~~~text
 enablecredsspsupport:i:0
 ~~~~
 
-Sources:  
+#### Sources
 <http://technet.microsoft.com/en-us/library/ff393716%28v=ws.10%29.aspx>  
 <http://support.microsoft.com/kb/941641>
-
-</p>
-
