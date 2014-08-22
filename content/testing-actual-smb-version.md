@@ -1,5 +1,6 @@
 Title: Testing actual SMB version
 Date: 2013-02-14 07:52
+Category: Microsoft
 Tags: Mysteries Solved, Scripts, NetApp, SMB, FileSystem, PowerShell, CIFS, Performance
 Slug: testing-actual-smb-version
 OldSlug: testing-actual-smb-version
@@ -19,20 +20,25 @@ taught me a little trick:
 2.  Perform an SMB operation against the file server (my Filer) like
     this:   
 
-    ~~~~ {.brush:ps}
-    ls \\Netapp\stupidShare
-    ~~~~
+        :::powershell
+        ls \\Netapp\stupidShare
 
-3.  Execute the command "Get-SmbConnection", filter for sessions to the
-    file server and look at "Dialect":  
+3.  Execute the command `Get-SmbConnection`, filter for sessions to the
+    file server and look at `Dialect`:  
 
-    ~~~~ {.brush:ps}
-    Get-SmbConnection -server Netapp | fl
-    ~~~~
+        :::powershell
+        Get-SmbConnection -server Netapp | fl
 
     The result should look like this:  
 
-        ServerName : NetappShareName  : stupidShareUserName   : Domain\OBACredential : Domain.Domains\OBADialect    : 1.50NumOpens   : 0
+        :::text
+        ServerName : Netapp
+        ShareName  : stupidShare
+        UserName   : Domain\OBA
+        Credential : Domain.Domains\OBA
+        Dialect    : 1.50
+        NumOpens   : 0
+
 
 As you can see, my suspicions were correct! My Windows 8 machine (that
 definitely supports SMB3 and SMB2) and the NetApp Filer eventually
@@ -42,6 +48,3 @@ No one can fool me with SMB versions anymore!
   
 P.S.: Check out Jose's post for SMB support matrix, version difference
 and some complex diagram with a raptor (no kidding).
-
-</p>
-
