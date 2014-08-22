@@ -1,5 +1,6 @@
 Title: Updating VMware discovery info in Active Directory
 Date: 2012-10-02 14:54
+Category: Microsoft
 Tags: VMware, Scripts, PowerShell, Active Directory
 Slug: updating-vmware-discovery-info-in
 OldSlug: updating-vmware-discovery-info-in
@@ -21,19 +22,44 @@ VM's attributes in AD:
 
 I decided to write them into one of the extension attributes - there
 are10 such attributes set aside by AD for such tasks. I chose
-extensionAttribute3.  
+`extensionAttribute3`.  
 The script finds all VMs in a given vSphere, and finds those whose OS is
 in the same domain as the current user. For those VMs, it creates the
 description string, searches for the AD computer account matching the
 VM's OS name and updates its extension attribute.  
   
 
-~~~~ {.brush:ps}
-param($viServer = 'VSPHERE')$myDomain = $env:USERDNSDOMAIN# VMWare initgsnp -reg | ?{('VMware.VimAutomation.Core','VMware.VimAutomation.License','VMware.DeployAutomation','VMware.ImageBuilder') -contains $_.name} | asnpDisconnect-VIServer -Confirm:0Connect-VIServer $viServer | out-null# AD initipmo ActiveDirectoryGet-VM | %{ $vm = $_ $guest = Get-VMGuest $vm $ret = $vm | select name,VMHost,Folder,Uid $ret | Add-Member NoteProperty 'HostName' ($guest.HostName) $ret} | ?{$_.HostName -match ([regex]::escape($myDomain)+'$'} | %{ $descString = ('VMWare: {1}/{0} | {2}' -f $_.name,$_.VMHost,$_.Uid).toString() $_ | select HostName, @{name='descString';expression={$_.descString}} } | %{ $hostName = $_.hostName $comp = get-ADComputer -fi {dnsHostName -eq $HostName} -ErrorAction 'continue' $descString=$_.descString if($comp){  set-ADComputer $_ -Add @{'extensionattribute3'=$descString}  $_ }}
+~~~~powershell
+param(
+$viServer = 'VSPHERE'
+)
+ 
+$myDomain = $env:USERDNSDOMAIN
+ 
+# VMWare init
+gsnp -reg | ?{('VMware.VimAutomation.Core','VMware.VimAutomation.License','VMware.DeployAutomation','VMware.ImageBuilder') -contains $_.name} | asnp
+Disconnect-VIServer -Confirm:0
+Connect-VIServer $viServer | out-null
+ 
+# AD init
+ipmo ActiveDirectory
+ 
+Get-VM | %{
+ $vm = $_
+ $guest = Get-VMGuest $vm
+ $ret = $vm | select name,VMHost,Folder,Uid
+ $ret | Add-Member NoteProperty 'HostName' ($guest.HostName)
+ $ret
+} | ?{$_.HostName -match ([regex]::escape($myDomain)+'$'} | %{
+ $descString = ('VMWare: {1}/{0} | {2}' -f $_.name,$_.VMHost,$_.Uid).toString()
+ $_ | select HostName, @{name='descString';expression={$_.descString}}
+} | %{
+ $hostName = $_.hostName
+ $comp = get-ADComputer -fi {dnsHostName -eq $HostName} -ErrorAction 'continue'
+ $descString=$_.descString
+ if($comp){
+  set-ADComputer $_ -Add @{'extensionattribute3'=$descString}
+  $_
+ }
+}
 ~~~~
-
-  
-Happy Scripting!
-
-</p>
-
