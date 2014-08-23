@@ -1,5 +1,6 @@
 Title: WindowsIdentity.GetCurrent and changing usernames
 Date: 2010-10-25 10:02
+Category: Microsoft
 Tags: Programming, Active Directory, Security, PowerShell
 Slug: windowsidentitygetcurrent-and-changing-usernames
 OldSlug: windowsidentitygetcurent-and-changing
