@@ -2,7 +2,7 @@ Title: Automatically Mounting USB drives and Surviving Reconnects
 Date: 2014-04-15 17:48
 Category: FOSS
 Tags: Mysteries Solved, Scripts, Linux, FileSystem, Raspberry Pi, raspberrySeed, udev
-Slug: automatically-mounting-usb-drives-and
+Slug: automatically-mounting-usb-drives-and-surviving-reconnects
 OldSlug: automatically-mounting-usb-drives-and
 
 Today I solved a problem that has been bothering me for a while - being unable to automatically "remount" my USB drive in case it disconnects and reconnects.

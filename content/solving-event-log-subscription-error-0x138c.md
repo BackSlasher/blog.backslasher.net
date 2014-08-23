@@ -2,7 +2,7 @@ Title: Solving Event Log Subscription Error "0x138C"
 Date: 2013-04-09 13:06
 Category: Microsoft
 Tags: Security, WinRM, Registry, Event Log
-Slug: solving-event-log-subscription-error
+Slug: solving-event-log-subscription-error-0x138c
 OldSlug: solving-event-log-subscription-error
 
 Today I saw some collector-initiated event log subscriptions that

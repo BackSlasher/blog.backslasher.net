@@ -2,7 +2,7 @@ Title: Updating VMware discovery info in Active Directory
 Date: 2012-10-02 14:54
 Category: Microsoft
 Tags: VMware, Scripts, PowerShell, Active Directory
-Slug: updating-vmware-discovery-info-in
+Slug: updating-vmware-discovery-info-in-active-directory
 OldSlug: updating-vmware-discovery-info-in
 
 Recently I decided I want to store physical discovery data (name,

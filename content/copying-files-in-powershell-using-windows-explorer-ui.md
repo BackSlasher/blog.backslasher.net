@@ -2,7 +2,7 @@ Title: Copying Files In PowerShell - Using Windows Explorer UI
 Date: 2013-02-19 14:35
 Category: Microsoft
 Tags: Scripts, FileSystem, PowerShell
-Slug: copying-files-in-powershell-using
+Slug: copying-files-in-powershell-using-windows-explorer-ui
 OldSlug: copying-files-in-powershell-using
 
 I know this trick is widely known, but I thought it's worth mentioning anyway.  

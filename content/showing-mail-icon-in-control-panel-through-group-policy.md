@@ -2,7 +2,7 @@ Title: Showing "Mail" icon in control panel through Group Policy
 Date: 2011-06-05 12:40
 Category: Microsoft
 Tags: Group Policy, Terminal Server, Office
-Slug: showing-mail-icon-in-control-panel
+Slug: showing-mail-icon-in-control-panel-through-group-policy
 OldSlug: showing-mail-icon-in-control-panel
 
 I recently had to lock down a Windows 2008R2 remote desktop server

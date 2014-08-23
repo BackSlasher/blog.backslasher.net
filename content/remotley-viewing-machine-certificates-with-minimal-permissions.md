@@ -2,7 +2,7 @@ Title: Remotely Viewing Machine Certificates With Minimal Permissions
 Date: 2012-04-11 20:18
 Tags: Security, PKI, Mysteries Solved, PowerShell, Active Directory
 Category: Microsoft
-Slug: remotley-viewing-machine-certificates
+Slug: remotley-viewing-machine-certificates-with-minimal-permissions
 OldSlug: remotley-viewing-machine-certificates
 
 We've started remotely monitoring our certificate stores on critical

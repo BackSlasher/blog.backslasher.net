@@ -2,7 +2,7 @@ Title: Applying SPWebConfigModification objects safely
 Date: 2012-10-04 15:38
 Category: Microsoft
 Tags: ASP.net, SharePoint, Scripts, Web.Config, PowerShell
-Slug: applying-spwebconfigmodification
+Slug: applying-spwebconfigmodification-objects-safely
 OldSlug: applying-spwebconfigmodification
 
 My SharePoint team and I wanted to move to [SPWebConfigModification](http://msdn.microsoft.com/en-us/library/microsoft.sharepoint.administration.spwebconfigmodification.aspx) rather that just modifying the web.config file manually, but I was always worried that applying faulty modifications will ruin my file.  

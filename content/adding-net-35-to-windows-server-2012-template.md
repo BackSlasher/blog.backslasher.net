@@ -1,7 +1,7 @@
 Title: Adding .net 3.5 to a Windows Server 2012 template
 Date: 2013-06-28 10:48
 Tags: Scripts, Windows, Virtualization, PowerShell
-Slug: adding-net-35-to-windows-server-2012
+Slug: adding-net-35-to-windows-server-2012-template
 OldSlug: adding-net-35-to-windows-server-2012
 Category: Microsoft
 

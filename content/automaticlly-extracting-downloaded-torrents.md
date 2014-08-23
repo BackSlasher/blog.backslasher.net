@@ -2,7 +2,7 @@ Title: Automaticlly Extracting Downloaded Torrents
 Date: 2012-04-14 20:17
 Category: Microsoft
 Tags: Scripts, BitTorrent, PowerShell
-Slug: automaticlly-extracting-downloaded
+Slug: automaticlly-extracting-downloaded-torrents
 OldSlug: automaticlly-extracting-downloaded
 
 As every average geek, I too download torrents (containing only legal, copyright-free material, of course), and most of the time the torrents contain multi-file archives that contain the really juicy data.  

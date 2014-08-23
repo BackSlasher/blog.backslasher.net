@@ -2,7 +2,7 @@ Title: List all Group Policy Extensions Registered
 Date: 2014-01-09 20:25
 Category: Microsoft
 Tags: Group Policy, Scripts, Windows, PowerShell, Registry, One-Liner, Active Directory
-Slug: list-all-group-policy-extensions
+Slug: list-all-group-policy-extensions-registered
 OldSlug: list-all-group-policy-extensions
 
 I use this script to see all GP extensions that my computer can

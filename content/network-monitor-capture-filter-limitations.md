@@ -2,7 +2,7 @@ Title: Network Monitor capture filter limitations
 Date: 2013-08-30 09:11
 Category: Microsoft
 Tags: TCP, Mysteries Solved, Firewall, Network Monitor
-Slug: network-monitor-capture-filter
+Slug: network-monitor-capture-filter-limitations
 OldSlug: network-monitor-capture-filter
 
 I recently had to deal with some network traffic issues, so naturally I turned to NetMon.  
