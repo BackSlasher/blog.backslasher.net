@@ -12,7 +12,7 @@ this biblical font being used:
 
 ![](images/fixing-ugly-hebrew-on-ubuntu-firefox/ff-hebrew-ugly.png)
 
-Let's check which fonts Ynet asks to be viewed in:  
+<!-- PELICAN_END_SUMMARY -->Let's check which fonts Ynet asks to be viewed in:  
 
 ![](images/fixing-ugly-hebrew-on-ubuntu-firefox/ff-ynet-david.png)
 
