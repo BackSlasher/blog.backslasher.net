@@ -1,5 +1,5 @@
 Title: setspn Duplicates and Case Sensitivity
-Date: 2014-01-09 17:06
+Date: 2014-01-07 17:06
 Category: Microsoft
 Tags: Kerberos, Security, Scripts, Windows, Power Management, One-Liner, Event Log, Active Directory
 Slug: setspn-duplicates-and-case-sensitivity

@@ -1,5 +1,5 @@
 Title: SPNs - Who? Why? Where?
-Date: 2010-12-24 22:01
+Date: 2010-10-02 22:01
 Category: Microsoft
 Tags: Kerberos, SharePoint, Active Directory, Security
 Slug: spns-who-why-where

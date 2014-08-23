@@ -1,5 +1,5 @@
 Title: Copying Files In PowerShell - Using Windows Explorer UI
-Date: 2014-07-16 09:02
+Date: 2013-02-19 14:35
 Category: Microsoft
 Tags: Scripts, FileSystem, PowerShell
 Slug: copying-files-in-powershell-using

@@ -1,5 +1,5 @@
 Title: Get-BigDirectories
-Date: 2010-07-30 10:23
+Date: 2010-07-29 10:23
 Category: Microsoft
 Tags: Scripts, FileSystem, PowerShell
 Slug: get-bigdirectories

@@ -1,5 +1,5 @@
 Title: Applying SPWebConfigModification objects safely
-Date: 2013-03-01 18:47
+Date: 2012-10-04 15:38
 Category: Microsoft
 Tags: ASP.net, SharePoint, Scripts, Web.Config, PowerShell
 Slug: applying-spwebconfigmodification

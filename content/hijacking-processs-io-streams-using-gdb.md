@@ -1,5 +1,5 @@
 Title: Hijacking a process's i/o streams using gdb
-Date: 2014-06-22 12:13
+Date: 2014-05-28 12:13
 Category: FOSS
 Tags: Scripts, Linux, gdb, Debugging, Bash
 Slug: hijacking-processs-io-streams-using-gdb

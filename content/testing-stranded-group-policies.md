@@ -1,5 +1,5 @@
 Title: Testing stranded group policies
-Date: 2010-08-18 16:13
+Date: 2010-05-08 16:13
 Category: Microsoft
 Tags: Group Policy, NTFRS, PowerShell, Active Directory
 Slug: testing-stranded-group-policies

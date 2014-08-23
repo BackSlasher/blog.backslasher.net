@@ -1,5 +1,5 @@
 Title: Automatically Mounting USB drives and Surviving Reconnects
-Date: 2014-06-23 13:04
+Date: 2014-04-15 17:48
 Category: FOSS
 Tags: Mysteries Solved, Scripts, Linux, FileSystem, Raspberry Pi, raspberrySeed, udev
 Slug: automatically-mounting-usb-drives-and

@@ -1,5 +1,5 @@
 Title: 2008 Clusters can't change password
-Date: 2011-01-12 19:32
+Date: 2010-08-23 23:49
 Category: Microsoft
 Tags: Failover Cluster, Active Directory, Mysteries Solved, Security, Windows
 Slug: 2008-clusters-cant-change-password

@@ -1,5 +1,5 @@
 Title: Preventing Users from Adding Computers to a Domain
-Date: 2013-09-19 09:32
+Date: 2013-05-19 09:32
 Category: Microsoft
 Tags: Group Policy, Security, Mysteries Solved, Scripts, PowerShell, Active Directory
 Slug: preventing-users-from-adding-computers-to-a-domain

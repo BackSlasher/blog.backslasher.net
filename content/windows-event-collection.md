@@ -1,5 +1,5 @@
 Title: Windows Event Collection
-Date: 2013-04-09 12:48
+Date: 2012-06-28 12:48
 Category: Microsoft
 Tags: Kerberos, Group Policy, Security, Event Log, Active Directory
 Slug: windows-event-collection

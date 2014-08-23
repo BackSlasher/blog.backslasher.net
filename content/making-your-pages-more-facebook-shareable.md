@@ -1,5 +1,5 @@
 Title: Making your pages more Facebook shareable
-Date: 2011-04-03 16:44
+Date: 2011-04-01 16:44
 Category: FOSS
 Tags: Facebook, HTML
 Slug: making-your-pages-more-facebook-shareable

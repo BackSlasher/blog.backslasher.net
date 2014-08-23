@@ -1,5 +1,5 @@
 Title: My Pinning Guidelines
-Date: 2014-06-22 12:10
+Date: 2014-06-14 12:10
 Category: FOSS
 Tags: Security, Linux, Debian, Apt
 Slug: my-pinning-guidelines

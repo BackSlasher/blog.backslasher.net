@@ -1,5 +1,5 @@
 Title: "The module ... owssvr.dll could not be loaded due to a configuration problem"
-Date: 2012-10-06 16:09
+Date: 2011-07-07 16:09
 Category: Microsoft
 Tags: Mysteries Solved, SharePoint, IIS
 Slug: module-owssvrdll-could-not-be-loaded

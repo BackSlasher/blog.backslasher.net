@@ -1,5 +1,5 @@
 Title: Setting up Gargoyle as a Time Server
-Date: 2014-06-22 12:12
+Date: 2014-06-11 12:12
 Category: FOSS
 Tags: Mysteries Solved, Gargoyle, Linux, Raspberry Pi, Debian, raspberrySeed, NTP
 Slug: setting-up-gargoyle-as-time-server

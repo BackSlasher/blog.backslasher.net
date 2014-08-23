@@ -1,5 +1,5 @@
 Title: Setting Up Samba on Raspberry Pi
-Date: 2014-06-23 13:12
+Date: 2014-01-13 13:12
 Category: FOSS
 Tags: Samba, Security, Linux, SMB, Raspberry Pi, raspberrySeed
 Slug: setting-up-samba-on-raspberry-pi

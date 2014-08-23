@@ -1,5 +1,5 @@
 Title: Fixing Dynamic DNS on Gargoyle
-Date: 2014-06-23 13:07
+Date: 2014-03-23 13:07
 Category: FOSS
 Tags: DNS, Mysteries Solved, Gargoyle, Scripts, Linux, Networking, DDNS, Bash
 Slug: fixing-dynamic-dns-on-gargoyle

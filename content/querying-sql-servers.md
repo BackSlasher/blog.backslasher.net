@@ -1,5 +1,5 @@
 Title: Querying SQL Servers
-Date: 2010-07-29 20:55
+Date: 2010-07-27 20:55
 Category: Microsoft
 Tags: Scripts, PowerShell, SQL
 Slug: querying-sql-servers

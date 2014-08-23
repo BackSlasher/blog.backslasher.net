@@ -1,5 +1,5 @@
 Title: Putting your Windows to sleep
-Date: 2013-08-10 13:01
+Date: 2013-08-09 13:01
 Category: Microsoft
 Tags: Group Policy, Mysteries Solved, Windows, Power Management, Ramblings, Registry, Performance
 Slug: putting-your-windows-to-sleep

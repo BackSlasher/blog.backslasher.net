@@ -1,5 +1,5 @@
 Title: Testing Local Facebook Applications with ABE
-Date: 2014-06-23 12:59
+Date: 2014-05-05 12:59
 Category: FOSS
 Tags: Security, Facebook, Development, NoScript, Firefox, HTTP
 Slug: testing-local-facebook-applications-with-abe
