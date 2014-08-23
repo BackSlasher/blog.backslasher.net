@@ -2,10 +2,10 @@
   slug: 2008-clusters-cant-change-password
   title: 2008 Clusters can't change password
 'content/active-directorys-object-specific-aces.md':
-  slug: active-directorys-object-specific-aces
+  slug: active-directory-object-specific-aces
   title: Active Directory's Object Specific ACEs and PowerShell
 'content/adding-net-35-to-windows-server-2012.md':
-  slug: adding-net-35-to-windows-server-2012
+  slug: adding-net-35-to-windows-server-2012-template
   title: Adding .net 3.5 to a Windows Server 2012 template
 'content/adding-repositories-for-inspection.md':
   slug: adding-repositories-for-inspection
@@ -14,13 +14,13 @@
   slug: adding-ssl-to-sharepoint-2010-web
   title: Adding SSL to a SharePoint 2010 Web Application, the Right Way
 'content/applying-spwebconfigmodification.md':
-  slug: applying-spwebconfigmodification
+  slug: applying-spwebconfigmodification-objects-safely
   title: Applying SPWebConfigModification objects safely
 'content/automatically-mounting-usb-drives-and.md':
-  slug: automatically-mounting-usb-drives-and
+  slug: automatically-mounting-usb-drives-and-surviving-reconnects
   title: Automatically Mounting USB drives and Surviving Reconnects
 'content/automaticlly-extracting-downloaded.md':
-  slug: automaticlly-extracting-downloaded
+  slug: automaticlly-extracting-downloaded-torrents
   title: Automaticlly Extracting Downloaded Torrents
 'content/automaticlly-updating-dns-server.md':
   slug: automaticlly-updating-dns-server
@@ -44,7 +44,7 @@
   slug: checking-for-conflicting-oids
   title: Checking for conflicting oIDs
 'content/copying-files-in-powershell-using.md':
-  slug: copying-files-in-powershell-using
+  slug: copying-files-in-powershell-using-windows-explorer-ui
   title: Copying Files In PowerShell - Using Windows Explorer UI
 'content/copying-list-permissions-in-sharepoint.md':
   slug: copying-list-permissions-in-sharepoint
@@ -53,7 +53,7 @@
   slug: creating-common-yii-code-directory
   title: Creating a common Yii code directory
 'content/creating-proxied-http-requests-with.md':
-  slug: creating-proxied-http-requests-with
+  slug: creating-proxied-http-requests-with-powershell
   title: Creating proxied http requests with PowerShell
 'content/determining-size-of-all-tables-in-a-database.md':
   slug: determining-size-of-all-tables-in-a-database
@@ -83,7 +83,7 @@
   slug: finding-accounts-trusted-for-delegation
   title: Finding Accounts Trusted for Delegation
 'content/finding-superseding-wsus-updates-in-wsus.md':
-  slug: finding-superseding-wsus-updates-in-wsus
+  slug: finding-superseding-wsus-updates-in-wsus-powershell
   title: Finding Superseding WSUS updates in PowerShell
 'content/finding-wsus-clients-by-susclientid.md':
   slug: finding-wsus-clients-by-susclientid
@@ -122,7 +122,7 @@
   slug: linux-and-ssds-should-you-trim
   title: Linux and SSDs - Should You TRIM?
 'content/list-all-group-policy-extensions.md':
-  slug: list-all-group-policy-extensions
+  slug: list-all-group-policy-extensions-registered
   title: List all Group Policy Extensions Registered
 'content/listing-unitys-scopes-and-originating-package.md':
   slug: listing-unitys-scopes-and-originating-package
@@ -134,7 +134,7 @@
   slug: making-sure-only-your-pdc-is-scavanging
   title: Making Sure Only Your PDC is Scavanging DNS Records
 'content/making-sure-your-audit-collection.md':
-  slug: making-sure-your-audit-collection
+  slug: making-sure-your-audit-collection-server-is-collecting
   title: Making sure your Audit Collection Server is collecting
 'content/making-your-pages-more-facebook-shareable.md':
   slug: making-your-pages-more-facebook-shareable
@@ -155,7 +155,7 @@
   slug: my-pinning-guidelines
   title: My Pinning Guidelines
 'content/network-monitor-capture-filter.md':
-  slug: network-monitor-capture-filter
+  slug: network-monitor-capture-filter-limitations
   title: Network Monitor capture filter limitations
 'content/new-blog-yay.md':
   slug: new-blog-yay
@@ -164,7 +164,7 @@
   slug: opening-group-policy-management-editor-from-the-command-line
   title: Opening Group Policy Management Editor from the Command Line
 'content/parsing-event-log-subscription-runtime.md':
-  slug: parsing-event-log-subscription-runtime
+  slug: parsing-event-log-subscription-runtime-status
   title: Parsing Event Log Subscription Runtime Status using PowerShell and Regex
 'content/preventing-users-from-adding-computers-to-a-domain.md':
   slug: preventing-users-from-adding-computers-to-a-domain
@@ -188,7 +188,7 @@
   slug: remotely-changing-dns-server-list
   title: Remotely changing DNS server list through registry
 'content/remotley-viewing-machine-certificates.md':
-  slug: remotley-viewing-machine-certificates
+  slug: remotley-viewing-machine-certificates-with-minimal-permissions
   title: Remotely Viewing Machine Certificates With Minimal Permissions
 'content/removing-all-metro-apps-from-windows-8.md':
   slug: removing-all-metro-apps-from-windows-8
@@ -212,16 +212,16 @@
   slug: setting-up-samba-on-raspberry-pi
   title: Setting Up Samba on Raspberry Pi
 'content/showing-mail-icon-in-control-panel.md':
-  slug: showing-mail-icon-in-control-panel
+  slug: showing-mail-icon-in-control-panel-through-group-policy
   title: Showing "Mail" icon in control panel through Group Policy
 'content/solving-and-preventing-topology.md':
-  slug: solving-and-preventing-topology
+  slug: solving-and-preventing-topology-discovery-failed
   title: Solving and preventing "Topology Discovery failed, error 0x80040a02"
 'content/solving-event-log-subscription-error.md':
-  slug: solving-event-log-subscription-error
+  slug: solving-event-log-subscription-error-0x138c
   title: Solving Event Log Subscription Error "0x138C"
 'content/some-powershell-snippets-for-network.md':
-  slug: some-powershell-snippets-for-network
+  slug: some-powershell-snippets-for-network-scanning
   title: Some PowerShell Snippets for Network Scanning
 'content/some-things-i-didnt-know-about-people-picker.md':
   slug: some-things-i-didnt-know-about-people-picker
@@ -248,7 +248,7 @@
   slug: timing-execution-by-output-lines
   title: Timing Execution By Output Lines
 'content/updating-vmware-discovery-info-in.md':
-  slug: updating-vmware-discovery-info-in
+  slug: updating-vmware-discovery-info-in-active-directory
   title: Updating VMware discovery info in Active Directory
 'content/using-remote-desktop-client-without-network-level-authentication.md':
   slug: using-remote-desktop-client-without-network-level-authentication
