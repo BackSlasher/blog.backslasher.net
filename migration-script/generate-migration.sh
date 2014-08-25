@@ -1,6 +1,7 @@
 #!/bin/bash
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # POSTS
+    echo "RewriteEngine On"
 (for FILENAME in $DIR/../content/*.md; do
     DATE=$(head -n 10 "$FILENAME" | grep '^Date: ' | cut -f2 -d ' ')
     YEAR=$(echo $DATE | cut -f1 -d '-')
@@ -9,5 +10,6 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
     [ -n "$SLUG" ] || SLUG=$(basename "$FILENAME" | perl -p -e 's/\.[^\.]+$//g')
     OLDSLUG=$(head -n 10 $FILENAME | grep '^OldSlug: ' | cut -f2 -d ' ')
 
-    echo "RedirectMatch ${OLDSLUG}.html$ http://blog.backslasher.net/${SLUG}.html [R=301,L]"
-done) > $DIR/.htaccess
+    echo "RewriteRule ${OLDSLUG}.html$ http://blog.backslasher.net/${SLUG}.html [R=301,L]"
+done)
+    echo "RewriteRule . http://blog.backslasher.net/pages/this-is-my-new-blog.html [R=301,L]"
