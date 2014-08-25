@@ -12,4 +12,4 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
     echo "RewriteRule ${OLDSLUG}.html$ http://blog.backslasher.net/${SLUG}.html [R=301,L]"
 done)
-    echo "RewriteRule . http://blog.backslasher.net/pages/this-is-my-new-blog.html [R=301,L]"
+    echo "RewriteRule .* http://blog.backslasher.net/pages/this-is-my-new-blog.html [R=301,L]"
