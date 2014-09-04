@@ -15,6 +15,7 @@ OUTPUT_RETENTION = ['.git']
 PYGMENTS_STYLE = 'default'
 
 THEME = 'theme'
+BOOTSTRAP_THEME = ''
 
 PATH = 'content'
 
