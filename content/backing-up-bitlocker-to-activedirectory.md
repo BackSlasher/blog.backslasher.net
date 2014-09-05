@@ -27,11 +27,11 @@ I think that in 2008+ domains they're already present, but it you might want to 
 The GP location is `Computer Configuration>Administrative Templates>Windows Components>BitLocker Drive Encryption`  
 **For NT6** (Server 2008 / Vista), the setting is global and called "Store BitLocker recovery information in Active Directory Domain Services":
 
-![](images/backing-up-bitlocker-to-activedirectory/BitLockerGP1.png)
+![](|filename|/images/backing-up-bitlocker-to-activedirectory/BitLockerGP1.png)
 
 **For newer versions**, there are different settings for OS drives ("C:"), fixed data drives (additional HDs) and removable data drives (e.g. Disk-On-Keys), each under the relevant folder and called "Choose how BitLocker-protected XXX drives can be recovered":
 
-![](images/backing-up-bitlocker-to-activedirectory/BitLockerGP2.png)
+![](|filename|/images/backing-up-bitlocker-to-activedirectory/BitLockerGP2.png)
 
 Both GPs have settings in common:  
 **Passwords or Packages?** Each drive is actually encrypted with a long key which in turn is encrypted by the password. This negates the security vulnerabilities of encrypting large amounts of data with human-memorable passwords. As long as the drive is healthy, the password suffices to read the data because the key can be decrypted. But if the drive is damaged and the part containing the key can't be read, the password is useless.  
@@ -54,11 +54,11 @@ Write-Host "Backing up drive $drive, key $($key.KeyProtectorId), password $($key
 #### 5. Test Search:
 Use the command "Find BitLocker recovery password" under `dsa.msc`:
 
-![](images/backing-up-bitlocker-to-activedirectory/BitLockerAD1.gif)
+![](|filename|/images/backing-up-bitlocker-to-activedirectory/BitLockerAD1.gif)
 
 Then enter the first "box" from the recovery guid, and make sure the
 password is found:
 
-![](images/backing-up-bitlocker-to-activedirectory/BitLockerAD2.png)
+![](|filename|/images/backing-up-bitlocker-to-activedirectory/BitLockerAD2.png)
 
 Have fun!

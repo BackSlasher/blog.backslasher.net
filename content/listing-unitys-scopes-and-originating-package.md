@@ -9,7 +9,7 @@ I recently upgraded to Ubuntu 14.04 (beta2), and I got all of my
 "lenses" (searching additional items in the dash menu), that look like
 this:  
 
-![](images/listing-unitys-scopes-and-originating-package/lenses.png)
+![](|filename|/images/listing-unitys-scopes-and-originating-package/lenses.png)
 
 Of course there's a way to disable those lenses, but I actually want to
 remove those I'll never use (like flickr).  

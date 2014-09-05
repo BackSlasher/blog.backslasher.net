@@ -16,12 +16,12 @@ troubleshooting.
 Turns out it's not that easy. One can mandate NLA by using the
 `Advanced` tab, under `Server Authentication`:  
 
-![](images/using-remote-desktop-client-without-network-level-authentication/RDPwithoutNLA1.png)
+![](|filename|/images/using-remote-desktop-client-without-network-level-authentication/RDPwithoutNLA1.png)
   
 but in order to avoid using it completely, you have to save your
 connection as an RDP file using "Save As":  
 
-![](images/using-remote-desktop-client-without-network-level-authentication/RDPwithoutNLA2.png)
+![](|filename|/images/using-remote-desktop-client-without-network-level-authentication/RDPwithoutNLA2.png)
 
 And then edit the file using notepad and add the line:
 

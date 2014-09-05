@@ -10,11 +10,11 @@ using Firefox on Ubuntu, is quite unsightly.
 If we check [Ynet.co.il](http://ynet.co.il/), a news site, we'll see
 this biblical font being used:  
 
-![](images/fixing-ugly-hebrew-on-ubuntu-firefox/ff-hebrew-ugly.png)
+![](|filename|/images/fixing-ugly-hebrew-on-ubuntu-firefox/ff-hebrew-ugly.png)
 
 <!-- PELICAN_END_SUMMARY -->Let's check which fonts Ynet asks to be viewed in:  
 
-![](images/fixing-ugly-hebrew-on-ubuntu-firefox/ff-ynet-david.png)
+![](|filename|/images/fixing-ugly-hebrew-on-ubuntu-firefox/ff-ynet-david.png)
 
 If you look at the marked part, you'll see something like:  
 
@@ -38,7 +38,7 @@ sudo apt-get install ttf-mscorefonts-installer culmus
 
 Complete installation, refresh and voila:  
 
-![](images/fixing-ugly-hebrew-on-ubuntu-firefox/ff-hebrew-nice.png)
+![](|filename|/images/fixing-ugly-hebrew-on-ubuntu-firefox/ff-hebrew-nice.png)
 
 ### Further reading
 [Microsoft typography  - fonts](http://www.microsoft.com/typography/fonts/)  

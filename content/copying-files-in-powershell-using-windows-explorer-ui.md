@@ -17,11 +17,11 @@ fsutil file createnew big.file (2GB)
 
 When we copy the file via `Copy-Item`, the best progress indication we can get is through the `-passthrough` flag to see a list of files copied:
 
-![](images/copying-files-in-powershell-using/PowerShellCopyExplorer1.png)
+![](|filename|/images/copying-files-in-powershell-using/PowerShellCopyExplorer1.png)
 
 Compared to Windows Explorer's copy dialog:  
 
-![](images/copying-files-in-powershell-using/PowerShellCopyExplorer2.png)
+![](|filename|/images/copying-files-in-powershell-using/PowerShellCopyExplorer2.png)
 
 I recently wrote a script that copies a lot of big files, and I wanted to spoil myself and get detailed information about the transfer - not just file names.  
 After a quick search, I wrote this method to copy files using Explorer's Shell (represented as a COM object):  

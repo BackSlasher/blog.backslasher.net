@@ -5,7 +5,7 @@ Tags: Scripts, Windows, .NET framework, XML, PowerShell
 Slug: disabling-generate-publisher-evidence
 OldSlug: disabling-generate-publisher-evidence
 
-I found the script we were using to disable authenticode on our machines, [a feature that causes great suffering](stsadm-new-spsite-is-slow.html) (and dll-loading-delays) to workstations not connected to the Internet when using various Microsoft products (i.e. SQL Management Studio, SharePoint).  
+I found the script we were using to disable authenticode on our machines, [a feature that causes great suffering](|filename|/stsadm-new-spsite-is-slow.md) (and dll-loading-delays) to workstations not connected to the Internet when using various Microsoft products (i.e. SQL Management Studio, SharePoint).  
 Note the line at the end - the script tries to find all `machine.config`
 files on the local machine, but you might want to modify other files
 (remote machines, only version 4 etc.).  

@@ -62,7 +62,7 @@ When executing:
 apt-cache policy puppet
 ~~~~
 We can see the pinning:  
-![](images/why-pinning/puppet-pinned.png)
+![](|filename|/images/why-pinning/puppet-pinned.png)
 
 ### Defaults
 For Debian / Ubuntu, all of the sources have the same priority - 500.
@@ -84,4 +84,4 @@ it - you better have a reason. Incorrect pinning can cause:
     to misbehave and even break other packages
 
 See my [other
-post](my-pinning-guidelines.html) about pinning for guidelines about what to pin and how.  
+post](|filename|/my-pinning-guidelines.md) about pinning for guidelines about what to pin and how.  

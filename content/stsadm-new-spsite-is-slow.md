@@ -5,7 +5,7 @@ Tags: Programming, PKI, Mysteries Solved, SharePoint, Scripts, PowerShell, Perfo
 Slug: stsadm-new-spsite-is-slow
 OldSlug: stsadm-new-spsite-is-slow
 
-**Update:** Get the script [here](disabling-generate-publisher-evidence.html)  
+**Update:** Get the script [here](|filename|/disabling-generate-publisher-evidence.md)  
 ### The Story
 A couple of days ago, developer extraordinaire [Itay
 Shakury](http://blogs.microsoft.co.il/blogs/itaysk/) was doing
@@ -95,7 +95,7 @@ the CRL-related process, thusly:
 ~~~
 (Of course you don't blank your .config files, only add this setting)
 **Update (27/12):** Apparently, on x64 machines, you should change **both**the x86 and the x64 .config files.  
-**Update (28/1/14):** I uploaded [the script](disabling-generate-publisher-evidence.html) we used  
+**Update (28/1/14):** I uploaded [the script](|filename|/disabling-generate-publisher-evidence.md) we used  
 #### 3. Fetch the CRLs yourself
 If the CRLs stored in the server's certificate store are fresh enough,
 it **shouldn't** dial home for new ones.  

@@ -18,7 +18,7 @@ Unfortunately, I don't have the ability to follow the terminal for 90
 seconds with full attention, so the only thing I recognized was small
 bursts of text:  
 
-![](images/timing-execution-by-output-lines/can-you-follow.png)  
+![](|filename|/images/timing-execution-by-output-lines/can-you-follow.png)  
 *Can you follow?*  
 
 I wished puppet's output would have timestamps, but there's no such
@@ -29,7 +29,7 @@ to keep it portable (as in not having to copy the file to every server).
 I considered using awk, python or bash loops, but ended up using perl
 because... it gave me the best functionality to code ratio :)   
 
-![](images/timing-execution-by-output-lines/much-better.png)
+![](|filename|/images/timing-execution-by-output-lines/much-better.png)
 
 ### The Script
 I use this code to simulate a real application:   
@@ -38,7 +38,7 @@ I use this code to simulate a real application:
 (sleep 2;echo 'a';sleep 2;echo 'err' 1>&2;echo 'b';echo 'c')
 ~~~~
 
-![](images/timing-execution-by-output-lines/timing-1.png)
+![](|filename|/images/timing-execution-by-output-lines/timing-1.png)
 
 My one-liner will prepend to each line the seconds passed since the
 script's start. That way, if you see a large number gap between two
@@ -48,7 +48,7 @@ lines, you can probably tell what's wasting your time.
 YOURCODEHERE | perl -e '$b=time();while (<stdin>) {print ((time()-$b)," $_")};'
 ~~~~
 
-![](images/timing-execution-by-output-lines/timing-2.png)
+![](|filename|/images/timing-execution-by-output-lines/timing-2.png)
 
 #### Possible Tweaks
 - Consider using `|&` instead of `|` to pipeline errors (`STDERR`) too -
@@ -57,7 +57,7 @@ YOURCODEHERE | perl -e '$b=time();while (<stdin>) {print ((time()-$b)," $_")};'
         :::bash
         YOURCODEHERE |& perl -e '$b=time();while (<stdin>) {print ((time()-$b)," $_")};'
 
-    ![](images/timing-execution-by-output-lines/timing-3.png)
+    ![](|filename|/images/timing-execution-by-output-lines/timing-3.png)
 
 - I really wanted the time measured from the script's start, and not the
 computer local time. If you'd rather have that, try something like:   
@@ -65,7 +65,7 @@ computer local time. If you'd rather have that, try something like:
         :::bash
         YOURCODEHERE | perl -e 'while (<stdin>) {print ((scalar localtime())," $_")};'
 
-    ![](images/timing-execution-by-output-lines/timing-4.png)
+    ![](|filename|/images/timing-execution-by-output-lines/timing-4.png)
   
 
 By the way, puppet's run took so long due to some SQL queries being run

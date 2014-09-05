@@ -17,12 +17,12 @@ what to do - the messages, both in the log and in the UI weren't too
 informative.  
 They were either:  
 
-![](images/fixing-dynamic-dns-on-gargoyle/DDNSCliError.png)
+![](|filename|/images/fixing-dynamic-dns-on-gargoyle/DDNSCliError.png)
 
 `Successfully retrieved local ip from url`..., so no real error there  
 Or:  
 
-![](images/fixing-dynamic-dns-on-gargoyle/DDNSUIError.png)
+![](|filename|/images/fixing-dynamic-dns-on-gargoyle/DDNSUIError.png)
 
 ~~~
 Update of new dynamic DNS service configuration(s) failed

@@ -5,7 +5,7 @@ Tags: Security, Linux, Debian, Apt
 Slug: my-pinning-guidelines
 OldSlug: my-pinning-guidelines
 
-In my [previous post](why-pinning.html) about
+In my [previous post](|filename|/why-pinning.md) about
 pinning I talked about the reasons to configure apt pinning.  
 This post details my logic about what and how to pin.
 
@@ -123,24 +123,24 @@ Different apt front-ends treat this dilemma differently:
 Y(=LOWVERSION) but HIGHVERSION is to be installed`, combined with the
 accusing statement `You have held broken packages`.  
 
-    ![](images/my-pinning-guidelines/apt-pinning-issue.png)
+    ![](|filename|/images/my-pinning-guidelines/apt-pinning-issue.png)
 
 - **Aptitude** offers several solutions (aptitude always does), one of
 them is what we want (installing the dependency):  
 
-    ![](images/my-pinning-guidelines/aptitude-pinning-puppet.jpg)
+    ![](|filename|/images/my-pinning-guidelines/aptitude-pinning-puppet.jpg)
 
 - The **python apt module** will throw an exception, telling you the
 automatic dependency resolution failed.  
 
-    ![](images/my-pinning-guidelines/python-apt-pinning.png)
+    ![](|filename|/images/my-pinning-guidelines/python-apt-pinning.png)
  
 **The solution** to this issue is to study the failed dependencies, and
 pin them in the same way. Use aptitude's interactive UI to check for the
 dependencies of your package, and find the ones with version constraints
 (`=X.YY.ZZZZ`). Those are the ones you'll need to pin.  
 
-![](images/my-pinning-guidelines/aptitude-depends.png)
+![](|filename|/images/my-pinning-guidelines/aptitude-depends.png)
 
 Remember - wrong pinning could negatively impact your system's security,
 performance, stability etc. Make sure you plan it carefully!

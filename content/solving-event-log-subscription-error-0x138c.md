@@ -12,7 +12,7 @@ Windows Event Forward plugin can't read any event from the query since the query
 ~~~
 The reason for this message is that WinRM can't read the event log.  
 If you haven't read my [long post about Event
-Forwarding](windows-event-collection.html),
+Forwarding](|filename|/windows-event-collection.md),
 you should.  
 The main point is that the WinRM service doesn't perform any
 impersonation while reading the events. Instead, it reads the logs using

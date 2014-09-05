@@ -21,7 +21,7 @@ First, `ssh` into your gargoyle setup.
 Edit the file `/etc/config/system`, and under `timeserver`, change the
 option `enable_server` to `'1'`.  
 
-![](images/setting-up-gargoyle-as-time-server/gargoyle-time-settings.png)
+![](|filename|/images/setting-up-gargoyle-as-time-server/gargoyle-time-settings.png)
 
 After editing the file, restart the service using   
 ~~~~bash
@@ -33,14 +33,14 @@ using this code:
 ps | grep ntp
 ~~~~
 
-![](images/setting-up-gargoyle-as-time-server/gargoyle-ntp-working.png)
+![](|filename|/images/setting-up-gargoyle-as-time-server/gargoyle-ntp-working.png)
 
 #### 2. Tell debian to ask Gargoyle:
 ssh to your debian machine, and edit the file `/etc/ntp.conf`.  
 Comment out all of the server entires, and only leave one pointing to
 the name/IP address of Gargoyle:  
 
-![](images/setting-up-gargoyle-as-time-server/debian-ntp-config.png)
+![](|filename|/images/setting-up-gargoyle-as-time-server/debian-ntp-config.png)
 
 After that, restart the ntp daemon by running   
 ~~~~bash
@@ -52,6 +52,6 @@ ntpq -p
 ~~~~
 You should see one entry for your Gargoyle router, with the other fields
 making sense (not all zeroes):  
-![](images/setting-up-gargoyle-as-time-server/debian-time-ok.png)
+![](|filename|/images/setting-up-gargoyle-as-time-server/debian-time-ok.png)
   
 Enjoy your new time configuration!

@@ -16,7 +16,7 @@ we've set each helpdesk supervisor as its group's `managed by`,
 with the additional "Manager can update membership list" (translates to
 an ACE on the group).  
 
-![](images/vanishing-permissions-on-ad-objects/Group.png)
+![](|filename|/images/vanishing-permissions-on-ad-objects/Group.png)
 
 The problem was that every other day, the supervisor called and
 complained he can't add people to the group. We checked the group

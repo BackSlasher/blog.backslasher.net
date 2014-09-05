@@ -5,7 +5,7 @@ Tags: Group Policy, Mysteries Solved, Windows, Power Management, Ramblings, Regi
 Slug: putting-your-windows-to-sleep
 OldSlug: putting-your-windows-to-sleep
 
-![](images/putting-your-windows-to-sleep/PowerZoe.jpg)
+![](|filename|/images/putting-your-windows-to-sleep/PowerZoe.jpg)
 
 Although there are many blog posts about configuring standby ("sleep")
 in Windows, each one with its own insomnia joke, I thought I'd share my
@@ -38,7 +38,7 @@ hibernation file instead of starting fresh
 When people refer to sleeping, they usually refer to S3.  
 You can see in the energy report which states are supported:  
 
-![](images/putting-your-windows-to-sleep/PowerEnergyReport.png)
+![](|filename|/images/putting-your-windows-to-sleep/PowerEnergyReport.png)
 
 ### How Sleep Works
 When sleep is enabled, after the computer idles for a set time (e.g. 15
@@ -52,7 +52,7 @@ Assuming you manage Windows 7+ workstations, the most convenient way is
 to use the Administrative Templates found in  
 `Administrative Templates > System > Power Management > Sleep Settings`.
 
-![](images/putting-your-windows-to-sleep/PowerSleepGP.png)
+![](|filename|/images/putting-your-windows-to-sleep/PowerSleepGP.png)
 
 Some things to note:  
 
@@ -99,7 +99,7 @@ main categories:
   they're playing.  
   Current requests can be viewed using `PowerCfg -requests` and they look a little like this:  
 
-    ![](images/putting-your-windows-to-sleep/PowerRequests.png)
+    ![](|filename|/images/putting-your-windows-to-sleep/PowerRequests.png)
 
     The usual suspect list contains media players, IM software with voice
     chat, AV software and indexing software (like google desktop).  
@@ -108,16 +108,16 @@ main categories:
     Windows allows different devices and software to wake it up from sleep.  
     For example, scheduled tasks can wake Windows up to execute:  
 
-    ![](images/putting-your-windows-to-sleep/PowerTask.jpg)
+    ![](|filename|/images/putting-your-windows-to-sleep/PowerTask.jpg)
 
     Or network cards can wake up the computer, either by any incoming
     activity or a special "magic packet":  
 
-    ![](images/putting-your-windows-to-sleep/PowerNIC.png)
+    ![](|filename|/images/putting-your-windows-to-sleep/PowerNIC.png)
 
     And of course, you can usually tap your keyboard to wake your computer up:
 
-    ![](images/putting-your-windows-to-sleep/PowerKeyboard.png)
+    ![](|filename|/images/putting-your-windows-to-sleep/PowerKeyboard.png)
 
     Some of those devices / features may be misbehaving and keep waking
     windows up.  

@@ -6,7 +6,7 @@ Slug: speed-boosting-disconnected-environments
 OldSlug: speed-boosting-disconnected
 
 Hi there.  
-Not a while ago, I've created a post about [stsadm.exe / new SPSite() being slow](stsadm-new-spsite-is-slow.html)
+Not a while ago, I've created a post about [stsadm.exe / new SPSite() being slow](|filename|/stsadm-new-spsite-is-slow.md)
 in disconnected environments. Just wanted to point out that I've tried
 changing the setting on some other servers, and the results were **most
 interesting**. Almost every other MS product, starting from SQL Studio

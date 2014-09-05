@@ -10,7 +10,7 @@ I haven't touched SharePoint in a while, but I've been asked by a friend to help
 We were looking for a way to add an HTTPS binding to an existing SharePoint 2010 site. Google is full of ways of doing that, but they
 involve adding another binding manually via IIS, like this:
 
-![](images/adding-ssl-to-sharepoint-2010-web/SharePointSSL1.png)
+![](|filename|/images/adding-ssl-to-sharepoint-2010-web/SharePointSSL1.png)
 
 Everyone who's familiar with SharePoint (and especially with cleaning after poor SharePoint infrastructure work) can see the issue immediately - even if this method works (and it might, with some added configuration) it will only apply to the current SharePoint front-end server - it won't be reflected in:  
 
@@ -32,17 +32,17 @@ mappings](http://technet.microsoft.com/en-us/library/cc261814%28v=office.12%29.a
 ### Via Central Administration (GUI):
 Open "Web Applications Management" and select the Web Application you wish to extend  
 
-![](images/adding-ssl-to-sharepoint-2010-web/SharePointSSL2.png)
+![](|filename|/images/adding-ssl-to-sharepoint-2010-web/SharePointSSL2.png)
 
 Hit "Extend" (under "Contribute") and fill the form to match the configuration of the **new** web application you wish to create. If you've used alternate access mappings before with this web application, make sure not to choose a zone you didn't use already (if you're not familiar with this term, you're probably OK with using "Intranet")  
 
-![](images/adding-ssl-to-sharepoint-2010-web/SharePointSSL3.png)
+![](|filename|/images/adding-ssl-to-sharepoint-2010-web/SharePointSSL3.png)
 
 Make sure the IIS site has been created. If you did choose SSL, you probably want to configure the certificate.  
 Unfortunately, this is done via IIS console (and has to be repeated for every server).  
 Open IIS console, find your new site and select "bindings". Choose the only binding there, select "edit" and choose your favorite certificate.  
 
-![](images/adding-ssl-to-sharepoint-2010-web/SharePointSSL4.png)
+![](|filename|/images/adding-ssl-to-sharepoint-2010-web/SharePointSSL4.png)
 
 Make sure everything works!  
   

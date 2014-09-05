@@ -14,8 +14,8 @@ Even simple users are familiar with the UI reminder for DST (when it
 starts / ends) that appears about 2 weeks before the due date, and looks
 something like this:  
 
-![](images/reading-daylight-saving-time-data-in-windows/)
-![](images/reading-daylight-saving-time-data-in-windows/dstUI.jpg)
+![](|filename|/images/reading-daylight-saving-time-data-in-windows/)
+![](|filename|/images/reading-daylight-saving-time-data-in-windows/dstUI.jpg)
 
 There are two alternatives that are easier to script and are not
 date-dependent, but they're harder to understand:  
@@ -24,13 +24,13 @@ date-dependent, but they're harder to understand:
 This command will give you the computer's timezone configuration,
 including the DST data - the bias, beginning and end of Standard/DST times:
 
-![](images/reading-daylight-saving-time-data-in-windows/dstW32tm.png)
+![](|filename|/images/reading-daylight-saving-time-data-in-windows/dstW32tm.png)
 
 #### PowerShell - WMI
 Using the class `win32_timezone` you can get the same data (and you can
 even access it remotely). Just select the relevant fields:  
 
-![](images/reading-daylight-saving-time-data-in-windows/dstPowerShell.png)
+![](|filename|/images/reading-daylight-saving-time-data-in-windows/dstPowerShell.png)
   
 ### Readability
 The problem with those two methods is that the output is not trivially

@@ -34,7 +34,7 @@ a [User Right Assignment](http://technet.microsoft.com/en-us/library/cc780182%28
 By default, Authenticated users are members of this group, meaning that
 all domain users can use this privilege.  
 
-![](images/preventing-users-from-adding-computers-to-a-domain/AddWorkstationsToDomain.png)
+![](|filename|/images/preventing-users-from-adding-computers-to-a-domain/AddWorkstationsToDomain.png)
 
 Users with this privilege can create up to 10 (by default) computer
 accounts in the default computers container.  

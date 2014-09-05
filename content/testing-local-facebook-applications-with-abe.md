@@ -23,7 +23,7 @@ populates your site with some needed variables that way).
 When I tried doing that in firefox, I found out that ABE was protecting
 me:  
 
-![](images/testing-local-facebook-applications-with-abe/FB-Abe-Blocking.png)
+![](|filename|/images/testing-local-facebook-applications-with-abe/FB-Abe-Blocking.png)
 
 My immediate thought was to disable ABE while
 developing, but I've decided to take this opportunity to learn how it
@@ -45,6 +45,6 @@ Accept ALL from .facebook.com
 
 ABE no longer blocked it:  
 
-![](images/testing-local-facebook-applications-with-abe/FB-Abe-Allowing.png)
+![](|filename|/images/testing-local-facebook-applications-with-abe/FB-Abe-Allowing.png)
 
 Now I have my own bugs to deal with :)

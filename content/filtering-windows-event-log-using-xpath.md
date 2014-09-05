@@ -10,7 +10,7 @@ When I want to search for events in Windows Event Log, I can usually make do wit
 - **Event Logs:** Security
 - **Event IDs:** 4624
 
-![](images/filtering-windows-event-log-using-xpath/EventFilterUI.png)
+![](|filename|/images/filtering-windows-event-log-using-xpath/EventFilterUI.png)
 
 But sometimes I need higher granularity. That's when XPath comes in.  
   
@@ -22,28 +22,28 @@ Given a list of books in XML, one can select the third book, the book with the m
 Since Windows NT6 (Vista / Server 2008), events are saved in XML format.  
 If we'll take a look in event 16384:  
 
-![](images/filtering-windows-event-log-using-xpath/16384Text.png)
+![](|filename|/images/filtering-windows-event-log-using-xpath/16384Text.png)
 
 The general message (`Successfully scheduled Software Protection service for re-start at {0}. Reason: {1}.`) is saved in an external resource file, but the specifics (the replacement strings) are saved in the event.  
 They can be viewed in a friendly view (`Details/Friendly`) or in their raw XML form (`Details/XML`):  
 
-![](images/filtering-windows-event-log-using-xpath/16384Friendly.png)
+![](|filename|/images/filtering-windows-event-log-using-xpath/16384Friendly.png)
 
-![](images/filtering-windows-event-log-using-xpath/16384Xml.png)
+![](|filename|/images/filtering-windows-event-log-using-xpath/16384Xml.png)
 
 Also available are the general event details (computer name, event ID,
 time generated), under the "System" Node:  
 
-![](images/filtering-windows-event-log-using-xpath/16384SystemXml.png)
+![](|filename|/images/filtering-windows-event-log-using-xpath/16384SystemXml.png)
 
 Not only can you filter events using XPath on the event's XML node, this is how the UI is actually filtering.  
 If we make up some sort of filter:  
 
-![](images/filtering-windows-event-log-using-xpath/SomeFilterUI.png)
+![](|filename|/images/filtering-windows-event-log-using-xpath/SomeFilterUI.png)
 
 And switch to the `XML` view:  
 
-![](images/filtering-windows-event-log-using-xpath/SomeFilterXml.png)
+![](|filename|/images/filtering-windows-event-log-using-xpath/SomeFilterXml.png)
 
 we can see our selections reflected in the XPath statement contained in the `Select` element.  
 Note `(EventID=4624)` for filtering by event ID, for example.
@@ -64,7 +64,7 @@ To filter events using XPath, you need:
 When searching for specific fields within a certain event (e.g. 4624 where `Process ID` is `0x2b0`), it's always good to find a sample event, switch to `Details` and see how it's built. In my example, I can see the
 field I need is `EventData/ProcessId`:  
 
-![](images/filtering-windows-event-log-using-xpath/4624ProcessID.png)
+![](|filename|/images/filtering-windows-event-log-using-xpath/4624ProcessID.png)
 
 And I can deduce that the XPath expression I need should be something
 like:

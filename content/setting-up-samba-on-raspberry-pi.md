@@ -94,7 +94,7 @@ sudo service samba restart
 You can test your shares from gnome, using "connect to server" and using
 the "smb" initial  
 
-![](images/setting-up-samba-on-raspberry-pi/ConnectToServer.png)
+![](|filename|/images/setting-up-samba-on-raspberry-pi/ConnectToServer.png)
 
 ### 7. Apply to Clients
 Make sure everything works. I find it best to restart all involved
@@ -103,7 +103,7 @@ When accessing the shares from Windows, I find it best to use network
 drives. Check "reconnect at sign-in" to make the drive "permanent" and
 check "Connect using different credentials".  
 
-![](images/setting-up-samba-on-raspberry-pi/NetworkDrive.png)
+![](|filename|/images/setting-up-samba-on-raspberry-pi/NetworkDrive.png)
 
 (photo from [techynotes](http://techynotes.net/question-how-do-i-map-a-network-drive-in-windows-8/))
   

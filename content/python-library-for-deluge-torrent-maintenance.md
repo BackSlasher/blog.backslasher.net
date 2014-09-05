@@ -22,7 +22,7 @@ The original `deluge-console` didn't work for two reasons:
 -   Manipulation of massive amounts of torrents is a nightmare - I'll be
     surprised if someone can manage more than 20 torrents at a time with
     this interface.  
-	![](images/python-library-for-deluge-torrent-maintenance/deluge-console-full.png)
+	![](|filename|/images/python-library-for-deluge-torrent-maintenance/deluge-console-full.png)
 -   Even the console was too much - apparently it's sophisticated enough
     to subscribe for updates from the Deluge daemon and many other
     things, overloading my poor rPi.

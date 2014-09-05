@@ -34,7 +34,7 @@ OK:
 sudo strace -ff -p $(pidof $DAEMON) -e write=1,2 -s 1024 2>&1 | grep "^ |"
 ~~~~
 
-![](images/hijacking-processs-io-streams-using-gdb/strace-ok-solution.png)
+![](|filename|/images/hijacking-processs-io-streams-using-gdb/strace-ok-solution.png)
 
 It gave me the output I wanted, and I solved my issue (which was me
 passing relative file locations, inaccessible to the sub process created
@@ -68,7 +68,7 @@ EOF
 
 Notice the output - much better:  
 
-![](images/hijacking-processs-io-streams-using-gdb/gdb-great-solution.png)
+![](|filename|/images/hijacking-processs-io-streams-using-gdb/gdb-great-solution.png)
 
 The way the script works is this:  
 First, it uses `tty` to find the path to the current terminal.  

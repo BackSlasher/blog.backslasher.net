@@ -18,7 +18,7 @@ the CD or access to the Microsoft Update service (and no, WSUS won't do
 for now).
 
 
-![AA](images/adding-net-35-to-windows-server-2012/AddNet1.png)
+![AA](|filename|/images/adding-net-35-to-windows-server-2012/AddNet1.png)
 
 ###Why I care
 Contrary to Microsoft's optimistic view of the software world, almost
@@ -54,14 +54,14 @@ external media!
         Add-WindowsFeature Net-Framework-Core -Sources "SXSDIRECTORY"
 		Remove-WindowsFeature Net-Framework-Core
 
-	![Step 2](images/adding-net-35-to-windows-server-2012/AddNet2.png)
+	![Step 2](|filename|/images/adding-net-35-to-windows-server-2012/AddNet2.png)
 	
 4.  Restart the machine, e.g. using `Restart-Computer` and verify:
 	
         :::powershell
 		Get-WindowsFeature Net-Framework-Core
 
-    ![Step 3](images/adding-net-35-to-windows-server-2012/AddNet3.png)
+    ![Step 3](|filename|/images/adding-net-35-to-windows-server-2012/AddNet3.png)
 
 
 That's it!   

@@ -14,7 +14,7 @@ Facebook offers you a link to export your events in
 Google Calendar all you can see from the events is a "busy/free" block,
 like this  
 
-![](images/fixing-facebook-to-google-calendar/busycalendar.PNG)
+![](|filename|/images/fixing-facebook-to-google-calendar/busycalendar.PNG)
 
 Of course it won't do at all, as you want to be able to see all of the
 event details!  
@@ -25,7 +25,7 @@ on all of my Facebook events.
 Facebook is probably using that field to signify which events are public
 and which are invite-only, like mine where.  
 
-![](images/fixing-facebook-to-google-calendar/inviteOnly.PNG)
+![](|filename|/images/fixing-facebook-to-google-calendar/inviteOnly.PNG)
 
 Google Calendar must be interpreting the `private` as an event which is
 sensitive and cannot be fully shown - only the "busy/free" field.

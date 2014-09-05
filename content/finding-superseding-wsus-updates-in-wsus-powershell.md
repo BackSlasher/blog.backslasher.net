@@ -9,7 +9,7 @@ Whenever I see a superseded update, I usually want to know which update
 supersedes it.  
 Finding it from the console is easy enough:  
 
-![](images/finding-superseding-wsus-updates-in-wsus/WsusSuper.png)
+![](|filename|/images/finding-superseding-wsus-updates-in-wsus/WsusSuper.png)
 
 But of course, working through the UI is no fun.  
 After you got an update object through PowerShell, like this:  

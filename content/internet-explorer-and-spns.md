@@ -5,7 +5,7 @@ Tags: Kerberos, Mysteries Solved, Internet Explorer, SharePoint
 Slug: internet-explorer-and-spns
 OldSlug: internet-explorer-and-spns
 
-After learning how SPNs work (read my ["Who? Why? Where"](spns-who-why-where.html)
+After learning how SPNs work (read my ["Who? Why? Where"](|filename|/spns-who-why-where.md)
 to learn what's an SPN), I was frustrated to find out that I can't
 implement my experience in the real world.  
 I've created a Sharepoint

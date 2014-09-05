@@ -8,7 +8,7 @@ OldSlug: investigating-repeatedly-locked-out
 I often get asked by some other IT guy "why does user XXXXX keep on
 getting locked out?"  
 
-![](images/investigating-repeatedly-locked-out-users/AccountLockedOut.png)
+![](|filename|/images/investigating-repeatedly-locked-out-users/AccountLockedOut.png)
 
 Let me clue you in on something - users (almost) always get locked out for the
 same reason: They try the wrong password too many times.The reasons for
@@ -56,7 +56,7 @@ filter:
     - Task Category: `Logon, Kerberos Service Ticket Operations, Kerberos Authentication Service`
     - Keywords: `Audit Failure`
 
-    ![](images/investigating-repeatedly-locked-out-users/AccountLockedOutFilter.png)
+    ![](|filename|/images/investigating-repeatedly-locked-out-users/AccountLockedOutFilter.png)
 
     And manually search (`Ctrl+F`) for the user name in the resulting event list
 

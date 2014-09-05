@@ -6,7 +6,7 @@ Slug: setspn-duplicates-and-case-sensitivity
 OldSlug: setspn-duplicates-and-case-sensitivity
 
 Today I found out that the command I use to find duplicate SPNs, `setspn -x`  
-![](images/setspn-duplicates-and-case-sensitivity/SetspnX.png)  
+![](|filename|/images/setspn-duplicates-and-case-sensitivity/SetspnX.png)  
 is case sensitive, meaning that the following SPNs don't count as
 duplicates:  
 ~~~~text
@@ -18,7 +18,7 @@ However, Active Directory Domain Controllers, being Windows systems, are
 case-insensitive and don't differentiate between the two. You could even
 get [event 11](http://technet.microsoft.com/en-us/library/cc733945%28v=ws.10%29.aspx)
 because of such duplication.  
-![](images/setspn-duplicates-and-case-sensitivity/Event11.png)  
+![](|filename|/images/setspn-duplicates-and-case-sensitivity/Event11.png)  
 Since `setspn` didn't work, I wrote a few lines of my own that search the
 current domain for duplicate SPNs.  
 Since PowerShell can be made case sensitive, it can find different-cased duplicate SPNs easily.  

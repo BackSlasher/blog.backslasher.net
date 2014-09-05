@@ -35,7 +35,7 @@ Delegation is all about an application getting a kerberos TGS (Ticket
 Granting Service) for another resource, using the client's identity
 (allowing the server to impersonate the client for that resource).
 
-![](images/finding-accounts-trusted-for-delegation/kerbDelegationDialog.jpg)  
+![](|filename|/images/finding-accounts-trusted-for-delegation/kerbDelegationDialog.jpg)  
 
 Delegation configuration is saved like that:  
 

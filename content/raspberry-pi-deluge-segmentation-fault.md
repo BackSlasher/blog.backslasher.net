@@ -105,6 +105,6 @@ the friendly names of those settings.
 Of course this is only a workaround, but at least I can use Deluge
 again.
 
-![](images/raspberry-pi-deluge-segmentation-fault/DelugedWorking.png)
+![](|filename|/images/raspberry-pi-deluge-segmentation-fault/DelugedWorking.png)
 
 What an adventure!

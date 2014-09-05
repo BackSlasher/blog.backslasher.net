@@ -8,10 +8,10 @@ OldSlug: active-directorys-object-specific-aces
 I recently checked the option of handing out AD permissions through PowerShell scripts, and I found out that setting object-specific ACEs is not trivial scriptwise.  
 Active Directory ACE (access control entries) are different from your regular ACEs (for example, NTFS), because they can be used to grant permissions only on specific types of objects, and to propagate only to specific types of child objects.  
 
-![](images/active-directorys-object-specific-aces/ObjectSpecificACE-UI.png)  
+![](|filename|/images/active-directorys-object-specific-aces/ObjectSpecificACE-UI.png)  
 Example - Granting `Everyone` the right to create `Computer` objects in `child OUs`
 
-![](images/active-directorys-object-specific-aces/ObjectSpecificACE-UI2.png)  
+![](|filename|/images/active-directorys-object-specific-aces/ObjectSpecificACE-UI2.png)  
 Example - Granting `Everyone` the `reset password` right, but only on `Computer` objects (rather than user accounts)
 
 My question is - how do I replicate this in PowerShell?  

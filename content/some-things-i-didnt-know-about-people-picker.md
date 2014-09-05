@@ -10,9 +10,9 @@ that emulates Windows' "Directory Object Picker", allowing the user to
 select security principals  
 
 - Active Directory's People Picker:  
-  ![](images/some-things-i-didnt-know-about-people-picker/ActiveDirectoryObjectPickerDialog.gif)
+  ![](|filename|/images/some-things-i-didnt-know-about-people-picker/ActiveDirectoryObjectPickerDialog.gif)
 - The SharePoint 2010 Variant:  
-  ![](images/some-things-i-didnt-know-about-people-picker/24-browse-for-users.jpg)
+  ![](|filename|/images/some-things-i-didnt-know-about-people-picker/24-browse-for-users.jpg)
 
 After the Devs asked me to customize it for them, I went rummaging
 through the dark corners of the internet (pages 5+ on Google), and came
@@ -23,7 +23,7 @@ and I think should have been:
 ### Changes can (and even should) be made from PowerShell
 Although the official documentation states that there are no PowerShell
 commands (as seen in the picture),  
-![](images/some-things-i-didnt-know-about-people-picker/Capture.png)  
+![](|filename|/images/some-things-i-didnt-know-about-people-picker/Capture.png)  
 changes don't have to be made from the `stsadm` utility.  
 You can instead find the relevant `SPWebApplication` object and use its
 PeoplePickerSettings property to modify the PeoplePicker configuration:
@@ -70,7 +70,7 @@ always limit external queries using `ActiveDirectoryRestrictIsolatedNameLevel` o
 There are two ways to search for users using the people picker - using
 the "check names" button and using the "browse" dialog  
 
-![](images/some-things-i-didnt-know-about-people-picker/PP.png)
+![](|filename|/images/some-things-i-didnt-know-about-people-picker/PP.png)
 
 According to the MS documentation, the queries sent to AD after clicking
 each one are different, and search for different attributes in users.  
