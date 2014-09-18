@@ -85,7 +85,8 @@ This is the fun part. Create a file in `/lib/udev/rules.d`. I chose `/lib/udev/r
 when it's disconnected:
 
 ~~~~bash
-echo 'ACTION=="add", ENV{ID_FS_UUID_ENC}=="aaDREAMa-aaaa-aaaa-aaaa-aFILESYSaaaa", RUN+="/bin/mount /dev/%k"' | sudo tee '/lib/udev/rules.d/99-automount-usb.rules'echo 'ACTION=="remove", ENV{ID_FS_UUID_ENC}=="aaDREAMa-aaaa-aaaa-aaaa-aFILESYSaaaa", RUN+="/bin/umount /dev/%k"' | sudo tee -a '/lib/udev/rules.d/99-automount-usb.rules'
+echo 'ACTION=="add", ENV{ID_FS_UUID_ENC}=="aaDREAMa-aaaa-aaaa-aaaa-aFILESYSaaaa", RUN+="/bin/mount /dev/%k"' | sudo tee '/lib/udev/rules.d/99-automount-usb.rules'
+echo 'ACTION=="remove", ENV{ID_FS_UUID_ENC}=="aaDREAMa-aaaa-aaaa-aaaa-aFILESYSaaaa", RUN+="/bin/umount /dev/%k"' | sudo tee -a '/lib/udev/rules.d/99-automount-usb.rules'
 ~~~~
 
 #### 4. Test
