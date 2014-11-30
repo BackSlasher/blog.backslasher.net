@@ -14,7 +14,6 @@ Even simple users are familiar with the UI reminder for DST (when it
 starts / ends) that appears about 2 weeks before the due date, and looks
 something like this:  
 
-![](|filename|/images/reading-daylight-saving-time-data-in-windows/)
 ![](|filename|/images/reading-daylight-saving-time-data-in-windows/dstUI.jpg)
 
 There are two alternatives that are easier to script and are not
