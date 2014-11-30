@@ -7,7 +7,7 @@ Tags: Jenkins, Linux, Security, HTTP
 
 Jenkins is a platform for build automation, and as such allows you to store the results of the build (the binaries, commonly known as "artifacts") for later.  
 ![](|filename|/images/artifacts-jenkins-authentication/jenkins-ui1.png)  
-
+<!-- PELICAN_END_SUMMARY -->
 I saw other people on the internet manually downloading their results via the web UI:  
 ![](|filename|/images/artifacts-jenkins-authentication/jenkins-ui2.png)  
 However, I wanted to pull the artifacts from my automation platform (currently Chef), and ran into an authentication predicament.
