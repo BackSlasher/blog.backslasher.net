@@ -28,7 +28,7 @@ me:
 My immediate thought was to disable ABE while
 developing, but I've decided to take this opportunity to learn how it
 works.  
-I saw the different rule looks like this:
+I saw the relevant rule looks like this:
 ~~~~text
 # Prevent Internet sites from requesting LAN resources.
 Site LOCAL
