@@ -69,7 +69,7 @@ to find trusted-for-delegation accounts:
 ~~~posh
 Get-ADObject -fi {(msDS-AllowedToDelegateTo -like '*') -or (UserAccountControl -band 0x0080000) -or (UserAccountControl -band 0x1000000)} -prop samAccountName,msDS-AllowedToBeDelegateTo,servicePrincipalName,userAccountControl `
 | select DistinguishedName,ObjectClass,samAccountName,servicePrincipalName,
- @{name='DelegationStatus';expression={if($_.UserAccountControl -band 0x80000){'AllServices'}else{'SpecificServices'}},
- @{name='AllowedProtocols';expression={if($_.UserAccountControl -band 0x1000000){'Any'}else{'Kerberos'}},
+ @{name='DelegationStatus';expression={if($_.UserAccountControl -band 0x80000){'AllServices'}else{'SpecificServices'}}},
+ @{name='AllowedProtocols';expression={if($_.UserAccountControl -band 0x1000000){'Any'}else{'Kerberos'}}},
 @{name='DestinationServices';expression={$_.'msDS-AllowedToDelegateTo'}}
 ~~~
