@@ -33,7 +33,7 @@ cat /usr/lib/git-core/git-sh-prompt | perl -nle 'print "$1" if (/(GIT_PS1_[a-zA-
   Shows the "stash" indicator - meaning whether you have files [stashed](http://git-scm.com/book/en/Git-Tools-Stashing).  
   Looks like `$`
 * `GIT_PS1_SHOWUNTRACKEDFILES`
-  Shows the "untracked" indicator - meaning whether you have untracked files (files that are in the working directory but haven't been added using `git add` to the repository.  
+  Shows the "untracked" indicator - meaning whether you have untracked files (files that are in the working directory but haven't been added using `git add` to the repository).  
   Looks like `%`
 * `GIT_PS1_SHOWUPSTREAM`  
   Shows the difference between the upstream branch and the current branch. I only use "auto", meaning that I get the following values:
