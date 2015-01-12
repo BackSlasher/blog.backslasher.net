@@ -50,8 +50,9 @@ I use something like:
 ```bash
 sudo tcpdump -i any -w statsd-ts.dump "(port $GRAPHITE_CARBON_PORT) or (port $STATSD_PORT)"
 ```
-Using this dump you can try and see if something's fishy.
-Since both StatsD and Graphite use packets that contain readable text, I use this combo to browse all of the textual data:
-```bash
-tshark -r /tmp/statsd-ts.dump -T fields -e data.data | ruby -e '$stdin.each_line{|l|puts l.split(":").map{|m|[m].pack("H*")}.join}' | less -r
+Using this dump you can try and see if something's fishy.  
+Since both StatsD and Graphite use packets that contain readable text, I use this combo to parse all textual data in ruby.  
+It's not perfect, but it works.
+```ruby
+`tshark -r #{filename} -T fields -e data.data`.split("\n").join(':').split(":").map{|m|m.hex.chr}.join.split("\n")[1..-2].map{|x|arr=x.split(' ');{'stat'=>arr[0],'val'=>arr[1],'time'=>arr[2].to_i}}
 ```
