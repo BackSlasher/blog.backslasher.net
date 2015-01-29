@@ -3,7 +3,6 @@ Date: 2015-01-15 12:00
 Category: FOSS
 Tags: Linux, Ruby, CSV, Spreadsheets, Office, LibreOffice
 Slug: csv-tricks
---Status: draft
 
 ## The Story
 I've been requested to recreate some spreadsheet for our execs. Being annoying as usual, I made it a point to only use scripting to build the tables.  
