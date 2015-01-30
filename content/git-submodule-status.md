@@ -24,7 +24,7 @@ While this is nice, I wanted something more detailed, like [git's PS1 prompt](|f
 ## The script
 I'm utilizing `git submodule foreach`, which `cd`s into every sudmodule while populating some variables (e.g. `$name` is the submodule's name) and executes something (using some subshell).  
 I started checking how the prompt script calculates its symbols, but after reading the script I found it full of `if`s and `case`s and lions and tigers and bears. I decided that the prompt script actually generates the string I need, so I should just execute it.  
-The only cavaet it that script requires variables defined in `~/.bashrc` and are not exported, like this:
+The only caveat is that the script reads variables defined in `~/.bashrc` and are not exported, like this:
 ```bash
 GIT_PS1_SHOWDIRTYSTATE='y'
 ```
