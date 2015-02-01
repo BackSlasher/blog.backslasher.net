@@ -91,6 +91,6 @@ If these results are different, that means that AWS and our OS aren't seeing eye
 This is my real implementation in Chef:
 ~~~ruby
 aws_root=node[:ec2][:block_device_mapping_root][-2,1]
-real_root=`mount`.split("\n").select{ |i| i[/ on \/ /]}.first[/^([^ ]+) /,1][-1,1]
+real_root=`mount`.split("\n").select{ |i| i[/ on \/ /]}.first[/^([^ ]+[a-zA-Z])\d? /,1][-1,1]
 block_diff=(aws_root == real_root) ? nil : real_root[0].ord - aws_root[0].ord
 ~~~
