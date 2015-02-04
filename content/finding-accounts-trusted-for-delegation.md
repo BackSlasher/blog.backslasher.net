@@ -41,7 +41,7 @@ Delegation configuration is saved like that:
 
 
 <style type="text/css">
-/*.borderline table td,th { border: 1px solid #000; }*/
+.borderline table td,th { border: 1px solid #000; }
 </style>
 <div class="borderline" markdown="1">
 Configuration | UserAccountControl & 0x80000 (TRUSTED_FOR_DELEGATION) | UserAccountControl & 0x100000 (TRUSTED_TO_AUTHENTICATE_FOR_DELEGATION) | msDS-AllowedToDelegateTo
@@ -57,9 +57,9 @@ Trust this user for delegation for specified services only (Any authentication p
 -   **When "Any protocol" is enabled**, services don't need to present an existing kerberos TGS, but can fabricate one using only the user's id. (Source: [Technet](http://msdn.microsoft.com/en-us/library/ff650469.aspx))  
    This method is designed to accommodate services that don't use kerberos authentication (e.g. websites that use forms authentication), but has a very serious implication - accounts allowed to do so don't have to present any proof that a specific user has even accessed the system - they can create any TGS out of thin air.
 -   **When constrained to specific services**, the resulting TGS is itself delegation-constrained to those services, so to allow a "triple hop" like this:  
-   S1 \> S2 \> S3  
-   S1 must be configured either to allow delegation to *any service* or to S2 **AND** S3.
--   **For really sensitive accounts** (such as domain admins), one can mark "Account is sensitive and cannot be delegated" to prevent AD allowing any form of delegation with this account. This account will suffer reduced functionality on applications requiring delegation to work (like the site described earlier).
+   `S1 > S2 > S3`  
+   `S1` must be configured either to allow delegation to `any service` or to `S2` **AND** `S3`.
+-   **For really sensitive accounts** (such as domain admins), one can mark "Account is sensitive and cannot be delegated" to prevent AD allowing any form of delegation with this account. This account will suffer from reduced functionality on applications requiring delegation to work (like the site described earlier).
 
   
 ###Finding Allowed Accounts
