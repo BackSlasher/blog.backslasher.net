@@ -11,7 +11,7 @@ Because the CentOS image my company uses isn't available as HVM, I switched to [
 ### The Problem
 After launching an instance, I always extend the root volume, which starts at a measly 8GB. Linux runs fine on 8GB, but our devs depend on some maneuvering space.  
 The EBS volume itself is extended when launching the instance. However, one must also extend the partitions/filesystems inside the volume.  
-**Our previous image** contained a root EBS that contained the filesystem directly, like this:
+**Our previous image** provided a root EBS that contained the filesystem directly, like this:
 ```text
 $ lsblk
 NAME    MAJ:MIN RM  SIZE RO TYPE  MOUNTPOINT
@@ -23,7 +23,7 @@ Here we only have to extend the filesystem, which can be done using something li
 ```bash
 resize2fs $(mount | perl -ne 'print $1,"\n" if /^(\S+) on \/ /')
 ```
-**On the HVM image**, however, the EBS was partitioned (using MBR) and contained a single partition, which contained the filesystem, like this:
+**On the HVM image**, however, the EBS was partitioned (using MBR) and had a single partition, which contained the filesystem, like this:
 ```text
 $ lsblk
 NAME    MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
@@ -37,7 +37,7 @@ The standard procedure is deleting the partition and recreating with the same se
 
 1. Since we're extending a partition which contains the root filesystem, we can't unmount it.
 2. When changing a partition that contains a filesystem that is mounted, the kernel refuses to re-read the filesystem, meaning you can't make sure everything works until you reboot
-3. If you're rebooting with a broken partition/filesystem configuration, the VM won't boot. Since AWS offers no direct method to interfacing with the VM directly, one can't easily troubleshoot the VM.
+3. If you're rebooting with a broken partition/filesystem configuration, the VM won't boot. Since AWS offers no direct method of interfacing with the VM directly, one can't easily troubleshoot the VM.
 
 Because of this, I spent 6 hours and 6 servers on trying to extend the partition.
 
