@@ -1,4 +1,4 @@
-Title: Resizing AWS root EBS in Centos HVM
+Title: Resizing AWS root EBS in CentOS HVM
 Date: 2015-02-01 12:00
 Category: FOSS
 Tags: Linux, AWS, Virtualization, Mysteries Solved, Ruby, Perl, Scripts, Storage
@@ -9,8 +9,8 @@ Today I started using HVM instances in AWS, because r3 instances (memory optimiz
 Because the CentOS image my company uses isn't available as HVM, I switched to [this](https://aws.amazon.com/marketplace/pp/B00NQAYLWO) image, which had an annoying side effect.
 
 ### The Problem
-After launching an instance, I always extend the root volume, which starts at a measly 8GB. Linux runs fine on 8GB, but our devs depend on some manuvering space.  
-The EBS volume itself is extended when launching the instance. Howver, one must also extend the partitions/filesystems inside the volume.  
+After launching an instance, I always extend the root volume, which starts at a measly 8GB. Linux runs fine on 8GB, but our devs depend on some maneuvering space.  
+The EBS volume itself is extended when launching the instance. However, one must also extend the partitions/filesystems inside the volume.  
 **Our previous image** contained a root EBS that contained the filesystem directly, like this:
 ```text
 $ lsblk
@@ -35,7 +35,7 @@ xvda    202:0    0  100G  0 disk
 This means that we must extend the partition before extending the filesystem, which proved to be a difficult task.  
 The standard procedure is deleting the partition and recreating with the same settings, however:
 
-1. Since we're extending a pratition which contains the root filesystem, we can't unmount it.
+1. Since we're extending a partition which contains the root filesystem, we can't unmount it.
 2. When changing a partition that contains a filesystem that is mounted, the kernel refuses to re-read the filesystem, meaning you can't make sure everything works until you reboot
 3. If you're rebooting with a broken partition/filesystem configuration, the VM won't boot. Since AWS offers no direct method to interfacing with the VM directly, one can't easily troubleshoot the VM.
 
