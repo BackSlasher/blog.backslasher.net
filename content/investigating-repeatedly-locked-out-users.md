@@ -45,12 +45,12 @@ hostname) USERNAME -prop LockedOut | select name,LockedOut
 
 ### 2. Search DC security logs for audit logon failures with that user
 If you have enterprise event collection, use it.  
-If you don't (or prefer that hardcore version), you have 3 ways to
+If you don't (or prefer the hardcore version), you have 3 ways to
 filter:  
 
 1. Filter every one of your DCs' logs with the following criteria:  
 
-    - Logged (time): *The smallest time range you can afford. I usually take 15 minutes *
+    - Logged (time): The smallest time range you can afford. I usually take 15 minutes
     - Event Logs: `Security`
     - Event Sources: `Microsoft Windows security auditing.` (this dot is actually there)
     - Task Category: `Logon, Kerberos Service Ticket Operations, Kerberos Authentication Service`
