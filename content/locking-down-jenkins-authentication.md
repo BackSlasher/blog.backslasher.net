@@ -6,7 +6,8 @@ Slug: locking-down-jenkins-authentication
 
 ### The Story
 I was tasked with automating and securing our Jenkins CI server.  
-I found the [Jenkins cookbook](https://github.com/opscode-cookbooks/jenkins) very helpful, and used a little groovy (less-anal Java) script found in the repo's `README.me` to set the following security policy:
+I found the [Jenkins cookbook](https://github.com/opscode-cookbooks/jenkins) very helpful, and used a little groovy (less-anal Java) script found in the repo's `README.md` to set the following security policy:
+
 * Authentication is done via BitBucket (using the [bitbucket plugin](https://wiki.jenkins-ci.org/display/JENKINS/Bitbucket+OAuth+Plugin))
 * Logged in users are allowed to do everything (since [groups aren't supported](https://github.com/jenkinsci/bitbucket-oauth-plugin/blob/155e11cf43372d0148429509035effa9e147ae54/src/main/java/org/jenkinsci/plugins/BitbucketSecurityRealm.java#L175) yet by the BitBucket plugin)
 
@@ -39,10 +40,10 @@ In this mode, every logged-in user gets full control of Jenkins. The only user w
 
 This mode is useful to force users to log in before taking actions, so that you can keep record of who has done what. This setting can be also used in public-facing Jenkins, where you only allow trusted users to have user accounts.
 ```
-So as we quickly found out, anonymous users can view our build specs and download our code. This is fine when developing FOSS, but bad when developing regular software
+So as we quickly found out, anonymous users can view our build specs and download our code. This is fine when developing FOSS, but bad when developing regular software.  
 ![](|filename|/images/locking-down-jenkins-authentication/anon-dl.png)
 
-Browsing [source code](https://github.com/kohsuke/hudson/blob/master/core/src/main/java/hudson/security/FullControlOnceLoggedInAuthorizationStrategy.java#L58) for Jenkins, I found the problem.  
+Browsing the [source code](https://github.com/kohsuke/hudson/blob/master/core/src/main/java/hudson/security/FullControlOnceLoggedInAuthorizationStrategy.java#L58) for Jenkins, I found the problem.  
 Under the constructor for `FullControlOnceLoggedInAuthorizationStrategy`, there is a line giving anonymous users "read":
 ```java
 THE_ACL.add(ACL.ANONYMOUS,Permission.READ,true);
@@ -84,9 +85,9 @@ The process is composed of these stages, which I found non-trivial (as a mere Ja
 2. Install JDK and Maven on said VM. For you Ubuntu guys, it's easy: `sudo apt-get install openjdk-7-jdk maven`
 3. *Optional:* Install Jenkins on the VM. Makes testing much easier.
 4. Take a peek at [the tutorial](https://wiki.jenkins-ci.org/display/JENKINS/Plugin+tutorial). Namely, edit your ` ~/.m2/settings.xml` file
-5. Create a placeholder using `mvn -U org.jenkins-ci.tools:maven-hpi-plugin:create` In the project's parent directory (the command will create the project directory for you).  
+5. Create a placeholder using `mvn -U org.jenkins-ci.tools:maven-hpi-plugin:create` in the project's parent directory (the command will create the project directory for you).  
   There are some questions to be answered, the tutorial explains them and if you don't like the result you can wipe and start over.
-6. Build the plugin (`mvn` in the project directory) after creation, to make Maven download all of its dependencies now. This might take a while
+6. Build the plugin (`mvn` in the project directory) after creation, to make Maven download all of its dependencies now. This might take a while.
 7. Modify the filesystem. These are some pointers that I discovered:  
     1. Place all of your code in the `src/main/java` directory (and inside according to your package hierarchy.
     2. Modify the `src/main/resources/index.jelly` to describe your project
@@ -106,6 +107,8 @@ The process is composed of these stages, which I found non-trivial (as a mere Ja
 
         :::bash
         mvn clean && mvn && sudo cp target/PLUGINNAME.hpi /var/lib/jenkins/plugins/PLUGINNAME.hpi  && sudo service jenkins restart
+
+9. [Publish the plugin](https://wiki.jenkins-ci.org/display/JENKINS/Hosting+Plugins) to the community, if you want to.
 
 ### TL;DR
 ![](|filename|images/locking-down-jenkins-authentication/myauth.png)  
