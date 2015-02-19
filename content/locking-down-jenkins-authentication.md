@@ -4,6 +4,29 @@ Category: FOSS
 Tags: Linux, Java, Security, Jenkins
 Slug: locking-down-jenkins-authentication
 
+### Update 19.02.15
+After posting my script in the Jenkins mailing list, I was told about a simpler way for implmenting my authorization strategy. I'm leaving this post because the things I learnt from developing the plugin are still valuable and may help someone someday.
+
+### The REAL solution
+
+We'll be using the "Matrix-based security" strategy, and give the group "authenticated" administrative permissions.
+
+#### Via GUI
+Go to "Configure Global Security" under "Manage Jenkins" and do like this:  
+![](|filename|images/locking-down-jenkins-authentication/matrix-auth.png)  
+
+#### Via CLI
+This is what I actually use:
+```groovy
+def instance = Jenkins.getInstance()
+
+def strategy = new hudson.security.GlobalMatrixAuthorizationStrategy()
+strategy.add(Jenkins.ADMINISTER,'authenticated')
+instance.setAuthorizationStrategy(strategy)
+
+instance.save()
+```
+
 ### The Story
 I was tasked with automating and securing our Jenkins CI server.  
 I found the [Jenkins cookbook](https://github.com/opscode-cookbooks/jenkins) very helpful, and used a little groovy (less-anal Java) script found in the repo's `README.md` to set the following security policy:
@@ -112,7 +135,7 @@ The process is composed of these stages, which I found non-trivial (as a mere Ja
 
 ### TL;DR
 ![](|filename|images/locking-down-jenkins-authentication/myauth.png)  
-My [plugin works](https://github.com/BackSlasher/jenkins-lockdown-fullcontrol-auth-plugin), and all anonymous users are recirected to a BitBucket login page
+My <s>plugin works</s> (removed), and all anonymous users are recirected to a BitBucket login page
 ![](|filename|images/locking-down-jenkins-authentication/bblogin.png)
 
 I set it from the (almost) identical groovy script:
@@ -136,5 +159,5 @@ instance.save()
 ```
 By the way, I'm not afraid of idempotence issues, since the objects modified by this code have no state (so while not ideal, I don't care about them being recreated over and over).  
 
-I'm planning to release a stable version, add a README file, upload to the Jenkins wiki etc soon.  
-PRs are welcome.
+<s>I'm planning to release a stable version, add a README file, upload to the Jenkins wiki etc soon.  
+PRs are welcome.</s> Removed
