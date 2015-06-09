@@ -6,7 +6,7 @@ Slug: chroot
 
 ## The Story
 Some time ago, my PC wouldn't boot.  
-This was my fault, as I needed to resize some partition, and resizing in Linux really means deleting the parition and craeting a new one at the same place. I forgot to assign the partition the same UUID, which caused Ubuntu to resent it.  
+This was my fault, as I needed to resize some partition, and resizing in Linux really means deleting the partition and creating a new one in the same place. I forgot to assign the partition the same UUID, which caused Ubuntu to resent it.  
 I was lazy and tried using automated boot fixers, which made things worse, and eventually had to go and operate manually.  
 During the surgery, I learnt about chrooting and found this nifty snippet (from [here](http://ubuntuforums.org/showthread.php?t=2264947)).
 Since I've been using it a lot since then, I thought I'd upload it.
