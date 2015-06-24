@@ -4,6 +4,9 @@ Category: FOSS
 Tags: Python, Scripts, CentOS, Linux
 Slug: yum-python-provides
 
+### Update 24-06-15
+Thanks to [this page](http://yum.baseurl.org/wiki/5MinuteExamples), I fixed my script. It no longer requires root privillages. I also muted informational messages because they were not very informational.
+
 ## The Story
 Today I had a list of files (nagios check scripts), and I wanted to check for every file if there's a package containing it (I'm a big fan of getting files from the repo rather than downloading manually).
 Although YUM provides a way to search for packages containing a file pattern, like this:
@@ -44,9 +47,13 @@ Luckily, YUM is completely written in python so we can copy its behaviour with a
 I used [this post](http://mo.morsi.org/blog/node/220) to help me with basic discovery. The rest is my work.  
 This script requires root (or `sudo`). I didn't bother finding out how to run it otherwise.
 ```python
+import logging
 import yum
 yb=yum.YumBase()
-yb.doConfigSetup(debuglevel=-1,errorlevel=-1) # Hide info messages
+yb.setCacheDir()
+# Mute yum's loggers
+logging.getLogger("yum.verbose.plugin").setLevel(logging.WARNING)
+logging.getLogger("yum.plugin").setLevel(logging.WARNING)
 files=['YOUR','file','name','go','here']
 
 res={}
