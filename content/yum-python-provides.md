@@ -51,9 +51,7 @@ import logging
 import yum
 yb=yum.YumBase()
 yb.setCacheDir()
-# Mute yum's loggers
-logging.getLogger("yum.verbose.plugin").setLevel(logging.WARNING)
-logging.getLogger("yum.plugin").setLevel(logging.WARNING)
+logging.disable(logging.WARNING) # Mute loggers
 files=['YOUR','file','name','go','here']
 
 res={}
