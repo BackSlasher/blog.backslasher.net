@@ -118,6 +118,7 @@ echo df; df -h /
 ```
 A successful result should look like this:
 ```
+lsblk
 NAME    MAJ:MIN RM SIZE RO TYPE MOUNTPOINT
 xvda    202:0    0  30G  0 disk
 └─xvda1 202:1    0  30G  0 part /
