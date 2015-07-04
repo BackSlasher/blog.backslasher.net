@@ -27,7 +27,7 @@ xvda    202:0    0  30G  0 disk
 The partition can actually be resized (as in deleted and recreated), but the updated partition table won't be available because the partition is in use (and you can't unmount the root partition).
 
 ## The ugly solution
-Before learning of a better way, I wrote this script. It checks if the root device is a partition, and if so whether its filling up the parent disk.
+Before learning of a better way, I wrote this script. It checks if the root device is a partition, and if so whether it's filling up the parent disk.
 If not, it deletes the root partition and recreates it to fill up the entire disk. Although it has been tested, I don't think it's a good idea to use it.
 ```bash
 echo BEFORE PARTITION RESIZE
@@ -137,4 +137,4 @@ For me, it looks like this:
 -rwxr-xr-x   1 root     root        16069 Nov 22  2013 usr/bin/growpart
 ```
 
-If the files are there but still no magic, try fishing in `/var/log/{messages,secure}` or `dmesg`. I always had everything working if the files where actually there.
+If the files are there but still no magic, try fishing in `/var/log/{messages,secure}` or `dmesg`. I always had everything working if the files were actually there.
