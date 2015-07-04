@@ -4,6 +4,10 @@ Category: FOSS
 Tags: Linux, AWS, Virtualization, Mysteries Solved, Ruby, Perl, Scripts, Storage
 Slug: resizing-aws-root-centos-hvm
 
+### Update 04.07.15
+This method doesn't work anymore because of some weird AWS restriction, which says you can't connect the root device of a marketplace AMI (like the CentOS one) to another VM, lest you discover its secrets.  
+I developed a better method which involves either rebooting or creating a custom AMI. [Give it a try!](|filename|/growroot-centos.md)
+
 ### The Story
 Today I started using HVM instances in AWS, because r3 instances (memory optimized) are only available on HVM ([the difference](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/virtualization_types.html)).
 Because the CentOS image my company uses isn't available as HVM, I switched to [this](https://aws.amazon.com/marketplace/pp/B00NQAYLWO) image, which had an annoying side effect.
