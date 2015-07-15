@@ -10,6 +10,8 @@ By sending detailed metrics on our HBase tables/regions/servers to Graphite, we 
 HBase has several connectors for monitoring available out of the box, but sadly none for Graphite. I saw some projects that can bridge between Graphite and HBase's JMX interface, but JMX seems really complicated and enterprise-y, and I found I can get everything from the HBase WebUI.  
 I settled for a Python script that polls the local HBase server webUI every 5 seconds or so, parses the JSON that contains the JMX data, collects interesting (IMO) data and sends it to our StatsD server, which sums everything up and makes sure it gets to Graphite.
 
+![](|filename|/images/hbase-graphite-python/graph.png)
+
 ## The script
 I decided to upload the script into a repository.  
 **[Check it out!](https://github.com/BackSlasher/monitor-hbase)**  
