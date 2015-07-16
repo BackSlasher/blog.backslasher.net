@@ -13,7 +13,7 @@ I settled for a Python script that polls the local HBase server webUI every 5 se
 ![](|filename|/images/hbase-graphite-python/graph.png)
 
 ## The script
-I decided to upload the script into a repository.  
+I decided to share this project as a GitHub repository.  
 **[Check it out!](https://github.com/BackSlasher/monitor-hbase)**  
 It includes setup instructions, example usage etc.
 
