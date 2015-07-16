@@ -44,7 +44,7 @@ if [ "$ROOT_TYPE" = "part" ] ; then
     if (( $PARENT_SIZE - $ROOT_START > $ROOT_SIZE )); then
         echo "Recreating partition ${ROOT_DEVICE} on /dev/${PARENT_NAME}, starting in ${ROOT_START}"
         echo -e "u\np\nd\nn\np\n1\n${ROOT_START}\n\na\n1\np\nw\n" | fdisk /dev/${PARENT_NAME}
-        reboot
+        reboot # <-- REBOOTING HERE
         sleep 60
     else
         echo "Partition ${ROOT_DEVICE} is fine"
