@@ -6,7 +6,7 @@ Slug: rpmbuild
 
 ## The Story
 I was trying to tinker with [Abrt](https://github.com/abrt/abrt), a daemon in charge of collecting and diagnosing various crashes in RHEL (more on that in a different post).  
-Because the crash hook is written in C (it was designed to be really quick), I couldn't use my usual method of editing the actual files and adding debug prints etc. I had to recompile the package from source, which proved to be a non-trivial task. The documentation I found was seperated over several locations so I thought I'd list my way here:
+Because the crash hook is written in C (it was designed to be really quick), I couldn't use my usual method of editing the actual files and adding debug prints etc. I had to recompile the package from source, which proved to be a non-trivial task. The documentation I found was separated over several locations so I thought I'd list my way here:
 
 ## My Solution
 
@@ -31,7 +31,7 @@ mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 ```
 
 ### 3. Grab source RPM
-While it IS possible to build from real source (cloning the github repo for instance), I haven't had much luck with it. Even after generating the Makefile successfully, the build faild on some weird C syntax errors.  
+While it IS possible to build from real source (cloning the github repo for instance), I haven't had much luck with it. Even after generating the Makefile successfully, the build failed on some weird C syntax errors.  
 For every binary RPM available from your repository, there should be a source RPM available as well - this one contains the source code and the metadata required to create the binary RPM. I use that RPM but to the source before building.  
 While I couldn't activate a source repository (which is supposed to be a thing), I managed to hunt my source package down by modifying a URL I to match my OS/package. Maybe you'll have to do the same.  
 Mine looks like:  
@@ -48,7 +48,7 @@ You can now inspect the files and modify whichever you want. Poke around in `~/r
 
 ## 5. Build
 We now use the rpmbuild script to build the package by pointing it to a `spec` file. It *should* handle everything and leave you with a collection of binary RPMs, but obviously it might fail.  
-I had an issue that even though I got the CentOS source package and ran in on a CentOS machine, the version was tagged as `el6` (Enterprise Linux 6), and not `el6.centos`, which is the tag that all CentOS packages that come from the official repos use. This is important because the dependencies of packages are often hardcoded to this tag, so trying to install those RPMs will cause it to complain (e.g. that you have `abrt-libs.2.0.8-30.el6.centos` and not `abrt-libs.2.0.8-30.el6`).  
+I had an issue that even though I got the CentOS source package and ran it on a CentOS machine, the version was tagged as `el6` (Enterprise Linux 6), and not `el6.centos`, which is the tag that all CentOS packages that come from the official repos use. This is important because the dependencies of packages are often hardcoded to this tag, so trying to install those RPMs will cause it to complain (e.g. that you have `abrt-libs.2.0.8-30.el6.centos` and not `abrt-libs.2.0.8-30.el6`).  
 To solve it, you should append something like `--define 'dist .el6.centos'` to your rpmbuild command.  
 Mine looked like:
 ```bash
@@ -56,4 +56,4 @@ rpmbuild -ba ~/rpmbuild/SPECS/abrt.spec --define 'dist .el6.centos'
 ```
 
 ### 6. Install
-After you're done building, you can now install the RPMS available at `~/rpmbuild/RPMS`. You might want to install the original repository packages first, just to have it install all of the external prerequisites (e.g. `gdb`) without boethering you. Use `sudo rpm -Uv` when installing, so you'll get a report of the files being installed / replaced. That way you can make sure your modified binaries are there.
+After you're done building, you can now install the RPMS available at `~/rpmbuild/RPMS`. You might want to install the original repository packages first, just to have it install all of the external prerequisites (e.g. `gdb`) without bothering you. Use `sudo rpm -Uv` when installing, so you'll get a report of the files being installed / replaced. That way you can make sure your modified binaries are there.
