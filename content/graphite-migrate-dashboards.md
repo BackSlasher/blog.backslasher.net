@@ -18,7 +18,7 @@ h=HTTP.basic_auth(user: creds[0], pass: creds[1])
 
 board_names=JSON.parse(h.post("#{old_server}/dashboard/find/", form: {query:''}).to_s)['dashboards'].map{|n|n['name']}
 
-board_names.each do |b|
+board_names.map do |b|
     dat=h.get("#{old_server}/dashboard/load/#{b}").to_s
     state_str=JSON.parse(dat)['state'].to_json # :(
     h.post("#{new_server}/dashboard/save/#{b}", form: {state: state_str})
