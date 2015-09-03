@@ -16,6 +16,13 @@ If you're running it on a standard Chef node (connected to a Chef server), you c
 sudo chef-shell -z
 ```
 
+### As human client
+If you want to run `chef-shell` from your Knife-wielding workstation, use a similar trick:
+```bash
+chef-shell -z -c ~/.chef/knife.rb
+```
+Of course, I'm assuming your Knife config is in the default location. Modify if necessary.
+
 ### As solo in Vagrant
 When using Chef solo in Vagrant, you can run Chef shell to simulate it by running something like
 ```bash
