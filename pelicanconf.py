@@ -9,7 +9,7 @@ SITEURL = ''
 STATIC_PATHS = ['images', 'extra/CNAME']
 EXTRA_PATH_METADATA = {'extra/CNAME': {'path': 'CNAME'},}
 PLUGIN_PATHS = ["pelican-plugins"]
-PLUGINS = ["summary"]
+PLUGINS = ["summary", "tag_cloud"]
 
 OUTPUT_RETENTION = ['.git']
 PYGMENTS_STYLE = 'default'
@@ -22,6 +22,8 @@ PATH = 'content'
 TIMEZONE = 'Europe/Paris'
 
 DEFAULT_LANG = u'en'
+
+TAG_CLOUD_SORTING = 'size'
 
 # Feed generation is usually not desired when developing
 FEED_ALL_ATOM = None
