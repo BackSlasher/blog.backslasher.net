@@ -94,13 +94,13 @@ Disabling it wasn't trivial either - since I couldn't get deluged to run
 for more than one minute, I had to edit the configuration file
 manually.  
 After editing the file `~/.config/deluge/core.conf` and changing these
-settings:
+settings (UI equivalent in brackets):
 
-- `"enc_level"` from `2` to `0`  
-- `"enc_prefer_rc4"` from `true` to `false`
+- `enc_level` (`Network > Encryption > Level`) from `2` to `0` ("Handshake")  
+- `enc_prefer_rc4` (`Network > Encryption > Encrypt entire stream`) from `true` to `false`
 
-Everything seems to be normal now. I'm still not fully aware what are
-the friendly names of those settings.  
+Everything seems to be normal now. <del>I'm still not fully aware what are
+the friendly names of those settings.</del> Thanks Lucas for the setting names!  
   
 Of course this is only a workaround, but at least I can use Deluge
 again.
