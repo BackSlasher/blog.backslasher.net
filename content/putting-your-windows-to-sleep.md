@@ -82,7 +82,7 @@ main categories:
   Try putting the computer to sleep manually, like this:
 
         :::bat
-        %windir%\System32\rundll32.exe powrprof.dll,SetSuspendState Standby`  
+        %windir%\System32\rundll32.exe powrprof.dll,SetSuspendState Standby  
   If the computer still won't sleep, check if:
   
     -   Sleep is unavailable on the hardware level (really old hardware, not
