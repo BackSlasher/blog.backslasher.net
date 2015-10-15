@@ -46,7 +46,7 @@ rm *.rpm
 ### 4. Modify source
 You can now inspect the files and modify whichever you want. Poke around in `~/rpmbuild/SOURCES`. I usually create a git repo in that directory before tinkering so I can easily track my customizations and revert if I mess something up.
 
-## 5. Build
+### 5. Build
 We now use the rpmbuild script to build the package by pointing it to a `spec` file. It *should* handle everything and leave you with a collection of binary RPMs, but obviously it might fail.  
 I had an issue that even though I got the CentOS source package and ran it on a CentOS machine, the version was tagged as `el6` (Enterprise Linux 6), and not `el6.centos`, which is the tag that all CentOS packages that come from the official repos use. This is important because the dependencies of packages are often hardcoded to this tag, so trying to install those RPMs will cause it to complain (e.g. that you have `abrt-libs.2.0.8-30.el6.centos` and not `abrt-libs.2.0.8-30.el6`).  
 To solve it, you should append something like `--define 'dist .el6.centos'` to your rpmbuild command.  
