@@ -88,3 +88,10 @@ current_groups=groups.select do |g|
   rest.get_rest("/groups/#{g}")['actors'].include?(client_name)
 end
 ```
+
+## Mass operations in Bash
+Some of these commands use `parallel`. It can be switches with `xargs -I {}` but it won't run as fast.
+### Get all nodes who's last run failed
+```bash
+knife node list | parallel 'knife runs list -r1 {} | egrep "status:\s+failure">/dev/null && echo {}'
+```
