@@ -31,7 +31,13 @@ sudo chef-shell -s --config /tmp/vagrant-chef/solo.rb --json-attributes /tmp/vag
 I got the arguments from running `vagrant provision` and during the provisioning running something like `ps aux | grep chef`.  
 To load your cookbooks (which is not automatic) you can run:
 ```ruby
-node.run_context.load(node.expand!)
+node.run_context.load(node.expand!) # Normal runlist
+```
+OR
+```ruby
+# Custom set of recipes
+recipes=['nginx']
+node.run_context.load(OpenStruct.new(recipes: recipes))
 ```
 
 ## Chef in Ruby
