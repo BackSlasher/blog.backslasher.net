@@ -41,6 +41,7 @@ SOCIAL = (
           ('github','http://github.com/BackSlasher'),
           ('linkedin','http://il.linkedin.com/in/nitzanraz/'),
           ('google-plus','https://plus.google.com/115663481647728261146'),
+          ('stack-overflow','http://careers.stackoverflow.com/backslasher'),
         )
 
 DEFAULT_PAGINATION = 10
