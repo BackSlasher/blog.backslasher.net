@@ -23,9 +23,10 @@ For regular usage, use the pip package:
 ```bash
 sudo pip install opengridview
 ```
-For modification and hacking, use the git repo:
+For modification and hacking, set up a venv in the git repo:
 ```bash
 git clone https://github.com/BackSlasher/opengridview .
+virtualenv . --system-site-packages
 . bin/activate
 pip install -e .
 ```
