@@ -18,5 +18,7 @@ I started writing this Blog in 2011.
 As I grew better in whatever it is I do, I started collecting "war stories" about issues that occupied me for days at a time and ended up being solved by adding a comma somewhere.  
 Eventually I figured that by posting these cases (+solutions) I could save a few minutes for my fellow tinkerers, plus give me a shot at world-wide fame.  
 It began in Blogger (which is a nice platform), and then turned into a GitHub-hosted Pelican-generated Juvia-commented hybrid.  
-
 I also self-Google every now and then to see whether I'm famous yet.
+
+## My Projects
+[Check them out!](|filename|/pages/projects.md)
