@@ -11,7 +11,7 @@ Thought I'd share them.
 ### The basics
 There is no longer a "state-only" resource and an implementing provider. Instead, there is a single "resource" that contains both state and behaviour.  
 A lot of terminology has been modified, partially to differentiate the new "custom resource" from the old "lightweight resource-provider" (LWRP) class.  
-`property` is now `attribute` and the syntax is slightly different, but this is documented.  
+`attribute` is now `property` and the syntax is slightly different, but this is documented.  
 If you want to use the "custom resource" paradigm on clients lower than Chef 12.5, you could depend on the 'compat\_resource' cookbook and it'll work.
 
 ### Actions are in the resource's context
@@ -20,7 +20,7 @@ This means that this:
 ```ruby
 # The LWRP way - Will not work in custom resources
 # Resource
-property :path
+attribute :path
 
 # Provider
 action :bla do
@@ -29,7 +29,7 @@ end
 ```
 One should use this:
 ```ruby
-attribute :path
+property :path
 action :bla do
   puts "Path is #{path}"
 end
