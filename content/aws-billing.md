@@ -2,7 +2,7 @@ Title: Parsing AWS billing
 Date: 2016-01-23 12:00
 Category: FOSS
 Tags: AWS, Billing, Scripts, Python
-Slugs: aws-billing
+Slug: aws-billing
 
 ## The Story
 I never understood the AWS billing very well and happily left it to my CTO.  

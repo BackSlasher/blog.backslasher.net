@@ -2,6 +2,7 @@ Title: Chef Custom Resources - Missing Documentation
 Date: 2016-01-25 16:00
 Category: FOSS
 Tags: Ruby, Chef, Scripts
+Slug: chef-custom-resources
 
 The new Chef documentation for [Custom Resources](https://docs.chef.io/custom_resources.html) is pretty lackluster.  
 This is probably because they're too busy making awesome stuff, but I still needed to learn some stuff the hard way.  
