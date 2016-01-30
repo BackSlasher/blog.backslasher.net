@@ -4,6 +4,26 @@ category: FOSS
 slug: ssh-openvpn-tunneling
 tags: Mysteries Solved, Networking, Linux, SSH, Security
 
+### Update 28.01.16
+I found some sites referring to this post. Below are the common complaints I saw, and my replies:
+
+* **I'm criminally bad with setting up OpenVPN, meaning the testing is completely off**  
+    I'm not an expert in networking, but I have a working knowledge of it and I spent around 2 work days on messing around with the OpenVPN parameters. This is as good as I got, compared to the SSH setup which required no optimization.  
+    I'll be **delighted** to see a better-performing OpenVPN config. Here is how to recreate my testing:
+    * One machine on each AWS region `US-EAST-1`, `EU-WEST-1`
+    * Size `c3.4xlarge` (I think)
+    * Vanilla CentOS 6 OS
+    * No interface configuration (can be modified if needed)
+    * All packages installed from CentOS repo
+
+    Make sure you show your configuration and your results!
+
+* **Comparing OpenVPN and SSH tunneling is like [apples and oranges](https://en.wikipedia.org/wiki/Apples_and_oranges)**  
+    This is nonsense. I had 2 tools to solve my issue. I tuned them both to the bst of my ability and tested them. One outperformed the other, so I chose it.
+
+Also, have a comment section, and I'll be happy if people with interesting replies drop me a line down there so I can learn something new.  
+Finally, I fixed my diagrams below.
+
 ### The Story
 I was asked to take care of a security challange - setup Redis replication between two VMs over the internet.  
 The VMs were in different continents, so I had keep the bandwidth impact to a minimum.
