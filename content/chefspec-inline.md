@@ -92,6 +92,9 @@ end
 I think it looks a lot more elegant. The test is self-contained (except for "real" code used in the actual cookbook) and is easily understood (what it does and what it expects to happen).
 
 ## And even so...
+
+**Update 19.02.16:** I am using this method successfully in my cookbooks, e.g. [selinux_policy](https://github.com/BackSlasher/chef-selinuxpolicy/blob/master/spec/boolean_spec.rb)
+
 Even though I think it's great, I'm currently not using it.  
 My reasons for it:
 
