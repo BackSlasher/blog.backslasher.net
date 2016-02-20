@@ -61,7 +61,7 @@ I created this Groovy script to do both tasks (modify the seed if needed, and en
 
     // Get pissed if not equal
     if (token != actual_token)
-      if (seed) { // Try to modify seed1
+      if (seed) { // Try to modify seed
         tokprop.apiToken = Secret.fromString(seed)
         // Check that seed will yield required token
         if (token == tokprop.getApiTokenInsecure())
@@ -74,3 +74,55 @@ I created this Groovy script to do both tasks (modify the seed if needed, and en
         throw new Exception(sprintf('Mismatching tokens. Actual token:%s', [actual_token]))
 
 I actually implemented this as a LWRP in Chef using the `jenkins_script` resource found in the [Jenkins cookbook](https://github.com/chef-cookbooks/jenkins). If the implementation is interesting, leave me a comment and I might add it.
+
+**Update 20.02.16**: Here is my current implementation
+### Chef implementation
+resources/jenkins\_key:
+```ruby
+actions :set
+default_action :set
+
+attribute :user, kind_of: String, name_attribute: true
+attribute :key, kind_of: String, required: true # We can't set this, only verify it matches
+                                               # This is because the actual key is being realtime-hashed from some string
+attribute :raw_key, kind_of: String, default: nil # Used to allow setting the new key
+```
+providers/jenkins\_key:
+```ruby
+use_inline_resources
+
+action :set do
+
+  jenkins_script 'ensure_key' do
+    command <<-EOH
+    def username = '#{new_resource.user}'
+    def wanted_key = '#{new_resource.key}'
+    def raw_key = '#{new_resource.raw_key.to_s}'
+
+    import hudson.model.User;
+    import jenkins.security.ApiTokenProperty;
+    import hudson.util.Secret;
+
+    // Get the actual key
+    u = User.get(username)
+    tok =  u.getProperty(ApiTokenProperty.class)
+    actual_key = tok.getApiTokenInsecure()
+
+    // Get pissed if not equal
+    if (wanted_key != actual_key)
+      if (raw_key) {
+        old_key = tok.getApiTokenInsecure()
+        tok.apiToken = Secret.fromString(raw_key)
+        // Check that raw key will yield required key
+        if (wanted_key == tok.getApiTokenInsecure())
+          u.save()
+        else
+          throw new Exception(sprintf('Key mismatch, raw_key wont cause wanted_key to become actualy key\\ncurrent key:%s\\nresulting key:%s',[actual_key, tok.getApiTokenInsecure()]))
+      }
+      else
+        // Can't set a better key, just complain
+        throw new Exception(sprintf('Mismatching keys. Actual key:%s', [actual_key]))
+    EOH
+  end
+end
+```
