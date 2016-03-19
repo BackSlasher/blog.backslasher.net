@@ -48,7 +48,7 @@ On the other hand, I wrestled with thie Poise-Python cookbook for 3 days and sti
 ### Enter [backslasher-python](https://github.com/BackSlasher/chef-backslasher-pytho://github.com/BackSlasher/chef-backslasher-python)
 Eventually, I chose to re-implement the Python cookbook by myself.  
 I made sure to choose a different namespace for the resources (`backslasher_python_*`), so it won't interfere with the existing usage of the Python cookbook (external cookbooks etc).  
-The new cookbook is written as plainly as possible. Its only vice is using the new custom resource syntax.
+The new cookbook is written as plainly as possible. <del>Its only vice is using the new custom resource syntax</del> (Edit: Moved back to old syntax. `comapt_resource` breaks so easily).
 
 For instance, this is the entire `backslasher_python_virtualenv` definition (34 lines of code):
 ```ruby
