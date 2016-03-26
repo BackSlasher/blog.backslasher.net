@@ -14,6 +14,6 @@ knife cookbook site share -o ../ $(basename $(realpath .)) -c ~/.chef/knife-supe
 
 ### Interesting points:
 
-* I'm using a specific Knife config file (that references the Superket credentials file)
+* I'm using a specific Knife config file (that references the Supermarket credentials file)
 * The entire `-o ../ $(basename $(realpath .))` bit tells Knife our "cookbook library" is `..` (the parent directory) and the "cookbook name" is our current directory's name.  
     Assuming we're running the script in `~/projects/cookbooks/backslasher-python`, it'll be similar to `-o ~/projects/cookbooks/ backslasher-python`
