@@ -68,6 +68,9 @@ fi
 ```
 
 ## The proper solution
+
+**Update 21.04.16:** Thanks to Trevor's tip, I switched from `perl` to `sed`, saving us the need of installing a package (a big win for Linux sysadmins).
+
 Just before deploying my script, I stumbled upon [dracut-modules-growroot](http://rpm.pbone.net/index.php3/stat/4/idpl/25071492/dir/redhat_el_6/com/dracut-modules-growroot-0.20-2.el6.noarch.rpm.html), which (like most things cloud) was imported from [Ubuntu](https://launchpad.net/ubuntu/utopic/+package/cloud-initramfs-growroot).  
 It's available via EPEL, and when installed to the initramfs, it enlarges the root partition (if needed) before actually mounting it. This saves you the reboot, because when in the initramfs stage, the root partition isn't really mounted, so it can be modified easily.  
 The steps I use in my image are:
@@ -82,20 +85,19 @@ The steps I use in my image are:
         :::bash
 		yum install -y epel-release
 
-3. Install `perl`, `cloud-init` and `dracut-modules-growroot`
+3. Install `cloud-init` and `dracut-modules-growroot`
 
         :::bash
-		yum install -y perl cloud-init dracut-modules-growroot
+		yum install -y cloud-init dracut-modules-growroot
 
     This has to be done after installing `epel-release`, because otherwise YUM won't look in the EPEL repository, where dracut-modules-growroot is available.  
-	I also like using perl (see next step), so I install it here.  
 	Cloud Init is useful in running startup scripts, but it also has an [enabled-by-default module](https://cloudinit.readthedocs.org/en/latest/topics/modules.html?highlight=growpart#module-cloudinit.config.cc_growpart) (great documentation, right?) that resizes the root filesystem (`resize2fs`-like) if its block device is bigger.  
 	You can avoid installing it, but then you'll have to resize the filesystem on your own (see my second ugly script).
 
 4. Rebuild **all** initramfs images.
 
         :::bash
-		rpm -qa kernel | perl -pe 's/^kernel-//'  | xargs -I {} dracut -f /boot/initramfs-{}.img {}
+		rpm -qa kernel | sed 's/^kernel-//'  | xargs -I {} dracut -f /boot/initramfs-{}.img {}
 
     This is very important. Without rebuilding the initramfs images, the module won't be available and nothing will get done.  
 	Also note that I'm explicitly rebuilding an image for every kernel package installed - this is because we might be running kernel A, and just installed newer kernel B with `yum update -y`, so if I only used `dracut -f` only kernel A's image will be rebuilt, and next time we'll boot from kernel B's image, that doesn't have the module.
@@ -104,8 +106,8 @@ The full script:
 ```bash
 yum update -y
 yum install -y epel-release
-yum install -y perl cloud-init dracut-modules-growroot
-rpm -qa kernel | perl -pe 's/^kernel-//'  | xargs -I {} dracut -f /boot/initramfs-{}.img {}
+yum install -y cloud-init dracut-modules-growroot
+rpm -qa kernel | sed 's/^kernel-//'  | xargs -I {} dracut -f /boot/initramfs-{}.img {}
 
 ```
 
