@@ -12,6 +12,12 @@ It should be run from within the cookbook's directory.
 knife cookbook site share -o ../ $(basename $(realpath .)) -c ~/.chef/knife-supermarket.rb
 ```
 
+Where my supermarket config is as simple as:
+```ruby
+node_name 'SUPERMARKET_USERNAME'
+client_key 'CLIENTKEY_LOCATION'
+```
+
 ### Interesting points:
 
 * I'm using a specific Knife config file (that references the Supermarket credentials file)
