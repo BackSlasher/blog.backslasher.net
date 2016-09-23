@@ -20,6 +20,33 @@ It basically works like this:
 
 **The code is available under [dns-override](https://github.com/BackSlasher/dns-override)**
 
+## Usage
+Before:
+```bash
+nitz@mars:~$ nslookup google.com
+Server:   127.0.1.1
+Address:  127.0.1.1#53
+
+Non-authoritative answer:
+Name: google.com
+Address: 172.217.22.78
+
+nitz@mars:~$
+```
+
+After:
+```
+nitz@mars:~$ ~/projects/dns-override/dns-override.sh -s 8.8.8.8 nslookup google.com
+Server:		8.8.8.8
+Address:	8.8.8.8#53
+
+Non-authoritative answer:
+Name:	google.com
+Address: 216.58.212.174
+
+nitz@mars:~$ 
+```
+
 ### Interesting points:
 1. Took me a while to figure out there are `fopen` and `fopen64`
 2. I'm opening read streams for `/etc/resolv.conf`, even when write streams are required. Could produce some weird behaviour
