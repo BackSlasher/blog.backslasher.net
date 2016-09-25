@@ -3,6 +3,7 @@ Date: 2016-09-23 12:00
 Category: FOSS
 Tags: DNS, Scripting, C, Linux
 Slug: dns-override
+Status: draft
 
 ## The Problem
 I needed to run a mobile emulator on my laptop, in order to test some DNS server changes before releasing them.  
