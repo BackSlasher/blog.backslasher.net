@@ -35,23 +35,106 @@ Example criteria you should consider:
 ### Expected salary
 You should have some magnitude of your paycheck in mind.  
 You can get a basic idea by:
+
 * Asking your friends/colleagues/fellow students (they might lie. I found that some of my colleagues' self worth was so determined by their salary that they lied in order to not "feel ashamed")
-* Checking salary tables. They might be grossly inaccruate but it's better than having no idea at all. Example for one: http://www.sqlink.com/blog/hightechsalary/
+* Checking salary tables. They might be grossly inaccruate but it's better than having no idea at all. Example for one: <http://www.sqlink.com/blog/hightechsalary/>
 
 ### CVs
 
 General tip - tailor the CV to your expected position. For instance, avoid mentioning classes that are completely irrelevant (knitting) or over-detailing things that are partially relevant (e.g. when looking for a position as a Software Developer, no one will care about the version of the NetApp appliance you worked with)
 
-### Properly divide your CV
+#### Properly divide your CV
 These sections are important:
-* Familiar technology  
+
+* **Familiar technology**  
     Avoid over-specifying (product versions when there is no major difference, for instance)
     Try to group by tech (e.g. "html5" and "CSS" should come under "Web") - this is justified if you have 3+ such groups
-* Employment history
-    Listing what you did is better what you worked with.  
+* **Employment history**  
+    Listing what you did is better   what you worked with.  
     Example:
     * "Implemented SharePoint backup end-to-end using NetApp SnapDrive" - Great
     * "SharePoint backups" - OK
     * "SharePoint, SnapDrive" - Bad
+* **Objective**  
+    If you have one in your CV, it gives readers the first hint on what you're looking to do in your work, which is very interesting for interviewers
 
-### 
+#### Make it easy to read
+The CV should be easy to navigate, and short (if possible).  
+After working on it for a long time you might get used to it and not see the monstrosity it has become.  
+A good way to test this is to let someone see it (even if they're not from the field).  
+Should they start to:
+
+* Make weird faces about the layout
+* Look scared because the doc is long
+* Start straining their eyes due to small/weird font
+
+Then you should probably rework it.
+
+### Open LinkedIn
+
+## Setting up interviews
+
+### You will suck on your first interview(s)
+Since this is a relatively new challange for you, you might fail on the first couple of times. This is perfectly fine. However, you should plan accordingly, by not interviewing at your dream companies first.
+
+### Where to get jobs from
+My ranking is based on this rational: The more information you know about the job before beginning interviews, the better.  
+
+1. **Personal contacts** like friends, family and former colleagues are good because:  
+    * They probablly will be accurate about the job (rather than embellishing it)
+    * They're familiar with both you and the workplace, and can appriciate whether you're going to fit
+2. **Recruitment agencies** are OK, because:
+    * They want you to find work through them, so they're "on your side"
+    * The agent you'll be working with probably has more experience than you in the job market, so they might be able to hint you in on things you miss
+    My tips about recruitment agencies are as follows:
+    1. Avoid agencies that look useless - lazy, misorganized, unprofessional etc. You don't want to waste your time
+    1. Apply at more than one agency
+    1. Be sure to describe all of your job expectations to the agent, so they can filter what they offer you
+    1. Reprimend them if you think they ignore your filters - you don't want them wasting your time
+    1. Insist that the agent coordinates with you before sending your CV to some company. This will both help you filter out companies that don't match your criteria, list where your CV are going and know that the agent is working hard for you
+3. **Classified ads / job portals** are a last resort in my opinion. If you decide to apply, know that:
+    1. You don't have to answer every single requirement. Even if you're missing a couple, you can apply
+    1. For some reason, some places think it's acceptable not to reply. Don't take it too hard.
+
+### Stick to your filters, sort of
+You've already decided what you're looking for.  
+If you allow yourself to deviate from it too much, you can only end up with offers that you won't want to take.  
+Avoid filling your schedules with interviews that won't lead anywhere.  
+However, if something is a bit out of your boundaries but looks promising, it might be OK to try it.
+
+### Avoid overscheduling
+Interviewing is tiering (at least when it's serious interviews), so if you'll schedule too much during one day, you'll hit the last one(s) exhausted and probably won't do your best.  
+I think 3 interviews a day is **a lot** and tried to stick to 2.
+
+## Interviewing
+
+Job interviews will probably be a new skill for you to learn, so you might not do very well at the first couple of times, as I said above.  
+Don't panic.
+
+### How to behave
+This is sort of like a date - you and the interviewer haven't met before (at least not at this context) and are trying to evaluate each other.  
+Therefor, all sensible guidelines for dates apply here. Be nice, polite, know what you want, show self confidence etc.
+
+### Interview them back
+The interview is also about you seeing if the company would be a good fit for you, so make sure you tell the interviewer what you're looking for.  
+You can also ask them about how their workday looks, what team they're designating you for, etc. All according to the progress of the interview (you'll get it eventually).  
+
+## When failing interviews
+
+Failing something isn't fun, but it's a great learning opportunity.  
+I'm referring here only to interviews where you didn't pass muster, and nothing like the workplace being a bad match for you etc.
+
+### Understand why you failed
+Sometimes you have a feel that something didn't go well. You should analyze the situtation and try to understand what you could have done better. However, the main focus should be improving yourself for the next time and not being depressed about making a mistake.  
+
+### It doesn't hurt to ask
+If you're really clueless about what went wrong, you can try asking the interviewer, assuming you can contact them.  
+**Never** argue with them - they've made their desicion and no good will come from trying to convince them. You're only doing this to get information.  
+Worst outcome - you'll get no response or some obvious lie. Best outcome - you'll get some feedback that can help you better yourself.
+
+## When passing interviews
+
+In my book, "passing" is when you get an offer. Nothing short of it.
+
+### Coordinate your offer window
+Usually, each offer has a time window (you should ask if you don't know it)
