@@ -8,7 +8,7 @@ According to [Urban Dictionary](http://www.urbandictionary.com/define.php?term=b
 I was unfamiliar with that meaning when choosing this nickname, but since I have some MS experience it kind-of fits. Not *that* big on polo shirts though.
 
 ## Me IRL
-I currently work as a "Devops Engineer" in a Start-Up company.  
+I currently work as a [Production Engineer](https://www.quora.com/What-is-it-like-to-be-a-Production-Engineer-at-Facebook) at Facebook.  
 I started developing when I was about 11 years old (thanks to a book I got about programming games in Visual Basic 6), and SysAdmin-ing since I was 15 y/o, in highschool.  
 I like tinkering with computer-related stuff and learning new things, both on and off work.  
 I started working seriously with Linux in 2014. Until then I did mostly Microsoft-only stuff (and some PHP development on the side). The best thing I can say about the move is that I really like being able to dig into the source code when I'm having issues instead of running blackbox tests or start disassembling things.
