@@ -47,4 +47,25 @@ Since we have to modify the DNS response returning to the app, and we have to le
 There are two options I've discarded because they're difficult:
 
 1. Make the production server treat our app differently: This is impossible to do with the slim DNS server applications that companies usually run
-2. Use 
+2. Use some network utility to do TCP-level interception of the DNS answers and replace them on the wire: Sounds very difficult
+
+I'm left with somehow delegating queries that I want to modify (`color.company.com`) to a special DNS server, and resolve all other queries regularly. For that, we need to set up a DNS server
+
+## Recursive or Authorative
+According to the DNS FRC, servers can either be Recurisve or Authorative.  
+**Recursive** DNS servers will go that extra mile for answering queries that involve upstream servers.  
+Say a DNS server gets a query for `color.company.com. IN A`, and has to go upstream for it. It get the response `color.company.com. IN CNAME google.com.`.  
+A recursive server will re-issue a query for `google.com IN A`, and give the client the complete answer.  
+A non-recursive server will simply return the `CNAME` result, risking leaving the client unhappy.
+
+**Authorative** DNS servers will answer innacurate queries about zones it knows about.  
+Say a DNS server that holds `company.com` gets a query for `color.company.com. IN A`, but it has `color.company.com IN CNAME`.  
+An authorative server will respond with the `CNAME` answer, and might include the following query if it has it. This will allow the client to continue the resolution.  
+A non-authorative server will respond with "nodata", terminating the journey to the coveted IP address.
+
+I assume that for proper internet functionality, each server has to be only one of those two types, because it's either affiliated with the client (recursive) or affiliated with the servers (authorative).  
+However, in my case I needed a server that is both recursive and authorative - when presented with a question about an `A` record which it has a `CNAME` for, it must both reply with the `CNAME` answer and perform additional resolution for the `CNAME` target (in case it doesn't have it)
+
+
+
+If we take the above example, querying for `color.comapny.com. IN A`, a non-recursive DNS server will answer negatively
