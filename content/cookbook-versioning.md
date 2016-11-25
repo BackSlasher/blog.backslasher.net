@@ -136,7 +136,7 @@ version_line=metadata.split("\n").select{|s|s[/^\s*version\W/]}.last
 
 # Generate new one
 new_version_line=version_line.gsub(version_regex,"'#{new_version}'")
-new_metadata=metadata.gsub("\n#{Regexp.escape(version_line)}\n","\n#{new_version_line}\n")
+new_metadata=metadata.gsub(/\n#{Regexp.escape(version_line)}\n/,"\n#{new_version_line}\n")
 
 # Write back to file
 File.write(metadata_file,new_metadata)
@@ -214,4 +214,99 @@ And this is the one I actually use, which helps me generate a nice message about
 BERKS_OUT=$(berks upload | grep '^Uploaded')
 echo "Uploaded: "
 echo "$BERKS_OUT"
+```
+
+## Update 25.11.16
+I joined all of these to a standalone script I use for my own cookbooks:
+```
+#!/usr/bin/env ruby
+
+# Arguments
+require 'optparse'
+options = {target_branch: 'master'}
+OptionParser.new do |opts|
+  opts.on('-M', "Major bump") do |m|
+    options[:major_bump]=true
+  end
+  opts.on('-m', "Minor bump") do |m|
+    options[:minor_bump]=true
+  end
+  opts.on("-d","--directory D", String, "Working directory") do |d|
+    options[:directory] = d
+  end
+  opts.on('-t','--target TAR', String, "Commit containing current version") do |t|
+    options[:target_branch]=t
+  end
+end.parse!
+
+target_branch = options[:target_branch]
+
+# monkey patching
+class << File
+  def write(filename,content)
+    f = File.new(filename,"w")
+    f.write(content)
+    f.close
+  end
+end
+
+# cd to target directory
+Dir.chdir(options[:directory]) if options[:directory]
+
+# New version
+split_index = if options[:major_bump] then 0
+              elsif options[:minor_bump] then 1
+              else 2
+              end
+metadata_file='./metadata.rb'
+metadata=File.read(metadata_file)
+version_line=metadata.split("\n").select{|s|s[/^\s*version\W/]}.last
+version_regex=/("|')([\d\.]+)("|')/
+version=version_line[version_regex,2]
+v_arr=version.split('.')
+v_arr[split_index]=(v_arr[split_index].to_i+1).to_s
+(split_index+1..v_arr.length-1).each{|a|v_arr[a]=0} # Zero other cells
+new_version=v_arr.join('.')
+
+#### Changelog
+
+# Collect messages
+messages=`git log #{target_branch}.. --format='%w(0,0,4)- [%h] (%an) %s'`
+
+# Combine to markdown
+new_changes="# #{new_version}\n#{messages}"
+
+# Modify file
+changes_file='./CHANGELOG.md'
+changes_content=File.read(changes_file)
+# Handle multiple formats
+if changes_content[/^#/] # Berks format
+  changes_content.sub!(/#/,"#{new_changes}\n#")
+elsif changes_content[/^.* CHANGELOG\n=*\n/] # Knife format
+  changes_content.sub!(/\n[\d\.]+\n-*\n/,"##{new_changes}\n\\0") # Added pound
+else
+  raise "Unknown format in #{changes_file}"
+end
+File.write(changes_file,changes_content)
+
+#### Metadata file
+
+# Read file
+metadata_file='./metadata.rb'
+metadata=File.read(metadata_file)
+
+# Find version line
+version_regex=/("|')([\d\.]+)("|')/
+version_line=metadata.split("\n").select{|s|s[/^\s*version\W/]}.last
+
+# Generate new one
+new_version_line=version_line.gsub(version_regex,"'#{new_version}'")
+new_metadata=metadata.gsub(/\n#{Regexp.escape(version_line)}\n/,"\n#{new_version_line}\n")
+
+# Write back to file
+File.write(metadata_file,new_metadata)
+
+# TODO git tag
+# TODO merge master
+# TODO push
 ```
