@@ -6,13 +6,18 @@ Tags: Ramblings
 Status: draft
 
 A lot of people (>3) asked me in the last month or so about how to land a first job after leaving the army / graduating from university, so I thought I'd write a post about it.  
-I think this post will mainly be helpful for those who look for their 1st job, because after that you get the feel for it.
+I think this post will mainly be helpful for those who look for their 1st job, because after that you get the feel for it.  
+This is a work in progress - I'll update this every now and then.
 
 ## Reservations and conditions
 I'm assuming that:
+
 * You're going into computer-science-ish fields
 * You're above average, so your best strategy is not to do shady things like putting stuff you didn't really do / don't really know in your CV
+
+
 Why my experience might not be applicable to you:
+
 * I'm favoring startup mentallity over big companies. This is because I can tolerate relative job insecurity (startups are more likely to die) and hate bureaucracy.  
     Your preferences may differ
 * I went for DevOps / Production / Operations / SysAdmin positions (the definition is very loose), where positions are filled slowly and the advantage is on the employee's side.  
@@ -22,7 +27,7 @@ Why my experience might not be applicable to you:
 ## Before interviews
 
 ### What would you like to do
-You should sit down and establish, at large, what is the job type you're looking for.  
+You should establish, at large, what is the job type you're looking for.  
 Example criteria you should consider:
 
 * Company type (enterprise, startup)
@@ -47,7 +52,7 @@ General tip - tailor the CV to your expected position. For instance, avoid menti
 These sections are important:
 
 * **Familiar technology**  
-    Avoid over-specifying (product versions when there is no major difference, for instance)
+    Avoid over-specifying (product versions when there is no major difference, for instance)  
     Try to group by tech (e.g. "html5" and "CSS" should come under "Web") - this is justified if you have 3+ such groups
 * **Employment history**  
     Listing what you did is better   what you worked with.  
@@ -70,7 +75,9 @@ Should they start to:
 
 Then you should probably rework it.
 
-### Open LinkedIn
+### Start a LinkedIn account
+LinkedIn is a good place to get your profile exposed to recruiters.  
+This adds a way to "discover" you, and also an easy way for people to get your CV if they only have your name.
 
 ## Setting up interviews
 
@@ -86,12 +93,15 @@ My ranking is based on this rational: The more information you know about the jo
 2. **Recruitment agencies** are OK, because:
     * They want you to find work through them, so they're "on your side"
     * The agent you'll be working with probably has more experience than you in the job market, so they might be able to hint you in on things you miss
+
     My tips about recruitment agencies are as follows:
+
     1. Avoid agencies that look useless - lazy, misorganized, unprofessional etc. You don't want to waste your time
     1. Apply at more than one agency
     1. Be sure to describe all of your job expectations to the agent, so they can filter what they offer you
     1. Reprimend them if you think they ignore your filters - you don't want them wasting your time
-    1. Insist that the agent coordinates with you before sending your CV to some company. This will both help you filter out companies that don't match your criteria, list where your CV are going and know that the agent is working hard for you
+    1. Insist that the agent coordinates with you before sending your CV to some company. This will both help you filter out companies that don't match your criteria, list where your CV are going and keep tabs on the agent's work
+
 3. **Classified ads / job portals** are a last resort in my opinion. If you decide to apply, know that:
     1. You don't have to answer every single requirement. Even if you're missing a couple, you can apply
     1. For some reason, some places think it's acceptable not to reply. Don't take it too hard.
@@ -137,4 +147,4 @@ Worst outcome - you'll get no response or some obvious lie. Best outcome - you'l
 In my book, "passing" is when you get an offer. Nothing short of it.
 
 ### Coordinate your offer window
-Usually, each offer has a time window (you should ask if you don't know it)
+Usually, each offer has a time window (you should ask if you don't know it). Try to time it so you'll have several offers in the same window. Otherwise, you'd have the [Secretary problem](https://en.wikipedia.org/wiki/Secretary_problem), which is a tough problem to solve.
