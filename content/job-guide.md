@@ -3,7 +3,6 @@ Date: 2016-09-18 12:00
 Category: Misc
 Slug: job-guide
 Tags: Ramblings
-Status: draft
 
 A lot of people (>3) asked me in the last month or so about how to land a first job after leaving the army / graduating from university, so I thought I'd write a post about it.  
 I think this post will mainly be helpful for those who look for their 1st job, because after that you get the feel for it.  
@@ -18,10 +17,10 @@ I'm assuming that:
 
 Why my experience might not be applicable to you:
 
-* I'm favoring startup mentallity over big companies. This is because I can tolerate relative job insecurity (startups are more likely to die) and hate bureaucracy.  
+* I'm favoring startup mentality over big companies. This is because I can tolerate relative job insecurity (startups are more likely to die) and hate bureaucracy.  
     Your preferences may differ
 * I went for DevOps / Production / Operations / SysAdmin positions (the definition is very loose), where positions are filled slowly and the advantage is on the employee's side.  
-    A job finding experience of a Software Engineer / Software Developer may be different
+    A job-finding experience of a Software Engineer / Software Developer may be different
 * I looked for work in Israel - some other country might have very different conventions
 
 ## Before interviews
@@ -42,7 +41,7 @@ You should have some magnitude of your paycheck in mind.
 You can get a basic idea by:
 
 * Asking your friends/colleagues/fellow students (they might lie. I found that some of my colleagues' self worth was so determined by their salary that they lied in order to not "feel ashamed")
-* Checking salary tables. They might be grossly inaccruate but it's better than having no idea at all. Example for one: <http://www.sqlink.com/blog/hightechsalary/>
+* Checking salary tables. They might be grossly inaccurate but it's better than having no idea at all. Example for one: <http://www.sqlink.com/blog/hightechsalary/>
 
 ### CVs
 
@@ -55,7 +54,7 @@ These sections are important:
     Avoid over-specifying (product versions when there is no major difference, for instance)  
     Try to group by tech (e.g. "html5" and "CSS" should come under "Web") - this is justified if you have 3+ such groups
 * **Employment history**  
-    Listing what you did is better   what you worked with.  
+    Listing what you did is better than what you worked with.  
     Example:
     * "Implemented SharePoint backup end-to-end using NetApp SnapDrive" - Great
     * "SharePoint backups" - OK
@@ -81,26 +80,26 @@ This adds a way to "discover" you, and also an easy way for people to get your C
 
 ## Setting up interviews
 
-### You will suck on your first interview(s)
-Since this is a relatively new challange for you, you might fail on the first couple of times. This is perfectly fine. However, you should plan accordingly, by not interviewing at your dream companies first.
+### You will suck in your first interview(s)
+Since this is a relatively new challenge for you, you might fail the first couple of times. This is perfectly fine. However, you should plan accordingly, by not interviewing at your dream companies first.
 
 ### Where to get jobs from
-My ranking is based on this rational: The more information you know about the job before beginning interviews, the better.  
+My ranking is based on this rationale: The more information you know about the job before beginning interviews, the better.  
 
 1. **Personal contacts** like friends, family and former colleagues are good because:  
     * They probablly will be accurate about the job (rather than embellishing it)
-    * They're familiar with both you and the workplace, and can appriciate whether you're going to fit
+    * They're familiar with both you and the workplace, and can appreciate whether you're going to fit
 2. **Recruitment agencies** are OK, because:
     * They want you to find work through them, so they're "on your side"
     * The agent you'll be working with probably has more experience than you in the job market, so they might be able to hint you in on things you miss
 
     My tips about recruitment agencies are as follows:
 
-    1. Avoid agencies that look useless - lazy, misorganized, unprofessional etc. You don't want to waste your time
+    1. Avoid agencies that look useless - lazy, disorganized, unprofessional etc. You don't want to waste your time
     1. Apply at more than one agency
     1. Be sure to describe all of your job expectations to the agent, so they can filter what they offer you
     1. Reprimend them if you think they ignore your filters - you don't want them wasting your time
-    1. Insist that the agent coordinates with you before sending your CV to some company. This will both help you filter out companies that don't match your criteria, list where your CV are going and keep tabs on the agent's work
+    1. Insist that the agent coordinate with you before sending your CV to some company. This will both help you filter out companies that don't match your criteria, list where your CV are going and keep tabs on the agent's work
 
 3. **Classified ads / job portals** are a last resort in my opinion. If you decide to apply, know that:
     1. You don't have to answer every single requirement. Even if you're missing a couple, you can apply
@@ -113,17 +112,17 @@ Avoid filling your schedules with interviews that won't lead anywhere.
 However, if something is a bit out of your boundaries but looks promising, it might be OK to try it.
 
 ### Avoid overscheduling
-Interviewing is tiering (at least when it's serious interviews), so if you'll schedule too much during one day, you'll hit the last one(s) exhausted and probably won't do your best.  
+Interviewing is tiring (at least when it's serious interviews), so if you'll schedule too much during one day, you'll hit the last one(s) exhausted and probably won't do your best.  
 I think 3 interviews a day is **a lot** and tried to stick to 2.
 
 ## Interviewing
 
-Job interviews will probably be a new skill for you to learn, so you might not do very well at the first couple of times, as I said above.  
+Job interviews will probably be a new skill for you to learn, so you might not do very well the first couple of times, as I said above.  
 Don't panic.
 
 ### How to behave
-This is sort of like a date - you and the interviewer haven't met before (at least not at this context) and are trying to evaluate each other.  
-Therefor, all sensible guidelines for dates apply here. Be nice, polite, know what you want, show self confidence etc.
+This is sort of like a date - you and the interviewer haven't met before (at least not in this context) and are trying to evaluate each other.  
+Therefore, all sensible guidelines for dates apply here. Be nice, polite, know what you want, show self confidence etc.
 
 ### Interview them back
 The interview is also about you seeing if the company would be a good fit for you, so make sure you tell the interviewer what you're looking for.  
@@ -139,7 +138,7 @@ Sometimes you have a feel that something didn't go well. You should analyze the 
 
 ### It doesn't hurt to ask
 If you're really clueless about what went wrong, you can try asking the interviewer, assuming you can contact them.  
-**Never** argue with them - they've made their desicion and no good will come from trying to convince them. You're only doing this to get information.  
+**Never** argue with them - they've made their decision and no good will come from trying to convince them. You're only doing this to get information.  
 Worst outcome - you'll get no response or some obvious lie. Best outcome - you'll get some feedback that can help you better yourself.
 
 ## When passing interviews
