@@ -56,7 +56,8 @@ To filter events using XPath, you need:
 -   A way to filter
 
 #### Basic XPath skills
-- You can learn basic queries on the w3c site: <http://www.w3schools.com/xpath/>  
+- You can learn basic queries on the w3c site: <https://www.w3schools.com/xml/xpath_syntax.asp>  
+- More about XPath: <http://www.whoishostingthis.com/resources/xpath/>
 - Windows Event Log XPath filtering uses a subset of XPath 1.0 with some serious limitations, which can be found here: <http://msdn.microsoft.com/en-us/library/dd996910(VS.85).aspx#limitations>  
 - You can always use the UI to build a filter, then switch to the XML view and see how it's represented in XPath.  
 
