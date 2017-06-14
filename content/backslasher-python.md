@@ -45,7 +45,7 @@ All of these facts, in addition to missing documentation, add up to make the coo
 On one hand, the reosurces included in this cookbook should be pretty simple. For instance, the package resource should install a python package (a single command), only if it's not already installed (another command).  
 On the other hand, I wrestled with thie Poise-Python cookbook for 3 days and still couldn't get it to do what the original Python cookbook did. It might be because I have a unique use case (custom-compiled Python), but it's still furstrating.
 
-### Enter [backslasher-python](https://github.com/BackSlasher/chef-backslasher-pytho://github.com/BackSlasher/chef-backslasher-python)
+### Enter [backslasher-python](https://supermarket.chef.io/cookbooks/backslasher-python)
 Eventually, I chose to re-implement the Python cookbook by myself.  
 I made sure to choose a different namespace for the resources (`backslasher_python_*`), so it won't interfere with the existing usage of the Python cookbook (external cookbooks etc).  
 The new cookbook is written as plainly as possible. <del>Its only vice is using the new custom resource syntax</del> (Edit: Moved back to old syntax. `comapt_resource` breaks so easily).
