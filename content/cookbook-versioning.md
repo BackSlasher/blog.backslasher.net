@@ -1,7 +1,7 @@
 Title: Cookbook Versioning Script
 Date: 2016-02-29 12:00
 Category: FOSS
-Tags: Scripting, Ruby, Bash, Chef
+Tags: Scripts, Ruby, Bash, Chef
 Slug: cookbook-versioning
 
 ## The Problem

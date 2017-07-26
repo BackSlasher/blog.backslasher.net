@@ -1,7 +1,7 @@
 Title: DNS Override for a Single Process
 Date: 2016-09-23 12:00
 Category: FOSS
-Tags: DNS, Scripting, C, Linux
+Tags: DNS, Scripts, C, Linux
 Slug: dns-override
 Status: draft
 

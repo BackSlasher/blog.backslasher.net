@@ -1,7 +1,7 @@
 Title: Filtering in Shell
 Date: 2016-02-29 13:00
 Category: FOSS
-Tags: Scripting, Bash, Shell
+Tags: Scripts, Bash, Shell
 Slug: shell-filter
 
 Today I told someone that a feature I'm missing in Bash is filtering.  

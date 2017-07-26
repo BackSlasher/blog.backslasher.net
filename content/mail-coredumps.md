@@ -1,7 +1,7 @@
 Title: Sending mail on coredumps
 Date: 2015-07-23 09:00
 Category: FOSS
-Tags: Linux, Scripting, Python, Email
+Tags: Linux, Scripts, Python, Email
 Slug: mail-coredumps
 
 ## The Story
