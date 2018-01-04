@@ -7,7 +7,7 @@ Slug: driven-by-anger
 `modus machinor` - my adjustment of "modus operandi" for "engineering"
 
 I recently noticed that I'm doing engineering work out of anger.  
-However, it seems like I'm going a good job, so I thought I'd share my method, which I worked hard on.  
+However, it seems like I'm doing a good job, so I thought I'd share my method, which I worked hard on.  
 You might recognize yourself in some of this, but not all. If you have something to say, I'm happy to recieve feedback / insults.  
 
 ## TL;DR:
