@@ -48,7 +48,7 @@ Publishing your fix, whether it's by writing a blog post, sending an email on th
   For instance, in FB, where I'm currently working, you're credited for time/trouble being saved for others by fixing things that you're both using.
 
 ## Success anecdotes 
-As I've alraedy said, in Facebook, you're credited for helping others, both directly and indirectly.  
+As I've already said, in Facebook, you're credited for helping others, both directly and indirectly.  
 One of my proudest moments in the last year is shaving off ~100h per week from a certain process, by moving 3LoC around.  
 I did this not because it was my responsibility, but because I was waiting for this process to finish and was annoyed by "what the hell is it doing while I'm sitting here waiting".  
 
