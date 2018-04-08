@@ -25,6 +25,8 @@ DEFAULT_LANG = u'en'
 
 TAG_CLOUD_SORTING = 'size'
 
+DISQUS_SITENAME = "blog-backslasher-net"
+
 # Feed generation is usually not desired when developing
 FEED_ALL_ATOM = None
 CATEGORY_FEED_ATOM = None
