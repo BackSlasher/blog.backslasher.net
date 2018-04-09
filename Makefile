@@ -126,8 +126,8 @@ mygit: publish
 
 update_externals:
 	#git submodule foreach "git fetch && git checkout origin/master"
-	#git submodule foreach "git submodule update --recursive"
+	# git submodule foreach "git submodule update --recursive"
 	git submodule update --recursive --remote
-	REPOS=$$(git submodule status | grep '^+' | cut -f2 -d' ');if [ -n "$$REPOS" ]; then echo updating $$REPOS;git commit $$REPOS -m 'Updated submodules'; else echo "not updating $$REPOS";fi
+	# REPOS=$$(git submodule status | grep '^+' | cut -f2 -d' ');if [ -n "$$REPOS" ]; then echo updating $$REPOS;git commit $$REPOS -m 'Updated submodules'; else echo "not updating $$REPOS";fi
 
 .PHONY: html help clean regenerate serve devserver publish ssh_upload rsync_upload dropbox_upload ftp_upload s3_upload cf_upload github mygit-prepare mygit update_externals

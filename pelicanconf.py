@@ -9,12 +9,14 @@ SITEURL = ''
 STATIC_PATHS = ['images', 'extra/CNAME']
 EXTRA_PATH_METADATA = {'extra/CNAME': {'path': 'CNAME'},}
 PLUGIN_PATHS = ["pelican-plugins"]
-PLUGINS = ["summary", "tag_cloud"]
+PLUGINS = ["summary", "tag_cloud", 'i18n_subsites']
+JINJA_ENVIRONMENT = {'extensions': ['jinja2.ext.i18n']}
 
 OUTPUT_RETENTION = ['.git']
 PYGMENTS_STYLE = 'default'
 
 THEME = 'theme'
+THEME = 'pelican-themes/pelican-bootstrap3'
 BOOTSTRAP_THEME = ''
 
 PATH = 'content'
