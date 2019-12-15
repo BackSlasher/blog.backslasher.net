@@ -26,6 +26,7 @@ TIMEZONE = 'Europe/Paris'
 DEFAULT_LANG = u'en'
 
 TAG_CLOUD_SORTING = 'size'
+TAG_CLOUD_MAX_ITEMS = 20
 
 DISQUS_SITENAME = "blog-backslasher-net"
 
