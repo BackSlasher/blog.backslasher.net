@@ -15,7 +15,6 @@ JINJA_ENVIRONMENT = {'extensions': ['jinja2.ext.i18n']}
 OUTPUT_RETENTION = ['.git']
 PYGMENTS_STYLE = 'default'
 
-THEME = 'theme'
 THEME = 'pelican-themes/pelican-bootstrap3'
 BOOTSTRAP_THEME = ''
 
@@ -28,7 +27,7 @@ DEFAULT_LANG = u'en'
 TAG_CLOUD_SORTING = 'size'
 TAG_CLOUD_MAX_ITEMS = 20
 
-DISQUS_SITENAME = "blog-backslasher-net"
+DISQUS_SITENAME = ""
 
 # Feed generation is usually not desired when developing
 FEED_ALL_ATOM = None
