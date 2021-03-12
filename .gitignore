@@ -1,24 +1,5 @@
-output/
-cache/
-/*.pyc
-/*.pid
-*~
-*.swp
-.\#*
-[#]*[#]
-
-# Virtualenv
-# http://iamzed.com/2009/05/07/a-primer-on-virtualenv/
-.Python
-[Bb]in
-[Ii]nclude
-[Ll]ib
-[Ll]ib64
-[Ll]ocal
-[Mm]an
-[Ss]cripts
-[Tt]cl
-pyvenv.cfg
-.venv
-pip-selfcheck.json
-__pycache__/
+_site
+.sass-cache
+.jekyll-cache
+.jekyll-metadata
+vendor
