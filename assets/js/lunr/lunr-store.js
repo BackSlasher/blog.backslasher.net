@@ -994,4 +994,10 @@ var store = [{
         "tags": ["Ramblings"],
         "url": "/3-loc-760h.html",
         "teaser": null
+      },{
+        "title": "Get Android App Sizes with ADB",
+        "excerpt":"Upon receiving a notification from my NVidia Shield indicating that it was running low on storage space, I attempted to use the device’s interface to troubleshoot the issue. I found the interface to be cumbersome and unintuitive. Fortunately, I had recently enabled the Android Debug Bridge (ADB) for the purpose...","categories": [],
+        "tags": ["Linux","Bash","Android","JQ"],
+        "url": "/android-app-sizes.html",
+        "teaser": null
       },]
