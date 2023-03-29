@@ -1,0 +1,743 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Event Log Permissions, With Scripts! - BackSlasher</title>
+<meta name="description" content="I’m going to keep it short, because there’s a lot of technical background. So, I’m assuming you know about:">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Event Log Permissions, With Scripts!">
+<meta property="og:url" content="https://blog.backslasher.net/event-log-permissions-with-scripts.html">
+
+
+  <meta property="og:description" content="I’m going to keep it short, because there’s a lot of technical background. So, I’m assuming you know about:">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2011-01-13T00:00:00+02:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/event-log-permissions-with-scripts.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Event Log Permissions, With Scripts!">
+    <meta itemprop="description" content="I’m going to keep it short, because there’s a lot of technical background.So, I’m assuming you know about:">
+    <meta itemprop="datePublished" content="2011-01-13T00:00:00+02:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Event Log Permissions, With Scripts!
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>I’m going to keep it short, because there’s a lot of technical background.<br />
+So, I’m assuming you know about:</p>
+
+<ul>
+  <li><a href="http://technet.microsoft.com/en-us/library/cc728310%28WS.10%29.aspx">Assigning permissions to the registry</a></li>
+  <li><a href="http://msdn.microsoft.com/en-us/library/aa379567%28v=vs.85%29.aspx">SDDLs</a></li>
+  <li>Event Log concepts (sources, logs)</li>
+</ul>
+
+<p>So, to business:</p>
+<h3 id="intro">Intro</h3>
+<p>Event viewer data is stored in <code class="language-plaintext highlighter-rouge">.evt</code>/<code class="language-plaintext highlighter-rouge">.evtx</code> files in <code class="language-plaintext highlighter-rouge">%SystemRoot%\System32\Winevt\Logs\</code>, but as with any half-decent DB, no one but <code class="language-plaintext highlighter-rouge">SYSTEM</code> is touching the files themselves.<br />
+The permissions are basically divided into two interesting parts - event-related permissions (reading / writing / clearing event logs) and source-related permissions (creating / deleting sources).</p>
+<h4 id="other-permissions">Other permissions</h4>
+<p>Of course there is also creating / deleting logs themselves, but it
+happens so rarely that I just do it with my admin account.</p>
+<h3 id="event-related">Event-Related</h3>
+<p>Event-related permissions are per log (<code class="language-plaintext highlighter-rouge">application</code>/<code class="language-plaintext highlighter-rouge">system</code> etc.) and are stored in an SDDL in <code class="language-plaintext highlighter-rouge">HKLM\SYSTEM\CurrentControlSet\services\eventlog\LOGNAME:CustomSD</code><br />
+To grant or deny principles some privileges, edit the SDDL, using the
+following bits:</p>
+
+<ul>
+  <li>0x01: Read</li>
+  <li>0x02: Write</li>
+  <li>0x04: Clear</li>
+</ul>
+
+<p><strong>Note:</strong> Restart is required to apply those permissions</p>
+
+<h4 id="scripting-time">Scripting Time</h4>
+<p>I use PowerShell to read the registry value, parse the SDDL into an ACL object, edit it, and export the SDDL-equivalent back into the registry.<br />
+This stub of a script will grant some principle permissions to read from and write to a certain log:</p>
+
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">param</span><span class="p">(</span><span class="w">
+</span><span class="p">[</span><span class="n">string</span><span class="p">]</span><span class="nv">$Principle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'Builtin\Remote Desktop Users'</span><span class="p">,</span><span class="w">
+</span><span class="p">[</span><span class="n">string</span><span class="p">]</span><span class="nv">$LogName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'Application'</span><span class="w">
+</span><span class="p">)</span><span class="w">
+ 
+</span><span class="c"># Get SDDL:</span><span class="w">
+</span><span class="nv">$orgSDDL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gp</span><span class="w"> </span><span class="p">(</span><span class="s1">'HKLM:\SYSTEM\CurrentControlSet\Services\Eventlog\'</span><span class="o">+</span><span class="nv">$LogName</span><span class="p">)</span><span class="w"> </span><span class="n">CustomSD</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">select</span><span class="w"> </span><span class="nt">-exp</span><span class="w"> </span><span class="nx">CustomSD</span><span class="p">;</span><span class="w">
+ 
+</span><span class="n">write-host</span><span class="w"> </span><span class="s1">'Before:'</span><span class="w">
+</span><span class="nv">$orgSDDL</span><span class="p">;</span><span class="w">
+ 
+</span><span class="c"># Create ACL</span><span class="w">
+</span><span class="nv">$acl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">new-object</span><span class="w"> </span><span class="nx">System.Security.AccessControl.RegistrySecurity</span><span class="p">;</span><span class="w">
+</span><span class="nv">$acl</span><span class="o">.</span><span class="nf">SetSecurityDescriptorSddlForm</span><span class="p">(</span><span class="nv">$orgSDDL</span><span class="p">);</span><span class="w">
+ 
+</span><span class="c"># Create ACE</span><span class="w">
+</span><span class="nv">$ace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">New-Object</span><span class="w"> </span><span class="nx">System.Security.AccessControl.RegistryAccessRule</span><span class="w"> </span><span class="nv">$Principle</span><span class="p">,</span><span class="nx">3</span><span class="p">,</span><span class="s1">'allow'</span><span class="p">;</span><span class="w">
+ 
+</span><span class="c"># Combine ACL</span><span class="w">
+</span><span class="nv">$acl</span><span class="o">.</span><span class="nf">AddAccessRule</span><span class="p">(</span><span class="nv">$ace</span><span class="p">);</span><span class="w">
+</span><span class="nv">$newSDDL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">$acl</span><span class="o">.</span><span class="nf">SDDL</span><span class="p">;</span><span class="w">
+ 
+</span><span class="n">write-host</span><span class="w"> </span><span class="s1">'After:'</span><span class="w">
+</span><span class="nv">$newSDDL</span><span class="p">;</span><span class="w">
+ 
+</span><span class="c"># Store SDDL:</span><span class="w">
+</span><span class="n">sp</span><span class="w"> </span><span class="p">(</span><span class="s1">'HKLM:\SYSTEM\CurrentControlSet\Services\Eventlog\'</span><span class="o">+</span><span class="nv">$LogName</span><span class="p">)</span><span class="w"> </span><span class="n">CustomSD</span><span class="w"> </span><span class="nv">$newSDDL</span><span class="p">;</span><span class="w">
+</span></code></pre></div></div>
+
+<h3 id="source-related">Source-Related</h3>
+<p>Sources are actually manipulated using the registry (not through some API), and therefore require actual permissions on the registry key of the log itself. For instance, to create a new event source in the <code class="language-plaintext highlighter-rouge">Application</code> log, I would need the privilege to create a key under
+<code class="language-plaintext highlighter-rouge">HKLM\SYSTEM\CurrentControlSet\services\eventlog\Application</code>.<br />
+<strong>Note:</strong> Consider creating all of the event sources in one concentrated blow as
+an admin, to avoid messing with the registry’s permissions.<br />
+No restart is required to apply these permissions.</p>
+<h4 id="scripting-time-1">Scripting Time</h4>
+<p>Granting / denying privileges on the registry is fairly easy with PowerShell. Here’s a bit that adds read/write permissions for sources on a specific log to a specific principle:</p>
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Set parameters:</span><span class="w">
+</span><span class="kr">param</span><span class="p">(</span><span class="w">
+</span><span class="p">[</span><span class="n">string</span><span class="p">]</span><span class="nv">$Principle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'Builtin\Remote Desktop Users'</span><span class="p">,</span><span class="w">
+</span><span class="p">[</span><span class="n">string</span><span class="p">]</span><span class="nv">$LogName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'Application'</span><span class="w">
+</span><span class="p">)</span><span class="w">
+ 
+</span><span class="c"># Compose Key:</span><span class="w">
+</span><span class="nv">$LogPath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'HKLM:\SYSTEM\CurrentControlSet\services\eventlog\'</span><span class="o">+</span><span class="nv">$LogName</span><span class="p">;</span><span class="w">
+</span><span class="kr">if</span><span class="p">(</span><span class="n">Test-Path</span><span class="w"> </span><span class="nv">$LogPath</span><span class="p">)</span><span class="w">
+</span><span class="p">{</span><span class="w">
+    </span><span class="nv">$acl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Get-Acl</span><span class="w"> </span><span class="nv">$LogPath</span><span class="w">
+    </span><span class="nv">$ace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">New-Object</span><span class="w"> </span><span class="nx">System.Security.AccessControl.RegistryAccessRule</span><span class="w"> </span><span class="nv">$Principle</span><span class="p">,</span><span class="s1">'WriteKey, ReadKey'</span><span class="p">,</span><span class="s1">'allow'</span><span class="w">
+    </span><span class="nv">$acl</span><span class="o">.</span><span class="nf">AddAccessRule</span><span class="p">(</span><span class="nv">$ace</span><span class="p">)</span><span class="w">
+    </span><span class="c">#Set-Acl $LogPath $acl</span><span class="w">
+</span><span class="p">}</span><span class="kr">else</span><span class="p">{</span><span class="n">Write-Error</span><span class="w"> </span><span class="s2">"Cannot acesss log </span><span class="nv">$LogName</span><span class="s2">"</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<h3 id="further-reading">Further Reading</h3>
+<ul>
+  <li><a href="http://msdn.microsoft.com/en-us/library/system.security.accesscontrol.aspx">System.Security.AccessControl
+namespace</a></li>
+  <li><a href="http://msdn.microsoft.com/en-us/library/aa363661%28VS.85%29.aspx">Event
+Sources</a></li>
+</ul>
+
+<p>Enjoy messing with the event log!</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#event-log" class="page__taxonomy-item" rel="tag">Event Log</a><span class="sep">, </span>
+    
+      <a href="/tags/#powershell" class="page__taxonomy-item" rel="tag">PowerShell</a><span class="sep">, </span>
+    
+      <a href="/tags/#registry" class="page__taxonomy-item" rel="tag">Registry</a><span class="sep">, </span>
+    
+      <a href="/tags/#scripts" class="page__taxonomy-item" rel="tag">Scripts</a><span class="sep">, </span>
+    
+      <a href="/tags/#security" class="page__taxonomy-item" rel="tag">Security</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#microsoft" class="page__taxonomy-item" rel="tag">Microsoft</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2011-01-13T00:00:00+02:00">January 13, 2011</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/enabling-remote-desktop-remotely.html" class="pagination--pager" title="Enabling Remote Desktop Remotely
+">Previous</a>
+    
+    
+      <a href="/changing-php-settings-without-htaccess.html" class="pagination--pager" title="Changing php settings without .htaccess or php.ini
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/3-loc-760h.html" rel="permalink">Changed 3 lines of code, saved 760 server hours per month
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Act 1, where I write Java
+In the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/sapling-commands.html" rel="permalink">Sapling Commands
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Sapling (the Facebook-released SCM) is great, but the docs are not-great.
+I thought I’d list some commands it took me a while to undertand, for me and for ot...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/foia-calendars-pt1.html" rel="permalink">Processing Israeli FOIA calendars, Part 1
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Preface
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/docker-compose-ecs-nginx-caddy.html" rel="permalink">Caddy is better than Nginx for Docker Compose on ECS
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I recently managed to use Docker Compose to launch a small app in Aamazon’s Elastic Container Services (ECS).
+Overall, the result is pretty incredible. I’m a...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <script>
+  window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+  ga('create','','auto');
+  ga('set', 'anonymizeIp', false);
+  ga('send','pageview')
+</script>
+<script src="https://www.google-analytics.com/analytics.js" async></script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>

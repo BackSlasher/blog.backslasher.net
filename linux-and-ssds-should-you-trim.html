@@ -1,0 +1,691 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Linux and SSDs - Should You TRIM? - BackSlasher</title>
+<meta name="description" content="Note: Although my experience is with Debian, I think this post helps anyone using some modern Linux distribution. What is TRIM? As a Windows sysadmin, I didn’t really consider the cons of running on top of Solid-State Drives, or SSDs. These drives are based on flash memory (similar to a Disk-On-Key), rather than metallic plates. A big difference between magnetic hard drives and SSDs is block reuse.">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Linux and SSDs - Should You TRIM?">
+<meta property="og:url" content="https://blog.backslasher.net/linux-and-ssds-should-you-trim.html">
+
+
+  <meta property="og:description" content="Note: Although my experience is with Debian, I think this post helps anyone using some modern Linux distribution. What is TRIM? As a Windows sysadmin, I didn’t really consider the cons of running on top of Solid-State Drives, or SSDs. These drives are based on flash memory (similar to a Disk-On-Key), rather than metallic plates. A big difference between magnetic hard drives and SSDs is block reuse.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2014-07-16T00:00:00+03:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/linux-and-ssds-should-you-trim.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Linux and SSDs - Should You TRIM?">
+    <meta itemprop="description" content="Note: Although my experience is with Debian, I think this post helps anyone using some modern Linux distribution.What is TRIM?As a Windows sysadmin, I didn’t really consider the cons of running on top of Solid-State Drives, or SSDs. These drives are based on flash memory (similar to a Disk-On-Key), rather than metallic plates.A big difference between magnetic hard drives and SSDs is block reuse.">
+    <meta itemprop="datePublished" content="2014-07-16T00:00:00+03:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Linux and SSDs - Should You TRIM?
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p><strong>Note</strong>: Although my experience is with Debian, I think this post helps anyone using some modern Linux distribution.</p>
+<h3 id="what-is-trim">What is TRIM?</h3>
+<p>As a Windows sysadmin, I didn’t really consider the cons of running on top of <a href="http://en.wikipedia.org/wiki/Solid_state_drives">Solid-State Drives</a>, or SSDs. These drives are based on <a href="http://en.wikipedia.org/wiki/Flash_memory">flash memory</a> (similar to a Disk-On-Key), rather than metallic plates.<br />
+A big difference between magnetic hard drives and SSDs is block reuse.
+<!-- PELICAN_END_SUMMARY --></p>
+
+<h4 id="the-problem">The Problem</h4>
+<p>Every storage device is seen (with the driver’s help) as a collection of sectors (or “blocks”) by the operating system, which can read and write a fixed amount of data (512 bytes / 4KB) to every sector. File systems are different ways of using said sectors to store files, directories, metadata etc.<br />
+In magnetic hard drives, used and unused blocks take the same time to write to. Modern file systems exploit that fact in different ways. For example:</p>
+
+<ul>
+  <li>Instead of deleting a file, they just “forget” about it, leaving the blocks in their used state (<a href="http://whereismydata.wordpress.com/2009/05/02/forensics-what-happens-when-files-are-deleted/">Example</a>)</li>
+  <li><a href="http://en.wikipedia.org/wiki/Copy_on_write">Copy-On-Write</a> techniques allow file systems to “effortlessly” remember the previous content of files (for versioning, corruption protection etc.), by writing modified content on free blocks</li>
+</ul>
+
+<p>In SSDs, however, this is not the situation. I read a metaphor somewhere thats it’s like building a house where a house is already present - you have to demolish the existing house, and only after that you can build your own.
+For that reason, used blocks take more time writing to, because the SSD has to erase the block first. The result - after many writes, the performance of SSDs degrades dramatically, even lower than traditional HDs.<br />
+<strong>Note</strong>: There is an additional issue called <a href="http://en.wikipedia.org/wiki/Write_amplification">Write amplification</a>, where you can only delete clusters of blocks, requiring the SSD to rearrange partially used blocks. In modern SSD drives, this is solved by the drive’s own firmware/configuration as long as you keep the file system trimmed.</p>
+<h4 id="the-solution">The Solution</h4>
+<p>The solution to that problem is a new OS-Device command called “<a href="http://en.wikipedia.org/wiki/TRIM">TRIM</a>”, telling the drive “I don’t need this block anymore. Erase it when you have the time”. This is a new idea, because traditional HDs don’t need that information.</p>
+<h3 id="trimming-and-you">Trimming and You</h3>
+<h4 id="naming">Naming</h4>
+<p>You’ll often see TRIM being called “discard”. This is because the concept  has been generalised, and can apply to <a href="http://en.wikipedia.org/wiki/Thin_provisioning">thin-provisioned</a> LUNs as well.</p>
+<h4 id="timing">Timing</h4>
+<p>The most obvious way to use TRIM is like Windows does - whenever blocks are no longer needed (e.g. a file was deleted), let the SSD know.<br />
+In Linux, this option has <strong>negative performance impact</strong>, because the Linux kernel <a href="http://en.opensuse.org/SDB:SSD_discard_%28trim%29_support#Kernel_support">currently handles one block at a time</a>. For instance, if I delete a file containing 500 blocks, instead of one IO operation (removing the pointer to the file from the directory listing), the kernel will issue 501 IO operations (remove the pointer, TRIM block 1, TRIM block 2…).<br />
+In the general use-case, this <a href="http://people.redhat.com/lczerner/discard/ext4_discard.html">ruins</a> the performance advantage of SSDs.<br />
+I think this is only a temporary setback, because Windows (supposedly) handles TRIM the correct way - using a range.</p>
+
+<p>If we take an example from Ubuntu, version 14.04 supports trimming but <a href="https://launchpad.net/ubuntu/+source/util-linux/2.20.1-5.1ubuntu14">uses a weekly scheduled execution</a> of <a href="http://man7.org/linux/man-pages/man8/fstrim.8.html">fstrim</a>. According to a quick Google search, this seems to be the preferred method, because you can execute it in a maintenance window, when I/O isn’t peaking.</p>
+
+<h4 id="support">Support</h4>
+<p>Support for TRIM in Linux is partial.<br />
+Mainstream <strong>file systems</strong> (ext4, btrfs) support TRIM, either immediately (using “discard” mount option) or on demand (“fstrim”).<br />
+Some <strong>containers</strong> (LVM, md) support passing TRIM commands from the contained file system and some don’t. Some containers even issue “discard” requests by themselves if configured to, like LVM (with <code class="language-plaintext highlighter-rouge">issue_discards</code> enabled) when removing volumes. These individual discards are only relevant when making configuration changes (deleting a RAID array) frequently, or when using snapshots.</p>
+
+<h4 id="testing">Testing</h4>
+<p>There are many posts on testing TRIM, like <a href="http://andyduffell.com/techblog/?p=852">this one</a>, but they only test whether trimming already works, and not if you need it. IMHO, the only proper method to know is benchmarking, manually trimming (using fstrim) and benchmarking again.</p>
+
+<p><strong>TL;DR:</strong> Yes, you should trim, and by cronning <code class="language-plaintext highlighter-rouge">fstrim</code>. It’s worth it.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#debian" class="page__taxonomy-item" rel="tag">Debian</a><span class="sep">, </span>
+    
+      <a href="/tags/#filesystem" class="page__taxonomy-item" rel="tag">FileSystem</a><span class="sep">, </span>
+    
+      <a href="/tags/#linux" class="page__taxonomy-item" rel="tag">Linux</a><span class="sep">, </span>
+    
+      <a href="/tags/#mysteries-solved" class="page__taxonomy-item" rel="tag">Mysteries Solved</a><span class="sep">, </span>
+    
+      <a href="/tags/#performance" class="page__taxonomy-item" rel="tag">Performance</a><span class="sep">, </span>
+    
+      <a href="/tags/#ramblings" class="page__taxonomy-item" rel="tag">Ramblings</a><span class="sep">, </span>
+    
+      <a href="/tags/#ubuntu" class="page__taxonomy-item" rel="tag">Ubuntu</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#foss" class="page__taxonomy-item" rel="tag">FOSS</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2014-07-16T00:00:00+03:00">July 16, 2014</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/why-pinning.html" class="pagination--pager" title="Why Pinning
+">Previous</a>
+    
+    
+      <a href="/accessing-specific-server-http-cluster.html" class="pagination--pager" title="Accessing a specific server in an HTTP cluster
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/3-loc-760h.html" rel="permalink">Changed 3 lines of code, saved 760 server hours per month
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Act 1, where I write Java
+In the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/sapling-commands.html" rel="permalink">Sapling Commands
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Sapling (the Facebook-released SCM) is great, but the docs are not-great.
+I thought I’d list some commands it took me a while to undertand, for me and for ot...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/foia-calendars-pt1.html" rel="permalink">Processing Israeli FOIA calendars, Part 1
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Preface
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/docker-compose-ecs-nginx-caddy.html" rel="permalink">Caddy is better than Nginx for Docker Compose on ECS
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I recently managed to use Docker Compose to launch a small app in Aamazon’s Elastic Container Services (ECS).
+Overall, the result is pretty incredible. I’m a...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <script>
+  window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+  ga('create','','auto');
+  ga('set', 'anonymizeIp', false);
+  ga('send','pageview')
+</script>
+<script src="https://www.google-analytics.com/analytics.js" async></script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>

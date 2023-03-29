@@ -1,0 +1,821 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Filtering Windows Event Log using XPath - BackSlasher</title>
+<meta name="description" content="When I want to search for events in Windows Event Log, I can usually make do with searching / filtering through the Event Viewer. For instance, to see all 4624 events (successful logon), I can fill the UI filter dialog like this:">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Filtering Windows Event Log using XPath">
+<meta property="og:url" content="https://blog.backslasher.net/filtering-windows-event-log-using-xpath.html">
+
+
+  <meta property="og:description" content="When I want to search for events in Windows Event Log, I can usually make do with searching / filtering through the Event Viewer. For instance, to see all 4624 events (successful logon), I can fill the UI filter dialog like this:">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2013-05-19T00:00:00+03:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/filtering-windows-event-log-using-xpath.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Filtering Windows Event Log using XPath">
+    <meta itemprop="description" content="When I want to search for events in Windows Event Log, I can usually make do with searching / filtering through the Event Viewer. For instance, to see all 4624 events (successful logon), I can fill the UI filter dialog like this:">
+    <meta itemprop="datePublished" content="2013-05-19T00:00:00+03:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Filtering Windows Event Log using XPath
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>When I want to search for events in Windows Event Log, I can usually make do with searching / filtering through the Event Viewer. For instance, to see all 4624 events (successful logon), I can fill the UI filter dialog like this:</p>
+
+<ul>
+  <li><strong>Event Logs:</strong> Security</li>
+  <li><strong>Event IDs:</strong> 4624</li>
+</ul>
+
+<p><img src="/assets/filtering-windows-event-log-using-xpath/EventFilterUI.png" alt="" /></p>
+
+<p>But sometimes I need higher granularity. That’s when XPath comes in.</p>
+
+<h3 id="what-is-xpath">What is XPath</h3>
+<p>Xpath is a method for selecting specific XML nodes from an XML document.<br />
+Given a list of books in XML, one can select the third book, the book with the most pages or the book with the author “David” with a single, human-readable XPath statement.</p>
+
+<h3 id="usage-in-windows-event-log">Usage in Windows Event Log</h3>
+<p>Since Windows NT6 (Vista / Server 2008), events are saved in XML format.<br />
+If we’ll take a look in event 16384:</p>
+
+<p><img src="/assets/filtering-windows-event-log-using-xpath/16384Text.png" alt="" /></p>
+
+<p>The general message (<code class="language-plaintext highlighter-rouge">Successfully scheduled Software Protection service for re-start at {0}. Reason: {1}.</code>) is saved in an external resource file, but the specifics (the replacement strings) are saved in the event.<br />
+They can be viewed in a friendly view (<code class="language-plaintext highlighter-rouge">Details/Friendly</code>) or in their raw XML form (<code class="language-plaintext highlighter-rouge">Details/XML</code>):</p>
+
+<p><img src="/assets/filtering-windows-event-log-using-xpath/16384Friendly.png" alt="" /></p>
+
+<p><img src="/assets/filtering-windows-event-log-using-xpath/16384Xml.png" alt="" /></p>
+
+<p>Also available are the general event details (computer name, event ID,
+time generated), under the “System” Node:</p>
+
+<p><img src="/assets/filtering-windows-event-log-using-xpath/16384SystemXml.png" alt="" /></p>
+
+<p>Not only can you filter events using XPath on the event’s XML node, this is how the UI is actually filtering.<br />
+If we make up some sort of filter:</p>
+
+<p><img src="/assets/filtering-windows-event-log-using-xpath/SomeFilterUI.png" alt="" /></p>
+
+<p>And switch to the <code class="language-plaintext highlighter-rouge">XML</code> view:</p>
+
+<p><img src="/assets/filtering-windows-event-log-using-xpath/SomeFilterXml.png" alt="" /></p>
+
+<p>we can see our selections reflected in the XPath statement contained in the <code class="language-plaintext highlighter-rouge">Select</code> element.<br />
+Note <code class="language-plaintext highlighter-rouge">(EventID=4624)</code> for filtering by event ID, for example.</p>
+
+<h3 id="using-xpath-filtering">Using XPath Filtering</h3>
+<p>To filter events using XPath, you need:</p>
+
+<ul>
+  <li>Basic XPath skills</li>
+  <li>A sample event to examine its structure</li>
+  <li>A way to filter</li>
+</ul>
+
+<h4 id="basic-xpath-skills">Basic XPath skills</h4>
+<ul>
+  <li>You can learn basic queries on the w3c site: <a href="https://www.w3schools.com/xml/xpath_syntax.asp">https://www.w3schools.com/xml/xpath_syntax.asp</a></li>
+  <li>More about XPath: <a href="http://www.whoishostingthis.com/resources/xpath/">http://www.whoishostingthis.com/resources/xpath/</a></li>
+  <li>Windows Event Log XPath filtering uses a subset of XPath 1.0 with some serious limitations, which can be found here: <a href="http://msdn.microsoft.com/en-us/library/dd996910(VS.85).aspx#limitations">http://msdn.microsoft.com/en-us/library/dd996910(VS.85).aspx#limitations</a></li>
+  <li>You can always use the UI to build a filter, then switch to the XML view and see how it’s represented in XPath.</li>
+</ul>
+
+<h4 id="a-sample-event">A sample event</h4>
+<p>When searching for specific fields within a certain event (e.g. 4624 where <code class="language-plaintext highlighter-rouge">Process ID</code> is <code class="language-plaintext highlighter-rouge">0x2b0</code>), it’s always good to find a sample event, switch to <code class="language-plaintext highlighter-rouge">Details</code> and see how it’s built. In my example, I can see the
+field I need is <code class="language-plaintext highlighter-rouge">EventData/ProcessId</code>:</p>
+
+<p><img src="/assets/filtering-windows-event-log-using-xpath/4624ProcessID.png" alt="" /></p>
+
+<p>And I can deduce that the XPath expression I need should be something
+like:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Event[
+ System[
+  EventID=4624
+ ] and
+ EventData[
+  Data[@Name="ProcessId"]="0x2b0"
+ ]
+]
+</code></pre></div></div>
+
+<h4 id="a-way-to-filter">A Way to Filter</h4>
+<p>After you got the XPath query, you need to choose the right tool to run the query on.<br />
+You can use:</p>
+
+<ul>
+  <li>UI (<code class="language-plaintext highlighter-rouge">EventVwr</code>)<br />
+  To use your XPath query in EventVwr, choose one of these two options, switch to the <code class="language-plaintext highlighter-rouge">XML</code> card, enable <code class="language-plaintext highlighter-rouge">Edit query manually</code> and… edit the query.
+    <ul>
+      <li>Filter<br />
+ Use the <code class="language-plaintext highlighter-rouge">Filter current log</code> button to get a one-time filter. Useful when you don’t need to save the query for later</li>
+      <li>Custom View<br />
+Create a new custom view if you intend to reuse the query. Note that it’s saved on the computer running the event viewer, not on the computer being queried.</li>
+    </ul>
+  </li>
+  <li>Cmd
+    <ul>
+      <li>
+        <p><code class="language-plaintext highlighter-rouge">Wevtutil</code><br />
+  This tool is useful when managing event logs in general, but it also can be used to query for events. The usage is:</p>
+
+        <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  :::bat
+  wevtutil qe LogName /q:"XpathQuery"
+</code></pre></div>        </div>
+
+        <p>For more info, run:</p>
+
+        <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  :::bat
+  wevtutil qe /?
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li>PowerShell
+    <ul>
+      <li>
+        <p><code class="language-plaintext highlighter-rouge">Get-WinEvent</code><br />
+  This Cmdlet has 3 options for filtering. Choose one:</p>
+
+        <ul>
+          <li><code class="language-plaintext highlighter-rouge">FilterXml</code> - Accepts a full XML (as seen in the event viewer UI)</li>
+          <li><code class="language-plaintext highlighter-rouge">FilterXPath</code> - Accepts just the XPath query</li>
+          <li><code class="language-plaintext highlighter-rouge">FilterHashtable</code> - Accepts a hashtable of field IDs and values. I
+  find it kind of confusing and buggy, so I avoid it.</li>
+        </ul>
+
+        <p>For example, to view the top 5 events matching our query (ID 4624
+  and “Process ID” is “0x2b0”) on computer “comp”, you can try:</p>
+
+        <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  :::powershell
+  Get-WinEvent -ComputerName 'Comp' -LogName 'Security' -FilterXPath 'Event[System[EventID=4624] and EventData[Data[@Name="ProcessId"]="0x2b0"]]' -MaxEvents 5
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p><strong>Pointers</strong></p>
+
+<ul>
+  <li>You can’t specify both Channel (“Event Logs”) and Provider (“Event
+Sources”). In any case, if you have the provider, the channel is
+redundant.</li>
+  <li>Specifying the Channel in the XPath query (like <code class="language-plaintext highlighter-rouge">Event[System[Channel="Security"]]</code>) doesn’t seem to work. The UI also avoids it in its generated queries.</li>
+  <li>When querying for events using PowerShell, you might get empty messages. The useful event details are still there! For example, you can use <code class="language-plaintext highlighter-rouge">ToXml()</code> on the event objects to get the XML format.</li>
+  <li>General event properties (like <code class="language-plaintext highlighter-rouge">TimeGenerated</code> and <code class="language-plaintext highlighter-rouge">Level</code>) can be quite different than how they look in the UI. Check the friendly/XML view or the UI-generated XPath Query.</li>
+  <li>
+    <p>The event-specific properties are contained in “Data” elements. To search for named properties, use something like:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>:::text
+Event[EventData[Data[@Name="PropertyName"]="RequiredValue"]]
+</code></pre></div>    </div>
+
+    <p>To search for that value in any property (kind of like searching for
+the value in the entire message), use:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>:::text
+Event[EventData[Data="RequiredValue"]]
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>To search for two fields, use something like:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>:::text
+Event[ EventData[  Data[@Name="PropA"]="ValueA" and  Data[@Name="PropB"]="ValueB" ]]
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h3 id="to-sum-up">To Sum Up</h3>
+<p>It may look harder than normal filtering at first, but the resulting
+queries can be much more granular and effective than UI-based filtering.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#event-log" class="page__taxonomy-item" rel="tag">Event Log</a><span class="sep">, </span>
+    
+      <a href="/tags/#powershell" class="page__taxonomy-item" rel="tag">PowerShell</a><span class="sep">, </span>
+    
+      <a href="/tags/#ramblings" class="page__taxonomy-item" rel="tag">Ramblings</a><span class="sep">, </span>
+    
+      <a href="/tags/#scripts" class="page__taxonomy-item" rel="tag">Scripts</a><span class="sep">, </span>
+    
+      <a href="/tags/#security" class="page__taxonomy-item" rel="tag">Security</a><span class="sep">, </span>
+    
+      <a href="/tags/#windows" class="page__taxonomy-item" rel="tag">Windows</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#microsoft" class="page__taxonomy-item" rel="tag">Microsoft</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2013-05-19T00:00:00+03:00">May 19, 2013</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/investigating-repeatedly-locked-out-users.html" class="pagination--pager" title="Investigating Repeatedly Locked Out Users
+">Previous</a>
+    
+    
+      <a href="/preventing-users-from-adding-computers-to-a-domain.html" class="pagination--pager" title="Preventing Users from Adding Computers to a Domain
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/3-loc-760h.html" rel="permalink">Changed 3 lines of code, saved 760 server hours per month
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Act 1, where I write Java
+In the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/sapling-commands.html" rel="permalink">Sapling Commands
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Sapling (the Facebook-released SCM) is great, but the docs are not-great.
+I thought I’d list some commands it took me a while to undertand, for me and for ot...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/foia-calendars-pt1.html" rel="permalink">Processing Israeli FOIA calendars, Part 1
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Preface
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/docker-compose-ecs-nginx-caddy.html" rel="permalink">Caddy is better than Nginx for Docker Compose on ECS
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I recently managed to use Docker Compose to launch a small app in Aamazon’s Elastic Container Services (ECS).
+Overall, the result is pretty incredible. I’m a...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <script>
+  window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+  ga('create','','auto');
+  ga('set', 'anonymizeIp', false);
+  ga('send','pageview')
+</script>
+<script src="https://www.google-analytics.com/analytics.js" async></script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>

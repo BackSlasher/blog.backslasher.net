@@ -1,0 +1,713 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Accessing a specific server in an HTTP cluster - BackSlasher</title>
+<meta name="description" content="The Problem Part1 - Fault tolerence A common configuration of web servers is setting up multiple servers to serve the same content, with a load-balancing method redirecting / forwarding clients to a specific server. For instance, let’s say I’m using servers server and otherserver to serve the site cluster-name. The cheapest (as in “not requiring any additional software/hardware”) way of doing it is creating the following DNS records: cluster-name IN CNAME server cluster-name IN CNAME otherserver  Due to  round-robin DNS, about 50% of the clients querying for cluster-name will get the record pointing to server first (and therefor access it), and the other ones will get otherserver first. As long as the server and otherserver are configured to reply to requests containing Host:&quot;cluster-nane&quot; with the right application, everything works fine. Part2 - Monitoring A popular weay to monitor web applications is hitting a specific page and making sure it comes out OK (for example, fetching /test and making sure it’s empty). When you have just one server, this is easy to test. For example, one can use: SERVER=&#39;http://site-adress&#39; [ -z $(curl -s &quot;$SERVER/test&quot;) ] || echo &#39;$SERVER is damaged&#39;  However, when using a configuration with mutliple servers, you can’t use the cluster name, because you’ll get a random server, and as a responsible admin you want to test all of them individually. When the servers redirect any hostname to this site, this is still relatively easy to script, like: SERVERS=( &#39;server&#39; &#39;otherserver&#39; ) for SERVER in &quot;${SERVERS[@]}&quot;; do 	[ -z $(curl -s &quot;http://$SERVER/test&quot;) ] || echo &#39;$SERVER is damaged&#39; done  However, most sites are configured on virtual hosting, so they respond only to a specific hostname (mostly to allow serving several sites on the same port). When using the above script on such sites, it won’t work (because the host name is wrong).">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Accessing a specific server in an HTTP cluster">
+<meta property="og:url" content="https://blog.backslasher.net/accessing-specific-server-http-cluster.html">
+
+
+  <meta property="og:description" content="The Problem Part1 - Fault tolerence A common configuration of web servers is setting up multiple servers to serve the same content, with a load-balancing method redirecting / forwarding clients to a specific server. For instance, let’s say I’m using servers server and otherserver to serve the site cluster-name. The cheapest (as in “not requiring any additional software/hardware”) way of doing it is creating the following DNS records: cluster-name IN CNAME server cluster-name IN CNAME otherserver  Due to  round-robin DNS, about 50% of the clients querying for cluster-name will get the record pointing to server first (and therefor access it), and the other ones will get otherserver first. As long as the server and otherserver are configured to reply to requests containing Host:&quot;cluster-nane&quot; with the right application, everything works fine. Part2 - Monitoring A popular weay to monitor web applications is hitting a specific page and making sure it comes out OK (for example, fetching /test and making sure it’s empty). When you have just one server, this is easy to test. For example, one can use: SERVER=&#39;http://site-adress&#39; [ -z $(curl -s &quot;$SERVER/test&quot;) ] || echo &#39;$SERVER is damaged&#39;  However, when using a configuration with mutliple servers, you can’t use the cluster name, because you’ll get a random server, and as a responsible admin you want to test all of them individually. When the servers redirect any hostname to this site, this is still relatively easy to script, like: SERVERS=( &#39;server&#39; &#39;otherserver&#39; ) for SERVER in &quot;${SERVERS[@]}&quot;; do 	[ -z $(curl -s &quot;http://$SERVER/test&quot;) ] || echo &#39;$SERVER is damaged&#39; done  However, most sites are configured on virtual hosting, so they respond only to a specific hostname (mostly to allow serving several sites on the same port). When using the above script on such sites, it won’t work (because the host name is wrong).">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2014-09-10T00:00:00+03:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/accessing-specific-server-http-cluster.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Accessing a specific server in an HTTP cluster">
+    <meta itemprop="description" content="The ProblemPart1 - Fault tolerenceA common configuration of web servers is setting up multiple servers to serve the same content, with a load-balancing method redirecting / forwarding clients to a specific server.For instance, let’s say I’m using servers server and otherserver to serve the site cluster-name.The cheapest (as in “not requiring any additional software/hardware”) way of doing it is creating the following DNS records:cluster-name IN CNAME servercluster-name IN CNAME otherserverDue to  round-robin DNS, about 50% of the clients querying for cluster-name will get the record pointing to server first (and therefor access it), and the other ones will get otherserver first. As long as the server and otherserver are configured to reply to requests containing Host:&quot;cluster-nane&quot; with the right application, everything works fine.Part2 - MonitoringA popular weay to monitor web applications is hitting a specific page and making sure it comes out OK (for example, fetching /test and making sure it’s empty).When you have just one server, this is easy to test. For example, one can use:SERVER=&#39;http://site-adress&#39;[ -z $(curl -s &quot;$SERVER/test&quot;) ] || echo &#39;$SERVER is damaged&#39;However, when using a configuration with mutliple servers, you can’t use the cluster name, because you’ll get a random server, and as a responsible admin you want to test all of them individually.When the servers redirect any hostname to this site, this is still relatively easy to script, like:SERVERS=( &#39;server&#39; &#39;otherserver&#39; )for SERVER in &quot;${SERVERS[@]}&quot;; do	[ -z $(curl -s &quot;http://$SERVER/test&quot;) ] || echo &#39;$SERVER is damaged&#39;doneHowever, most sites are configured on virtual hosting, so they respond only to a specific hostname (mostly to allow serving several sites on the same port). When using the above script on such sites, it won’t work (because the host name is wrong).">
+    <meta itemprop="datePublished" content="2014-09-10T00:00:00+03:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Accessing a specific server in an HTTP cluster
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <h2 id="the-problem">The Problem</h2>
+<h3 id="part1---fault-tolerence">Part1 - Fault tolerence</h3>
+<p>A common configuration of web servers is setting up multiple servers to serve the same content, with a load-balancing method redirecting / forwarding clients to a specific server.<br />
+For instance, let’s say I’m using servers <code class="language-plaintext highlighter-rouge">server</code> and <code class="language-plaintext highlighter-rouge">otherserver</code> to serve the site <code class="language-plaintext highlighter-rouge">cluster-name</code>.<br />
+The cheapest (as in “not requiring any additional software/hardware”) way of doing it is creating the following DNS records:</p>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cluster-name IN CNAME server
+cluster-name IN CNAME otherserver
+</code></pre></div></div>
+<p>Due to  <a href="http://en.wikipedia.org/wiki/Round-robin_DNS">round-robin DNS</a>, about 50% of the clients querying for <code class="language-plaintext highlighter-rouge">cluster-name</code> will get the record pointing to <code class="language-plaintext highlighter-rouge">server</code> first (and therefor access it), and the other ones will get <code class="language-plaintext highlighter-rouge">otherserver</code> first. As long as the <code class="language-plaintext highlighter-rouge">server</code> and <code class="language-plaintext highlighter-rouge">otherserver</code> are configured to reply to requests containing <code class="language-plaintext highlighter-rouge">Host:"cluster-nane"</code> with the right application, everything works fine.</p>
+<h3 id="part2---monitoring">Part2 - Monitoring</h3>
+<p>A popular weay to monitor web applications is hitting a specific page and making sure it comes out OK (for example, fetching <code class="language-plaintext highlighter-rouge">/test</code> and making sure it’s empty).<br />
+When you have just one server, this is easy to test. For example, one can use:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">SERVER</span><span class="o">=</span><span class="s1">'http://site-adress'</span>
+<span class="o">[</span> <span class="nt">-z</span> <span class="si">$(</span>curl <span class="nt">-s</span> <span class="s2">"</span><span class="nv">$SERVER</span><span class="s2">/test"</span><span class="si">)</span> <span class="o">]</span> <span class="o">||</span> <span class="nb">echo</span> <span class="s1">'$SERVER is damaged'</span>
+</code></pre></div></div>
+<p>However, when using a configuration with mutliple servers, you can’t use the cluster name, because you’ll get a random server, and as a responsible admin you want to test all of them individually.<br />
+When the servers redirect any hostname to this site, this is still relatively easy to script, like:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">SERVERS</span><span class="o">=(</span> <span class="s1">'server'</span> <span class="s1">'otherserver'</span> <span class="o">)</span>
+<span class="k">for </span>SERVER <span class="k">in</span> <span class="s2">"</span><span class="k">${</span><span class="nv">SERVERS</span><span class="p">[@]</span><span class="k">}</span><span class="s2">"</span><span class="p">;</span> <span class="k">do</span>
+	<span class="o">[</span> <span class="nt">-z</span> <span class="si">$(</span>curl <span class="nt">-s</span> <span class="s2">"http://</span><span class="nv">$SERVER</span><span class="s2">/test"</span><span class="si">)</span> <span class="o">]</span> <span class="o">||</span> <span class="nb">echo</span> <span class="s1">'$SERVER is damaged'</span>
+<span class="k">done</span>
+</code></pre></div></div>
+<p>However, most sites are configured on <a href="http://en.wikipedia.org/wiki/Virtual_hosting">virtual hosting</a>, so they respond only to a specific hostname (mostly to allow serving several sites on the same port). When using the above script on such sites, it won’t work (because the host name is wrong).</p>
+
+<h2 id="the-solution">The Solution</h2>
+<p>Any proper solution should modify the client (the system running the monitoring script) and not the server, so I’m not talking about serving the site at another IP etc.</p>
+<h3 id="the-primitive-one">The primitive one</h3>
+<p>The most primitive way of accessing a specific server is by modifying the HOSTS file, adding a record like</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;server ip&gt;    cluster-name
+</code></pre></div></div>
+<p>However, modifying the HOSTS file requires root/admin privilleges, might affect other processes on the machine and feels messy.</p>
+
+<h3 id="the-universal-one">The universal one</h3>
+<p>This method works with every tool I saw, because it’s utilizing <a href="http://en.wikipedia.org/wiki/Proxy_server#Web_proxy_servers">HTTP/Web Proxy</a> support, which is pretty basic.<br />
+Normally, the client opens a socket to the hostname/port combination in the URL, writes the HTTP request and reads the response.<br />
+When using an HTTP proxy, the client opens a socket to the proxy hostname/port combination and reads the response. The proxy is in charge of contacting the actual host via the <code class="language-plaintext highlighter-rouge">Host</code> HTTP header.<br />
+By specifying the server as the proxy, we can keep the request “addressed” to <code class="language-plaintext highlighter-rouge">cluster-name</code> (by using the HTTP header <code class="language-plaintext highlighter-rouge">Host: "cluster-name"</code>), but actually access the server we want.<br />
+And now for some examples, assuming <code class="language-plaintext highlighter-rouge">server:port</code> is the actual server/port listening, and <code class="language-plaintext highlighter-rouge">http://cluster-name/site</code> is the target site.</p>
+<h4 id="using-curl--wget">Using cURL / wget</h4>
+<p>Both applications can use the environment variable <code class="language-plaintext highlighter-rouge">http_proxy</code>, so the syntax is quite elegant.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">http_proxy</span><span class="o">=</span><span class="s1">'http://server:port'</span> curl <span class="s1">'http://cluster-name/site'</span>
+<span class="nv">http_proxy</span><span class="o">=</span><span class="s1">'http://server:port'</span> wget <span class="s1">'http://cluster-name/site'</span>
+</code></pre></div></div>
+<h4 id="using-powershell">Using PowerShell</h4>
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$prox</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">new-object</span><span class="w"> </span><span class="nx">System.Net.WebProxy</span><span class="w"> </span><span class="s1">'http://server:port'</span><span class="w">
+</span><span class="nv">$req</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">System.Net.WebRequest</span><span class="p">]::</span><span class="n">Create</span><span class="p">(</span><span class="s1">'http://cluster-name/site'</span><span class="p">)</span><span class="w">
+</span><span class="nv">$req</span><span class="o">.</span><span class="nf">Proxy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">$prox</span><span class="w">
+</span><span class="nv">$req</span><span class="o">.</span><span class="nf">GetResponse</span><span class="p">()</span><span class="w">
+</span></code></pre></div></div>
+<h4 id="using-python">Using Python</h4>
+<p>Using the <a href="http://docs.python-requests.org/en/latest/">requests</a> module</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">requests</span>
+<span class="n">proxies</span> <span class="o">=</span> <span class="p">{</span>
+	<span class="s">'http'</span><span class="p">:</span> <span class="s">'http://server:port'</span>
+<span class="p">}</span>
+
+<span class="n">requests</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'http://cluster-name/site'</span><span class="p">,</span> <span class="n">proxies</span><span class="o">=</span><span class="n">proxies</span><span class="p">)</span>
+</code></pre></div></div>
+<h4 id="using-ruby">Using Ruby</h4>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'net/http'</span>
+<span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s1">'cluster-name'</span><span class="p">,</span> <span class="kp">nil</span><span class="p">,</span> <span class="s1">'server'</span><span class="p">,</span> <span class="s1">'port'</span><span class="p">).</span><span class="nf">start</span> <span class="p">{</span>
+	<span class="o">|</span><span class="n">http</span><span class="o">|</span> <span class="n">http</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="s1">'cluster-name/site'</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#curl" class="page__taxonomy-item" rel="tag">curl</a><span class="sep">, </span>
+    
+      <a href="/tags/#http" class="page__taxonomy-item" rel="tag">HTTP</a><span class="sep">, </span>
+    
+      <a href="/tags/#linux" class="page__taxonomy-item" rel="tag">linux</a><span class="sep">, </span>
+    
+      <a href="/tags/#powershell" class="page__taxonomy-item" rel="tag">PowerShell</a><span class="sep">, </span>
+    
+      <a href="/tags/#scripts" class="page__taxonomy-item" rel="tag">Scripts</a><span class="sep">, </span>
+    
+      <a href="/tags/#web" class="page__taxonomy-item" rel="tag">Web</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#foss" class="page__taxonomy-item" rel="tag">FOSS</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2014-09-10T00:00:00+03:00">September 10, 2014</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/linux-and-ssds-should-you-trim.html" class="pagination--pager" title="Linux and SSDs - Should You TRIM?
+">Previous</a>
+    
+    
+      <a href="/validating-network-segments-using-puppet.html" class="pagination--pager" title="Validating network segments using Puppet
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/3-loc-760h.html" rel="permalink">Changed 3 lines of code, saved 760 server hours per month
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Act 1, where I write Java
+In the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/sapling-commands.html" rel="permalink">Sapling Commands
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Sapling (the Facebook-released SCM) is great, but the docs are not-great.
+I thought I’d list some commands it took me a while to undertand, for me and for ot...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/foia-calendars-pt1.html" rel="permalink">Processing Israeli FOIA calendars, Part 1
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Preface
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/docker-compose-ecs-nginx-caddy.html" rel="permalink">Caddy is better than Nginx for Docker Compose on ECS
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I recently managed to use Docker Compose to launch a small app in Aamazon’s Elastic Container Services (ECS).
+Overall, the result is pretty incredible. I’m a...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <script>
+  window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+  ga('create','','auto');
+  ga('set', 'anonymizeIp', false);
+  ga('send','pageview')
+</script>
+<script src="https://www.google-analytics.com/analytics.js" async></script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>

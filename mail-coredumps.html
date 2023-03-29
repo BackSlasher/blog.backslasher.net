@@ -1,0 +1,792 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Sending mail on coredumps - BackSlasher</title>
+<meta name="description" content="The Story I recently found out that some of our backend code suffers from memory-related ceashes, namely SIGSEGV (a program tries to access memory it doesn’t own). My initial response was to install and enable Abrt, which is a collection of utilities used in RHEL. Ubuntu has a similar tool called Apport. I like this tool because it sends the root user an email after every coredump / kernel oops / kernel panic, with the coredump attached (configurable) and helpful information about the process’s state (environment variables, open files, uid…). However, our issue was that our crashing processes are quite big (at least 2G of working memory) and might crash a lot, so taking coredumps for these processes was putting quite a strain on our servers’ I/O.">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Sending mail on coredumps">
+<meta property="og:url" content="https://blog.backslasher.net/mail-coredumps.html">
+
+
+  <meta property="og:description" content="The Story I recently found out that some of our backend code suffers from memory-related ceashes, namely SIGSEGV (a program tries to access memory it doesn’t own). My initial response was to install and enable Abrt, which is a collection of utilities used in RHEL. Ubuntu has a similar tool called Apport. I like this tool because it sends the root user an email after every coredump / kernel oops / kernel panic, with the coredump attached (configurable) and helpful information about the process’s state (environment variables, open files, uid…). However, our issue was that our crashing processes are quite big (at least 2G of working memory) and might crash a lot, so taking coredumps for these processes was putting quite a strain on our servers’ I/O.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2015-07-23T00:00:00+03:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/mail-coredumps.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Sending mail on coredumps">
+    <meta itemprop="description" content="The StoryI recently found out that some of our backend code suffers from memory-related ceashes, namely SIGSEGV (a program tries to access memory it doesn’t own). My initial response was to install and enable Abrt, which is a collection of utilities used in RHEL. Ubuntu has a similar tool called Apport.I like this tool because it sends the root user an email after every coredump / kernel oops / kernel panic, with the coredump attached (configurable) and helpful information about the process’s state (environment variables, open files, uid…).However, our issue was that our crashing processes are quite big (at least 2G of working memory) and might crash a lot, so taking coredumps for these processes was putting quite a strain on our servers’ I/O.">
+    <meta itemprop="datePublished" content="2015-07-23T00:00:00+03:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Sending mail on coredumps
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <h2 id="the-story">The Story</h2>
+<p>I recently found out that some of our backend code suffers from memory-related ceashes, namely <code class="language-plaintext highlighter-rouge">SIGSEGV</code> (a program tries to access memory it doesn’t own). My initial response was to install and enable <a href="https://fedorahosted.org/abrt/">Abrt</a>, which is a collection of utilities used in RHEL. Ubuntu has a similar tool called <a href="https://wiki.ubuntu.com/Apport">Apport</a>.<br />
+I like this tool because it sends the root user an email after every coredump / kernel oops / kernel panic, with the coredump attached (configurable) and helpful information about the process’s state (environment variables, open files, uid…).<br />
+However, our issue was that our crashing processes are quite big (at least 2G of working memory) and might crash a lot, so taking coredumps for these processes was putting quite a strain on our servers’ I/O.</p>
+
+<h2 id="a-bit-about-abrt">A bit about Abrt</h2>
+<p>Abrt is built from multiple processes. The ones relevant to my issue were:</p>
+
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">abrt-hook-ccpp</code>, registered as the kernel’s <code class="language-plaintext highlighter-rouge">core_pattern</code>, meaning it’s invoked whenever a process should coredump. This utility creates a “dump” directory under <code class="language-plaintext highlighter-rouge">/var/spool/abrt</code> and puts the coredump and process trivia there</li>
+  <li><code class="language-plaintext highlighter-rouge">abrtd</code>, a deamon that monitors said directory, and whenever a new dump directory appears, it reads the data inside and takes action (sends emails, reports to RHEL’s support API…)</li>
+  <li><code class="language-plaintext highlighter-rouge">abrt-ccpp</code>, a service that runs on startup and registers <code class="language-plaintext highlighter-rouge">abrt-hook-ccpp</code> as the <code class="language-plaintext highlighter-rouge">core_pattern</code></li>
+</ol>
+
+<p><code class="language-plaintext highlighter-rouge">abrt-ccpp</code> is registered by modifying <code class="language-plaintext highlighter-rouge">/proc/sys/kernel/core_pattern</code>, which usually specifies the filename to write core dumps to. However, when specifying a path that starts with <code class="language-plaintext highlighter-rouge">|</code>, it’s instead treated as a program to execute on coredumps. The program’s <code class="language-plaintext highlighter-rouge">STDIN</code> contains the coredump, and the offending process’s <code class="language-plaintext highlighter-rouge">/proc/</code> directory is kept alive so you can collect the interesting data.<br />
+I couldn’t utilize Abrt and skip the coredump - <code class="language-plaintext highlighter-rouge">abrt-hook-ccpp</code> refused to skip creating the coredump, and <code class="language-plaintext highlighter-rouge">abrtd</code> refused to process directories without the coredump. I had to emulate the behaviour on my own script.</p>
+
+<h2 id="the-script">The Script</h2>
+<p>This is my crude replacement - it’s supposed to be called from <code class="language-plaintext highlighter-rouge">core_pattern</code>, so I also wrote a “service” to register it.<br />
+It’s written in Python (and not Ruby, for instance) because Python comes installed on every server I encountered so far (because it powers Apt and Yum).<br />
+It basically harvests all interesting data from the failing process and emails it. The current list is:</p>
+
+<ul>
+  <li><strong>cgroup</strong></li>
+  <li><strong>cmdline</strong>: The commmand used to start the process, arguments and everything</li>
+  <li><strong>executable</strong>: Path to the binary file being executed</li>
+  <li><strong>signal</strong>: The signal causing the process to coredump</li>
+  <li><strong>hostname</strong></li>
+  <li><strong>kernel</strong></li>
+  <li><strong>pwd</strong>: Current working directory for the faulting process</li>
+  <li><strong>start_time</strong></li>
+  <li><strong>end_time</strong></li>
+  <li><strong>uid</strong></li>
+  <li><strong>username</strong></li>
+  <li><strong>dso_list</strong>: Loaded dynamic libraries</li>
+  <li><strong>environ</strong>: Environment variables</li>
+  <li><strong>limits</strong>: Ulimits for the process</li>
+  <li><strong>maps</strong>: Allocated memory areas (including memory-mapped files)</li>
+  <li><strong>open_fds</strong>: Open file descriptors (files, sockets, pipes…)</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#!/usr/bin/env python
+</span>
+<span class="c1">###########
+# Nitz Abrt
+###########
+#
+# A crude emulation of the Abrt utility for monitoring and diagnosing segfaults
+# Should be hooked from core_pattern - see your sysadmin
+# http://blog.backslasher.net/mail-coredumps.html
+</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pwd</span>
+<span class="kn">import</span> <span class="nn">syslog</span>
+
+<span class="k">def</span> <span class="nf">usage</span><span class="p">():</span>
+  <span class="k">print</span> <span class="s">'Usage: {} %s %c %p %u %g %t e'</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">__file__</span><span class="p">)</span>
+  <span class="k">print</span> <span class="p">(</span><span class="s">'%s  number of signal causing dump</span><span class="se">\n</span><span class="s">'</span>
+         <span class="s">'%c  core file size soft resource limit of crashing process</span><span class="se">\n</span><span class="s">'</span>
+         <span class="s">'%p  PID of dumped process</span><span class="se">\n</span><span class="s">'</span>
+         <span class="s">'%u  (numeric) real UID of dumped process</span><span class="se">\n</span><span class="s">'</span>
+         <span class="s">'%g  (numeric) real GID of dumped process</span><span class="se">\n</span><span class="s">'</span>
+         <span class="s">'%t  time of dump, expressed as seconds since the Epoch, 1970-01-01 00:00:00 +0000 (UTC)</span><span class="se">\n</span><span class="s">'</span>
+         <span class="s">'e   ignored</span><span class="se">\n</span><span class="s">'</span>
+         <span class="s">'</span><span class="se">\n</span><span class="s">'</span>
+         <span class="s">'Should be called from core_pattern</span><span class="se">\n</span><span class="s">'</span>
+  <span class="p">)</span>
+  <span class="n">sys</span><span class="p">.</span><span class="nb">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="k">if</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="p">.</span><span class="n">argv</span><span class="p">)</span><span class="o">!=</span><span class="mi">8</span><span class="p">):</span> <span class="n">usage</span><span class="p">()</span>
+
+<span class="n">signal</span><span class="o">=</span><span class="n">sys</span><span class="p">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">pid</span><span class="o">=</span><span class="n">sys</span><span class="p">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">uid</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">sys</span><span class="p">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">dump_time</span> <span class="o">=</span> <span class="n">sys</span><span class="p">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
+
+<span class="n">proc_path</span><span class="o">=</span><span class="s">'/proc/%s/'</span> <span class="o">%</span> <span class="n">pid</span>
+
+
+
+<span class="k">def</span> <span class="nf">read_file</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+  <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">proc_path</span><span class="p">,</span><span class="n">filename</span><span class="p">)</span>
+  <span class="k">return</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s">'r'</span><span class="p">).</span><span class="n">read</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">get_symlink</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+  <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">proc_path</span><span class="p">,</span><span class="n">filename</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">filename</span><span class="p">),</span> <span class="n">os</span><span class="p">.</span><span class="n">readlink</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">get_start_time</span><span class="p">():</span>
+  <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">getctime</span><span class="p">(</span><span class="n">proc_path</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">get_dso</span><span class="p">():</span>
+  <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">proc_path</span><span class="p">,</span><span class="s">'maps'</span><span class="p">)</span>
+  <span class="n">files</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">x</span><span class="p">.</span><span class="n">strip</span><span class="p">()[</span><span class="n">x</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="s">'/'</span><span class="p">):]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s">'r'</span><span class="p">).</span><span class="n">readlines</span><span class="p">()</span> <span class="k">if</span> <span class="n">x</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="s">'/'</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+  <span class="k">return</span> <span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">files</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">list_dir_symlink</span><span class="p">(</span><span class="n">dirname</span><span class="p">):</span>
+  <span class="n">dirname</span> <span class="o">=</span> <span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">proc_path</span><span class="p">,</span><span class="n">dirname</span><span class="p">)</span>
+  <span class="n">link_hash</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">i</span><span class="p">,</span><span class="n">os</span><span class="p">.</span><span class="n">readlink</span><span class="p">(</span><span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span><span class="n">i</span><span class="p">)))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">os</span><span class="p">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">dirname</span><span class="p">))</span>
+  <span class="k">return</span> <span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">.</span><span class="n">join</span><span class="p">([</span><span class="s">'%s: %s'</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">link_hash</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">link_hash</span><span class="p">.</span><span class="n">keys</span><span class="p">())])</span>
+
+<span class="n">exe_path</span><span class="o">=</span><span class="n">get_symlink</span><span class="p">(</span><span class="s">'exe'</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">fnmatch</span>
+<span class="n">blacklist</span> <span class="o">=</span> <span class="p">[</span><span class="s">'*/php-fpm'</span><span class="p">]</span> <span class="c1"># These executables are uninteresting
+</span><span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">blacklist</span><span class="p">:</span>
+  <span class="k">if</span> <span class="n">fnmatch</span><span class="p">.</span><span class="n">fnmatch</span><span class="p">(</span><span class="n">exe_path</span><span class="p">,</span><span class="n">pattern</span><span class="p">):</span>
+    <span class="k">print</span> <span class="s">'%s is blacklisted by pattern "%s". Ignoring'</span> <span class="o">%</span> <span class="p">(</span><span class="n">exe_path</span><span class="p">,</span><span class="n">pattern</span><span class="p">)</span>
+    <span class="nb">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s">'cgroup'</span><span class="p">:</span> <span class="n">read_file</span><span class="p">(</span><span class="s">'cgroup'</span><span class="p">),</span>
+  <span class="s">'cmdline'</span><span class="p">:</span> <span class="n">read_file</span><span class="p">(</span><span class="s">'cmdline'</span><span class="p">).</span><span class="n">replace</span><span class="p">(</span><span class="s">'</span><span class="se">\0</span><span class="s">'</span><span class="p">,</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">).</span><span class="n">strip</span><span class="p">(),</span>
+  <span class="s">'executable'</span><span class="p">:</span> <span class="n">exe_path</span><span class="p">,</span>
+  <span class="s">'signal'</span><span class="p">:</span> <span class="n">signal</span><span class="p">,</span>
+  <span class="s">'hostname'</span><span class="p">:</span> <span class="n">os</span><span class="p">.</span><span class="n">uname</span><span class="p">()[</span><span class="mi">1</span><span class="p">],</span>
+  <span class="s">'kernel'</span><span class="p">:</span> <span class="n">os</span><span class="p">.</span><span class="n">uname</span><span class="p">()[</span><span class="mi">2</span><span class="p">],</span>
+  <span class="s">'pid'</span><span class="p">:</span> <span class="n">pid</span><span class="p">,</span>
+  <span class="s">'pwd'</span><span class="p">:</span> <span class="n">get_symlink</span><span class="p">(</span><span class="s">'cwd'</span><span class="p">),</span>
+  <span class="s">'start_time'</span><span class="p">:</span> <span class="n">get_start_time</span><span class="p">(),</span>
+  <span class="s">'end_time'</span><span class="p">:</span> <span class="n">dump_time</span><span class="p">,</span>
+  <span class="s">'uid'</span><span class="p">:</span> <span class="n">uid</span><span class="p">,</span>
+  <span class="s">'username'</span><span class="p">:</span> <span class="n">pwd</span><span class="p">.</span><span class="n">getpwuid</span><span class="p">(</span><span class="n">uid</span><span class="p">).</span><span class="n">pw_name</span><span class="p">,</span>
+  <span class="s">'dso_list'</span><span class="p">:</span> <span class="n">get_dso</span><span class="p">(),</span>
+  <span class="s">'environ'</span><span class="p">:</span> <span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">read_file</span><span class="p">(</span><span class="s">'environ'</span><span class="p">).</span><span class="n">split</span><span class="p">(</span><span class="s">'</span><span class="se">\0</span><span class="s">'</span><span class="p">)),</span>
+  <span class="s">'limits'</span><span class="p">:</span><span class="n">read_file</span><span class="p">(</span><span class="s">'limits'</span><span class="p">),</span>
+  <span class="s">'maps'</span><span class="p">:</span> <span class="n">read_file</span><span class="p">(</span><span class="s">'maps'</span><span class="p">),</span>
+  <span class="s">'open_fds'</span><span class="p">:</span> <span class="n">list_dir_symlink</span><span class="p">(</span><span class="s">'fd'</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="n">data_str</span> <span class="o">=</span> <span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">.</span><span class="n">join</span><span class="p">([</span><span class="s">'#%s:</span><span class="se">\n</span><span class="s">%s'</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">keys</span><span class="p">())])</span>
+
+<span class="n">mail</span><span class="o">=</span><span class="s">'To:root</span><span class="se">\n</span><span class="s">Subject:nabrt crash %s</span><span class="se">\n\n</span><span class="s">%s'</span> <span class="o">%</span> <span class="p">(</span><span class="n">exe_path</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="s">'/'</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">data_str</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="n">pmail</span> <span class="o">=</span> <span class="n">subprocess</span><span class="p">.</span><span class="n">Popen</span><span class="p">([</span><span class="s">'mail'</span><span class="p">,</span><span class="s">'-t'</span><span class="p">],</span><span class="n">stdin</span><span class="o">=</span><span class="n">subprocess</span><span class="p">.</span><span class="n">PIPE</span><span class="p">)</span>
+<span class="n">pmail</span><span class="p">.</span><span class="n">stdin</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">mail</span><span class="p">)</span>
+<span class="n">pmail</span><span class="p">.</span><span class="n">stdin</span><span class="p">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h2 id="bonus---modifying-stdin">Bonus - modifying <code class="language-plaintext highlighter-rouge">STDIN</code></h2>
+<p>Because <code class="language-plaintext highlighter-rouge">abrt-hook-ccpp</code> takes its coredump from <code class="language-plaintext highlighter-rouge">STDIN</code>, I thought I could still utilize it by calling it with a modified STDIN that contains very little.
+This idea failed because <code class="language-plaintext highlighter-rouge">abrtd</code> wouldn’t work with a “corrupted” coredump, but I think it’s a novel idea and a cute script:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/sh</span>
+<span class="o">(</span><span class="nb">head</span> <span class="nt">-c</span> <span class="k">$((</span><span class="m">5</span><span class="o">*</span><span class="m">1024</span><span class="k">))</span> &lt;&amp;0 <span class="o">)</span> |          <span class="c"># Only take the first 5 MB from STDIN and pass it along</span>
+<span class="nb">exec</span> /usr/libexec/abrt-hook-ccpp <span class="s2">"</span><span class="nv">$@</span><span class="s2">"</span> <span class="c"># Become original hook</span>
+</code></pre></div></div>
+<p>I initially tried closing <code class="language-plaintext highlighter-rouge">STDIN</code> completely, but turns out the kernel is only keeping the <code class="language-plaintext highlighter-rouge">/proc</code> directory of the faulting process when that stream is open - it thinks you’re done collecting diagnostics when you close that stream.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#email" class="page__taxonomy-item" rel="tag">Email</a><span class="sep">, </span>
+    
+      <a href="/tags/#linux" class="page__taxonomy-item" rel="tag">Linux</a><span class="sep">, </span>
+    
+      <a href="/tags/#python" class="page__taxonomy-item" rel="tag">Python</a><span class="sep">, </span>
+    
+      <a href="/tags/#scripts" class="page__taxonomy-item" rel="tag">Scripts</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#foss" class="page__taxonomy-item" rel="tag">FOSS</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2015-07-23T00:00:00+03:00">July 23, 2015</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/rpmbuild.html" class="pagination--pager" title="Using RPMBuild - My Shortlist
+">Previous</a>
+    
+    
+      <a href="/graphite-migrate-dashboards.html" class="pagination--pager" title="Migrating Graphite’s Dashboards
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/3-loc-760h.html" rel="permalink">Changed 3 lines of code, saved 760 server hours per month
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Act 1, where I write Java
+In the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/sapling-commands.html" rel="permalink">Sapling Commands
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Sapling (the Facebook-released SCM) is great, but the docs are not-great.
+I thought I’d list some commands it took me a while to undertand, for me and for ot...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/foia-calendars-pt1.html" rel="permalink">Processing Israeli FOIA calendars, Part 1
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Preface
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/docker-compose-ecs-nginx-caddy.html" rel="permalink">Caddy is better than Nginx for Docker Compose on ECS
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I recently managed to use Docker Compose to launch a small app in Aamazon’s Elastic Container Services (ECS).
+Overall, the result is pretty incredible. I’m a...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <script>
+  window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+  ga('create','','auto');
+  ga('set', 'anonymizeIp', false);
+  ga('send','pageview')
+</script>
+<script src="https://www.google-analytics.com/analytics.js" async></script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>

@@ -1,0 +1,799 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Enhancing Packer Templates with eRuby - BackSlasher</title>
+<meta name="description" content="The Problem Packer is a great tool for creating machine images, and I’m using it to create EC2 AMIs. My issue with it is that Packer is using JSON for input, and JSON is very inflexible. For instance, you can’t:">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Enhancing Packer Templates with eRuby">
+<meta property="og:url" content="https://blog.backslasher.net/packer-erb.html">
+
+
+  <meta property="og:description" content="The Problem Packer is a great tool for creating machine images, and I’m using it to create EC2 AMIs. My issue with it is that Packer is using JSON for input, and JSON is very inflexible. For instance, you can’t:">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2015-11-18T00:00:00+02:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/packer-erb.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Enhancing Packer Templates with eRuby">
+    <meta itemprop="description" content="The ProblemPacker is a great tool for creating machine images, and I’m using it to create EC2 AMIs.My issue with it is that Packer is using JSON for input, and JSON is very inflexible. For instance, you can’t:">
+    <meta itemprop="datePublished" content="2015-11-18T00:00:00+02:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Enhancing Packer Templates with eRuby
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <h2 id="the-problem">The Problem</h2>
+<p><a href="https://www.packer.io/">Packer</a> is a great tool for creating machine images, and I’m using it to create EC2 AMIs.<br />
+My issue with it is that Packer is using JSON for input, and JSON is very inflexible. For instance, you can’t:</p>
+
+<ul>
+  <li>Write comments (there was <a href="https://github.com/mitchellh/packer/issues/283">an issue</a> open for two years about this)</li>
+  <li>Comment blocks out for testing (part of “write comments” but different usage)</li>
+  <li>Create identical blocks with subtle changes</li>
+</ul>
+
+<h2 id="the-solution">The Solution</h2>
+<p>After reading the comment-related issue in Packer’s GitHub page, I decided to use some wrapper. I considered writing a DSL wrapper for Ruby, but settled for using eRuby templates as a quick win.<br />
+The basic usage is writing an <code class="language-plaintext highlighter-rouge">erb</code> file instead of a <code class="language-plaintext highlighter-rouge">json</code> one, and passing it to Packer like this:</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>packer build &lt;<span class="o">(</span>erb cherry.json.erb<span class="o">)</span>
+</code></pre></div></div>
+<p>The redirection causes Bash to first execute <code class="language-plaintext highlighter-rouge">erb</code> with our template, and provide the output as a file (actually a pipe), to <code class="language-plaintext highlighter-rouge">packer</code>, who sees it as regular JSON.<br />
+A slight variation is using Packer’s STDIN, like this:</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>erb cherry.json.erb | packer build -
+</code></pre></div></div>
+<p>I dislike the idea of passing things via STDIN to binaries I’m not familiar with (since they might want some input and accidentally read it from the file), but that’s just me.</p>
+
+<h3 id="basic-usage">Basic usage</h3>
+<p>The file inside can look almost identical to the JSON one but with Ruby snippets inside, like:</p>
+
+<ul>
+  <li>
+    <p>Comments:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  :::ERB
+  &lt;%# Upload cloud-init preconfig %&gt;
+  {"type":"file","source":"cloud-init/userdata.yaml","destination":"/etc/cloud/cloud.cfg.d/50_slasher.cfg"},
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Reducing magic constants:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  :::ERB
+  &lt;% ssh_timeout_minutes = 5 %&gt;
+  ssh -o ConnectTimeout &lt;%=ssh_timeout_minutes*60%&gt; server get_stuff.sh
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>JSON-proofing strings (quick and dirty version):</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  ::ERB
+  {"type":"shell", "inline": &lt;%='sed \'s/^pidfile.*$/pidfile \/tmp\/redis.pid\' -i /etc/redis.conf'.inspect%&gt;
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h3 id="more-ruby">More Ruby</h3>
+<p>You can use heavier Ruby code to do more awesome stuff.<br />
+For instance, this is me creating both PV and HVM versions of my AMI:</p>
+<pre><code class="language-ERB">&lt;%
+require 'json'
+build_config = [
+  {type: 'pv', instance_type: 't1.micro', source_ami: 'ami-c2a818aa'},
+  {type: 'hvm', instance_type: 't2.micro', source_ami: 'ami-42718735'}
+]
+builders = build_config.map do |item|
+  {
+    "name"=&gt;"aws #{item[:type]}",
+    'type' =&gt; 'amazon-ebs',
+    'region' =&gt; 'us-east-1',
+    'source_ami' =&gt; item[:source_ami],
+    'instance_type' =&gt; item[:instance_type],
+    'ami_description' =&gt; "packer #{item[:instance_type]}",
+  }
+%&gt;
+"builders": &lt;%= JSON.pretty_generate(builders) %&gt;
+</code></pre>
+
+<p>And here’s choosing the right CentOS 6 AMI:</p>
+<pre><code class="language-ERB">&lt;%
+def source_ami(region,platform,is_hvm)
+  unless is_hvm then
+    # PV  https://aws.amazon.com/marketplace/ordering/ref=dtl_psb_continue?ie=UTF8&amp;productId=f4325b48-37b0-405a-9847-236c64622e3e&amp;region=us-east-1
+    case region
+      when 'eu-central-1' then nil # No such image
+      when 'sa-east-1' then 'ami-7d02a260'
+      when 'ap-northeast-1' then 'ami-81294380'
+      when 'eu-west-1' then 'ami-42718735'
+      when 'us-east-1' then 'ami-8997afe0'
+      when 'us-west-1' then 'ami-1a013c5f'
+      when 'us-west-2' then 'ami-b6bdde86'
+      when 'ap-southeast-2' then 'ami-e7138ddd'
+      when 'ap-southeast-1' then 'ami-a08fd9f2'
+      else raise 'Cannot choose AMI'
+    end
+  else
+    # HVM https://aws.amazon.com/marketplace/ordering?productId=74e73035-3435-48d6-88e0-89cc02ad83ee&amp;ref_=dtl_psb_continue&amp;region=us-east-1
+    case region
+      when 'eu-central-1' then 'ami-46c4f65b'
+      when 'sa-east-1' then 'ami-9b952086'
+      when 'ap-northeast-1' then 'ami-13614b12'
+      when 'eu-west-1' then 'ami-30ff5c47'
+      when 'us-east-1' then 'ami-c2a818aa'
+      when 'us-west-1' then 'ami-57cfc412'
+      when 'us-west-2' then 'ami-81d092b1'
+      when 'ap-southeast-2' then 'ami-b3523089'
+      when 'ap-southeast-1' then 'ami-b4a582e6'
+      else raise 'Cannot choose AMI'
+    end
+  end
+end
+%&gt;
+...
+"builders": [
+  ...
+  "region": &lt;%=source_ami(region,true)%&gt;
+  ...
+]
+</code></pre>
+
+<h3 id="arguments">Arguments</h3>
+<p>One can imagine arguments would be useful (e.g. “regions to build the AMI in”).<br />
+However, the <code class="language-plaintext highlighter-rouge">erb</code> binary doesn’t accept arguments, so I had to pass those as environment variables. Less elegant but works OK:</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>packer build &lt;<span class="o">(</span><span class="nv">REGIONS</span><span class="o">=</span>us-east-1,us-west-2 erb cherry.json.erb<span class="o">)</span>
+</code></pre></div></div>
+<p>And inside the template:</p>
+<pre><code class="language-ERB">&lt;%
+regions=ENV['REGIONS'].to_s.split(',').map(&amp;:strip)
+regions=['us-east-1'] if regions.empty?
+%&gt;
+</code></pre>
+
+<h3 id="going-full-ruby">Going full Ruby</h3>
+<p>I haven’t done it, but if your template is really complicated you can use a real Ruby file that prints the Packer template.<br />
+Taking the exmaple template from the <a href="https://www.packer.io/docs/templates/introduction.html">Packer docs</a>, it’ll look something like this:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'json'</span>
+<span class="n">region</span><span class="o">=</span><span class="no">ARGV</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">||</span> <span class="s1">'us-east-1'</span>
+<span class="c1">#...</span>
+<span class="c1">#...</span>
+<span class="n">builder</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="ss">type: </span><span class="s1">'amazon-ebs'</span><span class="p">,</span>
+  <span class="ss">access_key: </span><span class="s1">'...'</span><span class="p">,</span>
+  <span class="ss">secret_key: </span><span class="p">(</span><span class="no">File</span><span class="p">.</span><span class="nf">read</span><span class="p">(</span><span class="s1">'./passwd'</span><span class="p">).</span><span class="nf">strip</span><span class="p">),</span> <span class="c1"># interpolate files</span>
+  <span class="ss">region: </span><span class="n">region</span> <span class="c1"># arguments</span>
+  <span class="ss">source_ami: </span><span class="n">get_ami</span><span class="p">(</span><span class="n">region</span><span class="p">),</span> <span class="c1"># functions</span>
+  <span class="ss">instance_type: </span><span class="s1">'t1.micro'</span><span class="p">,</span>
+  <span class="ss">ssh_username: </span><span class="s1">'ubuntu'</span><span class="p">,</span>
+  <span class="ss">ami_name: </span><span class="s1">'packer '</span><span class="p">,</span> <span class="c1"># Packer's variables still work</span>
+<span class="p">}</span>
+<span class="n">res</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="ss">builders: </span><span class="p">[</span><span class="n">builder</span><span class="p">],</span>
+  <span class="ss">provisioners: </span><span class="p">{</span>
+    <span class="ss">type: </span><span class="s1">'shell'</span><span class="p">,</span>
+    <span class="ss">script: </span><span class="s1">'setup_things.sh'</span><span class="p">,</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1"># Print result</span>
+<span class="nb">puts</span> <span class="no">JSON</span><span class="p">.</span><span class="nf">pretty_generate</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Have fun templating!</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#packer" class="page__taxonomy-item" rel="tag">Packer</a><span class="sep">, </span>
+    
+      <a href="/tags/#ruby" class="page__taxonomy-item" rel="tag">Ruby</a><span class="sep">, </span>
+    
+      <a href="/tags/#scripts" class="page__taxonomy-item" rel="tag">Scripts</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#foss" class="page__taxonomy-item" rel="tag">FOSS</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2015-11-18T00:00:00+02:00">November 18, 2015</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/chef-licenses.html" class="pagination--pager" title="Listing Chef Cookbook Licenses
+">Previous</a>
+    
+    
+      <a href="/chef-lock.html" class="pagination--pager" title="Using a global lock in Chef
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/3-loc-760h.html" rel="permalink">Changed 3 lines of code, saved 760 server hours per month
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Act 1, where I write Java
+In the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/sapling-commands.html" rel="permalink">Sapling Commands
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Sapling (the Facebook-released SCM) is great, but the docs are not-great.
+I thought I’d list some commands it took me a while to undertand, for me and for ot...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/foia-calendars-pt1.html" rel="permalink">Processing Israeli FOIA calendars, Part 1
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Preface
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/docker-compose-ecs-nginx-caddy.html" rel="permalink">Caddy is better than Nginx for Docker Compose on ECS
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I recently managed to use Docker Compose to launch a small app in Aamazon’s Elastic Container Services (ECS).
+Overall, the result is pretty incredible. I’m a...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <script>
+  window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+  ga('create','','auto');
+  ga('set', 'anonymizeIp', false);
+  ga('send','pageview')
+</script>
+<script src="https://www.google-analytics.com/analytics.js" async></script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>

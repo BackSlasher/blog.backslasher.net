@@ -1,0 +1,721 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Finding Accounts Trusted for Delegation - BackSlasher</title>
+<meta name="description" content="As part of a security audit, I was asked to help in finding all accounts marked with “Trusted for Delegation”  What is “Trust for Delegation” You can try reading the TechNet Article, but in short - delegation (also known as kerberos double-hop) is allowing a service to impersonate clients in order to access other services, e.g. allowing an ASP.NET site to pull CRM records via CRM web service, using the client’s credentials (and so showing only records relevant to the client).  The Risk Accounts that are trusted for delegation can access other services in the domain (e.g. Active Directory, Exchange, in-house software that uses kerberos authentication, external software using ADFS) without the user’s explicit action or consent (sometimes without him even accessing the system, see next paragraph) and without any limits or indication that it’s not the original user. Some configurations also allow the delegate access to any service in the domain (as opposed to specified ones) or giving the delegate access without the user actually accessing the delegate in the first place (read on). To sum it up, delegation must be used sparingly due to its dangerous nature.  Technical Implementation and Quirks Delegation is all about an application getting a kerberos TGS (Ticket Granting Service) for another resource, using the client’s identity (allowing the server to impersonate the client for that resource).">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Finding Accounts Trusted for Delegation">
+<meta property="og:url" content="https://blog.backslasher.net/finding-accounts-trusted-for-delegation.html">
+
+
+  <meta property="og:description" content="As part of a security audit, I was asked to help in finding all accounts marked with “Trusted for Delegation”  What is “Trust for Delegation” You can try reading the TechNet Article, but in short - delegation (also known as kerberos double-hop) is allowing a service to impersonate clients in order to access other services, e.g. allowing an ASP.NET site to pull CRM records via CRM web service, using the client’s credentials (and so showing only records relevant to the client).  The Risk Accounts that are trusted for delegation can access other services in the domain (e.g. Active Directory, Exchange, in-house software that uses kerberos authentication, external software using ADFS) without the user’s explicit action or consent (sometimes without him even accessing the system, see next paragraph) and without any limits or indication that it’s not the original user. Some configurations also allow the delegate access to any service in the domain (as opposed to specified ones) or giving the delegate access without the user actually accessing the delegate in the first place (read on). To sum it up, delegation must be used sparingly due to its dangerous nature.  Technical Implementation and Quirks Delegation is all about an application getting a kerberos TGS (Ticket Granting Service) for another resource, using the client’s identity (allowing the server to impersonate the client for that resource).">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2014-01-23T00:00:00+02:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/finding-accounts-trusted-for-delegation.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Finding Accounts Trusted for Delegation">
+    <meta itemprop="description" content="As part of a security audit, I was asked to help in finding all accountsmarked with “Trusted for Delegation”What is “Trust for Delegation”You can try reading the TechNet Article,but in short - delegation (also known as kerberos double-hop) isallowing a service to impersonate clients in order to access otherservices, e.g. allowing an ASP.NET site to pull CRM records via CRM webservice, using the client’s credentials (and so showing only recordsrelevant to the client).The RiskAccounts that are trusted for delegation can access other services inthe domain (e.g. Active Directory, Exchange, in-house software that useskerberos authentication, external software using ADFS) without theuser’s explicit action or consent (sometimes without him even accessingthe system, see next paragraph) and without any limits or indicationthat it’s not the original user.Some configurations also allow the delegate access to any service in thedomain (as opposed to specified ones) or giving the delegate accesswithout the user actually accessing the delegate in the first place(read on).To sum it up, delegation must be used sparingly due to its dangerousnature.Technical Implementation and QuirksDelegation is all about an application getting a kerberos TGS (TicketGranting Service) for another resource, using the client’s identity(allowing the server to impersonate the client for that resource).">
+    <meta itemprop="datePublished" content="2014-01-23T00:00:00+02:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Finding Accounts Trusted for Delegation
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>As part of a security audit, I was asked to help in finding all accounts
+marked with “Trusted for Delegation”</p>
+
+<h3 id="what-is-trust-for-delegation">What is “Trust for Delegation”</h3>
+<p>You can try reading the <a href="http://technet.microsoft.com/en-us/library/cc739740%28v=ws.10%29.aspx">TechNet Article</a>,
+but in short - delegation (also known as kerberos double-hop) is
+allowing a service to impersonate clients in order to access other
+services, e.g. allowing an ASP.NET site to pull CRM records via CRM web
+service, using the client’s credentials (and so showing only records
+relevant to the client).<a name="more"></a></p>
+
+<h3 id="the-risk">The Risk</h3>
+<p>Accounts that are trusted for delegation can access other services in
+the domain (e.g. Active Directory, Exchange, in-house software that uses
+kerberos authentication, external software using ADFS) without the
+user’s explicit action or consent (sometimes without him even accessing
+the system, see next paragraph) and without any limits or indication
+that it’s not the original user.<br />
+Some configurations also allow the delegate access to any service in the
+domain (as opposed to specified ones) or giving the delegate access
+without the user actually accessing the delegate in the first place
+(read on).<br />
+To sum it up, delegation must be used sparingly due to its dangerous
+nature.</p>
+
+<h3 id="technical-implementation-and-quirks">Technical Implementation and Quirks</h3>
+<p>Delegation is all about an application getting a kerberos TGS (Ticket
+Granting Service) for another resource, using the client’s identity
+(allowing the server to impersonate the client for that resource).</p>
+
+<p><img src="/assets/finding-accounts-trusted-for-delegation/kerbDelegationDialog.jpg" alt="" /></p>
+
+<p>Delegation configuration is saved like that:</p>
+
+<style type="text/css">
+.borderline table td,th { border: 1px solid #000; }
+</style>
+
+<div class="borderline">
+  <p>Configuration | UserAccountControl &amp; 0x80000 (TRUSTED_FOR_DELEGATION) | UserAccountControl &amp; 0x100000 (TRUSTED_TO_AUTHENTICATE_FOR_DELEGATION) | msDS-AllowedToDelegateTo
+————-                                                                            | —————— | ————- | —————-
+Do not trust this user for delegation                                                    | X                  | X             | X
+Trust this user for delegation to any service (Kerberos only)                            | V                  | X             | X
+Trust this user for delegation for specified services only (Kerberos protocol)           | X                  | X             | V (List of SPNs)
+Trust this user for delegation for specified services only (Any authentication protocol) | X                  | V             | V (List of SPNs)</p>
+</div>
+
+<p>####Notes</p>
+
+<ul>
+  <li><strong>When “Any protocol” is enabled</strong>, services don’t need to present an existing kerberos TGS, but can fabricate one using only the user’s id. (Source: <a href="http://msdn.microsoft.com/en-us/library/ff650469.aspx">Technet</a>)<br />
+   This method is designed to accommodate services that don’t use kerberos authentication (e.g. websites that use forms authentication), but has a very serious implication - accounts allowed to do so don’t have to present any proof that a specific user has even accessed the system - they can create any TGS out of thin air.</li>
+  <li><strong>When constrained to specific services</strong>, the resulting TGS is itself delegation-constrained to those services, so to allow a “triple hop” like this:<br />
+   <code class="language-plaintext highlighter-rouge">S1 &gt; S2 &gt; S3</code><br />
+   <code class="language-plaintext highlighter-rouge">S1</code> must be configured either to allow delegation to <code class="language-plaintext highlighter-rouge">any service</code> or to <code class="language-plaintext highlighter-rouge">S2</code> <strong>AND</strong> <code class="language-plaintext highlighter-rouge">S3</code>.</li>
+  <li><strong>For really sensitive accounts</strong> (such as domain admins), one can mark “Account is sensitive and cannot be delegated” to prevent AD allowing any form of delegation with this account. This account will suffer from reduced functionality on applications requiring delegation to work (like the site described earlier).</li>
+</ul>
+
+<p>###Finding Allowed Accounts
+Although PowerShell’s module for Active Directory has some calculated variables for delegation (e.g. <code class="language-plaintext highlighter-rouge">TrustedForDelegation</code>), they can’t be used to filter <code class="language-plaintext highlighter-rouge">ADObject</code> (only <code class="language-plaintext highlighter-rouge">ADUSer</code> or <code class="language-plaintext highlighter-rouge">ADComputer</code>), so I built my own script
+to find trusted-for-delegation accounts:</p>
+
+<div class="language-posh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Get-ADObject</span><span class="w"> </span><span class="nt">-fi</span><span class="w"> </span><span class="p">{(</span><span class="n">msDS-AllowedToDelegateTo</span><span class="w"> </span><span class="o">-like</span><span class="w"> </span><span class="s1">'*'</span><span class="p">)</span><span class="w"> </span><span class="o">-or</span><span class="w"> </span><span class="p">(</span><span class="n">UserAccountControl</span><span class="w"> </span><span class="o">-band</span><span class="w"> </span><span class="nx">0x0080000</span><span class="p">)</span><span class="w"> </span><span class="o">-or</span><span class="w"> </span><span class="p">(</span><span class="n">UserAccountControl</span><span class="w"> </span><span class="o">-band</span><span class="w"> </span><span class="nx">0x1000000</span><span class="p">)}</span><span class="w"> </span><span class="nt">-prop</span><span class="w"> </span><span class="n">samAccountName</span><span class="p">,</span><span class="nx">msDS-AllowedToBeDelegateTo</span><span class="p">,</span><span class="nx">servicePrincipalName</span><span class="p">,</span><span class="nx">userAccountControl</span><span class="w"> </span><span class="se">`
+</span><span class="o">|</span><span class="w"> </span><span class="n">select</span><span class="w"> </span><span class="nx">DistinguishedName</span><span class="p">,</span><span class="nx">ObjectClass</span><span class="p">,</span><span class="nx">samAccountName</span><span class="p">,</span><span class="nx">servicePrincipalName</span><span class="p">,</span><span class="w">
+ </span><span class="p">@{</span><span class="nx">name</span><span class="o">=</span><span class="s1">'DelegationStatus'</span><span class="p">;</span><span class="nx">expression</span><span class="o">=</span><span class="p">{</span><span class="kr">if</span><span class="p">(</span><span class="bp">$_</span><span class="o">.</span><span class="nf">UserAccountControl</span><span class="w"> </span><span class="o">-band</span><span class="w"> </span><span class="mi">0</span><span class="n">x80000</span><span class="p">){</span><span class="s1">'AllServices'</span><span class="p">}</span><span class="kr">else</span><span class="p">{</span><span class="s1">'SpecificServices'</span><span class="p">}}},</span><span class="w">
+ </span><span class="p">@{</span><span class="nx">name</span><span class="o">=</span><span class="s1">'AllowedProtocols'</span><span class="p">;</span><span class="nx">expression</span><span class="o">=</span><span class="p">{</span><span class="kr">if</span><span class="p">(</span><span class="bp">$_</span><span class="o">.</span><span class="nf">UserAccountControl</span><span class="w"> </span><span class="o">-band</span><span class="w"> </span><span class="mi">0</span><span class="n">x1000000</span><span class="p">){</span><span class="s1">'Any'</span><span class="p">}</span><span class="kr">else</span><span class="p">{</span><span class="s1">'Kerberos'</span><span class="p">}}},</span><span class="w">
+</span><span class="p">@{</span><span class="nx">name</span><span class="o">=</span><span class="s1">'DestinationServices'</span><span class="p">;</span><span class="nx">expression</span><span class="o">=</span><span class="p">{</span><span class="bp">$_</span><span class="o">.</span><span class="s1">'msDS-AllowedToDelegateTo'</span><span class="p">}}</span><span class="w">
+</span></code></pre></div></div>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#active-directory" class="page__taxonomy-item" rel="tag">Active Directory</a><span class="sep">, </span>
+    
+      <a href="/tags/#delegation" class="page__taxonomy-item" rel="tag">Delegation</a><span class="sep">, </span>
+    
+      <a href="/tags/#kerberos" class="page__taxonomy-item" rel="tag">Kerberos</a><span class="sep">, </span>
+    
+      <a href="/tags/#one-liner" class="page__taxonomy-item" rel="tag">One-Liner</a><span class="sep">, </span>
+    
+      <a href="/tags/#powershell" class="page__taxonomy-item" rel="tag">PowerShell</a><span class="sep">, </span>
+    
+      <a href="/tags/#scripts" class="page__taxonomy-item" rel="tag">Scripts</a><span class="sep">, </span>
+    
+      <a href="/tags/#security" class="page__taxonomy-item" rel="tag">Security</a><span class="sep">, </span>
+    
+      <a href="/tags/#windows" class="page__taxonomy-item" rel="tag">Windows</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#microsoft" class="page__taxonomy-item" rel="tag">Microsoft</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2014-01-23T00:00:00+02:00">January 23, 2014</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/some-powershell-snippets-for-network-scanning.html" class="pagination--pager" title="Some PowerShell Snippets for Network Scanning
+">Previous</a>
+    
+    
+      <a href="/disabling-generate-publisher-evidence.html" class="pagination--pager" title="Disabling “generate Publisher Evidence” using scripts
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/3-loc-760h.html" rel="permalink">Changed 3 lines of code, saved 760 server hours per month
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Act 1, where I write Java
+In the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/sapling-commands.html" rel="permalink">Sapling Commands
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Sapling (the Facebook-released SCM) is great, but the docs are not-great.
+I thought I’d list some commands it took me a while to undertand, for me and for ot...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/foia-calendars-pt1.html" rel="permalink">Processing Israeli FOIA calendars, Part 1
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Preface
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/docker-compose-ecs-nginx-caddy.html" rel="permalink">Caddy is better than Nginx for Docker Compose on ECS
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I recently managed to use Docker Compose to launch a small app in Aamazon’s Elastic Container Services (ECS).
+Overall, the result is pretty incredible. I’m a...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <script>
+  window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+  ga('create','','auto');
+  ga('set', 'anonymizeIp', false);
+  ga('send','pageview')
+</script>
+<script src="https://www.google-analytics.com/analytics.js" async></script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>

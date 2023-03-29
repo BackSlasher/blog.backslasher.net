@@ -1,0 +1,710 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Running Xbox360 controllers on Ubuntu - BackSlasher</title>
+<meta name="description" content="">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Running Xbox360 controllers on Ubuntu">
+<meta property="og:url" content="https://blog.backslasher.net/xbox360-controller-ubuntu.html">
+
+
+  <meta property="og:description" content="">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2015-09-06T00:00:00+03:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/xbox360-controller-ubuntu.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Running Xbox360 controllers on Ubuntu">
+    <meta itemprop="description" content="">
+    <meta itemprop="datePublished" content="2015-09-06T00:00:00+03:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Running Xbox360 controllers on Ubuntu
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p><img src="/assets/xbox360-controller-ubuntu/ubuntu360.png" alt="" /></p>
+
+<p>I wanted to write a few lines on how I configured my controller on Ubuntu to work with Steam games, since I discovered some neat stuff.</p>
+
+<h3 id="what-ive-got">What I’ve got</h3>
+<ul>
+  <li><a href="http://www.xbox.com/en-US/xbox-360/accessories/controllers/wireless-controller-with-play-and-charge-kit">Xbox 360 wireless standard controller</a>, with cable (the one you use with the Xbox 360 console)</li>
+  <li><a href="http://www.amazon.com/Xbox-Wireless-Gaming-Receiver-Windows/dp/B000HZFCT2">Xbox 360 Gaming Reciever</a></li>
+  <li>Ubuntu 14.04.3 LTS</li>
+  <li>Steam, as installed from the Ubuntu repo</li>
+</ul>
+
+<p>If your inventory differs, you might have other issues.</p>
+
+<h2 id="the-play-and-charge-is-a-lie">The play and charge is a lie</h2>
+<p>The cable can’t transfer any data, and is useless for connecting the gamepad to the computer.</p>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Controller:        Microsoft Xbox 360 Play&amp;Charge Kit
+Vendor/Product:    045e:028f
+USB Path:          003:029
+Controller Type:   Xbox360 Play&amp;Charge
+
+-- [ ERROR ] ------------------------------------------------------
+The Xbox360 Play&amp;Charge cable is for recharging only, it does not transmit data, thus xboxdrv can't support it. You have to get a wireless receiver:
+
+* http://www.xbox.com/en-ca/hardware/x/xbox360wirelessgamingreceiver/
+-------
+</code></pre></div></div>
+<p>Above is <code class="language-plaintext highlighter-rouge">xboxdrv</code> reproaching me for trying to work with the cable.</p>
+
+<h2 id="xpad">xpad</h2>
+<p>(not the <a href="https://apps.ubuntu.com/cat/applications/xpad/">Ubuntu package</a> that emulates sticky notes).<br />
+A  kernel module in charge of interfacing with gamepads, now bundled with Ubuntu. <a href="https://help.ubuntu.com/community/Xbox360Controller">See more here</a>.<br />
+This module handles regular Xbox 360 controllers (see “What I’ve got” above) well enough, but some games didn’t recognize the controller.<br />
+It also does nothing to indicate the controller was recognized - the controller keeps blinking (like it’s searching for an owner), and no message in <code class="language-plaintext highlighter-rouge">dmesg</code> or any log (<code class="language-plaintext highlighter-rouge">/var/log/{syslog,kern.log,dmesg}</code>).<br />
+The reason is that the driver registers 4 controllers (<code class="language-plaintext highlighter-rouge">/dev/input/js{0,1,2,3}</code>) when the reciever is plugged in, so nothing happens when it’s detecting a new actual controller.</p>
+
+<h2 id="xboxdrv">xboxdrv</h2>
+<p>An alternative userspace driver avaialble from the Ubuntu repos.<br />
+To run it, you first have to unload the xpad module using <code class="language-plaintext highlighter-rouge">sudo rmmod xpad</code> or by supplying <code class="language-plaintext highlighter-rouge">-d</code> to xboxdrv. It can also be <a href="http://askubuntu.com/q/110341">blacklisted</a>.<br />
+It has to be run as root (because it handles raw input devices), and gives much more visibilty to the controller’s state (for instance, it sets the controller’s status LED to indicate that the controller is connected).<br />
+Some games only detected my input when running <code class="language-plaintext highlighter-rouge">xboxdrv</code> with <code class="language-plaintext highlighter-rouge">--mimic-xpad</code>, even though they wouldn’t work with the real <code class="language-plaintext highlighter-rouge">xpad</code>. Weird.
+It has a lot of interesting arguments (really) and the manpage is really worth a read (<code class="language-plaintext highlighter-rouge">man xboxdrv</code>). I think the secret to success is trying different kinds of configurations.</p>
+
+<h2 id="steam-games-and-gamepads">Steam Games and Gamepads</h2>
+<p>When using Steam’s <a href="http://store.steampowered.com/bigpicture">Big Picture</a> (accessible by pressing the big Xbox logo while browsing steam), games with the gamepad icon are supposed to support gamepads (duh).<br />
+<img src="/assets/xbox360-controller-ubuntu/meatboy.png" alt="" /></p>
+
+<p>I’m going to list a few games I managed to get working with the controller, so you’ll know that if you can’t get these working, you have some configuration issue.<br />
+Please let me know if you have any insights / additions!</p>
+<h3 id="works-with-xpad">Works with xpad</h3>
+<p>Since these work with the default setup, I didn’t test them on xboxdrv.</p>
+
+<ul>
+  <li><a href="http://store.steampowered.com/app/70300">VVVVVV</a></li>
+  <li><a href="http://store.steampowered.com/app/40800">Super Meat Boy</a> - so much better with a gamepad!</li>
+  <li><a href="http://store.steampowered.com/app/218820">Mercenary Kings</a></li>
+  <li><a href="http://store.steampowered.com/app/305050">Outland</a></li>
+</ul>
+
+<h3 id="works-with-xboxdrv">Works with xboxdrv</h3>
+<ul>
+  <li><a href="http://store.steampowered.com/app/113200">The Binding of Isaac</a> - required <code class="language-plaintext highlighter-rouge">--mimic-xpad</code></li>
+  <li><a href="http://store.steampowered.com/app/247020">Cook, Serve, Delicious!</a> - required <code class="language-plaintext highlighter-rouge">--mimic-xpad</code></li>
+</ul>
+
+<h2 id="image-attribution">Image Attribution</h2>
+<p>First image taken from here: <a href="https://scognito.wordpress.com/2009/11/18/streaming-movies-and-music-from-ubuntu-to-xbox360/">https://scognito.wordpress.com/2009/11/18/streaming-movies-and-music-from-ubuntu-to-xbox360/</a></p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#steam" class="page__taxonomy-item" rel="tag">steam</a><span class="sep">, </span>
+    
+      <a href="/tags/#ubuntu" class="page__taxonomy-item" rel="tag">ubuntu</a><span class="sep">, </span>
+    
+      <a href="/tags/#xbox" class="page__taxonomy-item" rel="tag">xbox</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#foss" class="page__taxonomy-item" rel="tag">FOSS</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2015-09-06T00:00:00+03:00">September 6, 2015</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/chef-snippets.html" class="pagination--pager" title="Chef Snippets
+">Previous</a>
+    
+    
+      <a href="/piculet.html" class="pagination--pager" title="Managing AWS Security Groups with Piculet
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/3-loc-760h.html" rel="permalink">Changed 3 lines of code, saved 760 server hours per month
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Act 1, where I write Java
+In the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/sapling-commands.html" rel="permalink">Sapling Commands
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Sapling (the Facebook-released SCM) is great, but the docs are not-great.
+I thought I’d list some commands it took me a while to undertand, for me and for ot...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/foia-calendars-pt1.html" rel="permalink">Processing Israeli FOIA calendars, Part 1
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Preface
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/docker-compose-ecs-nginx-caddy.html" rel="permalink">Caddy is better than Nginx for Docker Compose on ECS
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I recently managed to use Docker Compose to launch a small app in Aamazon’s Elastic Container Services (ECS).
+Overall, the result is pretty incredible. I’m a...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <script>
+  window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+  ga('create','','auto');
+  ga('set', 'anonymizeIp', false);
+  ga('send','pageview')
+</script>
+<script src="https://www.google-analytics.com/analytics.js" async></script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>

@@ -1,0 +1,766 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Open-Gridview - the FOSS Out-Gridview - BackSlasher</title>
+<meta name="description" content="The Story I’ve been a Microsoft SysAdmin for a long time before switching for Linux. During which, I scripted a lot in PowerShell. PowerShell has several “output” functions like Out-File (which passes the input to a file), Out-Null etc. One of these functions was Out-Gridview which tabularizes its input and displays it in an interactive table:  You can see how easy it is to tabulate your objects.">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Open-Gridview - the FOSS Out-Gridview">
+<meta property="og:url" content="https://blog.backslasher.net/open-gridview.html">
+
+
+  <meta property="og:description" content="The Story I’ve been a Microsoft SysAdmin for a long time before switching for Linux. During which, I scripted a lot in PowerShell. PowerShell has several “output” functions like Out-File (which passes the input to a file), Out-Null etc. One of these functions was Out-Gridview which tabularizes its input and displays it in an interactive table:  You can see how easy it is to tabulate your objects.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2015-12-13T00:00:00+02:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/open-gridview.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Open-Gridview - the FOSS Out-Gridview">
+    <meta itemprop="description" content="The StoryI’ve been a Microsoft SysAdmin for a long time before switching for Linux. During which, I scripted a lot in PowerShell.PowerShell has several “output” functions like Out-File (which passes the input to a file), Out-Null etc.One of these functions was Out-Gridview which tabularizes its input and displays it in an interactive table:You can see how easy it is to tabulate your objects.">
+    <meta itemprop="datePublished" content="2015-12-13T00:00:00+02:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Open-Gridview - the FOSS Out-Gridview
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <h2 id="the-story">The Story</h2>
+<p>I’ve been a Microsoft SysAdmin for a long time before switching for Linux. During which, I scripted a lot in PowerShell.<br />
+PowerShell has several “output” functions like <code class="language-plaintext highlighter-rouge">Out-File</code> (which passes the input to a file), <code class="language-plaintext highlighter-rouge">Out-Null</code> etc.<br />
+One of these functions was <a href="https://technet.microsoft.com/en-us/library/hh849920.aspx">Out-Gridview</a> which tabularizes its input and displays it in an interactive table:<br />
+<img src="/assets/open-gridview/out-gridview.jpg" alt="out-gridview" /><br />
+You can see how easy it is to tabulate your objects.</p>
+
+<p>The advantage might be hard to explain to hardcore *nix CLI users - they might scoff and say that you can filter using <code class="language-plaintext highlighter-rouge">grep</code>, sort using <code class="language-plaintext highlighter-rouge">sort</code> and extract columns using <code class="language-plaintext highlighter-rouge">awk</code>, and that all output is beautiful in its own way.<br />
+However, since switching to Linux I’ve had numerous incidents of either trying to format my output so that it is both readable and parsable, or piping output to some filter and regret filtering it. How I missed being able to pass the output to <code class="language-plaintext highlighter-rouge">Out-Gridview</code> and being able to manipulate it via GUI.</p>
+
+<h2 id="the-solution">The Solution</h2>
+<p>I’ve decided that Out-Gridview is a basic enough problem so I can tackle it, and also writing UI is fun (as if), so I implemented it via GTK and Python.<br />
+The result is the package <a href="https://pypi.python.org/pypi/opengridview">opengridview</a>.</p>
+
+<h3 id="installation">Installation</h3>
+<p>For regular usage, use the pip package:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>pip <span class="nb">install </span>opengridview
+</code></pre></div></div>
+<p>For modification and hacking, set up a venv in the git repo:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone https://github.com/BackSlasher/opengridview <span class="nb">.</span>
+virtualenv <span class="nb">.</span> <span class="nt">--system-site-packages</span>
+<span class="nb">.</span> bin/activate
+pip <span class="nb">install</span> <span class="nt">-e</span> <span class="nb">.</span>
+</code></pre></div></div>
+
+<h3 id="basic-usage">Basic usage</h3>
+<p>To use it, pipe your output into <code class="language-plaintext highlighter-rouge">ogv</code> (or <code class="language-plaintext highlighter-rouge">open-gridview</code>), optionally specifying how to parse each row (the default is “autosplit”) and how the columns are named (usually the first row is taken as a header row).<br />
+<code class="language-plaintext highlighter-rouge">ogv</code> can accept regular files, but it’s more interesting to pipe streams into it.<br />
+Multiple files can be passed (causing multiple windows to appear) by using bash’s <a href="http://tldp.org/LDP/abs/html/process-sub.html">process substitution</a>:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ogv &lt;<span class="o">(</span><span class="nb">ls</span> <span class="nt">-l</span> /home/bob | <span class="nb">tail</span> <span class="nt">-n</span>+2<span class="o">)</span> &lt;<span class="o">(</span><span class="nb">ls</span> <span class="nt">-l</span> /var | <span class="nb">tail</span> <span class="nt">-n</span>+2<span class="o">)</span> <span class="nt">--headers</span> permissions,links,user,group,size,mod-month,mod-day,mod-time,name
+</code></pre></div></div>
+
+<h3 id="parsers">Parsers</h3>
+<h4 id="autosplit">autosplit</h4>
+<p>Emulates perl’s <code class="language-plaintext highlighter-rouge">autosplit</code>, using <code class="language-plaintext highlighter-rouge">re.split</code> and a delimiter (defaults to <code class="language-plaintext highlighter-rouge">\s+</code>)</p>
+
+<h4 id="csv">csv</h4>
+<p>Uses the <code class="language-plaintext highlighter-rouge">csv</code> module to prase every line. Configurable delimeter (defaults to <code class="language-plaintext highlighter-rouge">,</code>)</p>
+
+<h4 id="line_json">line_json</h4>
+<p>Treats each line as a separate JSON object</p>
+
+<h3 id="neat-features">Neat features</h3>
+<ul>
+  <li>
+    <p>The autosplit parser uses <code class="language-plaintext highlighter-rouge">re.split</code> to create the columns. This method honors capturing groups inside the separator, meaning you can use the separator as a Regex parser, and discard the “split” columns using empty column headers, like this:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  :::bash
+  pip list | ogv -s '^([^ ]*) \(([^ ]*)\)$' --headers ,name,version
+</code></pre></div>    </div>
+
+    <p>(see below for screenshot of the result)</p>
+  </li>
+  <li>
+    <p>I implemented <code class="language-plaintext highlighter-rouge">Ctrl+c</code> (inside the GUI) to copy selected rows as CSV text, in order to ease copying data into spreadsheet applications (a common action for me when handling tabulated data)</p>
+  </li>
+</ul>
+
+<h2 id="example-use-cases">Example use cases</h2>
+<h3 id="filesystem-stuff">Filesystem stuff</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>:::bash
+ls -l | tail -n+2 | ogv --headers permissions,links,user,group,size,mod-month,mod-day,mod-time,name &amp;
+du -h | ogv --separator '\t' --headers size,path &amp;
+wait
+</code></pre></div></div>
+
+<p><img src="/assets/open-gridview/filesystem.png" alt="" /></p>
+
+<h3 id="show-all-packages-installed">Show all packages installed</h3>
+<p>Preset the filter to “python”</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>:::bash
+aptitude search ~i --disable-columns -F '%p,%v,%t' | ogv -p csv --headers name,version,source --filter python
+</code></pre></div></div>
+
+<p><img src="/assets/open-gridview/aptitude.png" alt="" /></p>
+
+<h3 id="pip-package-list">Pip package list</h3>
+<p>Custom headers, column extraction using capturing groups</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>:::bash
+pip list | ogv -s '^([^ ]*) \(([^ ]*)\)$' --headers ,name,version
+</code></pre></div></div>
+
+<p><img src="/assets/open-gridview/pip.png" alt="" /></p>
+
+<h3 id="multiple-module-search">Multiple module search</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>:::bash
+(
+  echo platform name version
+  pip list | perl -ne 'print "python $_"';
+  gem list | grep '(' | perl -ne 'print "ruby $_"'
+) | ogv
+</code></pre></div></div>
+
+<p><img src="/assets/open-gridview/pip-gem.png" alt="" /></p>
+
+<h2 id="interesting-bits">Interesting bits</h2>
+<ul>
+  <li>I chose to implement Open-Gridview on GTK because I’m running Gnome</li>
+  <li>I chose Python (as opposed to Ruby / Perl) because Python comes preinstalled on most major Linux distros</li>
+  <li>Since I chose <a href="https://wiki.gnome.org/action/show/Projects/PyGObject?action=show&amp;redirect=PyGObject">PyGObject</a> as my GTK library, I’m annoyingly missing some features, like:
+    <ul>
+      <li>Writing custom data to the clipboard</li>
+      <li>Directly connecting functions to key shortcuts (I’m currently using menu items as a middleman)</li>
+      <li>The <code class="language-plaintext highlighter-rouge">Gtk.Application</code> class forces “single-instance” applications on you (think firefox). Although there was <a href="https://mail.gnome.org/archives/gtk-devel-list/2011-February/msg00091.html">some discussion</a> about this decision, it seems mandated. I had to work around this by managing multiple <code class="language-plaintext highlighter-rouge">Gtk.Window</code> instances by myself</li>
+    </ul>
+  </li>
+  <li>Some Python utilities (e.g. <code class="language-plaintext highlighter-rouge">csv.reader</code>) use internal buffering when reading streams. This means that using them directly caused delay when parsing a live stream (and not a file). I’m currently reading one line at a time, then feeding it to a parser. This is also why all current parsers are line-based</li>
+  <li>I found no easy/elegant way to interrupt streams while they were waiting for input. Eventually I found about “daemon threads”, which are threads that don’t justify keeping the process alive (if only daemon threads are left, the process is closed)</li>
+</ul>
+
+<h2 id="todos">TODOs</h2>
+<ul>
+  <li>Add item selection functionality (like out-gridview’s <code class="language-plaintext highlighter-rouge">OutputMode</code>)</li>
+  <li>Support advanced filtering (e.g. regex, specific columns)</li>
+  <li>Support hiding and re-ordering columns</li>
+  <li>Add a progress bar if the stream isn’t closed (EOFed)</li>
+</ul>
+
+<p>Please let me know if you find this useful.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#powershell" class="page__taxonomy-item" rel="tag">PowerShell</a><span class="sep">, </span>
+    
+      <a href="/tags/#python" class="page__taxonomy-item" rel="tag">Python</a><span class="sep">, </span>
+    
+      <a href="/tags/#scripts" class="page__taxonomy-item" rel="tag">Scripts</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#foss" class="page__taxonomy-item" rel="tag">FOSS</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2015-12-13T00:00:00+02:00">December 13, 2015</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/chef-lock.html" class="pagination--pager" title="Using a global lock in Chef
+">Previous</a>
+    
+    
+      <a href="/jenkins-token.html" class="pagination--pager" title="Managing Jenkins API Tokens
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/3-loc-760h.html" rel="permalink">Changed 3 lines of code, saved 760 server hours per month
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Act 1, where I write Java
+In the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/sapling-commands.html" rel="permalink">Sapling Commands
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Sapling (the Facebook-released SCM) is great, but the docs are not-great.
+I thought I’d list some commands it took me a while to undertand, for me and for ot...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/foia-calendars-pt1.html" rel="permalink">Processing Israeli FOIA calendars, Part 1
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Preface
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/docker-compose-ecs-nginx-caddy.html" rel="permalink">Caddy is better than Nginx for Docker Compose on ECS
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I recently managed to use Docker Compose to launch a small app in Aamazon’s Elastic Container Services (ECS).
+Overall, the result is pretty incredible. I’m a...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <script>
+  window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+  ga('create','','auto');
+  ga('set', 'anonymizeIp', false);
+  ga('send','pageview')
+</script>
+<script src="https://www.google-analytics.com/analytics.js" async></script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>

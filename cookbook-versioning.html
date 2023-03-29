@@ -1,0 +1,952 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Cookbook Versioning Script - BackSlasher</title>
+<meta name="description" content="The Problem I’ve always disliked releasing cookbook versions manually. The process requires a lot of bureaucratic steps which are easy to forget and require no thought at all. Before I had this script, I sometimes avoided modifying the cookbook’s version when I only applied “a little fix”, losing the ability to roll back to previous versions (for instance). I also had little success in having anybody else follow my tedious procedure, which led to the “only I can touch master” approach that turned me into a serious bottleneck in cookbook releases.">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Cookbook Versioning Script">
+<meta property="og:url" content="https://blog.backslasher.net/cookbook-versioning.html">
+
+
+  <meta property="og:description" content="The Problem I’ve always disliked releasing cookbook versions manually. The process requires a lot of bureaucratic steps which are easy to forget and require no thought at all. Before I had this script, I sometimes avoided modifying the cookbook’s version when I only applied “a little fix”, losing the ability to roll back to previous versions (for instance). I also had little success in having anybody else follow my tedious procedure, which led to the “only I can touch master” approach that turned me into a serious bottleneck in cookbook releases.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2016-02-29T00:00:00+02:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/cookbook-versioning.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Cookbook Versioning Script">
+    <meta itemprop="description" content="The ProblemI’ve always disliked releasing cookbook versions manually. The process requires a lot of bureaucratic steps which are easy to forget and require no thought at all.Before I had this script, I sometimes avoided modifying the cookbook’s version when I only applied “a little fix”, losing the ability to roll back to previous versions (for instance).I also had little success in having anybody else follow my tedious procedure, which led to the “only I can touch master” approach that turned me into a serious bottleneck in cookbook releases.">
+    <meta itemprop="datePublished" content="2016-02-29T00:00:00+02:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Cookbook Versioning Script
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          5 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <h2 id="the-problem">The Problem</h2>
+<p>I’ve always disliked releasing cookbook versions manually. The process requires a lot of bureaucratic steps which are easy to forget and require no thought at all.<br />
+Before I had this script, I sometimes avoided modifying the cookbook’s version when I only applied “a little fix”, losing the ability to roll back to previous versions (for instance).<br />
+I also had little success in having anybody else follow my tedious procedure, which led to the “only I can touch master” approach that turned me into a serious bottleneck in cookbook releases.</p>
+
+<h2 id="the-solution">The Solution</h2>
+<p>Nowdays I have a Jenkins job which is in charge of taking a “topical” branch and merging it “properly” to the cookbook’s master branch.<br />
+The job contains these steps:</p>
+
+<h3 id="1-valdate-git-etiquette">1. Valdate git-etiquette</h3>
+<p>I need to make sure that this branch is following my guidelines for PRs:</p>
+
+<ol>
+  <li>
+    <p>It has to be a descendant of master<br />
+ This is done to ensure that the resulting merge will be a fast-forward merge (FF), keeping my git history uncomplicated, saving me from unexpected merge conflicts, and avoiding merge-only issues (<code class="language-plaintext highlighter-rouge">master</code> works fine, <code class="language-plaintext highlighter-rouge">topical</code> works fine, their merge somehow doesn’t. It happens).</p>
+  </li>
+  <li>
+    <p>It needs to be merge-commit free:<br />
+ I really like my commit trees linear. I also expect merge-candidates to be short-lived topical branches, so it makes sense to expect a straightforward chain of commits from them</p>
+  </li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+<span class="nb">set</span> <span class="nt">-e</span>
+
+<span class="c"># `git merge-base --is-ancestor` on git&gt;1.8</span>
+<span class="nv">A</span><span class="o">=</span><span class="si">$(</span>git rev-parse <span class="nt">--short</span> HEAD<span class="si">)</span> <span class="c">#current commit</span>
+<span class="nv">B</span><span class="o">=</span><span class="s2">"master"</span> <span class="c"># target_branch</span>
+
+<span class="k">if</span> <span class="o">[[</span> <span class="si">$(</span>git merge-base <span class="nv">$A</span> <span class="nv">$B</span><span class="si">)</span> <span class="o">==</span> <span class="si">$(</span>git rev-parse <span class="nt">--verify</span> <span class="nv">$A</span><span class="si">)</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then
+  </span><span class="nb">echo</span> <span class="s2">"Will not merge </span><span class="k">${</span><span class="nv">B</span><span class="k">}</span><span class="s2"> into itself"</span> <span class="o">&gt;</span>&amp;2
+  <span class="nb">exit </span>1
+<span class="k">fi
+
+if</span> <span class="o">[[</span> <span class="si">$(</span>git merge-base <span class="nv">$B</span> <span class="nv">$A</span><span class="si">)</span> <span class="o">!=</span> <span class="si">$(</span>git rev-parse <span class="nt">--verify</span> <span class="nv">$B</span><span class="si">)</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then
+  </span><span class="nb">echo</span> <span class="s2">"Will not perform a non-FF merge"</span> <span class="o">&gt;</span>&amp;2
+  <span class="nb">exit </span>2
+<span class="k">fi
+
+if</span> <span class="o">[</span> <span class="nt">-n</span> <span class="s2">"</span><span class="si">$(</span>git log <span class="nt">--merges</span> <span class="nv">$A</span>..<span class="nv">$B</span><span class="si">)</span><span class="s2">"</span> <span class="o">]</span><span class="p">;</span> <span class="k">then
+  </span><span class="nb">echo</span> <span class="s2">"Will not introduce merge commits"</span> <span class="o">&gt;</span>&amp;2
+  <span class="nb">exit </span>2
+<span class="k">fi</span>
+
+<span class="c"># All OK</span>
+<span class="nb">exit </span>0
+</code></pre></div></div>
+
+<h3 id="2-test-cookbook">2. Test Cookbook</h3>
+<p>In real life, this is done by a different Jenkins job, since “testing a cookbook” is an action I use a lot in my workflows.
+The simplest way of doing it, however, can be something like this:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>berks <span class="nb">install</span> <span class="c"># Fetch dependencies</span>
+berks verify  <span class="c"># Check syntax etc</span>
+foodcritic <span class="nb">.</span>  <span class="c"># Linting</span>
+</code></pre></div></div>
+
+<p>These steps require the ChefDK installed, obviously</p>
+
+<h3 id="3-choose-a-new-version-number">3. Choose a new version number</h3>
+<p>I use the <a href="http://semver.org/">semantic versioning</a> standard versioning, which basically means that:</p>
+
+<ul>
+  <li>If I break backwards-compatibility, it’s a major version (X.x.x)</li>
+  <li>Else-if I add new features, it’s a minor version (x.X.x)</li>
+  <li>Else it’s a build number (x.x.X)</li>
+</ul>
+
+<p>To determine the increment required, I’ve decided to look through git commit messages and detect strings indicating big changes.<br />
+My reasoning is that when a developer adds a significant change (e.g. a breaking change), they can include the string <code class="language-plaintext highlighter-rouge">MAJOR_BUMP</code> in their commit message and forget about it.<br />
+This script will see that the new commits include such messages and increment the major version.<br />
+It might look a bit hackish, but it works</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#!/usr/bin/env ruby</span>
+<span class="c1"># monkey patching</span>
+<span class="k">class</span> <span class="o">&lt;&lt;</span> <span class="no">File</span>
+  <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="n">content</span><span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="no">File</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s2">"w"</span><span class="p">)</span>
+    <span class="n">f</span><span class="p">.</span><span class="nf">write</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+    <span class="n">f</span><span class="p">.</span><span class="nf">close</span>
+  <span class="k">end</span>
+<span class="k">end</span> 
+
+<span class="n">target_branch</span><span class="o">=</span><span class="s1">'master'</span>
+<span class="n">has_minor</span><span class="o">=</span><span class="sb">`git log </span><span class="si">#{</span><span class="n">target_branch</span><span class="si">}</span><span class="sb">.. --grep=BUMP_MINOR`</span><span class="p">.</span><span class="nf">length</span> <span class="o">&gt;</span> <span class="mi">0</span>
+<span class="n">has_major</span><span class="o">=</span><span class="sb">`git log </span><span class="si">#{</span><span class="n">target_branch</span><span class="si">}</span><span class="sb">.. --grep=BUMP_MAJOR`</span><span class="p">.</span><span class="nf">length</span> <span class="o">&gt;</span> <span class="mi">0</span>
+<span class="n">bump_type</span><span class="o">=</span><span class="k">if</span> <span class="n">has_major</span> <span class="k">then</span> <span class="s1">'major'</span>
+          <span class="k">elsif</span> <span class="n">has_minor</span> <span class="k">then</span> <span class="s1">'minor'</span>
+          <span class="k">else</span> <span class="s1">'build'</span>
+          <span class="k">end</span>
+
+<span class="c1"># Get next version</span>
+<span class="n">split_options</span><span class="o">=</span><span class="p">[</span><span class="s1">'major'</span><span class="p">,</span><span class="s1">'minor'</span><span class="p">,</span><span class="s1">'build'</span><span class="p">]</span>
+<span class="n">split_index</span><span class="o">=</span><span class="n">split_options</span><span class="p">.</span><span class="nf">index</span><span class="p">(</span><span class="n">bump_type</span><span class="p">)</span>
+<span class="k">raise</span> <span class="s1">'unknown bump modifier'</span> <span class="k">if</span> <span class="n">split_index</span><span class="p">.</span><span class="nf">nil?</span>
+<span class="n">metadata_file</span><span class="o">=</span><span class="s1">'./metadata.rb'</span>
+<span class="n">metadata</span><span class="o">=</span><span class="no">File</span><span class="p">.</span><span class="nf">read</span><span class="p">(</span><span class="n">metadata_file</span><span class="p">)</span>
+<span class="n">version_line</span><span class="o">=</span><span class="n">metadata</span><span class="p">.</span><span class="nf">split</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">).</span><span class="nf">select</span><span class="p">{</span><span class="o">|</span><span class="n">s</span><span class="o">|</span><span class="n">s</span><span class="p">[</span><span class="sr">/^\s*version\W/</span><span class="p">]}.</span><span class="nf">last</span>
+<span class="n">version_regex</span><span class="o">=</span><span class="sr">/("|')([\d\.]+)("|')/</span>
+<span class="n">version</span><span class="o">=</span><span class="n">version_line</span><span class="p">[</span><span class="n">version_regex</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">v_arr</span><span class="o">=</span><span class="n">version</span><span class="p">.</span><span class="nf">split</span><span class="p">(</span><span class="s1">'.'</span><span class="p">)</span>
+<span class="n">v_arr</span><span class="p">[</span><span class="n">split_index</span><span class="p">]</span><span class="o">=</span><span class="p">(</span><span class="n">v_arr</span><span class="p">[</span><span class="n">split_index</span><span class="p">].</span><span class="nf">to_i</span><span class="o">+</span><span class="mi">1</span><span class="p">).</span><span class="nf">to_s</span>
+<span class="p">(</span><span class="n">split_index</span><span class="o">+</span><span class="mi">1</span><span class="o">..</span><span class="n">v_arr</span><span class="p">.</span><span class="nf">length</span><span class="o">-</span><span class="mi">1</span><span class="p">).</span><span class="nf">each</span><span class="p">{</span><span class="o">|</span><span class="n">a</span><span class="o">|</span><span class="n">v_arr</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span><span class="p">}</span> <span class="c1"># Zero other cells</span>
+<span class="n">new_version</span><span class="o">=</span><span class="n">v_arr</span><span class="p">.</span><span class="nf">join</span><span class="p">(</span><span class="s1">'.'</span><span class="p">)</span>
+
+<span class="c1"># Export new_version somehow to the other scripts</span>
+<span class="no">File</span><span class="p">.</span><span class="nf">write</span><span class="p">(</span><span class="s1">'NEW_VERSION'</span><span class="p">,</span><span class="n">new_version</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="4-modify-the-version-identifier">4. Modify the version identifier</h3>
+<p>Now that we have a version, we need to update the <code class="language-plaintext highlighter-rouge">metadata.rb</code> file with the new version number</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#!/usr/bin/env ruby</span>
+<span class="c1"># monkey patching</span>
+<span class="k">class</span> <span class="o">&lt;&lt;</span> <span class="no">File</span>
+  <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="n">content</span><span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="no">File</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s2">"w"</span><span class="p">)</span>
+    <span class="n">f</span><span class="p">.</span><span class="nf">write</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+    <span class="n">f</span><span class="p">.</span><span class="nf">close</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">new_version</span><span class="o">=</span><span class="no">ENV</span><span class="p">[</span><span class="s1">'NEW_VERSION'</span><span class="p">]</span>
+
+<span class="c1"># Read file</span>
+<span class="n">metadata_file</span><span class="o">=</span><span class="s1">'./metadata.rb'</span>
+<span class="n">metadata</span><span class="o">=</span><span class="no">File</span><span class="p">.</span><span class="nf">read</span><span class="p">(</span><span class="n">metadata_file</span><span class="p">)</span>
+
+<span class="c1"># Find version line</span>
+<span class="n">version_regex</span><span class="o">=</span><span class="sr">/("|')([\d\.]+)("|')/</span>
+<span class="n">version_line</span><span class="o">=</span><span class="n">metadata</span><span class="p">.</span><span class="nf">split</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">).</span><span class="nf">select</span><span class="p">{</span><span class="o">|</span><span class="n">s</span><span class="o">|</span><span class="n">s</span><span class="p">[</span><span class="sr">/^\s*version\W/</span><span class="p">]}.</span><span class="nf">last</span>
+
+<span class="c1"># Generate new one</span>
+<span class="n">new_version_line</span><span class="o">=</span><span class="n">version_line</span><span class="p">.</span><span class="nf">gsub</span><span class="p">(</span><span class="n">version_regex</span><span class="p">,</span><span class="s2">"'</span><span class="si">#{</span><span class="n">new_version</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
+<span class="n">new_metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">.</span><span class="nf">gsub</span><span class="p">(</span><span class="sr">/\n</span><span class="si">#{</span><span class="no">Regexp</span><span class="p">.</span><span class="nf">escape</span><span class="p">(</span><span class="n">version_line</span><span class="p">)</span><span class="si">}</span><span class="sr">\n/</span><span class="p">,</span><span class="s2">"</span><span class="se">\n</span><span class="si">#{</span><span class="n">new_version_line</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="c1"># Write back to file</span>
+<span class="no">File</span><span class="p">.</span><span class="nf">write</span><span class="p">(</span><span class="n">metadata_file</span><span class="p">,</span><span class="n">new_metadata</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="5-create-changelog">5. Create changelog</h3>
+<p>This is by far the most tedious step to do manually, and also the hardest (IMO) to automate. I insist on maintaining a changelog for cookbooks, because:</p>
+
+<ol>
+  <li>The git history isn’t always available (e.g. in the cookbook’s “compiled” form)</li>
+  <li>Compiled artifacts shouldn’t rely on version-control-specific details, such as commits.</li>
+</ol>
+
+<p>I support the changelog formats created by both <code class="language-plaintext highlighter-rouge">berks cookbook</code> and <code class="language-plaintext highlighter-rouge">knife cookbook create</code>.<br />
+The gist of the script is:</p>
+
+<ol>
+  <li>Extract commit message in a specific format from every commit to be merged</li>
+  <li>Combine them into a markdown-like list</li>
+  <li>Add the list at the right place in the <code class="language-plaintext highlighter-rouge">CHANGELOG</code> file - before the topmost version</li>
+</ol>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#!/usr/bin/env ruby</span>
+<span class="c1"># monkey patching</span>
+<span class="k">class</span> <span class="o">&lt;&lt;</span> <span class="no">File</span>
+  <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="n">content</span><span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="no">File</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s2">"w"</span><span class="p">)</span>
+    <span class="n">f</span><span class="p">.</span><span class="nf">write</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+    <span class="n">f</span><span class="p">.</span><span class="nf">close</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">target_branch</span><span class="o">=</span><span class="s1">'master'</span>
+<span class="n">new_version</span><span class="o">=</span><span class="no">ENV</span><span class="p">[</span><span class="s1">'NEW_VERSION'</span><span class="p">]</span>
+
+<span class="c1"># Collect messages</span>
+<span class="n">messages</span><span class="o">=</span><span class="sb">`git log </span><span class="si">#{</span><span class="n">target_branch</span><span class="si">}</span><span class="sb">.. --format='%w(0,0,4)- [%h] (%an) %s%n%n%b'`</span>
+
+<span class="c1"># Combine to markdown</span>
+<span class="n">new_changes</span><span class="o">=</span><span class="s2">"# </span><span class="si">#{</span><span class="n">new_version</span><span class="si">}</span><span class="se">\n</span><span class="si">#{</span><span class="n">messages</span><span class="si">}</span><span class="s2">"</span>
+
+<span class="c1"># Modify file</span>
+<span class="n">changes_file</span><span class="o">=</span><span class="s1">'./CHANGELOG.md'</span>
+<span class="n">changes_content</span><span class="o">=</span><span class="no">File</span><span class="p">.</span><span class="nf">read</span><span class="p">(</span><span class="n">changes_file</span><span class="p">)</span>
+<span class="c1"># Handle multiple formats</span>
+<span class="k">if</span> <span class="n">changes_content</span><span class="p">[</span><span class="sr">/^#/</span><span class="p">]</span> <span class="c1"># Berks format</span>
+  <span class="n">changes_content</span><span class="p">.</span><span class="nf">sub!</span><span class="p">(</span><span class="sr">/#/</span><span class="p">,</span><span class="s2">"</span><span class="si">#{</span><span class="n">new_changes</span><span class="si">}</span><span class="se">\n</span><span class="s2">#"</span><span class="p">)</span>
+<span class="k">elsif</span> <span class="n">changes_content</span><span class="p">[</span><span class="sr">/^.* CHANGELOG\n=*\n/</span><span class="p">]</span> <span class="c1"># Knife format</span>
+  <span class="n">changes_content</span><span class="p">.</span><span class="nf">sub!</span><span class="p">(</span><span class="sr">/\n[\d\.]+\n-*\n/</span><span class="p">,</span><span class="s2">"#</span><span class="si">#{</span><span class="n">new_changes</span><span class="si">}</span><span class="se">\n\\</span><span class="s2">0"</span><span class="p">)</span> <span class="c1"># Added pound</span>
+<span class="k">else</span>
+  <span class="k">raise</span> <span class="s2">"Unknown format in </span><span class="si">#{</span><span class="n">changes_file</span><span class="si">}</span><span class="s2">"</span>
+<span class="k">end</span>
+<span class="no">File</span><span class="p">.</span><span class="nf">write</span><span class="p">(</span><span class="n">changes_file</span><span class="p">,</span><span class="n">changes_content</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="6-create-the-version-commit">6. Create the version commit</h3>
+<p>The modifications to the files need to be commited as the “version bump” commit. This commit will also be the tip for the new version.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git commit metadata.rb CHANGELOG.md <span class="nt">-m</span> <span class="s2">"Upgraded to version </span><span class="nv">$NEW_VERSION</span><span class="s2">"</span>
+</code></pre></div></div>
+
+<h3 id="7-tag-and-push">7. Tag and push</h3>
+<p>The new version should be pushed to <code class="language-plaintext highlighter-rouge">master</code> and tagged as <code class="language-plaintext highlighter-rouge">vNEW_VERSION</code>. In my case, this is done in a Jenkins-specific action, but it can be scripted like this:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git tag <span class="s2">"v</span><span class="k">${</span><span class="nv">NEW_VERSION</span><span class="k">}</span><span class="s2">"</span>
+git push <span class="nt">--tags</span>
+git push origin HEAD:master
+</code></pre></div></div>
+
+<h3 id="8-upload-to-production">8. Upload to production</h3>
+<p>This is the simple version:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>berks upload
+</code></pre></div></div>
+<p>And this is the one I actually use, which helps me generate a nice message about which cookbooks were modified:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">BERKS_OUT</span><span class="o">=</span><span class="si">$(</span>berks upload | <span class="nb">grep</span> <span class="s1">'^Uploaded'</span><span class="si">)</span>
+<span class="nb">echo</span> <span class="s2">"Uploaded: "</span>
+<span class="nb">echo</span> <span class="s2">"</span><span class="nv">$BERKS_OUT</span><span class="s2">"</span>
+</code></pre></div></div>
+
+<h2 id="update-251116">Update 25.11.16</h2>
+<p>I joined all of these to a standalone script I use for my own cookbooks:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#!/usr/bin/env ruby
+
+# Arguments
+require 'optparse'
+options = {target_branch: 'master'}
+OptionParser.new do |opts|
+  opts.on('-M', "Major bump") do |m|
+    options[:major_bump]=true
+  end
+  opts.on('-m', "Minor bump") do |m|
+    options[:minor_bump]=true
+  end
+  opts.on("-d","--directory D", String, "Working directory") do |d|
+    options[:directory] = d
+  end
+  opts.on('-t','--target TAR', String, "Commit containing current version") do |t|
+    options[:target_branch]=t
+  end
+end.parse!
+
+target_branch = options[:target_branch]
+
+# monkey patching
+class &lt;&lt; File
+  def write(filename,content)
+    f = File.new(filename,"w")
+    f.write(content)
+    f.close
+  end
+end
+
+# cd to target directory
+Dir.chdir(options[:directory]) if options[:directory]
+
+# New version
+split_index = if options[:major_bump] then 0
+              elsif options[:minor_bump] then 1
+              else 2
+              end
+metadata_file='./metadata.rb'
+metadata=File.read(metadata_file)
+version_line=metadata.split("\n").select{|s|s[/^\s*version\W/]}.last
+version_regex=/("|')([\d\.]+)("|')/
+version=version_line[version_regex,2]
+v_arr=version.split('.')
+v_arr[split_index]=(v_arr[split_index].to_i+1).to_s
+(split_index+1..v_arr.length-1).each{|a|v_arr[a]=0} # Zero other cells
+new_version=v_arr.join('.')
+
+#### Changelog
+
+# Collect messages
+messages=`git log #{target_branch}.. --format='%w(0,0,4)- [%h] (%an) %s'`
+
+# Combine to markdown
+new_changes="# #{new_version}\n#{messages}"
+
+# Modify file
+changes_file='./CHANGELOG.md'
+changes_content=File.read(changes_file)
+# Handle multiple formats
+if changes_content[/^#/] # Berks format
+  changes_content.sub!(/#/,"#{new_changes}\n#")
+elsif changes_content[/^.* CHANGELOG\n=*\n/] # Knife format
+  changes_content.sub!(/\n[\d\.]+\n-*\n/,"##{new_changes}\n\\0") # Added pound
+else
+  raise "Unknown format in #{changes_file}"
+end
+File.write(changes_file,changes_content)
+
+#### Metadata file
+
+# Read file
+metadata_file='./metadata.rb'
+metadata=File.read(metadata_file)
+
+# Find version line
+version_regex=/("|')([\d\.]+)("|')/
+version_line=metadata.split("\n").select{|s|s[/^\s*version\W/]}.last
+
+# Generate new one
+new_version_line=version_line.gsub(version_regex,"'#{new_version}'")
+new_metadata=metadata.gsub(/\n#{Regexp.escape(version_line)}\n/,"\n#{new_version_line}\n")
+
+# Write back to file
+File.write(metadata_file,new_metadata)
+
+# TODO git tag
+# TODO merge master
+# TODO push
+</code></pre></div></div>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#bash" class="page__taxonomy-item" rel="tag">Bash</a><span class="sep">, </span>
+    
+      <a href="/tags/#chef" class="page__taxonomy-item" rel="tag">Chef</a><span class="sep">, </span>
+    
+      <a href="/tags/#ruby" class="page__taxonomy-item" rel="tag">Ruby</a><span class="sep">, </span>
+    
+      <a href="/tags/#scripts" class="page__taxonomy-item" rel="tag">Scripts</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#foss" class="page__taxonomy-item" rel="tag">FOSS</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2016-02-29T00:00:00+02:00">February 29, 2016</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/grafana-migrate-dashboards.html" class="pagination--pager" title="Migrating Grafana’s Dashboards
+">Previous</a>
+    
+    
+      <a href="/shell-filter.html" class="pagination--pager" title="Filtering in Shell
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/3-loc-760h.html" rel="permalink">Changed 3 lines of code, saved 760 server hours per month
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Act 1, where I write Java
+In the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/sapling-commands.html" rel="permalink">Sapling Commands
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Sapling (the Facebook-released SCM) is great, but the docs are not-great.
+I thought I’d list some commands it took me a while to undertand, for me and for ot...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/foia-calendars-pt1.html" rel="permalink">Processing Israeli FOIA calendars, Part 1
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Preface
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/docker-compose-ecs-nginx-caddy.html" rel="permalink">Caddy is better than Nginx for Docker Compose on ECS
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I recently managed to use Docker Compose to launch a small app in Aamazon’s Elastic Container Services (ECS).
+Overall, the result is pretty incredible. I’m a...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <script>
+  window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+  ga('create','','auto');
+  ga('set', 'anonymizeIp', false);
+  ga('send','pageview')
+</script>
+<script src="https://www.google-analytics.com/analytics.js" async></script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>

@@ -1,0 +1,700 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Using RPMBuild - My Shortlist - BackSlasher</title>
+<meta name="description" content="The Story I was trying to tinker with Abrt, a daemon in charge of collecting and diagnosing various crashes in RHEL (more on that in a different post). Because the crash hook is written in C (it was designed to be really quick), I couldn’t use my usual method of editing the actual files and adding debug prints etc. I had to recompile the package from source, which proved to be a non-trivial task. The documentation I found was separated over several locations so I thought I’d list my way here:">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Using RPMBuild - My Shortlist">
+<meta property="og:url" content="https://blog.backslasher.net/rpmbuild.html">
+
+
+  <meta property="og:description" content="The Story I was trying to tinker with Abrt, a daemon in charge of collecting and diagnosing various crashes in RHEL (more on that in a different post). Because the crash hook is written in C (it was designed to be really quick), I couldn’t use my usual method of editing the actual files and adding debug prints etc. I had to recompile the package from source, which proved to be a non-trivial task. The documentation I found was separated over several locations so I thought I’d list my way here:">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2015-07-22T00:00:00+03:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/rpmbuild.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Using RPMBuild - My Shortlist">
+    <meta itemprop="description" content="The StoryI was trying to tinker with Abrt, a daemon in charge of collecting and diagnosing various crashes in RHEL (more on that in a different post).Because the crash hook is written in C (it was designed to be really quick), I couldn’t use my usual method of editing the actual files and adding debug prints etc. I had to recompile the package from source, which proved to be a non-trivial task. The documentation I found was separated over several locations so I thought I’d list my way here:">
+    <meta itemprop="datePublished" content="2015-07-22T00:00:00+03:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Using RPMBuild - My Shortlist
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <h2 id="the-story">The Story</h2>
+<p>I was trying to tinker with <a href="https://github.com/abrt/abrt">Abrt</a>, a daemon in charge of collecting and diagnosing various crashes in RHEL (more on that in a different post).<br />
+Because the crash hook is written in C (it was designed to be really quick), I couldn’t use my usual method of editing the actual files and adding debug prints etc. I had to recompile the package from source, which proved to be a non-trivial task. The documentation I found was separated over several locations so I thought I’d list my way here:</p>
+
+<h2 id="my-solution">My Solution</h2>
+
+<p>Related articles from CentOS wiki:</p>
+
+<ul>
+  <li><a href="http://wiki.centos.org/HowTos/SetupRpmBuildEnvironment">Build environment</a></li>
+  <li><a href="http://wiki.centos.org/HowTos/RebuildSRPM">Rebuilding Source RPM</a></li>
+</ul>
+
+<h3 id="1-create-a-build-vm">1. Create a build VM</h3>
+<p>Building is still a messy process. If you don’t feel like cleaning up manually, you can just utilize a VM (I have a Vagrant config just for that). It should be running the same OS version you’re building for (in my case, CentOS 6.6)</p>
+
+<h3 id="2-install-build-tools">2. Install build tools</h3>
+<p>I always install the package group “development tools” in addition to “rpm-build”, which contains a script for building RPMs.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>yum groupinstall <span class="s1">'development tools'</span>
+<span class="nb">sudo </span>yum <span class="nb">install </span>rpm-build
+</code></pre></div></div>
+<p>Also create a build root directory:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span> <span class="o">!</span> <span class="nt">-d</span> ~/rpmbuild <span class="o">]</span> <span class="o">||</span> <span class="nb">rm</span> <span class="nt">-r</span> ~/rpmbuild <span class="c"># Delete dir if exists</span>
+<span class="nb">mkdir</span> <span class="nt">-p</span> ~/rpmbuild/<span class="o">{</span>BUILD,RPMS,SOURCES,SPECS,SRPMS<span class="o">}</span>
+</code></pre></div></div>
+
+<h3 id="3-grab-source-rpm">3. Grab source RPM</h3>
+<p>While it IS possible to build from real source (cloning the github repo for instance), I haven’t had much luck with it. Even after generating the Makefile successfully, the build failed on some weird C syntax errors.<br />
+For every binary RPM available from your repository, there should be a source RPM available as well - this one contains the source code and the metadata required to create the binary RPM. I use that RPM but to the source before building.<br />
+While I couldn’t activate a source repository (which is supposed to be a thing), I managed to hunt my source package down by modifying a URL I to match my OS/package. Maybe you’ll have to do the same.<br />
+Mine looks like:<br />
+<a href="http://vault.centos.org/6.6/os/Source/SPackages/abrt-2.0.8-26.el6.centos.src.rpm">http://vault.centos.org/6.6/os/Source/SPackages/abrt-2.0.8-26.el6.centos.src.rpm</a><br />
+You need to download and install the downloaded package (<strong>without root</strong>), which will deploy many files into your build root directory:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget <span class="s1">'http://vault.centos.org/6.6/os/Source/SPackages/abrt-2.0.8-26.el6.centos.src.rpm'</span> <span class="o">&amp;&amp;</span>
+rpm <span class="nt">-iv</span> <span class="k">*</span>.rpm <span class="o">&amp;&amp;</span> <span class="c"># NO SUDO</span>
+<span class="nb">rm</span> <span class="k">*</span>.rpm
+</code></pre></div></div>
+
+<h3 id="4-modify-source">4. Modify source</h3>
+<p>You can now inspect the files and modify whichever you want. Poke around in <code class="language-plaintext highlighter-rouge">~/rpmbuild/SOURCES</code>. I usually create a git repo in that directory before tinkering so I can easily track my customizations and revert if I mess something up.</p>
+
+<h3 id="5-build">5. Build</h3>
+<p>We now use the rpmbuild script to build the package by pointing it to a <code class="language-plaintext highlighter-rouge">spec</code> file. It <em>should</em> handle everything and leave you with a collection of binary RPMs, but obviously it might fail.<br />
+I had an issue that even though I got the CentOS source package and ran it on a CentOS machine, the version was tagged as <code class="language-plaintext highlighter-rouge">el6</code> (Enterprise Linux 6), and not <code class="language-plaintext highlighter-rouge">el6.centos</code>, which is the tag that all CentOS packages that come from the official repos use. This is important because the dependencies of packages are often hardcoded to this tag, so trying to install those RPMs will cause it to complain (e.g. that you have <code class="language-plaintext highlighter-rouge">abrt-libs.2.0.8-30.el6.centos</code> and not <code class="language-plaintext highlighter-rouge">abrt-libs.2.0.8-30.el6</code>).<br />
+To solve it, you should append something like <code class="language-plaintext highlighter-rouge">--define 'dist .el6.centos'</code> to your rpmbuild command.<br />
+Mine looked like:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rpmbuild <span class="nt">-ba</span> ~/rpmbuild/SPECS/abrt.spec <span class="nt">--define</span> <span class="s1">'dist .el6.centos'</span>
+</code></pre></div></div>
+
+<h3 id="6-install">6. Install</h3>
+<p>After you’re done building, you can now install the RPMS available at <code class="language-plaintext highlighter-rouge">~/rpmbuild/RPMS</code>. You might want to install the original repository packages first, just to have it install all of the external prerequisites (e.g. <code class="language-plaintext highlighter-rouge">gdb</code>) without bothering you. Use <code class="language-plaintext highlighter-rouge">sudo rpm -Uv</code> when installing, so you’ll get a report of the files being installed / replaced. That way you can make sure your modified binaries are there.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#building" class="page__taxonomy-item" rel="tag">Building</a><span class="sep">, </span>
+    
+      <a href="/tags/#centos" class="page__taxonomy-item" rel="tag">CentOS</a><span class="sep">, </span>
+    
+      <a href="/tags/#linux" class="page__taxonomy-item" rel="tag">Linux</a><span class="sep">, </span>
+    
+      <a href="/tags/#rhel" class="page__taxonomy-item" rel="tag">RHEL</a><span class="sep">, </span>
+    
+      <a href="/tags/#rpm" class="page__taxonomy-item" rel="tag">RPM</a><span class="sep">, </span>
+    
+      <a href="/tags/#scripts" class="page__taxonomy-item" rel="tag">Scripts</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#foss" class="page__taxonomy-item" rel="tag">FOSS</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2015-07-22T00:00:00+03:00">July 22, 2015</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/hbase-graphite-python.html" class="pagination--pager" title="Sending HBase metrics to Graphite using Python
+">Previous</a>
+    
+    
+      <a href="/mail-coredumps.html" class="pagination--pager" title="Sending mail on coredumps
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/3-loc-760h.html" rel="permalink">Changed 3 lines of code, saved 760 server hours per month
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Act 1, where I write Java
+In the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/sapling-commands.html" rel="permalink">Sapling Commands
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Sapling (the Facebook-released SCM) is great, but the docs are not-great.
+I thought I’d list some commands it took me a while to undertand, for me and for ot...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/foia-calendars-pt1.html" rel="permalink">Processing Israeli FOIA calendars, Part 1
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Preface
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/docker-compose-ecs-nginx-caddy.html" rel="permalink">Caddy is better than Nginx for Docker Compose on ECS
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I recently managed to use Docker Compose to launch a small app in Aamazon’s Elastic Container Services (ECS).
+Overall, the result is pretty incredible. I’m a...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <script>
+  window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+  ga('create','','auto');
+  ga('set', 'anonymizeIp', false);
+  ga('send','pageview')
+</script>
+<script src="https://www.google-analytics.com/analytics.js" async></script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>

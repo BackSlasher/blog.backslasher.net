@@ -1,0 +1,769 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Windows Event Collection - BackSlasher</title>
+<meta name="description" content="I’ve recently implemented an enterprise-wide solution of event collection in our organization, using Windows’ built-in mechanism called the Windows Event Collector. This mechanism allows you to collect events from computers running Windows NT5+ (XP/Server 2003 and greater) into Windows NT6+ (Vista/Server 2008 and greater) machines. The only basic rules are that the source machine should have Winrm2 installed and running on it, and the Event Collector Service should be running on the collector machine. There are two methods available to complete this challenge - collector initiated and source initiated:">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Windows Event Collection">
+<meta property="og:url" content="https://blog.backslasher.net/windows-event-collection.html">
+
+
+  <meta property="og:description" content="I’ve recently implemented an enterprise-wide solution of event collection in our organization, using Windows’ built-in mechanism called the Windows Event Collector. This mechanism allows you to collect events from computers running Windows NT5+ (XP/Server 2003 and greater) into Windows NT6+ (Vista/Server 2008 and greater) machines. The only basic rules are that the source machine should have Winrm2 installed and running on it, and the Event Collector Service should be running on the collector machine. There are two methods available to complete this challenge - collector initiated and source initiated:">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2012-06-28T00:00:00+03:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/windows-event-collection.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Windows Event Collection">
+    <meta itemprop="description" content="I’ve recently implemented an enterprise-wide solution of eventcollection in our organization, using Windows’ built-in mechanism calledthe Windows Event Collector.This mechanism allows you to collect events from computers runningWindows NT5+ (XP/Server 2003 and greater) into Windows NT6+(Vista/Server 2008 and greater) machines. The only basic rules are thatthe source machine should have Winrm2 installed and running on it, andthe Event Collector Service should be running on the collector machine.There are two methods available to complete this challenge - collectorinitiated and source initiated:">
+    <meta itemprop="datePublished" content="2012-06-28T00:00:00+03:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Windows Event Collection
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>I’ve recently implemented an enterprise-wide solution of event
+collection in our organization, using Windows’ built-in mechanism called
+the <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb427443%28v=vs.85%29.aspx">Windows Event Collector.</a><br />
+This mechanism allows you to collect events from computers running
+Windows NT5+ (XP/Server 2003 and greater) into Windows NT6+
+(Vista/Server 2008 and greater) machines. The only basic rules are that
+the source machine should have Winrm2 installed and running on it, and
+the <code class="language-plaintext highlighter-rouge">Event Collector Service</code> should be running on the collector machine.<br />
+There are two methods available to complete this challenge - collector
+initiated and source initiated:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Parameter</th>
+      <th>Collector Initiated</th>
+      <th>Source Initiated</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Socket direction (for firewall rules)</td>
+      <td>Collector –&gt; Source</td>
+      <td>Collector –&gt; Source</td>
+    </tr>
+    <tr>
+      <td>Initiating machine</td>
+      <td>Collector</td>
+      <td>Source</td>
+    </tr>
+    <tr>
+      <td>Authentication Type</td>
+      <td>Kerberos</td>
+      <td>Kerberos / Certificates</td>
+    </tr>
+    <tr>
+      <td>Permissions used to access event log</td>
+      <td>Configurable (<code class="language-plaintext highlighter-rouge">system</code>/user)</td>
+      <td><code class="language-plaintext highlighter-rouge">system</code></td>
+    </tr>
+    <tr>
+      <td>Bulk adding methods</td>
+      <td>None (machines are added one by one)</td>
+      <td>Active Directory Groups (and Group Policy)</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="similarities">Similarities</h3>
+
+<p>In both of the methods, some persistent open socket is created between
+the collector and the source machine using WinRM (so it’s firewall
+friendly - one configurable port, standard HTTP messages), through which
+events are transferred (as opposed to other mechanisms, which have one
+machine polling another every now and then, creating a new socket during
+every poll).<br />
+The events are passing encrypted through the channel (standard WinRM
+encryption, either via the Kerberos authentication or using an SSL
+certificate), which makes it ideal for sensitive events (like security
+ones).<br />
+There can be several subscriptions to and from every server, each one
+with its own configuration, including method, authentication, client
+list and other settings (like heartbeat rate).</p>
+
+<h3 id="collector-initiated">Collector Initiated</h3>
+
+<p>When defining such a subscription, you instruct the collector to open a
+WinRM session to the source machine(s) using a specified set of
+credentials (or the computer account) and ask for a subscription. The
+user doesn’t have to be able to read all of the event logs, but can
+rather be delegated access to a specific log that needs reading (the
+<code class="language-plaintext highlighter-rouge">NETWORK SERVICE</code> has to be able to read that log as well, since that’s
+the identity WinRM is operating with). Monitoring the connection
+programmatically from the collector is quite easy, because events
+related are written to the
+<code class="language-plaintext highlighter-rouge">Microsoft-Windows-EventCollector/Operational</code> log.</p>
+
+<h4 id="pros">Pros:</h4>
+<ul>
+  <li>Easy to configure and test</li>
+  <li>Easy to centrally programmatically monitor (only read collector’s
+log)</li>
+  <li>Collector doesn’t necessarily gain access to all events in source
+machine, only ones allowed by permissions on source</li>
+</ul>
+
+<h3 id="source-initiated">Source Initiated</h3>
+<p>Using this method requires one to dabble in Group Policy, because it
+works by telling the source machine(s) “You should access server X and
+offer it a subscription to your event logs at leisure”.<br />
+The only settings configured at the source level are the collector
+endpoints (server name, authentication type, port etc) and the maximum
+amount of events per second allowed to pass through subscriptions
+(offering the most basic performance throttling on the source side). All
+other configuration is performed on the collector machine.<br />
+The Collector can be configured to allow certain sources in every
+subscription. Such sources can be Kerberos-Authenticated, in which case
+they can be filtered by Account or Active Directory group membership
+(like allowing <code class="language-plaintext highlighter-rouge">Domain Computers</code> but rejecting <code class="language-plaintext highlighter-rouge">Domain Controllers</code>),
+or Certificate-Authenticated, filtered by wildcard name-matching (e.g.
+including all <code class="language-plaintext highlighter-rouge">*.domain.com</code> and rejecting <code class="language-plaintext highlighter-rouge">*dc*.domain.com</code>).</p>
+
+<h4 id="pros-1">Pros:</h4>
+<ul>
+  <li>Can be configured on arrays of machines easily</li>
+  <li>Can be used to collect events from machines from outside the domain</li>
+</ul>
+
+<h3 id="basic-configuration">Basic Configuration</h3>
+<p>In any case, one can use either the GUI (Event Viewer from the
+collector) or the CLI (<code class="language-plaintext highlighter-rouge">WecUtil.exe</code> on the collector) to create a
+subscription and fine tune it, including (but not limited to) the rate
+in which new events arrive, the allowed/denied computers, destination
+log and event query (which events will get transferred). Current
+information about the subscription can be viewed using both tools,
+whether it’s the <code class="language-plaintext highlighter-rouge">runtime status</code> in the GUI or <code class="language-plaintext highlighter-rouge">wecutil rs</code> in the
+CLI. I will expand this post if I see fit. Event forwarding is not
+trivial, but it allows a sysadmin to centralize events for all kinds of
+reasons using tools included in the Windows OS and doing so in a
+standard, performance-friendly and secure way.</p>
+
+<p>Have fun forwarding!</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#active-directory" class="page__taxonomy-item" rel="tag">Active Directory</a><span class="sep">, </span>
+    
+      <a href="/tags/#event-log" class="page__taxonomy-item" rel="tag">Event Log</a><span class="sep">, </span>
+    
+      <a href="/tags/#group-policy" class="page__taxonomy-item" rel="tag">Group Policy</a><span class="sep">, </span>
+    
+      <a href="/tags/#kerberos" class="page__taxonomy-item" rel="tag">Kerberos</a><span class="sep">, </span>
+    
+      <a href="/tags/#security" class="page__taxonomy-item" rel="tag">Security</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#microsoft" class="page__taxonomy-item" rel="tag">Microsoft</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2012-06-28T00:00:00+03:00">June 28, 2012</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/installing-wsus-prerequisites-easily-in-a-disconnected-server.html" class="pagination--pager" title="Installing WSUS Prerequisites Easily in a Disconnected Server
+">Previous</a>
+    
+    
+      <a href="/windows-event-collection.html" class="pagination--pager" title="Windows Event Collection
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/3-loc-760h.html" rel="permalink">Changed 3 lines of code, saved 760 server hours per month
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Act 1, where I write Java
+In the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/sapling-commands.html" rel="permalink">Sapling Commands
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Sapling (the Facebook-released SCM) is great, but the docs are not-great.
+I thought I’d list some commands it took me a while to undertand, for me and for ot...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/foia-calendars-pt1.html" rel="permalink">Processing Israeli FOIA calendars, Part 1
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Preface
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/docker-compose-ecs-nginx-caddy.html" rel="permalink">Caddy is better than Nginx for Docker Compose on ECS
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I recently managed to use Docker Compose to launch a small app in Aamazon’s Elastic Container Services (ECS).
+Overall, the result is pretty incredible. I’m a...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <script>
+  window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+  ga('create','','auto');
+  ga('set', 'anonymizeIp', false);
+  ga('send','pageview')
+</script>
+<script src="https://www.google-analytics.com/analytics.js" async></script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>

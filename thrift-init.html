@@ -1,0 +1,698 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Init file for HBase Thrift Server - BackSlasher</title>
+<meta name="description" content="As part of our HBase setup, we run Thrift servers. This is pretty simple, except for the init files. Since we’re running Thrift standalone (and not as part of a full HBase server), I couldn’t find a perfect fit from googling. I eventually settled for this puppet template, but it had a big deficiency - no support for status.">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Init file for HBase Thrift Server">
+<meta property="og:url" content="https://blog.backslasher.net/thrift-init.html">
+
+
+  <meta property="og:description" content="As part of our HBase setup, we run Thrift servers. This is pretty simple, except for the init files. Since we’re running Thrift standalone (and not as part of a full HBase server), I couldn’t find a perfect fit from googling. I eventually settled for this puppet template, but it had a big deficiency - no support for status.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2015-04-29T00:00:00+03:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/thrift-init.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Init file for HBase Thrift Server">
+    <meta itemprop="description" content="As part of our HBase setup, we run Thrift servers. This is pretty simple, except for the init files.Since we’re running Thrift standalone (and not as part of a full HBase server), I couldn’t find a perfect fit from googling.I eventually settled for this puppet template, but it had a big deficiency - no support for status.">
+    <meta itemprop="datePublished" content="2015-04-29T00:00:00+03:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Init file for HBase Thrift Server
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>As part of our HBase setup, we run <a href="http://wiki.apache.org/hadoop/Hbase/ThriftApi">Thrift servers</a>. This is pretty simple, except for the init files.<br />
+Since we’re running Thrift standalone (and not as part of a full HBase server), I couldn’t find a perfect fit from googling.<br />
+I eventually settled for <a href="https://github.com/chrisglass/puppet-hadoop-modules/blob/master/modules/adobe-hbase/templates/service/hbase-thrift.erb">this puppet template</a>, but it had a big deficiency - no support for <code class="language-plaintext highlighter-rouge">status</code>.</p>
+
+<h3 id="a-tiny-bit-about-init">A tiny bit about init</h3>
+<p><a href="http://en.wikipedia.org/wiki/Init">SysVInit</a> is the old-school way of managing services in Linux (and Unix).<br />
+Every service has an “init script”, located in <code class="language-plaintext highlighter-rouge">/etc/init.d/SERVICENAME</code>, which is in charge of controlling the sevice.<br />
+It is called by using <code class="language-plaintext highlighter-rouge">service SERVICENAME ACTION</code>, where every script is free to define its own actions, but the standard ones are <code class="language-plaintext highlighter-rouge">start</code>,<code class="language-plaintext highlighter-rouge">stop</code>,<code class="language-plaintext highlighter-rouge">restart</code>,<code class="language-plaintext highlighter-rouge">status</code>.</p>
+
+<h3 id="why-status-matters">Why <code class="language-plaintext highlighter-rouge">status</code> matters</h3>
+<p>Using <code class="language-plaintext highlighter-rouge">status</code> is the best way of checking whether a service is alive.<br />
+It could be a sysadmin checking for issues, Nagios making sure the service is OK, or a configuration management tool checking whether it should start the service.<br />
+Just for fun, here is how Chef uses it. I quote from the holy repo of <a href="https://github.com/chef/chef">Chef</a>, file <code class="language-plaintext highlighter-rouge">lib/chef/provider/service/simple.rb</code>, verse 130:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="n">shell_out</span><span class="p">(</span><span class="s2">"</span><span class="si">#{</span><span class="n">default_init_command</span><span class="si">}</span><span class="s2"> status"</span><span class="p">).</span><span class="nf">exitstatus</span> <span class="o">==</span> <span class="mi">0</span>
+  <span class="vi">@current_resource</span><span class="p">.</span><span class="nf">running</span> <span class="kp">true</span>
+  <span class="no">Chef</span><span class="o">::</span><span class="no">Log</span><span class="p">.</span><span class="nf">debug</span><span class="p">(</span><span class="s2">"</span><span class="si">#{</span><span class="vi">@new_resource</span><span class="si">}</span><span class="s2"> is running"</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div></div>
+<p>So as long as <code class="language-plaintext highlighter-rouge">service SERVICENAME status</code> exits successfully (exit code 0), Chef thinks the service is running.</p>
+
+<h3 id="implementing-status">Implementing <code class="language-plaintext highlighter-rouge">status</code></h3>
+<p>Since I’m using CentOS 6.5, my common service functions file (<code class="language-plaintext highlighter-rouge">/etc/init.d/functions</code>) is old, so it’s not creating new pids (<code class="language-plaintext highlighter-rouge">--pidfile</code> only checks for an existing file, not creating a new one) and it can’t rename the process (I’ve heard of a magical <code class="language-plaintext highlighter-rouge">--name</code> parameter, but can’t find it in my file).<br />
+Because of that, I can’t find the process after starting it, so I can’t make sure it’s still alive.
+After digging around in the HBase code, I found out that HBase keeps PID files.<br />
+<code class="language-plaintext highlighter-rouge">bin/hbase-daemon.sh</code>:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span>start<span class="o">)</span>
+  <span class="nb">mkdir</span> <span class="nt">-p</span> <span class="s2">"</span><span class="nv">$HBASE_PID_DIR</span><span class="s2">"</span>
+  <span class="k">if</span> <span class="o">[</span> <span class="nt">-f</span> <span class="nv">$pid</span> <span class="o">]</span><span class="p">;</span> <span class="k">then
+    if </span><span class="nb">kill</span> <span class="nt">-0</span> <span class="sb">`</span><span class="nb">cat</span> <span class="nv">$pid</span><span class="sb">`</span> <span class="o">&gt;</span> /dev/null 2&gt;&amp;1<span class="p">;</span> <span class="k">then
+    </span><span class="nb">echo</span> <span class="nv">$command</span> running as process <span class="sb">`</span><span class="nb">cat</span> <span class="nv">$pid</span><span class="sb">`</span><span class="nb">.</span>  Stop it first.
+    <span class="nb">exit </span>1
+  <span class="k">fi
+fi</span>
+</code></pre></div></div>
+<p>All I needed was to use this pidfile in my init script. I accomplished this by replicating the pidfile-building logic in my init script.<br />
+It looks something like:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">HBASE_PID_DIR</span><span class="o">=</span>/var/run/
+<span class="nv">HBASE_IDENT_STRING</span><span class="o">=</span><span class="s2">"</span><span class="nv">$HOSTNAME</span><span class="s2">"</span>
+<span class="nb">command</span><span class="o">=</span>thrift
+<span class="nv">pid</span><span class="o">=</span><span class="nv">$HBASE_PID_DIR</span>/hbase-<span class="nv">$HBASE_IDENT_STRING</span>-<span class="nv">$command</span>.pid
+</code></pre></div></div>
+
+<p>Now I can implement the status check like so:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>status<span class="o">)</span>
+  status <span class="nt">-p</span> <span class="nv">$pid</span> java
+  <span class="nv">RETVAL</span><span class="o">=</span><span class="nv">$?</span>
+<span class="p">;;</span>
+</code></pre></div></div>
+<p>Note that the process name is <code class="language-plaintext highlighter-rouge">java</code>. This is imperfect because the thrift process might die and another java process might take its place, but I don’t find it too much of a risk for now. I might modify it later.</p>
+
+<h3 id="the-result">The Result</h3>
+<p><a href="https://gist.github.com/BackSlasher/7510adb69c73dbee7894">The full file</a> is stored as a gist, but be warned - it’s a Chef template!<br />
+You can probably manually fill it out though.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#bash" class="page__taxonomy-item" rel="tag">Bash</a><span class="sep">, </span>
+    
+      <a href="/tags/#hbase" class="page__taxonomy-item" rel="tag">HBase</a><span class="sep">, </span>
+    
+      <a href="/tags/#linux" class="page__taxonomy-item" rel="tag">Linux</a><span class="sep">, </span>
+    
+      <a href="/tags/#sysvinit" class="page__taxonomy-item" rel="tag">SysVInit</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#foss" class="page__taxonomy-item" rel="tag">FOSS</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2015-04-29T00:00:00+03:00">April 29, 2015</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/yum-python-provides.html" class="pagination--pager" title="Scripting YUM provides search using Python
+">Previous</a>
+    
+    
+      <a href="/ruby-newline-file.html" class="pagination--pager" title="Appending Newline to File Ends with Ruby
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/3-loc-760h.html" rel="permalink">Changed 3 lines of code, saved 760 server hours per month
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Act 1, where I write Java
+In the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/sapling-commands.html" rel="permalink">Sapling Commands
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Sapling (the Facebook-released SCM) is great, but the docs are not-great.
+I thought I’d list some commands it took me a while to undertand, for me and for ot...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/foia-calendars-pt1.html" rel="permalink">Processing Israeli FOIA calendars, Part 1
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Preface
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/docker-compose-ecs-nginx-caddy.html" rel="permalink">Caddy is better than Nginx for Docker Compose on ECS
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I recently managed to use Docker Compose to launch a small app in Aamazon’s Elastic Container Services (ECS).
+Overall, the result is pretty incredible. I’m a...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <script>
+  window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+  ga('create','','auto');
+  ga('set', 'anonymizeIp', false);
+  ga('send','pageview')
+</script>
+<script src="https://www.google-analytics.com/analytics.js" async></script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>

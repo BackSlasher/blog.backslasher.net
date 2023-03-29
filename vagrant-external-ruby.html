@@ -1,0 +1,916 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Running external Ruby code from Vagrant - BackSlasher</title>
+<meta name="description" content="The Story Like a lot of Chef users, I’m using Vagrant for testing my cookbooks. I’m also using Berkshelf for providing the Vagrant box with the cookbooks it needs. Until recently, I was happy using the ChefDK-provided Berlshelf (v4.0.1). I stopped being happy when running berks started consuming CPU for ~5 mins and then failing when my Berksfile contained multiple sources (the Chef Supermarket and my private Chef server). While troubleshooting it I’ve learned that there’s an issue with the native dependency graph solver, and I won’t be able to fix it in less than a week. I also noticed that the latest version of the Berkshelf gem (v4.1.1) had no such issues (unless I’m mistaken, it’s because it switched to the native Ruby graph solver).">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Running external Ruby code from Vagrant">
+<meta property="og:url" content="https://blog.backslasher.net/vagrant-external-ruby.html">
+
+
+  <meta property="og:description" content="The Story Like a lot of Chef users, I’m using Vagrant for testing my cookbooks. I’m also using Berkshelf for providing the Vagrant box with the cookbooks it needs. Until recently, I was happy using the ChefDK-provided Berlshelf (v4.0.1). I stopped being happy when running berks started consuming CPU for ~5 mins and then failing when my Berksfile contained multiple sources (the Chef Supermarket and my private Chef server). While troubleshooting it I’ve learned that there’s an issue with the native dependency graph solver, and I won’t be able to fix it in less than a week. I also noticed that the latest version of the Berkshelf gem (v4.1.1) had no such issues (unless I’m mistaken, it’s because it switched to the native Ruby graph solver).">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2016-02-21T00:00:00+02:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/vagrant-external-ruby.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Running external Ruby code from Vagrant">
+    <meta itemprop="description" content="The StoryLike a lot of Chef users, I’m using Vagrant for testing my cookbooks. I’m also using Berkshelf for providing the Vagrant box with the cookbooks it needs.Until recently, I was happy using the ChefDK-provided Berlshelf (v4.0.1). I stopped being happy when running berks started consuming CPU for ~5 mins and then failing when my Berksfile contained multiple sources (the Chef Supermarket and my private Chef server).While troubleshooting it I’ve learned that there’s an issue with the native dependency graph solver, and I won’t be able to fix it in less than a week.I also noticed that the latest version of the Berkshelf gem (v4.1.1) had no such issues (unless I’m mistaken, it’s because it switched to the native Ruby graph solver).">
+    <meta itemprop="datePublished" content="2016-02-21T00:00:00+02:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Running external Ruby code from Vagrant
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          6 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <h2 id="the-story">The Story</h2>
+<p>Like a lot of Chef users, I’m using Vagrant for testing my cookbooks. I’m also using Berkshelf for providing the Vagrant box with the cookbooks it needs.<br />
+Until recently, I was happy using the ChefDK-provided Berlshelf (v4.0.1). I stopped being happy when running <code class="language-plaintext highlighter-rouge">berks</code> started consuming CPU for ~5 mins and then failing when my <code class="language-plaintext highlighter-rouge">Berksfile</code> contained multiple sources (the Chef Supermarket and my private Chef server).<br />
+While troubleshooting it I’ve learned that there’s an issue with the native dependency graph solver, and I won’t be able to fix it in less than a week.<br />
+I also noticed that the latest version of the Berkshelf gem (v4.1.1) had no such issues (unless I’m mistaken, it’s because it switched to the native Ruby graph solver).</p>
+
+<p>The next logical step was migrating to the new version of Berkshelf</p>
+
+<h3 id="attempting-to-upgrade-berkshelf-in-the-chefdk">Attempting to upgrade Berkshelf in the ChefDK</h3>
+<p>I firstly tried working inside ChefDK by upgrading its version of ChefDK.<br />
+This made me learn several interesting things:</p>
+
+<ol>
+  <li>The <code class="language-plaintext highlighter-rouge">/usr/bin/berks</code> file (actually <code class="language-plaintext highlighter-rouge">/opt/chefdk/bin/berks</code>) loads specific versions of Gems.<br />
+ This means that even if I install the new version of Berkshelf correctly, I’d have to modify this entry point, and it won’t be trivial.</li>
+  <li>The ChefDK Ruby environment is configured to install new Gems into the User’s home directory (using <code class="language-plaintext highlighter-rouge">GEM_HOME</code>).<br />
+ I’m not sure why (<a href="https://github.com/chef/chef-dk/pull/160">something related</a> with developing gems?)</li>
+  <li>The only way I could execute the new Berkshelf gem “properly” inside the ChefDK was using a <code class="language-plaintext highlighter-rouge">Gemfile</code> and something like <code class="language-plaintext highlighter-rouge">chef exec bundle exec Berkshelf</code>, which was really annoying</li>
+</ol>
+
+<p>Eventually I decided that the comfort of working inside the ChefDK isn’t worth the effort, as taking a clean Ruby 2 environment (e.g. using RVM or Bundler) and installing the Berkshelf Gem inside was effortless.<br />
+This worked well for non-Vagrant usage (e.g. calling it from Jenkins), but I still had quite a lot of work.</p>
+
+<h3 id="running-ruby-in-vagrant">Running Ruby in Vagrant</h3>
+<p>My second issue was with running any Ruby code from inside Vagrant.<br />
+As any Vagrant-Berkshelf veteran knows, the workflow goes something like this:</p>
+
+<ol>
+  <li>User runs some command requiring provisioning, like <code class="language-plaintext highlighter-rouge">vagrant up</code></li>
+  <li>Vagrant calls the <code class="language-plaintext highlighter-rouge">vagrant-berkshelf</code> methods pretty early in the Vagrant workflow (after <code class="language-plaintext highlighter-rouge">Vagrant::Action::Builtin::ConfigValidate</code>)</li>
+  <li><code class="language-plaintext highlighter-rouge">vagrant-berkshelf</code> runs <code class="language-plaintext highlighter-rouge">berks install</code> to locate all relevant cookbooks and generate the <code class="language-plaintext highlighter-rouge">Bersfile.lock</code></li>
+  <li><code class="language-plaintext highlighter-rouge">vagrant-berkshelf</code> calls <code class="language-plaintext highlighter-rouge">berks vendor</code> to make a directory containing all cookbooks that the VM needs, which will be accessed by the Chef client on the VM
+And so forth</li>
+</ol>
+
+<p>This workflow heavily depends on Vagrant executing Berkshelf, which works with ChefDK’s Berkshelf because its entry point is “environment-variable proof”:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#!/opt/chefdk/embedded/bin/ruby</span>
+<span class="c1">#--APP_BUNDLER_BINSTUB_FORMAT_VERSION=1--</span>
+<span class="no">ENV</span><span class="p">[</span><span class="s2">"GEM_HOME"</span><span class="p">]</span> <span class="o">=</span> <span class="no">ENV</span><span class="p">[</span><span class="s2">"GEM_PATH"</span><span class="p">]</span> <span class="o">=</span> <span class="kp">nil</span> <span class="k">unless</span> <span class="no">ENV</span><span class="p">[</span><span class="s2">"APPBUNDLER_ALLOW_RVM"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"true"</span>
+<span class="c1">#...</span>
+</code></pre></div></div>
+<p>Compare this to the “normal” entry point generated by Gems:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#!/usr/bin/ruby2.0</span>
+<span class="c1">#</span>
+<span class="c1"># This file was generated by RubyGems.</span>
+<span class="c1">#</span>
+<span class="c1"># The application 'berkshelf' is installed as part of a gem, and</span>
+<span class="c1"># this file is here to facilitate running it.</span>
+<span class="c1">#</span>
+
+<span class="nb">require</span> <span class="s1">'rubygems'</span>
+
+<span class="n">version</span> <span class="o">=</span> <span class="s2">"&gt;= 0"</span>
+
+<span class="k">if</span> <span class="no">ARGV</span><span class="p">.</span><span class="nf">first</span>
+  <span class="n">str</span> <span class="o">=</span> <span class="no">ARGV</span><span class="p">.</span><span class="nf">first</span>
+  <span class="n">str</span> <span class="o">=</span> <span class="n">str</span><span class="p">.</span><span class="nf">dup</span><span class="p">.</span><span class="nf">force_encoding</span><span class="p">(</span><span class="s2">"BINARY"</span><span class="p">)</span> <span class="k">if</span> <span class="n">str</span><span class="p">.</span><span class="nf">respond_to?</span> <span class="ss">:force_encoding</span>
+  <span class="k">if</span> <span class="n">str</span> <span class="o">=~</span> <span class="sr">/\A_(.*)_\z/</span>
+    <span class="n">version</span> <span class="o">=</span> <span class="vg">$1</span>
+    <span class="no">ARGV</span><span class="p">.</span><span class="nf">shift</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">gem</span> <span class="s1">'berkshelf'</span><span class="p">,</span> <span class="n">version</span>
+<span class="nb">load</span> <span class="no">Gem</span><span class="p">.</span><span class="nf">bin_path</span><span class="p">(</span><span class="s1">'berkshelf'</span><span class="p">,</span> <span class="s1">'berks'</span><span class="p">,</span> <span class="n">version</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>The environment negation (deleting <code class="language-plaintext highlighter-rouge">GEM_HOME</code> and <code class="language-plaintext highlighter-rouge">GEM_PATH</code>) is (IMO) related to the Vagrant use-case.<br />
+Fact is, Vagrant is polluting the environment of subprocesses with Vagrant-specific Ruby-related variables.</p>
+
+<h3 id="vagrant-bundler-and-external-processes">Vagrant, Bundler and external processes</h3>
+<p>Vagrant uses Bundler as a way of managing its Ruby dependencies (both internal and plugins), so Vagrant suffers from the same issue that Bundler has - it assumes that subprocesses are supposed to run inside its own Ruby environment. To do so, it modifies its own ruby-related environment variables, such as <code class="language-plaintext highlighter-rouge">GEM_PATH</code> (where to look for gems) and <code class="language-plaintext highlighter-rouge">GEM_HOME</code> (where gems should be installed).<br />
+For cases where it’s not true, Bundler offers a method called <a href="http://www.rubydoc.info/github/bundler/bundler/Bundler.with_clean_env"><code class="language-plaintext highlighter-rouge">Bundler.with_clean_env</code></a>. This should yield (execute a given code block) with the “original” environment (the one bundler had when it started), so any processes spawned from that block should be free of the Bundler contamination.<br />
+Vagrant tries to utilize this method, but it doesn’t work as expected.</p>
+
+<h4 id="with_clean_env-internals"><code class="language-plaintext highlighter-rouge">with_clean_env</code> internals</h4>
+<p>Let’s drill down a bit:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># https://github.com/bundler/bundler/blob/5131fcd/lib/bundler.rb#L211</span>
+
+<span class="k">def</span> <span class="nf">with_clean_env</span>
+  <span class="n">with_original_env</span> <span class="k">do</span>
+    <span class="no">ENV</span><span class="p">[</span><span class="s1">'MANPATH'</span><span class="p">]</span> <span class="o">=</span> <span class="no">ENV</span><span class="p">[</span><span class="s1">'BUNDLE_ORIG_MANPATH'</span><span class="p">]</span>
+    <span class="no">ENV</span><span class="p">.</span><span class="nf">delete_if</span> <span class="p">{</span> <span class="o">|</span><span class="n">k</span><span class="p">,</span><span class="n">_</span><span class="o">|</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">7</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'BUNDLE_'</span> <span class="p">}</span>
+    <span class="k">if</span> <span class="no">ENV</span><span class="p">.</span><span class="nf">has_key?</span> <span class="s1">'RUBYOPT'</span>
+      <span class="no">ENV</span><span class="p">[</span><span class="s1">'RUBYOPT'</span><span class="p">]</span> <span class="o">=</span> <span class="no">ENV</span><span class="p">[</span><span class="s1">'RUBYOPT'</span><span class="p">].</span><span class="nf">sub</span> <span class="s1">'-rbundler/setup'</span><span class="p">,</span> <span class="s1">''</span>
+      <span class="no">ENV</span><span class="p">[</span><span class="s1">'RUBYOPT'</span><span class="p">]</span> <span class="o">=</span> <span class="no">ENV</span><span class="p">[</span><span class="s1">'RUBYOPT'</span><span class="p">].</span><span class="nf">sub</span> <span class="s2">"-I</span><span class="si">#{</span><span class="no">File</span><span class="p">.</span><span class="nf">expand_path</span><span class="p">(</span><span class="s1">'..'</span><span class="p">,</span> <span class="kp">__FILE__</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="s1">''</span>
+    <span class="k">end</span>
+    <span class="k">yield</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># https://github.com/bundler/bundler/blob/5131fcd/lib/bundler.rb#L203</span>
+
+<span class="k">def</span> <span class="nf">with_original_env</span>
+  <span class="n">bundled_env</span> <span class="o">=</span> <span class="no">ENV</span><span class="p">.</span><span class="nf">to_hash</span>
+  <span class="no">ENV</span><span class="p">.</span><span class="nf">replace</span><span class="p">(</span><span class="no">ORIGINAL_ENV</span><span class="p">)</span>
+  <span class="k">yield</span>
+<span class="k">ensure</span>
+  <span class="no">ENV</span><span class="p">.</span><span class="nf">replace</span><span class="p">(</span><span class="n">bundled_env</span><span class="p">.</span><span class="nf">to_hash</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div></div>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># https://github.com/bundler/bundler/blob/5131fcd/lib/bundler.rb#L16</span>
+<span class="k">module</span> <span class="nn">Bundler</span>
+  <span class="no">ORIGINAL_ENV</span> <span class="o">=</span> <span class="n">environment_preserver</span><span class="p">.</span><span class="nf">restore</span>
+  <span class="no">ENV</span><span class="p">.</span><span class="nf">replace</span><span class="p">(</span><span class="n">environment_preserver</span><span class="p">.</span><span class="nf">backup</span><span class="p">)</span>
+<span class="c1">#...</span>
+</code></pre></div></div>
+<p>So, when the Bundler module is loaded, it creates a backup of the current environment variables. This backup (plus some modifications) is used whenever <code class="language-plaintext highlighter-rouge">with_clean_env</code> is called. How can it break?</p>
+
+<p>By adding debug prints inside the Bundler gem, I deduced the following facts:</p>
+
+<ol>
+  <li>
+    <p>Bundler is invoked twice<br />
+ First, the entry point is <code class="language-plaintext highlighter-rouge">pre-rubygems.rb</code>, as evident from the <a href="https://github.com/mitchellh/vagrant-installers/blob/c5eb9bb/substrate/launcher/main.go">vagrant launcher</a>:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> :::go
+ // Line 187
+
+ cmd.Args[0] = "ruby"
+ cmd.Args[1] = filepath.Join(gemPath, "lib", "vagrant", "pre-rubygems.rb")
+ //...
+ if err := cmd.Start(); err != nil {
+ // ...
+</code></pre></div>    </div>
+
+    <p>Note these bits at <a href="https://github.com/mitchellh/vagrant/blob/27157b5/lib/vagrant/pre-rubygems.rb">lib/vagrant/pre-rubygems.rb</a>:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> :::ruby
+ # Line 19
+ require_relative "bundler"
+</code></pre></div>    </div>
+
+    <p><!-- --></p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> :::ruby
+ # Line 30
+
+ if ENV["VAGRANT_EXECUTABLE"]
+   Kernel.exec("ruby", ENV["VAGRANT_EXECUTABLE"], *ARGV)
+ else
+   Kernel.exec("vagrant", *ARGV)
+ end
+</code></pre></div>    </div>
+
+    <p>And finally, this in <a href="https://github.com/mitchellh/vagrant/blob/27157b5/bin/vagrant"><code class="language-plaintext highlighter-rouge">bin/vagrant</code></a>:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> :::ruby
+ # Line 69
+
+ require "bundler"
+</code></pre></div>    </div>
+
+    <p>As you can see, the <code class="language-plaintext highlighter-rouge">pre-rubygems.rb</code> file is invoked first, loads Bundler, and then <a href="http://linux.die.net/man/3/exec">execs</a> the Vagrant entry point, which loads its own Bundler.
+ So the Bundler gem is loaded twice, and the second instance “saves” the environment already modified by the first instace, meaning <code class="language-plaintext highlighter-rouge">with_clean_env</code> is useless.</p>
+  </li>
+  <li>
+    <p>Vagrant works around this<br />
+ The Vagrant devs tried to solve this issue by backing up the environment variables before any modification, like so:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> :::go
+ // https://github.com/mitchellh/vagrant-installers/blob/c5eb9bb/substrate/launcher/main.go
+ // Line 18
+ const envPrefix = "VAGRANT_OLD_ENV"
+</code></pre></div>    </div>
+
+    <p><!-- --></p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> :::go
+ // https://github.com/mitchellh/vagrant-installers/blob/c5eb9bb/substrate/launcher/main.go
+ // Line 150
+ for _, value := range os.Environ() {
+   idx := strings.IndexRune(value, '=')
+   key := fmt.Sprintf("%s_%s", envPrefix, value[:idx])
+   newEnv[key] = value[idx+1:]
+ }
+</code></pre></div>    </div>
+
+    <p>And then allow restoring from it:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> :::ruby
+ # https://github.com/mitchellh/vagrant/blob/27157b5/lib/vagrant.rb
+ # Line 236
+
+ def self.original_env
+     {}.tap do |h|
+       ENV.each do |k,v|
+         if k.start_with?("VAGRANT_OLD_ENV")
+           key = k.sub(/^VAGRANT_OLD_ENV_/, "")
+           h[key] = v
+         end
+       end
+     end
+   end
+ end
+</code></pre></div>    </div>
+
+    <p>This method works (sort of).</p>
+  </li>
+</ol>
+
+<h3 id="with_original_env-is-done-wrong"><code class="language-plaintext highlighter-rouge">with_original_env</code> is done wrong</h3>
+
+<p>Both the Bundler backup environment and the Vagrant backup environment are being handled in <a href="https://github.com/mitchellh/vagrant/blob/dec5f70/lib/vagrant/util/env.rb"><code class="language-plaintext highlighter-rouge">Vagrant::Util::Env.with_original_env</code></a>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">with_original_env</span>
+  <span class="n">original_env</span> <span class="o">=</span> <span class="no">ENV</span><span class="p">.</span><span class="nf">to_hash</span>
+  <span class="no">ENV</span><span class="p">.</span><span class="nf">replace</span><span class="p">(</span><span class="o">::</span><span class="no">Bundler</span><span class="o">::</span><span class="no">ORIGINAL_ENV</span><span class="p">)</span> <span class="k">if</span> <span class="k">defined?</span><span class="p">(</span><span class="o">::</span><span class="no">Bundler</span><span class="o">::</span><span class="no">ORIGINAL_ENV</span><span class="p">)</span>
+  <span class="no">ENV</span><span class="p">.</span><span class="nf">update</span><span class="p">(</span><span class="no">Vagrant</span><span class="p">.</span><span class="nf">original_env</span><span class="p">)</span>
+  <span class="k">yield</span>
+<span class="k">ensure</span>
+  <span class="no">ENV</span><span class="p">.</span><span class="nf">replace</span><span class="p">(</span><span class="n">original_env</span><span class="p">.</span><span class="nf">to_hash</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Now, notice the two issues here:</p>
+
+<ol>
+  <li>In the normal Vagrant flow (working via the Vagrant launcher), the <code class="language-plaintext highlighter-rouge">Bundler::ORIGINAL_ENV</code> hash is useless because of the double invocation of Bundler.</li>
+  <li>
+    <p>Because we’re only using <code class="language-plaintext highlighter-rouge">update</code> with the “proper” environment backup, values won’t be deleted, only replaced:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> :::ruby
+ good={'a'=&gt;1}
+ bad={'a'=&gt;2,'b'=&gt;3}
+ bad.update(good)
+ bad
+ # =&gt; {"a"=&gt;1, "b"=&gt;3}
+</code></pre></div>    </div>
+
+    <p>So values that didn’t exist in the backup and do exist in the current environment (e.g. <code class="language-plaintext highlighter-rouge">GEM_PATH</code>) will stay.</p>
+  </li>
+</ol>
+
+<h2 id="the-solution">The Solution</h2>
+<p><a href="https://github.com/mitchellh/vagrant/pull/7047">This</a> is the relevant PR</p>
+
+<p>Firsty, I modified <code class="language-plaintext highlighter-rouge">Vagrant::Util::Env.with_original_env</code>.<br />
+I made the assumption that if we’re going through the Vagrant launcher, we only need to restore its environment.<br />
+If not, we’ll restore the Bundler environment, if one exists.<br />
+The result looks like this:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">proxy_env</span> <span class="o">=</span> <span class="no">Vagrant</span><span class="p">.</span><span class="nf">original_env</span>
+<span class="k">if</span> <span class="no">Vagrant</span><span class="p">.</span><span class="nf">original_env</span><span class="p">.</span><span class="nf">any?</span>
+  <span class="no">ENV</span><span class="p">.</span><span class="nf">replace</span><span class="p">(</span><span class="n">proxy_env</span><span class="p">)</span>
+<span class="k">elsif</span> <span class="k">defined?</span><span class="p">(</span><span class="o">::</span><span class="no">Bundler</span><span class="o">::</span><span class="no">ORIGINAL_ENV</span><span class="p">)</span>
+  <span class="no">ENV</span><span class="p">.</span><span class="nf">replace</span><span class="p">(</span><span class="o">::</span><span class="no">Bundler</span><span class="o">::</span><span class="no">ORIGINAL_ENV</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>After that, I had to locate the code in charge of spawning new processes and make sure that it’s using the right logic.<br />
+The interesting method is <code class="language-plaintext highlighter-rouge">Vagrant::Util::Subprocess#execute</code> in <a href="https://github.com/mitchellh/vagrant/blob/dec5f70/lib/vagrant/util/subprocess.rb">lib/vagrant/util/subprocess.rb</a>.<br />
+It’s very long, but you can save yourself reading it by believing me that the only thing it does about saving the subprocess from the Bundler modifications is calling <code class="language-plaintext highlighter-rouge">jailbreak</code>, which is defined in the same file.<br />
+The introduction for this method is best quoted from the file direct:</p>
+<blockquote>
+  <p>This is, quite possibly, the saddest function in all of Vagrant.</p>
+</blockquote>
+
+<p>The method itself does plenty with the environment, mainly dealing with environment-related corner cases. Our interesting part is this:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">env</span><span class="p">.</span><span class="nf">replace</span><span class="p">(</span><span class="o">::</span><span class="no">Bundler</span><span class="o">::</span><span class="no">ORIGINAL_ENV</span><span class="p">)</span> <span class="k">if</span> <span class="k">defined?</span><span class="p">(</span><span class="o">::</span><span class="no">Bundler</span><span class="o">::</span><span class="no">ORIGINAL_ENV</span><span class="p">)</span>
+<span class="n">env</span><span class="p">.</span><span class="nf">merge!</span><span class="p">(</span><span class="no">Vagrant</span><span class="p">.</span><span class="nf">original_env</span><span class="p">)</span>
+</code></pre></div></div>
+<p>Instead of repeating the logic from <code class="language-plaintext highlighter-rouge">with_original_env</code>, I removed it from <code class="language-plaintext highlighter-rouge">jailbreak</code>, and instead took <code class="language-plaintext highlighter-rouge">process.start</code> from <code class="language-plaintext highlighter-rouge">execute</code> and wrapped it in <code class="language-plaintext highlighter-rouge">with_original_env</code>, like so:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Vagrant</span><span class="o">::</span><span class="no">Util</span><span class="o">::</span><span class="no">Env</span><span class="p">.</span><span class="nf">with_original_env</span> <span class="k">do</span>
+  <span class="n">process</span><span class="p">.</span><span class="nf">start</span>
+<span class="k">end</span>
+</code></pre></div></div>
+<p>I might have misunderstood jailbreak a bit, but hopefully it’ll work OK.</p>
+
+<p>And there you have it.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#chef" class="page__taxonomy-item" rel="tag">Chef</a><span class="sep">, </span>
+    
+      <a href="/tags/#linux" class="page__taxonomy-item" rel="tag">Linux</a><span class="sep">, </span>
+    
+      <a href="/tags/#mysteries-solved" class="page__taxonomy-item" rel="tag">Mysteries Solved</a><span class="sep">, </span>
+    
+      <a href="/tags/#ruby" class="page__taxonomy-item" rel="tag">Ruby</a><span class="sep">, </span>
+    
+      <a href="/tags/#vagrant" class="page__taxonomy-item" rel="tag">Vagrant</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#foss" class="page__taxonomy-item" rel="tag">FOSS</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2016-02-21T00:00:00+02:00">February 21, 2016</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/backslasher-python.html" class="pagination--pager" title="Backslasher-Python: a simple Chef Python cookbook
+">Previous</a>
+    
+    
+      <a href="/grafana-migrate-dashboards.html" class="pagination--pager" title="Migrating Grafana’s Dashboards
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/3-loc-760h.html" rel="permalink">Changed 3 lines of code, saved 760 server hours per month
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Act 1, where I write Java
+In the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/sapling-commands.html" rel="permalink">Sapling Commands
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Sapling (the Facebook-released SCM) is great, but the docs are not-great.
+I thought I’d list some commands it took me a while to undertand, for me and for ot...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/foia-calendars-pt1.html" rel="permalink">Processing Israeli FOIA calendars, Part 1
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Preface
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/docker-compose-ecs-nginx-caddy.html" rel="permalink">Caddy is better than Nginx for Docker Compose on ECS
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I recently managed to use Docker Compose to launch a small app in Aamazon’s Elastic Container Services (ECS).
+Overall, the result is pretty incredible. I’m a...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <script>
+  window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+  ga('create','','auto');
+  ga('set', 'anonymizeIp', false);
+  ga('send','pageview')
+</script>
+<script src="https://www.google-analytics.com/analytics.js" async></script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>

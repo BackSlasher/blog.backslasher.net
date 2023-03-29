@@ -1,0 +1,686 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Changed 3 lines of code, saved 760 server hours per month - BackSlasher</title>
+<meta name="description" content="Act 1, where I write Java In the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus was on the networking and container environment, a hackathon presented an opportunity to dive deeper into the app’s functionality. I discovered that the server was utilizing an excessive amount of CPU time, approximately 0.5% of the total, to check a particular feature flag. Recognizing the potential for cost savings, I implemented a caching mechanism to store the flag for five-second intervals, thus saving the company a tidy sum.">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Changed 3 lines of code, saved 760 server hours per month">
+<meta property="og:url" content="https://blog.backslasher.net/3-loc-760h.html">
+
+
+  <meta property="og:description" content="Act 1, where I write Java In the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus was on the networking and container environment, a hackathon presented an opportunity to dive deeper into the app’s functionality. I discovered that the server was utilizing an excessive amount of CPU time, approximately 0.5% of the total, to check a particular feature flag. Recognizing the potential for cost savings, I implemented a caching mechanism to store the flag for five-second intervals, thus saving the company a tidy sum.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2023-03-27T00:00:00+03:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/3-loc-760h.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Changed 3 lines of code, saved 760 server hours per month">
+    <meta itemprop="description" content="Act 1, where I write JavaIn the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus was on the networking and container environment, a hackathon presented an opportunity to dive deeper into the app’s functionality. I discovered that the server was utilizing an excessive amount of CPU time, approximately 0.5% of the total, to check a particular feature flag. Recognizing the potential for cost savings, I implemented a caching mechanism to store the flag for five-second intervals, thus saving the company a tidy sum.">
+    <meta itemprop="datePublished" content="2023-03-27T00:00:00+03:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Changed 3 lines of code, saved 760 server hours per month
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <h2 id="act-1-where-i-write-java">Act 1, where I write Java</h2>
+<p>In the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus was on the networking and container environment, a hackathon presented an opportunity to dive deeper into the app’s functionality. I discovered that the server was utilizing an excessive amount of CPU time, approximately 0.5% of the total, to check a particular feature flag. Recognizing the potential for cost savings, I implemented a caching mechanism to store the flag for five-second intervals, thus saving the company a tidy sum.</p>
+
+<p>During the development process, I observed that every update I made to my pull request (PR) required over 20 minutes for validation. Upon further investigation of the PR signals, I discovered that the end-to-end (e2e) signal was the clear outlier, consistently taking nearly 20 minutes, while all the other signals took less than two minutes. After the hackathon, I revisited this issue to identify the root cause.</p>
+
+<h2 id="act-2-with-big-plans-for-great-things">Act 2, with big plans for great things</h2>
+<p>I consulted with the engineer responsible for our e2e infrastructure to inquire about the validation delays I had been experiencing. In response, they confirmed that the entire system was subpar, and that there were plans to restructure it in the coming months.
+They said the following was missing:</p>
+<ol>
+  <li>Utilizing previously-built or partially-built artifacts</li>
+  <li>Building production rather than debug code (including minified assets and no symbols)</li>
+  <li>Connecting to a common log analysis framework to identify specific issues</li>
+</ol>
+
+<p>While these sounded good to me, I couldn’t resist taking a closer look at the code myself.
+What I found there shocked me.</p>
+
+<h2 id="act-3-where-i-spot-a-problem">Act 3, where I spot a problem</h2>
+<p>The e2e code was hard to read (non-common PHP dialect, sprinkled with JavaScript), but I figured out a specific piece that looked weird to me.
+Translated to JavaScript, it looked a bit like this:</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">e2eTest</span><span class="p">(</span><span class="nx">commit</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">checkOut</span><span class="p">(</span><span class="nx">commit</span><span class="p">);</span>
+    <span class="c1">// ...</span>
+    <span class="k">await</span> <span class="nx">runProcess</span><span class="p">(</span><span class="dl">"</span><span class="s2">server/build.sh</span><span class="dl">"</span><span class="p">);</span>
+    <span class="c1">// ...</span>
+    <span class="kd">const</span> <span class="nx">artifact</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">androidBuilder</span><span class="p">.</span><span class="nx">buildApk</span><span class="p">(</span><span class="nx">commit</span><span class="p">,</span> <span class="dl">"</span><span class="s2">client</span><span class="dl">"</span><span class="p">);</span>
+    <span class="c1">// ...</span>
+    <span class="kd">const</span> <span class="nx">serverProcess</span> <span class="o">=</span> <span class="nx">runProcess</span><span class="p">(</span><span class="dl">"</span><span class="s2">java server/server.jar localhost:8000</span><span class="dl">"</span><span class="p">);</span>
+    <span class="c1">// Magic to ensure server is running</span>
+    <span class="k">await</span> <span class="nx">androidTestRunner</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="nx">artifact</span><span class="p">,</span> <span class="dl">"</span><span class="s2">localhost:8000</span><span class="dl">"</span><span class="p">);</span>
+    <span class="nx">serverProcess</span><span class="p">.</span><span class="nx">kill</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>If you feel annoyed, it means you can see what I saw:<br />
+<strong>We’re waiting for the server build to finish before even starting client build</strong><br />
+To avoid wasting time building the APK when there are issues with the server, we have a process in place to wait for the server to finish before building the client. However, this approach results in unnecessary delays since the two builds do not benefit from being run sequentially. I confirmed this and approached the owner of the end-to-end (e2e) process to address the issue. The owner appeared indifferent and casually mentioned that they planned to implement a new build system that automatically parallelizes the build steps next half. After undrestanding that this is not being currently handled, I went to work.</p>
+
+<h2 id="act-4-cut-and-paste-is-used">Act 4. Cut and paste is used</h2>
+<p>Using my limited knowledge of parallelism in our e2e codebase, I rewrote the above to something like:</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">e2eTest</span><span class="p">(</span><span class="nx">commit</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">checkOut</span><span class="p">(</span><span class="nx">commit</span><span class="p">);</span>
+    <span class="c1">// ...</span>
+    <span class="kd">const</span> <span class="p">[</span><span class="nx">_</span><span class="p">,</span> <span class="nx">artifact</span><span class="p">]</span> <span class="o">=</span> <span class="nb">Promise</span><span class="p">.</span><span class="nx">all</span><span class="p">([</span>
+        <span class="k">await</span> <span class="nx">runProcess</span><span class="p">(</span><span class="dl">"</span><span class="s2">server/build.sh</span><span class="dl">"</span><span class="p">),</span>
+        <span class="k">await</span> <span class="nx">androidBuilder</span><span class="p">.</span><span class="nx">buildApk</span><span class="p">(</span><span class="nx">commit</span><span class="p">,</span> <span class="dl">"</span><span class="s2">client</span><span class="dl">"</span><span class="p">),</span>
+    <span class="p">]);</span>
+    <span class="c1">// ...</span>
+    <span class="kd">const</span> <span class="nx">serverProcess</span> <span class="o">=</span> <span class="nx">runProcess</span><span class="p">(</span><span class="dl">"</span><span class="s2">java server/server.jar localhost:8000</span><span class="dl">"</span><span class="p">);</span>
+    <span class="c1">// Magic to ensure server is running</span>
+    <span class="k">await</span> <span class="nx">androidTestRunner</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="nx">artifact</span><span class="p">,</span> <span class="dl">"</span><span class="s2">localhost:8000</span><span class="dl">"</span><span class="p">);</span>
+    <span class="nx">serverProcess</span><span class="p">.</span><span class="nx">kill</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>With the new build system in place, we are now able to build both the server and client in parallel and wait for both to complete before initiating testing. I tested and deployed this change promptly and effortlessly, as it was a small change only rearranging the execution methods in a particular area.</p>
+
+<p>To our delight, this minor modification reduced the e2e signal’s run time from 20 minutes to 11 minutes, resulting in significant time savings for our engineering team, who no longer had to wait as long for PRs to be ready. While this achievement was appreciated by the team, the server runtime savings were more easily measured.<br />
+By decreasing the e2e runtime, we were able to reduce the worker time that our build system consumed. Analyzing our build system’s utilization logs, I discovered that this simple change eliminated <em>760 hours</em> of worker time per month, which is a substantial amount.</p>
+
+<h2 id="epilogue-big-plans-are-crashing">Epilogue: big plans are crashing</h2>
+<p>Upon informing my colleagues of the improvement in e2e testing, I received feedback from the e2e specialist. They expressed dissatisfaction because their six-month plan to optimize the process would be more challenging to justify since the expected gains were now less significant. They had anticipated achieving a 7-minute e2e suite run time, which is a considerable improvement from 20 minutes, but less impressive compared to the new 11 minutes. After discussing the situation, we concluded that if the overhaul was less attractive now, it would be best to focus on other areas that could yield more significant gains. For instance, there may be other areas of the codebase with inefficient feature-flag checks that consume unnecessary CPU time, and optimizing these areas could save us a considerable amount of money.</p>
+
+<p>I ended up moving to another team shortly after, but I will forever remember how my 3-line change saved our company a whole worker a month.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#ramblings" class="page__taxonomy-item" rel="tag">Ramblings</a>
+    
+    </span>
+  </p>
+
+
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2023-03-27T00:00:00+03:00">March 27, 2023</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/sapling-commands.html" class="pagination--pager" title="Sapling Commands
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/sapling-commands.html" rel="permalink">Sapling Commands
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Sapling (the Facebook-released SCM) is great, but the docs are not-great.
+I thought I’d list some commands it took me a while to undertand, for me and for ot...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/foia-calendars-pt1.html" rel="permalink">Processing Israeli FOIA calendars, Part 1
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Preface
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/docker-compose-ecs-nginx-caddy.html" rel="permalink">Caddy is better than Nginx for Docker Compose on ECS
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I recently managed to use Docker Compose to launch a small app in Aamazon’s Elastic Container Services (ECS).
+Overall, the result is pretty incredible. I’m a...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/docker-commands.html" rel="permalink">Quick Docker Compose commands for ECS
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I’m pretty new to Dockering in the wild, and I’m trying to use the new ECS integration to push all of my tiny app to the cloud.
+
+</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <script>
+  window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+  ga('create','','auto');
+  ga('set', 'anonymizeIp', false);
+  ga('send','pageview')
+</script>
+<script src="https://www.google-analytics.com/analytics.js" async></script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>

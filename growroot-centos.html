@@ -1,0 +1,784 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Installing Growroot on CentOS - BackSlasher</title>
+<meta name="description" content="The story I currently work with CentOS on Amazon EC2. As I previously written, The HVM version of the AMI is created with a partitioned disk, instead of having the filesystem written directly on the block device. Problem is, when creating a root device bigger than the default (8G), you have to resize both the partition and the filesystem. While the filesystem can be resized online, the partition can’t. The issue looks something like this: lsblk  Without a partition: NAME    MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT xvde    202:64   0   30G  0 disk /">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Installing Growroot on CentOS">
+<meta property="og:url" content="https://blog.backslasher.net/growroot-centos.html">
+
+
+  <meta property="og:description" content="The story I currently work with CentOS on Amazon EC2. As I previously written, The HVM version of the AMI is created with a partitioned disk, instead of having the filesystem written directly on the block device. Problem is, when creating a root device bigger than the default (8G), you have to resize both the partition and the filesystem. While the filesystem can be resized online, the partition can’t. The issue looks something like this: lsblk  Without a partition: NAME    MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT xvde    202:64   0   30G  0 disk /">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2015-07-02T00:00:00+03:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/growroot-centos.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Installing Growroot on CentOS">
+    <meta itemprop="description" content="The storyI currently work with CentOS on Amazon EC2. As I previously written, The HVM version of the AMI is created with a partitioned disk, instead of having the filesystem written directly on the block device.Problem is, when creating a root device bigger than the default (8G), you have to resize both the partition and the filesystem. While the filesystem can be resized online, the partition can’t.The issue looks something like this:lsblkWithout a partition:NAME    MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTxvde    202:64   0   30G  0 disk /">
+    <meta itemprop="datePublished" content="2015-07-02T00:00:00+03:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Installing Growroot on CentOS
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <h2 id="the-story">The story</h2>
+<p>I currently work with CentOS on Amazon EC2. As I <a href="|filename|/resizing-aws-root-centos-hvm.md">previously written</a>, The HVM version of the AMI is created with a partitioned disk, instead of having the filesystem written directly on the block device.<br />
+Problem is, when creating a root device bigger than the default (8G), you have to resize both the partition and the filesystem. While the filesystem can be resized online, the partition can’t.<br />
+The issue looks something like this:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lsblk
+</code></pre></div></div>
+<p>Without a partition:</p>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>NAME    MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+xvde    202:64   0   30G  0 disk /
+</code></pre></div></div>
+
+<p>With a partition:</p>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>NAME    MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+xvda    202:0    0  30G  0 disk
+└─xvda1 202:1    0   8G  0 part /
+</code></pre></div></div>
+
+<p>The partition can actually be resized (as in deleted and recreated), but the updated partition table won’t be available because the partition is in use (and you can’t unmount the root partition).</p>
+
+<h2 id="the-ugly-solution">The ugly solution</h2>
+<p>Before learning of a better way, I wrote this script. It checks if the root device is a partition, and if so whether it’s filling up the parent disk.
+If not, it deletes the root partition and recreates it to fill up the entire disk. Although it has been tested, I don’t think it’s a good idea to use it.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo </span>BEFORE PARTITION RESIZE
+<span class="nv">ROOT_DEVICE</span><span class="o">=</span><span class="si">$(</span><span class="nb">df</span> / | <span class="nb">tail</span> <span class="nt">-n1</span> | <span class="nb">cut</span> <span class="nt">-f1</span> <span class="nt">-d</span> <span class="s1">' '</span><span class="si">)</span>
+<span class="nv">ROOT_TYPE</span><span class="o">=</span><span class="si">$(</span>lsblk <span class="nv">$ROOT_DEVICE</span> <span class="nt">-no</span> TYPE<span class="si">)</span>
+<span class="k">if</span> <span class="o">[</span> <span class="s2">"</span><span class="nv">$ROOT_TYPE</span><span class="s2">"</span> <span class="o">=</span> <span class="s2">"part"</span> <span class="o">]</span> <span class="p">;</span> <span class="k">then</span>
+    <span class="c"># find the parent disk</span>
+    <span class="nv">ROOT_MAJMIN</span><span class="o">=</span><span class="si">$(</span>lsblk <span class="nv">$ROOT_DEVICE</span> <span class="nt">-no</span> MAJ:MIN | <span class="nb">tr</span> <span class="nt">-d</span> <span class="s1">' '</span><span class="si">)</span>
+    <span class="nv">ROOT_SIZE</span><span class="o">=</span><span class="si">$(</span><span class="nb">cat</span> /sys/dev/block/<span class="k">${</span><span class="nv">ROOT_MAJMIN</span><span class="k">}</span>/size<span class="si">)</span>
+    <span class="nv">PARENT_SIZE</span><span class="o">=</span><span class="si">$(</span><span class="nb">cat</span> /sys/dev/block/<span class="k">${</span><span class="nv">ROOT_MAJMIN</span><span class="k">}</span>/../size<span class="si">)</span>
+    <span class="nv">ROOT_START</span><span class="o">=</span><span class="si">$(</span><span class="nb">cat</span> /sys/dev/block/<span class="k">${</span><span class="nv">ROOT_MAJMIN</span><span class="k">}</span>/start<span class="si">)</span>
+    <span class="nv">PARENT_NAME</span><span class="o">=</span><span class="si">$(</span><span class="nb">cat</span> /sys/dev/block/<span class="k">${</span><span class="nv">ROOT_MAJMIN</span><span class="k">}</span>/../uevent | perl <span class="nt">-ne</span> <span class="s1">'print $1,$/ if /^DEVNAME=(.+)$/'</span><span class="si">)</span>
+    <span class="c"># Check if the same size</span>
+    <span class="k">if</span> <span class="o">((</span> <span class="nv">$PARENT_SIZE</span> - <span class="nv">$ROOT_START</span> <span class="o">&gt;</span> <span class="nv">$ROOT_SIZE</span> <span class="o">))</span><span class="p">;</span> <span class="k">then
+        </span><span class="nb">echo</span> <span class="s2">"Recreating partition </span><span class="k">${</span><span class="nv">ROOT_DEVICE</span><span class="k">}</span><span class="s2"> on /dev/</span><span class="k">${</span><span class="nv">PARENT_NAME</span><span class="k">}</span><span class="s2">, starting in </span><span class="k">${</span><span class="nv">ROOT_START</span><span class="k">}</span><span class="s2">"</span>
+        <span class="nb">echo</span> <span class="nt">-e</span> <span class="s2">"u</span><span class="se">\n</span><span class="s2">p</span><span class="se">\n</span><span class="s2">d</span><span class="se">\n</span><span class="s2">n</span><span class="se">\n</span><span class="s2">p</span><span class="se">\n</span><span class="s2">1</span><span class="se">\n</span><span class="k">${</span><span class="nv">ROOT_START</span><span class="k">}</span><span class="se">\n\n</span><span class="s2">a</span><span class="se">\n</span><span class="s2">1</span><span class="se">\n</span><span class="s2">p</span><span class="se">\n</span><span class="s2">w</span><span class="se">\n</span><span class="s2">"</span> | fdisk /dev/<span class="k">${</span><span class="nv">PARENT_NAME</span><span class="k">}</span>
+        reboot <span class="c"># &lt;-- REBOOTING HERE</span>
+        <span class="nb">sleep </span>60
+    <span class="k">else
+        </span><span class="nb">echo</span> <span class="s2">"Partition </span><span class="k">${</span><span class="nv">ROOT_DEVICE</span><span class="k">}</span><span class="s2"> is fine"</span>
+    <span class="k">fi
+else
+    </span><span class="nb">echo</span> <span class="s2">"</span><span class="k">${</span><span class="nv">ROOT_DEVICE</span><span class="k">}</span><span class="s2"> is not a partition - its </span><span class="k">${</span><span class="nv">ROOT_TYPE</span><span class="k">}</span><span class="s2">"</span>
+<span class="k">fi
+</span><span class="nb">echo </span>AFTER PARTITION RESIZE
+</code></pre></div></div>
+<p>And I have a similar one for the filesystem:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">ROOT_DEVICE</span><span class="o">=</span><span class="si">$(</span><span class="nb">df</span> / | <span class="nb">tail</span> <span class="nt">-n1</span> | <span class="nb">cut</span> <span class="nt">-f1</span> <span class="nt">-d</span> <span class="s1">' '</span><span class="si">)</span>
+<span class="nv">ROOT_DEVICE_SIZE_B</span><span class="o">=</span><span class="si">$(</span>blockdev <span class="nt">--getsize64</span> <span class="nv">$ROOT_DEVICE</span><span class="si">)</span>
+<span class="nv">ROOT_FS_BLOCK_COUNT</span><span class="o">=</span><span class="si">$(</span>tune2fs <span class="nt">-l</span> <span class="nv">$ROOT_DEVICE</span> | perl <span class="nt">-ne</span> <span class="s1">'print $1,$/ if /Block count:\s+(\d+)$/'</span><span class="si">)</span>
+<span class="nv">ROOT_FS_BLOCK_SIZE</span><span class="o">=</span><span class="si">$(</span>tune2fs <span class="nt">-l</span> <span class="nv">$ROOT_DEVICE</span> | perl <span class="nt">-ne</span> <span class="s1">'print $1,$/ if /Block size:\s+(\d+)$/'</span><span class="si">)</span>
+<span class="c"># If the root FS is smaller in at least one block size than the root device size</span>
+<span class="k">if</span> <span class="o">((</span> <span class="o">(</span> <span class="nv">$ROOT_FS_BLOCK_COUNT</span> +1 <span class="o">)</span> <span class="k">*</span> <span class="nv">$ROOT_FS_BLOCK_SIZE</span> &lt; <span class="nv">$ROOT_DEVICE_SIZE_B</span> <span class="o">))</span><span class="p">;</span> <span class="k">then
+    </span><span class="nb">echo </span>resizing filesystem
+    resize2fs <span class="nv">$ROOT_DEVICE</span>
+<span class="k">fi</span>
+</code></pre></div></div>
+
+<h2 id="the-proper-solution">The proper solution</h2>
+
+<p><strong>Update 21.04.16:</strong> Thanks to Trevor’s tip, I switched from <code class="language-plaintext highlighter-rouge">perl</code> to <code class="language-plaintext highlighter-rouge">sed</code>, saving us the need of installing a package (a big win for Linux sysadmins).</p>
+
+<p>Just before deploying my script, I stumbled upon <a href="http://rpm.pbone.net/index.php3/stat/4/idpl/25071492/dir/redhat_el_6/com/dracut-modules-growroot-0.20-2.el6.noarch.rpm.html">dracut-modules-growroot</a>, which (like most things cloud) was imported from <a href="https://launchpad.net/ubuntu/utopic/+package/cloud-initramfs-growroot">Ubuntu</a>.<br />
+It’s available via EPEL, and when installed to the initramfs, it enlarges the root partition (if needed) before actually mounting it. This saves you the reboot, because when in the initramfs stage, the root partition isn’t really mounted, so it can be modified easily.<br />
+The steps I use in my image are:</p>
+
+<ol>
+  <li>
+    <p>Install all available updates</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> :::bash
+ yum update -y
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Install the EPEL helper package</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> :::bash
+ yum install -y epel-release
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Install <code class="language-plaintext highlighter-rouge">cloud-init</code> and <code class="language-plaintext highlighter-rouge">dracut-modules-growroot</code></p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> :::bash
+ yum install -y cloud-init dracut-modules-growroot
+</code></pre></div>    </div>
+
+    <p>This has to be done after installing <code class="language-plaintext highlighter-rouge">epel-release</code>, because otherwise YUM won’t look in the EPEL repository, where dracut-modules-growroot is available.<br />
+ Cloud Init is useful in running startup scripts, but it also has an <a href="https://cloudinit.readthedocs.org/en/latest/topics/modules.html?highlight=growpart#module-cloudinit.config.cc_growpart">enabled-by-default module</a> (great documentation, right?) that resizes the root filesystem (<code class="language-plaintext highlighter-rouge">resize2fs</code>-like) if its block device is bigger.<br />
+ You can avoid installing it, but then you’ll have to resize the filesystem on your own (see my second ugly script).</p>
+  </li>
+  <li>
+    <p>Rebuild <strong>all</strong> initramfs images.</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> :::bash
+ rpm -qa kernel | sed 's/^kernel-//'  | xargs -I {} dracut -f /boot/initramfs-{}.img {}
+</code></pre></div>    </div>
+
+    <p>This is very important. Without rebuilding the initramfs images, the module won’t be available and nothing will get done.<br />
+ Also note that I’m explicitly rebuilding an image for every kernel package installed - this is because we might be running kernel A, and just installed newer kernel B with <code class="language-plaintext highlighter-rouge">yum update -y</code>, so if I only used <code class="language-plaintext highlighter-rouge">dracut -f</code> only kernel A’s image will be rebuilt, and next time we’ll boot from kernel B’s image, that doesn’t have the module.</p>
+  </li>
+</ol>
+
+<p>The full script:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>yum update <span class="nt">-y</span>
+yum <span class="nb">install</span> <span class="nt">-y</span> epel-release
+yum <span class="nb">install</span> <span class="nt">-y</span> cloud-init dracut-modules-growroot
+rpm <span class="nt">-qa</span> kernel | <span class="nb">sed</span> <span class="s1">'s/^kernel-//'</span>  | xargs <span class="nt">-I</span> <span class="o">{}</span> dracut <span class="nt">-f</span> /boot/initramfs-<span class="o">{}</span>.img <span class="o">{}</span>
+
+</code></pre></div></div>
+
+<h2 id="troubleshooting">Troubleshooting</h2>
+
+<p>You can easily compare the sizes of your root block device, it’s parent and the root filesystem itself by running:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo </span>lsblk<span class="p">;</span>lsblk
+<span class="nb">echo df</span><span class="p">;</span> <span class="nb">df</span> <span class="nt">-h</span> /
+</code></pre></div></div>
+<p>A successful result should look like this:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lsblk
+NAME    MAJ:MIN RM SIZE RO TYPE MOUNTPOINT
+xvda    202:0    0  30G  0 disk
+└─xvda1 202:1    0  30G  0 part /
+df
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/xvda1       30G  963M   27G   4% /
+</code></pre></div></div>
+<p>If the script completes successfully but the partition isn’t magically resized, you can use this to search for growroot’s files in the initrd image that was used to boot:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>lsinitrd | <span class="nb">grep </span>grow
+</code></pre></div></div>
+<p>For me, it looks like this:</p>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>-rwxr-xr-x   1 root     root          133 Nov 22  2013 cmdline/99growroot-dummy.sh
+-rwxr-xr-x   1 root     root         2167 Nov 22  2013 pre-mount/99growroot.sh
+-rwxr-xr-x   1 root     root        16069 Nov 22  2013 usr/bin/growpart
+</code></pre></div></div>
+
+<p>If the files are there but still no magic, try fishing in <code class="language-plaintext highlighter-rouge">/var/log/{messages,secure}</code> or <code class="language-plaintext highlighter-rouge">dmesg</code>. I always had everything working if the files were actually there.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#aws" class="page__taxonomy-item" rel="tag">AWS</a><span class="sep">, </span>
+    
+      <a href="/tags/#centos" class="page__taxonomy-item" rel="tag">CentOS</a><span class="sep">, </span>
+    
+      <a href="/tags/#disk" class="page__taxonomy-item" rel="tag">Disk</a><span class="sep">, </span>
+    
+      <a href="/tags/#linux" class="page__taxonomy-item" rel="tag">Linux</a><span class="sep">, </span>
+    
+      <a href="/tags/#virtualization" class="page__taxonomy-item" rel="tag">Virtualization</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#foss" class="page__taxonomy-item" rel="tag">FOSS</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2015-07-02T00:00:00+03:00">July 2, 2015</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/chroot.html" class="pagination--pager" title="Chroot Snippet
+">Previous</a>
+    
+    
+      <a href="/nginx-crt-script.html" class="pagination--pager" title="Preparing Certificate files for Nginx
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/3-loc-760h.html" rel="permalink">Changed 3 lines of code, saved 760 server hours per month
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Act 1, where I write Java
+In the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/sapling-commands.html" rel="permalink">Sapling Commands
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Sapling (the Facebook-released SCM) is great, but the docs are not-great.
+I thought I’d list some commands it took me a while to undertand, for me and for ot...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/foia-calendars-pt1.html" rel="permalink">Processing Israeli FOIA calendars, Part 1
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Preface
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/docker-compose-ecs-nginx-caddy.html" rel="permalink">Caddy is better than Nginx for Docker Compose on ECS
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I recently managed to use Docker Compose to launch a small app in Aamazon’s Elastic Container Services (ECS).
+Overall, the result is pretty incredible. I’m a...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <script>
+  window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+  ga('create','','auto');
+  ga('set', 'anonymizeIp', false);
+  ga('send','pageview')
+</script>
+<script src="https://www.google-analytics.com/analytics.js" async></script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>

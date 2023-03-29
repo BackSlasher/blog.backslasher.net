@@ -1,0 +1,825 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Managing AWS Security Groups with Piculet - BackSlasher</title>
+<meta name="description" content="The Problem One of the first things I noticed when starting to work with AWS is that security groups are very hard to maintain:">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Managing AWS Security Groups with Piculet">
+<meta property="og:url" content="https://blog.backslasher.net/piculet.html">
+
+
+  <meta property="og:description" content="The Problem One of the first things I noticed when starting to work with AWS is that security groups are very hard to maintain:">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2015-10-07T00:00:00+03:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/piculet.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Managing AWS Security Groups with Piculet">
+    <meta itemprop="description" content="The ProblemOne of the first things I noticed when starting to work with AWS is that security groups are very hard to maintain:">
+    <meta itemprop="datePublished" content="2015-10-07T00:00:00+03:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Managing AWS Security Groups with Piculet
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <h2 id="the-problem">The Problem</h2>
+<p>One of the first things I noticed when starting to work with AWS is that security groups are very hard to maintain:</p>
+
+<ul>
+  <li>Name and description are immutable - One can’t modify the name/description of a Security Group after it’s created</li>
+  <li>Groups contain magical constants - There is no place for labeling IP ranges or port numbers</li>
+  <li>The rules can only refer to other security groups in the same VPC (or classic region, if outside VPC) or bare IPs, meaning that cross-VPC rules must contain a list of IPs that can change (since EC2 machines can change their IPs)</li>
+</ul>
+
+<p>Since I didn’t finish migrating our environment to documented and organized CloudFormation stacks (and I might never get around to it), I needed a way to manage security groups that doesn’t cause me to change paradigms, meaning it won’t force me to deploy tunneling solutions or push the servers into stacks.</p>
+
+<p>Luckily I found <a href="https://github.com/winebarrel/piculet">Piculet</a>.</p>
+
+<h2 id="what-does-it-do">What does it do</h2>
+<p>Piculet allowed me to define all of my Security Groups in a specific region using its DSL (it even has an export function for your existing groups).<br />
+By using <code class="language-plaintext highlighter-rouge">piculet --apply</code> one can make the actual security groups look like the DSL file (or its compiled form), meaning that Piculet will create/delete security groups and add/remove rules to match your file.<br />
+<img src="/assets/piculet/apply.png" alt="" /><br />
+This is already great as you can:</p>
+
+<ul>
+  <li>
+    <p>add comments to document your rules</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  :::ruby
+  # LB healthcheck
+  permission :tcp, 8644..8644 do
+    groups("default")
+  end
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>use ruby constructs to simpify your rules</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  :::ruby
+  [
+    2003, # carbon incoming
+    4567, # grafana UI
+  ].each do |port|
+    permission :tcp, port..port do
+      groups("default")
+    end
+  end
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>keep the files under source control to see who changed what, when and why<br />
+<img src="/assets/piculet/git.png" alt="" /></p>
+  </li>
+</ul>
+
+<h2 id="what-im-doing-with-it">What I’m doing with it</h2>
+<p>Using piculet as is was fine for a while, but aside from modifying the gem itself I modified the way we’re using it.</p>
+
+<h3 id="helper-methods-for-ips">Helper methods for IPs</h3>
+<p>I have some cross-VPC rules (like servers in Singapore talking to servers in Ireland), so I can’t use security group references. If I used IPs, my rules would look like this</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Ireland rule</span>
+<span class="n">permission</span> <span class="ss">:tcp</span><span class="p">,</span> <span class="mi">5678</span><span class="o">..</span><span class="mi">5678</span> <span class="k">do</span>
+  <span class="n">ip_ranges</span><span class="p">(</span>
+    <span class="s2">"1.2.3.4/0"</span><span class="p">,</span> <span class="c1"># serverA.singapore.slash.com</span>
+    <span class="s2">"5.6.7.8/0"</span><span class="p">,</span> <span class="c1"># serverB.singapore.slash.com</span>
+  <span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div></div>
+<p>This isn’t ideal because I have to update the list whenever an IP changes (or I add a new server).
+I ended up creating a helper file that monkey-patches the Piculet classes to include my helper methods such as <code class="language-plaintext highlighter-rouge">aws_role</code> (finds IP addresses of instances by a tag named “role”) or <code class="language-plaintext highlighter-rouge">aws_vpc</code> (IP addresses of all instances in a specific VPC).<br />
+This is most of my helper file. I might release it properly if it’s interesting.</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nn">Slasher</span>
+  <span class="k">module</span> <span class="nn">Firewall</span>
+      <span class="c1"># Create instance hash</span>
+      <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">set_instances</span>
+      <span class="n">extract_tag</span><span class="o">=</span><span class="nb">lambda</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="p">,</span><span class="n">n</span><span class="o">|</span>
+        <span class="n">mt</span> <span class="o">=</span> <span class="n">i</span><span class="p">.</span><span class="nf">tags</span><span class="p">.</span><span class="nf">find</span><span class="p">{</span><span class="o">|</span><span class="n">t</span><span class="o">|</span><span class="n">t</span><span class="p">.</span><span class="nf">key</span><span class="o">==</span><span class="n">n</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">mt</span><span class="p">.</span><span class="nf">nil?</span>
+          <span class="k">return</span> <span class="s1">''</span>
+        <span class="k">else</span>
+          <span class="k">return</span> <span class="n">mt</span><span class="p">.</span><span class="nf">value</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+
+      <span class="nb">require</span> <span class="s1">'aws-sdk-core'</span>
+      <span class="n">c</span><span class="o">=</span><span class="no">Aws</span><span class="o">::</span><span class="no">EC2</span><span class="o">::</span><span class="no">Client</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">region</span><span class="ss">:'us-east-1'</span><span class="p">);</span>
+      <span class="n">regions</span> <span class="o">=</span> <span class="n">c</span><span class="p">.</span><span class="nf">describe_regions</span><span class="p">.</span><span class="nf">regions</span><span class="p">.</span><span class="nf">map</span><span class="p">{</span><span class="o">|</span><span class="n">x</span><span class="o">|</span><span class="n">x</span><span class="p">.</span><span class="nf">region_name</span><span class="p">};</span>
+      <span class="n">instances</span> <span class="o">=</span> <span class="n">regions</span><span class="p">.</span><span class="nf">collect</span><span class="p">{</span><span class="o">|</span><span class="n">r</span><span class="o">|</span><span class="no">Aws</span><span class="o">::</span><span class="no">EC2</span><span class="o">::</span><span class="no">Client</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">region</span><span class="ss">:r</span><span class="p">).</span><span class="nf">describe_instances</span><span class="p">.</span><span class="nf">reservations</span><span class="p">.</span><span class="nf">map</span><span class="p">{</span><span class="o">|</span><span class="n">re</span><span class="o">|</span><span class="n">re</span><span class="p">.</span><span class="nf">instances</span><span class="p">}}.</span><span class="nf">flatten</span><span class="p">.</span><span class="nf">select</span><span class="p">{</span><span class="o">|</span><span class="n">i</span><span class="o">|</span><span class="n">i</span><span class="p">.</span><span class="nf">state</span><span class="p">.</span><span class="nf">code</span><span class="o">==</span><span class="mi">16</span><span class="p">}</span>
+      <span class="n">instances</span><span class="p">.</span><span class="nf">select!</span><span class="p">{</span><span class="o">|</span><span class="n">i</span><span class="o">|</span><span class="n">extract_tag</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="s1">'piculet_ignore'</span><span class="p">].</span><span class="nf">empty?</span><span class="p">}</span>
+      <span class="vc">@@instance_hash</span><span class="o">=</span><span class="n">instances</span><span class="p">.</span><span class="nf">map</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>
+        <span class="p">({</span>
+          <span class="ss">name: </span><span class="n">extract_tag</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="s1">'Name'</span><span class="p">],</span>
+          <span class="ss">ip:   </span><span class="s2">"</span><span class="si">#{</span><span class="n">i</span><span class="p">.</span><span class="nf">public_ip_address</span><span class="si">}</span><span class="s2">/32"</span><span class="p">,</span>
+          <span class="ss">role: </span><span class="n">extract_tag</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="s1">'Role'</span><span class="p">],</span>
+          <span class="ss">roles: </span><span class="n">extract_tag</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="s1">'Role'</span><span class="p">].</span><span class="nf">split</span><span class="p">(</span><span class="s1">','</span><span class="p">).</span><span class="nf">map</span><span class="p">(</span><span class="o">&amp;</span><span class="ss">:strip</span><span class="p">),</span>
+          <span class="ss">vpc_id: </span><span class="n">i</span><span class="p">.</span><span class="nf">vpc_id</span><span class="p">,</span>
+          <span class="ss">region: </span><span class="n">i</span><span class="p">.</span><span class="nf">placement</span><span class="p">.</span><span class="nf">availability_zone</span><span class="p">.</span><span class="nf">gsub</span><span class="p">(</span><span class="sr">/.$/</span><span class="p">,</span><span class="s1">''</span><span class="p">),</span>
+        <span class="p">})</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+    <span class="n">set_instances</span> <span class="c1"># Actually run</span>
+
+    <span class="k">def</span> <span class="nf">instance_hash</span>
+      <span class="vc">@@instance_hash</span>
+    <span class="k">end</span>
+
+    <span class="c1"># DNS resolution</span>
+    <span class="k">def</span> <span class="nf">host_name</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
+      <span class="nb">require</span> <span class="s1">'resolv'</span>
+      <span class="n">ip</span><span class="o">=</span><span class="no">Resolv</span><span class="p">.</span><span class="nf">getaddress</span> <span class="nb">name</span>
+      <span class="s2">"</span><span class="si">#{</span><span class="n">ip</span><span class="si">}</span><span class="s2">/32"</span>
+    <span class="k">end</span>
+
+    <span class="c1"># By name tag</span>
+    <span class="k">def</span> <span class="nf">aws_name</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
+      <span class="n">instance_hash</span><span class="p">.</span><span class="nf">select</span><span class="p">{</span><span class="o">|</span><span class="n">n</span><span class="o">|</span><span class="n">n</span><span class="p">[</span><span class="ss">:name</span><span class="p">]</span><span class="o">==</span><span class="nb">name</span><span class="p">}.</span><span class="nf">map</span><span class="p">{</span><span class="o">|</span><span class="n">n</span><span class="o">|</span><span class="n">n</span><span class="p">[</span><span class="ss">:ip</span><span class="p">]}</span>
+    <span class="k">end</span>
+
+    <span class="c1"># By role tag</span>
+    <span class="k">def</span> <span class="nf">aws_role</span><span class="p">(</span><span class="n">role</span><span class="p">)</span>
+      <span class="n">instance_hash</span><span class="p">.</span><span class="nf">select</span><span class="p">{</span><span class="o">|</span><span class="n">n</span><span class="o">|</span><span class="n">n</span><span class="p">[</span><span class="ss">:roles</span><span class="p">].</span><span class="nf">include?</span><span class="p">(</span><span class="n">role</span><span class="p">)}.</span><span class="nf">map</span><span class="p">{</span><span class="o">|</span><span class="n">n</span><span class="o">|</span><span class="n">n</span><span class="p">[</span><span class="ss">:ip</span><span class="p">]}</span>
+    <span class="k">end</span>
+
+    <span class="c1"># All in classic EC2 in region</span>
+    <span class="k">def</span> <span class="nf">aws_classic</span><span class="p">(</span><span class="n">region</span><span class="p">)</span>
+      <span class="n">instance_hash</span><span class="p">.</span><span class="nf">select</span><span class="p">{</span><span class="o">|</span><span class="n">i</span><span class="o">|</span> <span class="n">i</span><span class="p">[</span><span class="ss">:region</span><span class="p">]</span><span class="o">==</span><span class="n">region</span> <span class="o">&amp;&amp;</span> <span class="n">i</span><span class="p">[</span><span class="ss">:vpc_id</span><span class="p">].</span><span class="nf">nil?</span><span class="p">}.</span><span class="nf">map</span><span class="p">{</span><span class="o">|</span><span class="n">n</span><span class="o">|</span><span class="n">n</span><span class="p">[</span><span class="ss">:ip</span><span class="p">]}</span>
+    <span class="k">end</span>
+
+    <span class="c1"># All in specific VPC</span>
+    <span class="k">def</span> <span class="nf">aws_vpc</span><span class="p">(</span><span class="n">vpc_id</span><span class="p">)</span>
+      <span class="n">instance_hash</span><span class="p">.</span><span class="nf">select</span><span class="p">{</span><span class="o">|</span><span class="n">i</span><span class="o">|</span><span class="n">i</span><span class="p">[</span><span class="ss">:vpc_id</span><span class="p">]</span><span class="o">==</span><span class="n">vpc_id</span><span class="p">}.</span><span class="nf">map</span><span class="p">{</span><span class="o">|</span><span class="n">n</span><span class="o">|</span><span class="n">n</span><span class="p">[</span><span class="ss">:ip</span><span class="p">]}</span>
+    <span class="k">end</span>
+
+    <span class="c1"># IPs of health checkers in Route53</span>
+    <span class="k">def</span> <span class="nf">route53_ips</span>
+      <span class="p">[</span><span class="s2">"54.228.16.0/26"</span><span class="p">,</span> <span class="s2">"54.232.40.64/26"</span><span class="p">,</span> <span class="s2">"54.241.32.64/26"</span><span class="p">,</span> <span class="s2">"54.243.31.192/26"</span><span class="p">,</span> <span class="s2">"54.245.168.0/26"</span><span class="p">,</span> <span class="s2">"54.248.220.0/26"</span><span class="p">,</span> <span class="s2">"54.251.31.128/26"</span><span class="p">,</span> <span class="s2">"54.252.79.128/26"</span><span class="p">,</span> <span class="s2">"54.183.255.128/26"</span><span class="p">,</span> <span class="s2">"54.244.52.192/26"</span><span class="p">,</span> <span class="s2">"54.250.253.192/26"</span><span class="p">,</span> <span class="s2">"54.252.254.192/26"</span><span class="p">,</span> <span class="s2">"54.255.254.192/26"</span><span class="p">,</span> <span class="s2">"107.23.255.0/26"</span><span class="p">,</span> <span class="s2">"176.34.159.192/26"</span><span class="p">,</span> <span class="s2">"177.71.207.128/26"</span><span class="p">]</span>
+    <span class="k">end</span>
+
+    <span class="c1"># Every IP we can think of</span>
+    <span class="k">def</span> <span class="nf">all_ips</span>
+      <span class="n">instance_hash</span><span class="p">.</span><span class="nf">map</span><span class="p">{</span><span class="o">|</span><span class="n">n</span><span class="o">|</span><span class="n">n</span><span class="p">[</span><span class="ss">:ip</span><span class="p">]}</span> <span class="o">+</span> <span class="n">route53_ips</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">Piculet::DSL::EC2::SecurityGroup::Permissions::Permission</span>
+  <span class="kp">include</span> <span class="no">Slasher</span><span class="o">::</span><span class="no">Firewall</span>
+<span class="k">end</span>
+</code></pre></div></div>
+<p>Now I can use it in my rules, like so:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># App healthcheck</span>
+<span class="n">permission</span> <span class="ss">:tcp</span><span class="p">,</span> <span class="mi">8644</span><span class="o">..</span><span class="mi">8644</span> <span class="k">do</span>
+  <span class="n">ip_ranges</span><span class="p">(</span>
+    <span class="o">*</span><span class="n">route53_ips</span><span class="p">,</span>
+  <span class="p">)</span>
+<span class="k">end</span>
+
+<span class="c1"># Backroom API</span>
+<span class="n">permission</span> <span class="ss">:tcp</span><span class="p">,</span> <span class="mi">8081</span><span class="o">..</span><span class="mi">8081</span> <span class="k">do</span>
+  <span class="n">ip_ranges</span><span class="p">(</span>
+    <span class="o">*</span><span class="n">aws_role</span><span class="p">(</span><span class="s1">'backroom'</span><span class="p">),</span> <span class="c1"># From around the world</span>
+    <span class="n">host_name</span><span class="p">(</span><span class="s1">'important.client.com'</span><span class="p">),</span>
+  <span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h3 id="apply-all-regions">Apply all regions</h3>
+<p>I have this helper script to apply each file to its matching region.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+<span class="nb">cat </span>regions | parallel <span class="nt">-j</span> 0 bundle <span class="nb">exec </span>piculet <span class="nv">$@</span> <span class="nt">-a</span> <span class="nt">-f</span> <span class="o">{}</span> <span class="nt">-r</span> <span class="o">{}</span> <span class="nt">--exclude</span> <span class="s1">'/^packer\s[\w\-]+$/'</span> <span class="nt">--exclude_tag</span> piculet_ignore
+</code></pre></div></div>
+<p>Interesting things:</p>
+
+<ul>
+  <li>The <code class="language-plaintext highlighter-rouge">regions</code> file contains all of the regions you want to apply. This is handy because you can stop handling a region without removing its file, have unrelated files around, etc.</li>
+  <li><code class="language-plaintext highlighter-rouge">--exclude</code> is being used to ignore temporary security groups created by packer.</li>
+  <li><code class="language-plaintext highlighter-rouge">--exlcude_tag</code> only exists in my fork of the gem (currently) and allows me to ignore security groups belonging to CloudFormation stacks.</li>
+  <li><code class="language-plaintext highlighter-rouge">parallel</code> is used to run all regions at the same time and keep the output tidy. If you don’t care about output tidiness, you can use <code class="language-plaintext highlighter-rouge">xargs -P 0 -I {}</code> instead</li>
+</ul>
+
+<h3 id="automatically-updating-rules">Automatically updating rules</h3>
+<p>Since our rules are in a git repository, I have a server that keeps an updated copy of said repo and applies it every once in a while. This allows me to keep a CI/CD feel (infrastructure as code) and allow “regular” users to modify the FW rules using pull requests on the repo.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#aws" class="page__taxonomy-item" rel="tag">AWS</a><span class="sep">, </span>
+    
+      <a href="/tags/#firewall" class="page__taxonomy-item" rel="tag">Firewall</a><span class="sep">, </span>
+    
+      <a href="/tags/#piculet" class="page__taxonomy-item" rel="tag">Piculet</a><span class="sep">, </span>
+    
+      <a href="/tags/#ruby" class="page__taxonomy-item" rel="tag">Ruby</a><span class="sep">, </span>
+    
+      <a href="/tags/#security" class="page__taxonomy-item" rel="tag">Security</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#foss" class="page__taxonomy-item" rel="tag">FOSS</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2015-10-07T00:00:00+03:00">October 7, 2015</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/xbox360-controller-ubuntu.html" class="pagination--pager" title="Running Xbox360 controllers on Ubuntu
+">Previous</a>
+    
+    
+      <a href="/chef-known-hosts.html" class="pagination--pager" title="Generating known_hosts file using Chef
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/3-loc-760h.html" rel="permalink">Changed 3 lines of code, saved 760 server hours per month
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Act 1, where I write Java
+In the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/sapling-commands.html" rel="permalink">Sapling Commands
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Sapling (the Facebook-released SCM) is great, but the docs are not-great.
+I thought I’d list some commands it took me a while to undertand, for me and for ot...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/foia-calendars-pt1.html" rel="permalink">Processing Israeli FOIA calendars, Part 1
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Preface
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/docker-compose-ecs-nginx-caddy.html" rel="permalink">Caddy is better than Nginx for Docker Compose on ECS
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I recently managed to use Docker Compose to launch a small app in Aamazon’s Elastic Container Services (ECS).
+Overall, the result is pretty incredible. I’m a...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <script>
+  window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+  ga('create','','auto');
+  ga('set', 'anonymizeIp', false);
+  ga('send','pageview')
+</script>
+<script src="https://www.google-analytics.com/analytics.js" async></script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>

@@ -1,0 +1,737 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Scripting YUM provides search using Python - BackSlasher</title>
+<meta name="description" content="Update 24-06-15 Thanks to this page, I fixed my script. It no longer requires root privillages. I also muted informational messages because they were not very informational.">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Scripting YUM provides search using Python">
+<meta property="og:url" content="https://blog.backslasher.net/yum-python-provides.html">
+
+
+  <meta property="og:description" content="Update 24-06-15 Thanks to this page, I fixed my script. It no longer requires root privillages. I also muted informational messages because they were not very informational.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2015-04-14T00:00:00+03:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/yum-python-provides.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Scripting YUM provides search using Python">
+    <meta itemprop="description" content="Update 24-06-15Thanks to this page, I fixed my script. It no longer requires root privillages. I also muted informational messages because they were not very informational.">
+    <meta itemprop="datePublished" content="2015-04-14T00:00:00+03:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Scripting YUM provides search using Python
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          1 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <h3 id="update-24-06-15">Update 24-06-15</h3>
+<p>Thanks to <a href="http://yum.baseurl.org/wiki/5MinuteExamples">this page</a>, I fixed my script. It no longer requires root privillages. I also muted informational messages because they were not very informational.</p>
+
+<h2 id="the-story">The Story</h2>
+<p>Today I had a list of files (nagios check scripts), and I wanted to check for every file if there’s a package containing it (I’m a big fan of getting files from the repo rather than downloading manually).
+Although YUM provides a way to search for packages containing a file pattern, like this:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>yum provides <span class="s1">'*/check_mailq'</span>
+</code></pre></div></div>
+<p>The output is quite complicated to parse:</p>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Loaded plugins: fastestmirror, presto
+Loading mirror speeds from cached hostfile
+ * base: mirrors.seas.harvard.edu
+ * epel: mirror.symnds.com
+ * extras: mirror.ash.fastserv.com
+ * updates: mirror.cogentco.com
+private-chef-1.4.15-1.el6.x86_64 : The full stack of private-chef
+Repo        : chef-stable
+Matched from:
+Filename    : /opt/opscode/embedded/nagios/libexec/check_mailq
+
+
+
+private-chef-1.4.14-1.el6.x86_64 : The full stack of private-chef
+Repo        : chef-stable
+Matched from:
+Filename    : /opt/opscode/embedded/nagios/libexec/check_mailq
+
+
+
+nagios-plugins-mailq-1.4.16-10.el6.x86_64 : Nagios Plugin - check_mailq
+Repo        : epel
+Matched from:
+Filename    : /usr/lib64/nagios/plugins/check_mailq
+</code></pre></div></div>
+<p>The first part is irrelevant (info messages that should IMO go to <code class="language-plaintext highlighter-rouge">stderr</code>), and every entry in the actual result contains multiple lines… bah.
+Luckily, YUM is completely written in python so we can copy its behaviour with a custom script.</p>
+
+<h2 id="the-solution">The Solution</h2>
+<p>I used <a href="http://mo.morsi.org/blog/node/220">this post</a> to help me with basic discovery. The rest is my work.<br />
+This script requires root (or <code class="language-plaintext highlighter-rouge">sudo</code>). I didn’t bother finding out how to run it otherwise.</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">yum</span>
+<span class="n">yb</span><span class="o">=</span><span class="n">yum</span><span class="p">.</span><span class="n">YumBase</span><span class="p">()</span>
+<span class="n">yb</span><span class="p">.</span><span class="n">setCacheDir</span><span class="p">()</span>
+<span class="n">logging</span><span class="p">.</span><span class="n">disable</span><span class="p">(</span><span class="n">logging</span><span class="p">.</span><span class="n">WARNING</span><span class="p">)</span> <span class="c1"># Mute loggers
+</span><span class="n">files</span><span class="o">=</span><span class="p">[</span><span class="s">'YOUR'</span><span class="p">,</span><span class="s">'file'</span><span class="p">,</span><span class="s">'name'</span><span class="p">,</span><span class="s">'go'</span><span class="p">,</span><span class="s">'here'</span><span class="p">]</span>
+
+<span class="n">res</span><span class="o">=</span><span class="p">{}</span>
+<span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+  <span class="n">r</span><span class="o">=</span><span class="n">yb</span><span class="p">.</span><span class="n">searchPackageProvides</span><span class="p">([</span><span class="s">'*/'</span><span class="o">+</span><span class="n">f</span><span class="p">])</span> <span class="c1"># ,('*/'+f+'.*')
+</span>  <span class="n">res</span><span class="p">[</span><span class="n">f</span><span class="p">]</span><span class="o">=</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">.</span><span class="n">name</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
+</code></pre></div></div>
+<p>The following part varies by your objective. I wanted to list the packages required for each file, and also a sorted list of all relevant packages:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">print</span> <span class="s">'**No matches:'</span>
+<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="n">x</span><span class="p">])</span><span class="o">==</span><span class="mi">0</span><span class="p">,</span> <span class="n">res</span><span class="p">):</span> <span class="k">print</span> <span class="n">p</span>
+
+<span class="k">print</span>
+<span class="k">print</span> <span class="s">'**Matches:'</span>
+<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="n">x</span><span class="p">])</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">,</span> <span class="n">res</span><span class="p">):</span> <span class="k">print</span> <span class="n">p</span><span class="p">,</span><span class="n">res</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+
+<span class="k">print</span>
+<span class="k">print</span> <span class="s">'**Duplicates:'</span>
+<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="n">x</span><span class="p">])</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">,</span> <span class="n">res</span><span class="p">):</span> <span class="k">print</span> <span class="n">p</span><span class="p">,</span><span class="n">res</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+
+<span class="k">print</span>
+<span class="k">print</span> <span class="s">'**Packages to be installed:'</span>
+<span class="n">pkgs</span><span class="o">=</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">res</span><span class="p">[</span><span class="n">x</span><span class="p">],</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="n">x</span><span class="p">])</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">,</span> <span class="n">res</span><span class="p">))</span>
+<span class="k">print</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">item</span> <span class="k">for</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="n">pkgs</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sublist</span><span class="p">])))</span>
+</code></pre></div></div>
+<p>The result is quite nice:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">**</span><span class="n">No</span> <span class="n">matches</span><span class="p">:</span>
+<span class="n">check_sockets</span><span class="p">.</span><span class="n">sh</span>
+<span class="n">check_threads</span><span class="p">.</span><span class="n">sh</span>
+<span class="n">check_exit_code</span><span class="p">.</span><span class="n">pl</span>
+<span class="n">check_duplicate_process</span>
+
+<span class="o">**</span><span class="n">Matches</span><span class="p">:</span>
+<span class="n">check_nagios</span> <span class="p">[</span><span class="s">'nagios-plugins-nagios'</span><span class="p">]</span>
+<span class="n">check_breeze</span> <span class="p">[</span><span class="s">'nagios-plugins-breeze'</span><span class="p">]</span>
+<span class="n">check_mrtgtraf</span> <span class="p">[</span><span class="s">'nagios-plugins-mrtgtraf'</span><span class="p">]</span>
+<span class="n">check_ldap</span> <span class="p">[</span><span class="s">'check-mk'</span><span class="p">,</span> <span class="s">'check-mk-docs'</span><span class="p">,</span> <span class="s">'nagios-plugins-ldap'</span><span class="p">]</span>
+<span class="n">check_ircd</span> <span class="p">[</span><span class="s">'nagios-plugins-ircd'</span><span class="p">]</span>
+
+<span class="o">**</span><span class="n">Duplicates</span><span class="p">:</span>
+<span class="n">check_ldap</span> <span class="p">[</span><span class="s">'check-mk'</span><span class="p">,</span> <span class="s">'check-mk-docs'</span><span class="p">,</span> <span class="s">'nagios-plugins-ldap'</span><span class="p">]</span>
+<span class="n">check_dns</span> <span class="p">[</span><span class="s">'nagios-plugins-dns'</span><span class="p">,</span> <span class="s">'check-mk'</span><span class="p">,</span> <span class="s">'check-mk-docs'</span><span class="p">]</span>
+<span class="n">check_smtp</span> <span class="p">[</span><span class="s">'check-mk'</span><span class="p">,</span> <span class="s">'nagios-plugins-smtp'</span><span class="p">,</span> <span class="s">'check-mk-docs'</span><span class="p">]</span>
+
+<span class="o">**</span><span class="n">Packages</span> <span class="n">to</span> <span class="n">be</span> <span class="n">installed</span><span class="p">:</span>
+<span class="p">[</span><span class="s">'check-mk'</span><span class="p">,</span> <span class="s">'check-mk-docs'</span><span class="p">,</span> <span class="s">'nagios-plugins-breeze'</span><span class="p">,</span> <span class="s">'nagios-plugins-dns'</span><span class="p">,</span> <span class="s">'nagios-plugins-ircd'</span><span class="p">,</span> <span class="s">'nagios-plugins-ldap'</span><span class="p">,</span> <span class="s">'nagios-plugins-mrtgtraf'</span><span class="p">,</span> <span class="s">'nagios-plugins-nagios'</span><span class="p">,</span> <span class="s">'nagios-plugins-smtp'</span><span class="p">]</span>
+</code></pre></div></div>
+<p>Looks good.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#centos" class="page__taxonomy-item" rel="tag">CentOS</a><span class="sep">, </span>
+    
+      <a href="/tags/#linux" class="page__taxonomy-item" rel="tag">Linux</a><span class="sep">, </span>
+    
+      <a href="/tags/#python" class="page__taxonomy-item" rel="tag">Python</a><span class="sep">, </span>
+    
+      <a href="/tags/#scripts" class="page__taxonomy-item" rel="tag">Scripts</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#foss" class="page__taxonomy-item" rel="tag">FOSS</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2015-04-14T00:00:00+03:00">April 14, 2015</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/batch-fitting-imagemagick.html" class="pagination--pager" title="Batch fitting pictures in ImageMagick
+">Previous</a>
+    
+    
+      <a href="/thrift-init.html" class="pagination--pager" title="Init file for HBase Thrift Server
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/3-loc-760h.html" rel="permalink">Changed 3 lines of code, saved 760 server hours per month
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Act 1, where I write Java
+In the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/sapling-commands.html" rel="permalink">Sapling Commands
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Sapling (the Facebook-released SCM) is great, but the docs are not-great.
+I thought I’d list some commands it took me a while to undertand, for me and for ot...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/foia-calendars-pt1.html" rel="permalink">Processing Israeli FOIA calendars, Part 1
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Preface
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/docker-compose-ecs-nginx-caddy.html" rel="permalink">Caddy is better than Nginx for Docker Compose on ECS
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I recently managed to use Docker Compose to launch a small app in Aamazon’s Elastic Container Services (ECS).
+Overall, the result is pretty incredible. I’m a...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <script>
+  window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+  ga('create','','auto');
+  ga('set', 'anonymizeIp', false);
+  ga('send','pageview')
+</script>
+<script src="https://www.google-analytics.com/analytics.js" async></script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>

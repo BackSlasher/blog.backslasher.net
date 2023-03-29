@@ -1,0 +1,787 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Some PowerShell Snippets for Network Scanning - BackSlasher</title>
+<meta name="description" content="I recently had to improvise some network scanning using PowerShell. The security guys got somewhat excited, so I decided to upload these snippets. I think all of them require PowerShell v2+  Checking ping for one IP address Test-Connection $target -count 1 -quiet">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Some PowerShell Snippets for Network Scanning">
+<meta property="og:url" content="https://blog.backslasher.net/some-powershell-snippets-for-network-scanning.html">
+
+
+  <meta property="og:description" content="I recently had to improvise some network scanning using PowerShell. The security guys got somewhat excited, so I decided to upload these snippets. I think all of them require PowerShell v2+  Checking ping for one IP address Test-Connection $target -count 1 -quiet">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2014-01-21T00:00:00+02:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/some-powershell-snippets-for-network-scanning.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Some PowerShell Snippets for Network Scanning">
+    <meta itemprop="description" content="I recently had to improvise some network scanning using PowerShell. Thesecurity guys got somewhat excited, so I decided to upload thesesnippets.I think all of them require PowerShell v2+Checking ping for one IP addressTest-Connection $target -count 1 -quiet">
+    <meta itemprop="datePublished" content="2014-01-21T00:00:00+02:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Some PowerShell Snippets for Network Scanning
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          1 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>I recently had to improvise some network scanning using PowerShell. The
+security guys got somewhat excited, so I decided to upload these
+snippets.<br />
+I think all of them require PowerShell v2+</p>
+
+<h3 id="checking-ping-for-one-ip-address">Checking ping for one IP address</h3>
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Test-Connection</span><span class="w"> </span><span class="nv">$target</span><span class="w"> </span><span class="nt">-count</span><span class="w"> </span><span class="nx">1</span><span class="w"> </span><span class="nt">-quiet</span><span class="w">
+</span></code></pre></div></div>
+
+<h3 id="checking-if-a-tcp-port-is-listening">Checking if a TCP port is listening</h3>
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">function</span><span class="w"> </span><span class="nf">TryOpen-TCPPort</span><span class="p">([</span><span class="n">string</span><span class="p">]</span><span class="nv">$target</span><span class="p">,[</span><span class="n">int</span><span class="p">]</span><span class="nv">$port</span><span class="p">){</span><span class="w">
+ </span><span class="kr">try</span><span class="p">{</span><span class="w">
+  </span><span class="nv">$socket</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">new-object</span><span class="w"> </span><span class="nx">System.Net.Sockets.TcpClient</span><span class="w">
+  </span><span class="nv">$socket</span><span class="o">.</span><span class="nf">Connect</span><span class="p">(</span><span class="nv">$target</span><span class="p">,</span><span class="nv">$port</span><span class="p">)</span><span class="w">
+  </span><span class="nv">$socket</span><span class="o">.</span><span class="nf">Close</span><span class="p">()</span><span class="w">
+  </span><span class="kr">return</span><span class="w"> </span><span class="bp">$true</span><span class="w">
+ </span><span class="p">}</span><span class="kr">catch</span><span class="p">{</span><span class="kr">return</span><span class="w"> </span><span class="bp">$false</span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<h3 id="scanning-a-list-of-addresses-for-predefined-ports">Scanning a list of addresses for predefined ports</h3>
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">function</span><span class="w"> </span><span class="nf">Map-Ports</span><span class="p">{</span><span class="w">
+ </span><span class="kr">param</span><span class="p">(</span><span class="w">
+  </span><span class="p">[</span><span class="n">string</span><span class="p">[]]</span><span class="nv">$targets</span><span class="p">,</span><span class="w">
+  </span><span class="p">[</span><span class="n">int</span><span class="p">[]]</span><span class="nv">$tcpPorts</span><span class="w">
+ </span><span class="p">)</span><span class="w">
+
+ </span><span class="nv">$targets</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="o">%</span><span class="p">{</span><span class="w">
+ </span><span class="nv">$target</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="bp">$_</span><span class="w">
+ </span><span class="nv">$ret</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">new-object</span><span class="w"> </span><span class="nx">object</span><span class="w">
+ </span><span class="nv">$ret</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Add-Member</span><span class="w"> </span><span class="nx">NoteProperty</span><span class="w"> </span><span class="s1">'Name'</span><span class="w"> </span><span class="bp">$_</span><span class="w">
+ </span><span class="nv">$ret</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Add-Member</span><span class="w"> </span><span class="nx">NoteProperty</span><span class="w"> </span><span class="s1">'IP'</span><span class="w"> </span><span class="bp">$null</span><span class="w">
+ </span><span class="nv">$ret</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Add-Member</span><span class="w"> </span><span class="nx">NoteProperty</span><span class="w"> </span><span class="s1">'HasPing'</span><span class="w"> </span><span class="bp">$null</span><span class="w">
+ </span><span class="nv">$tcpPorts</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="o">%</span><span class="p">{</span><span class="nv">$ret</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Add-Member</span><span class="w"> </span><span class="nx">NoteProperty</span><span class="w"> </span><span class="s2">"TCP</span><span class="bp">$_</span><span class="s2">"</span><span class="w"> </span><span class="bp">$null</span><span class="p">}</span><span class="w">
+  </span><span class="nv">$ip</span><span class="o">=</span><span class="bp">$null</span><span class="w">
+ </span><span class="kr">try</span><span class="p">{</span><span class="w">
+  </span><span class="nv">$ip</span><span class="o">=</span><span class="p">[</span><span class="n">System.Net.Dns</span><span class="p">]::</span><span class="n">Resolve</span><span class="p">(</span><span class="nv">$target</span><span class="p">)</span><span class="o">.</span><span class="n">AddressList</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="nf">IPAddressToString</span><span class="w">
+ </span><span class="p">}</span><span class="kr">catch</span><span class="w"> </span><span class="p">[</span><span class="n">Net.Sockets.SocketException</span><span class="p">]{}</span><span class="w">
+ </span><span class="nv">$ret</span><span class="o">.</span><span class="nf">IP</span><span class="o">=</span><span class="nv">$ip</span><span class="w">
+  </span><span class="kr">if</span><span class="p">(</span><span class="nv">$ip</span><span class="p">){</span><span class="w">
+  </span><span class="nv">$ret</span><span class="o">.</span><span class="nf">HasPing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">Test-Connection</span><span class="w"> </span><span class="nv">$ip</span><span class="w"> </span><span class="nt">-Quiet</span><span class="w"> </span><span class="nt">-Count</span><span class="w"> </span><span class="nx">1</span><span class="p">)</span><span class="w">
+  </span><span class="nv">$tcpPorts</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="o">%</span><span class="p">{</span><span class="nv">$ret</span><span class="o">.</span><span class="s2">"TCP</span><span class="bp">$_</span><span class="s2">"</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">TryOpen-TCPPort</span><span class="w"> </span><span class="nv">$ip</span><span class="w"> </span><span class="bp">$_</span><span class="p">)}</span><span class="w">
+ </span><span class="p">}</span><span class="w">
+ </span><span class="nv">$ret</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<h3 id="scanning-some-subnet-for-web-servers">Scanning some subnet for web servers</h3>
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Map-Ports</span><span class="w"> </span><span class="nt">-targets</span><span class="w"> </span><span class="p">((</span><span class="mi">1</span><span class="o">..</span><span class="mi">254</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="o">%</span><span class="p">{</span><span class="s2">"10.0.0.</span><span class="bp">$_</span><span class="s2">"</span><span class="p">})</span><span class="w"> </span><span class="nt">-tcpPorts</span><span class="w"> </span><span class="mi">80</span><span class="p">,</span><span class="mi">443</span><span class="w">
+</span></code></pre></div></div>
+
+<h3 id="scanning-my-immediate-subnet-for-common-ms-ports">Scanning my immediate subnet for common MS ports</h3>
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w">
+</span><span class="c"># Fabricate IP Addresses</span><span class="w">
+</span><span class="kr">function</span><span class="w"> </span><span class="nf">Fabricate-IPAddress</span><span class="p">([</span><span class="n">string</span><span class="p">]</span><span class="nv">$header</span><span class="p">,[</span><span class="n">int</span><span class="p">]</span><span class="nv">$levels</span><span class="o">=</span><span class="mi">0</span><span class="p">){</span><span class="w">
+ </span><span class="nv">$queue</span><span class="o">=</span><span class="p">@(</span><span class="nv">$header</span><span class="p">)</span><span class="w">
+ </span><span class="kr">while</span><span class="p">(</span><span class="nv">$levels</span><span class="o">--</span><span class="p">){</span><span class="w">
+  </span><span class="nv">$newQueue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">$queue</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="o">%</span><span class="p">{</span><span class="nv">$q</span><span class="o">=</span><span class="bp">$_</span><span class="p">;(</span><span class="mi">1</span><span class="o">..</span><span class="mi">254</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="o">%</span><span class="p">{</span><span class="s2">"</span><span class="nv">$q</span><span class="s2">.</span><span class="bp">$_</span><span class="s2">"</span><span class="p">}}</span><span class="w">
+  </span><span class="nv">$queue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">$newQueue</span><span class="w">
+ </span><span class="p">}</span><span class="w">
+ </span><span class="nv">$queue</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span><span class="c"># Scan Immediate Addresses</span><span class="w">
+</span><span class="kr">function</span><span class="w"> </span><span class="nf">Scan-MySubnet</span><span class="p">{</span><span class="w">
+ </span><span class="nv">$myIps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gwmi</span><span class="w"> </span><span class="nx">win32_networkAdapterConfiguration</span><span class="w"> </span><span class="nt">-fi</span><span class="w"> </span><span class="s1">'IPEnabled=True'</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="o">%</span><span class="p">{</span><span class="w">
+  </span><span class="kr">for</span><span class="p">(</span><span class="nv">$i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="nv">$i</span><span class="w"> </span><span class="o">-lt</span><span class="w"> </span><span class="bp">$_</span><span class="o">.</span><span class="nf">IPAddress</span><span class="o">.</span><span class="nf">length</span><span class="p">;</span><span class="nv">$i</span><span class="o">++</span><span class="p">){</span><span class="w">
+   </span><span class="bp">$_</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">select</span><span class="w"> </span><span class="se">`
+</span><span class="w">    </span><span class="p">@{</span><span class="nx">Name</span><span class="o">=</span><span class="s1">'IP'</span><span class="p">;</span><span class="nx">Expression</span><span class="o">=</span><span class="p">{[</span><span class="n">System.Net.IPAddress</span><span class="p">](</span><span class="bp">$_</span><span class="o">.</span><span class="n">IPAddress</span><span class="p">[</span><span class="nv">$i</span><span class="p">])}},</span><span class="w">
+    </span><span class="p">@{</span><span class="nx">Name</span><span class="o">=</span><span class="s1">'Subnet'</span><span class="p">;</span><span class="nx">Expression</span><span class="o">=</span><span class="p">{[</span><span class="n">System.Net.IPAddress</span><span class="p">](</span><span class="bp">$_</span><span class="o">.</span><span class="n">IPSubnet</span><span class="p">[</span><span class="nv">$i</span><span class="p">])}}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+ </span><span class="p">}</span><span class="w">
+  </span><span class="nv">$myIPs</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="o">%</span><span class="p">{</span><span class="w">
+  </span><span class="p">[</span><span class="n">int</span><span class="p">]</span><span class="nv">$levels</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="w">
+  </span><span class="c"># Worst range calculation ever, but it works for standard subnets</span><span class="w">
+  </span><span class="kr">switch</span><span class="p">(</span><span class="bp">$_</span><span class="o">.</span><span class="nf">Subnet</span><span class="p">){</span><span class="w">
+   </span><span class="s1">'225.255.255.0'</span><span class="w"> </span><span class="p">{</span><span class="nv">$levels</span><span class="o">=</span><span class="mi">1</span><span class="p">}</span><span class="w">
+   </span><span class="s1">'225.255.0.0'</span><span class="w"> </span><span class="p">{</span><span class="nv">$levels</span><span class="o">=</span><span class="mi">2</span><span class="p">}</span><span class="w">
+   </span><span class="s1">'225.0.0.0'</span><span class="w"> </span><span class="p">{</span><span class="nv">$levels</span><span class="o">=</span><span class="mi">3</span><span class="p">}</span><span class="w">
+   </span><span class="n">default</span><span class="w"> </span><span class="p">{</span><span class="n">Write-Error</span><span class="w"> </span><span class="s1">'Too lazy to calculate range'</span><span class="p">;</span><span class="kr">continue</span><span class="p">;}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+  </span><span class="nv">$header</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="bp">$_</span><span class="o">.</span><span class="nf">IP</span><span class="o">.</span><span class="nf">GetAddressBytes</span><span class="p">()[</span><span class="mi">1</span><span class="o">..</span><span class="p">(</span><span class="mi">4</span><span class="o">-</span><span class="nv">$levels</span><span class="p">)])</span><span class="w"> </span><span class="o">-join</span><span class="w"> </span><span class="s1">'.'</span><span class="w">
+  </span><span class="n">Fabricate-IPAddress</span><span class="w"> </span><span class="nv">$header</span><span class="w"> </span><span class="nv">$levels</span><span class="w">
+ </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span><span class="n">Map-Ports</span><span class="w"> </span><span class="nt">-targets</span><span class="w"> </span><span class="p">(</span><span class="n">Scan-MySubnet</span><span class="p">)</span><span class="w"> </span><span class="nt">-tcpPorts</span><span class="w"> </span><span class="mi">135</span><span class="p">,</span><span class="mi">445</span><span class="w">
+</span></code></pre></div></div>
+
+<h3 id="testing-a-web-page-on-a-server">Testing a web page on a server</h3>
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">function</span><span class="w"> </span><span class="nf">Get-WebResponseCode</span><span class="p">([</span><span class="n">uri</span><span class="p">]</span><span class="nv">$url</span><span class="p">,[</span><span class="n">switch</span><span class="p">]</span><span class="nv">$UseDefaultCredentials</span><span class="p">){</span><span class="w">
+ </span><span class="nv">$req</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">System.Net.WebRequest</span><span class="p">]::</span><span class="n">Create</span><span class="p">(</span><span class="nv">$url</span><span class="p">)</span><span class="w">
+ </span><span class="nv">$req</span><span class="o">.</span><span class="nf">UseDefaultCredentials</span><span class="o">=</span><span class="nv">$UseDefaultCredentials</span><span class="w">
+ </span><span class="c"># Avoid downloading the whole page</span><span class="w">
+ </span><span class="nv">$req</span><span class="o">.</span><span class="nf">Method</span><span class="o">=</span><span class="s1">'HEAD'</span><span class="w">
+ </span><span class="kr">try</span><span class="p">{</span><span class="nv">$resp</span><span class="o">=</span><span class="nv">$req</span><span class="o">.</span><span class="nf">GetResponse</span><span class="p">()}</span><span class="w">
+ </span><span class="kr">catch</span><span class="w"> </span><span class="p">[</span><span class="n">System.Net.WebException</span><span class="p">]{</span><span class="nv">$resp</span><span class="o">=</span><span class="bp">$_</span><span class="o">.</span><span class="nf">Exception</span><span class="o">.</span><span class="nf">Response</span><span class="p">}</span><span class="w">
+ </span><span class="s1">'{0}: {1}'</span><span class="w"> </span><span class="nt">-f</span><span class="w"> </span><span class="p">([</span><span class="n">int</span><span class="p">]</span><span class="nv">$resp</span><span class="o">.</span><span class="nf">StatusCode</span><span class="p">),</span><span class="nv">$resp</span><span class="o">.</span><span class="nf">StatusDescription</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<h3 id="testing-common-webpages-on-a-server">Testing common webpages on a server</h3>
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w">
+</span><span class="kr">function</span><span class="w"> </span><span class="nf">Test-WebPages</span><span class="p">{</span><span class="w">
+ </span><span class="kr">param</span><span class="p">(</span><span class="w">
+ </span><span class="p">[</span><span class="n">string</span><span class="p">[]]</span><span class="nv">$targets</span><span class="p">,</span><span class="w">
+ </span><span class="p">[</span><span class="n">uri</span><span class="p">[]]</span><span class="nv">$paths</span><span class="p">,</span><span class="w">
+ </span><span class="p">[</span><span class="n">string</span><span class="p">[]]</span><span class="nv">$schemes</span><span class="o">=</span><span class="s1">'http'</span><span class="p">,</span><span class="w">
+ </span><span class="p">[</span><span class="n">switch</span><span class="p">]</span><span class="nv">$UseDefaultCredentials</span><span class="w">
+ </span><span class="p">)</span><span class="w">
+
+ </span><span class="nv">$targets</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="o">%</span><span class="p">{</span><span class="w">
+  </span><span class="n">Write-Progress</span><span class="w"> </span><span class="s1">'Testing Servers'</span><span class="w"> </span><span class="bp">$_</span><span class="w"> </span><span class="nt">-Id</span><span class="w"> </span><span class="nx">1</span><span class="w">
+  </span><span class="nv">$target</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="bp">$_</span><span class="w">
+  </span><span class="nv">$schemes</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="o">%</span><span class="p">{</span><span class="w">
+   </span><span class="n">Write-Progress</span><span class="w"> </span><span class="s1">'Testing Schemes'</span><span class="w"> </span><span class="bp">$_</span><span class="w"> </span><span class="nt">-Id</span><span class="w"> </span><span class="nx">2</span><span class="w">
+   </span><span class="nv">$scheme</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="bp">$_</span><span class="w">
+   </span><span class="nv">$ret</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">$new</span><span class="nt">-object</span><span class="w"> </span><span class="n">object</span><span class="w">
+   </span><span class="nv">$ret</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Add-Member</span><span class="w"> </span><span class="nx">NoteProperty</span><span class="w"> </span><span class="s1">'Name'</span><span class="w"> </span><span class="nv">$target</span><span class="w">
+   </span><span class="nv">$ret</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Add-Member</span><span class="w"> </span><span class="nx">NoteProperty</span><span class="w"> </span><span class="s1">'Scheme'</span><span class="w"> </span><span class="nv">$scheme</span><span class="w">
+   </span><span class="nv">$paths</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="o">%</span><span class="p">{</span><span class="nv">$ret</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Add-Member</span><span class="w"> </span><span class="nx">NoteProperty</span><span class="w"> </span><span class="bp">$_</span><span class="w"> </span><span class="bp">$null</span><span class="p">}</span><span class="w">
+
+   </span><span class="nv">$pu</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">new-object</span><span class="w"> </span><span class="nx">uri</span><span class="w"> </span><span class="p">([</span><span class="n">uri</span><span class="p">]</span><span class="s2">"</span><span class="nv">${scheme}</span><span class="s2">://</span><span class="nv">$target</span><span class="s2">"</span><span class="p">)</span><span class="w">
+   </span><span class="nv">$paths</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="o">%</span><span class="p">{</span><span class="w">
+    </span><span class="nv">$u</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">new-object</span><span class="w"> </span><span class="nx">uri</span><span class="w"> </span><span class="nv">$pu</span><span class="p">,</span><span class="bp">$_</span><span class="w">
+    </span><span class="n">Write-Progress</span><span class="w"> </span><span class="s1">'Testing Url'</span><span class="w"> </span><span class="nv">$u</span><span class="w"> </span><span class="nt">-Id</span><span class="w"> </span><span class="nx">3</span><span class="w">
+    </span><span class="nv">$ret</span><span class="o">.</span><span class="bp">$_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Get-WebResponseCode</span><span class="w"> </span><span class="nv">$u</span><span class="w"> </span><span class="nt">-UseDefaultCredentials</span><span class="p">:</span><span class="nv">$UseDefaultCredentials</span><span class="w">
+    
+  </span><span class="p">}</span><span class="w">
+  </span><span class="nv">$ret</span><span class="w">
+ </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span><span class="n">Test-WebPages</span><span class="w"> </span><span class="s1">'SharePointDev'</span><span class="p">,</span><span class="s1">'ExchangeCAS'</span><span class="p">,</span><span class="s1">'AnotherServer'</span><span class="w"> </span><span class="nt">-paths</span><span class="w"> </span><span class="s1">'/'</span><span class="p">,</span><span class="s1">'/owa'</span><span class="p">,</span><span class="s1">'/sites'</span><span class="w"> </span><span class="nt">-schemes</span><span class="w"> </span><span class="s1">'http'</span><span class="p">,</span><span class="s1">'https'</span><span class="w"> </span><span class="nt">-UseDefaultCredentials</span><span class="w">
+</span></code></pre></div></div>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#http" class="page__taxonomy-item" rel="tag">HTTP</a><span class="sep">, </span>
+    
+      <a href="/tags/#one-liner" class="page__taxonomy-item" rel="tag">One-Liner</a><span class="sep">, </span>
+    
+      <a href="/tags/#powershell" class="page__taxonomy-item" rel="tag">PowerShell</a><span class="sep">, </span>
+    
+      <a href="/tags/#scripts" class="page__taxonomy-item" rel="tag">Scripts</a><span class="sep">, </span>
+    
+      <a href="/tags/#security" class="page__taxonomy-item" rel="tag">Security</a><span class="sep">, </span>
+    
+      <a href="/tags/#tcp" class="page__taxonomy-item" rel="tag">TCP</a><span class="sep">, </span>
+    
+      <a href="/tags/#windows" class="page__taxonomy-item" rel="tag">Windows</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#microsoft" class="page__taxonomy-item" rel="tag">Microsoft</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2014-01-21T00:00:00+02:00">January 21, 2014</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/setting-up-samba-on-raspberry-pi.html" class="pagination--pager" title="Setting Up Samba on Raspberry Pi
+">Previous</a>
+    
+    
+      <a href="/finding-accounts-trusted-for-delegation.html" class="pagination--pager" title="Finding Accounts Trusted for Delegation
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/3-loc-760h.html" rel="permalink">Changed 3 lines of code, saved 760 server hours per month
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Act 1, where I write Java
+In the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/sapling-commands.html" rel="permalink">Sapling Commands
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Sapling (the Facebook-released SCM) is great, but the docs are not-great.
+I thought I’d list some commands it took me a while to undertand, for me and for ot...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/foia-calendars-pt1.html" rel="permalink">Processing Israeli FOIA calendars, Part 1
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Preface
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/docker-compose-ecs-nginx-caddy.html" rel="permalink">Caddy is better than Nginx for Docker Compose on ECS
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I recently managed to use Docker Compose to launch a small app in Aamazon’s Elastic Container Services (ECS).
+Overall, the result is pretty incredible. I’m a...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <script>
+  window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+  ga('create','','auto');
+  ga('set', 'anonymizeIp', false);
+  ga('send','pageview')
+</script>
+<script src="https://www.google-analytics.com/analytics.js" async></script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>

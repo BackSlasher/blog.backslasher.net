@@ -1,0 +1,714 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Google Friendly Apache Domain Migration - BackSlasher</title>
+<meta name="description" content="I recently migrated a domain for a client, and did it like a noob (as in simply copying the db and files, making sure everything’s working, and then shutting down the old site). As a result, Google’s pageranks were lost, old links were broken and ghost pages were found on Google searches. After googling around, I found out what I should have done, and made my own action list. Note: While this list contains Apache and Google specific steps, you can certainly research and replace them with equivalent steps for your scenario. Also, Google’s change of address only works for root domains (not bla.othersite.com) 1. Prepare destination environment Copy files, dbs etc from to the new site, and make sure it’s working. Change whatever absolute (http://bla.com/file) URLs you have in your site to point to the new domain  Before you get to the next stage, make sure your new site is up to date (dbs updated etc). 2. Prepare to redirect the old site Make sure mod_rewrite is enabled on the old server. Almost all modern Apache hosts have it enabled. Rename / wipe the old site’s root directory (including deleting sub directories). Of course you should back up the files if you delete them.  3. Preform the actual redirection Create the .htaccess in the root directory, and set it to contain:">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Google Friendly Apache Domain Migration">
+<meta property="og:url" content="https://blog.backslasher.net/google-friendly-apache-domain-migration.html">
+
+
+  <meta property="og:description" content="I recently migrated a domain for a client, and did it like a noob (as in simply copying the db and files, making sure everything’s working, and then shutting down the old site). As a result, Google’s pageranks were lost, old links were broken and ghost pages were found on Google searches. After googling around, I found out what I should have done, and made my own action list. Note: While this list contains Apache and Google specific steps, you can certainly research and replace them with equivalent steps for your scenario. Also, Google’s change of address only works for root domains (not bla.othersite.com) 1. Prepare destination environment Copy files, dbs etc from to the new site, and make sure it’s working. Change whatever absolute (http://bla.com/file) URLs you have in your site to point to the new domain  Before you get to the next stage, make sure your new site is up to date (dbs updated etc). 2. Prepare to redirect the old site Make sure mod_rewrite is enabled on the old server. Almost all modern Apache hosts have it enabled. Rename / wipe the old site’s root directory (including deleting sub directories). Of course you should back up the files if you delete them.  3. Preform the actual redirection Create the .htaccess in the root directory, and set it to contain:">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2011-07-26T00:00:00+03:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/google-friendly-apache-domain-migration.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Google Friendly Apache Domain Migration">
+    <meta itemprop="description" content="I recently migrated a domain for a client, and did it like a noob (as insimply copying the db and files, making sure everything’s working, andthen shutting down the old site). As a result, Google’s pageranks werelost, old links were broken and ghost pages were found on Googlesearches.After googling around, I found out what I should have done, and mademy own action list.Note: While this list contains Apache and Google specific steps, youcan certainly research and replace them with equivalent steps for yourscenario.Also, Google’s change of address only works for root domains (notbla.othersite.com)1. Prepare destination environmentCopy files, dbs etc from to the new site, and make sure it’s working.Change whatever absolute (http://bla.com/file) URLs you have in yoursite to point to the new domain Before you get to the next stage, make sure your new site is up to date(dbs updated etc).2. Prepare to redirect the oldsiteMake sure mod_rewrite isenabled on the old server. Almost all modern Apache hosts have itenabled.Rename / wipe the old site’s root directory (including deleting subdirectories). Of course you should back up the files if you delete them.3. Preform the actual redirectionCreate the .htaccess in the root directory, and set it to contain:">
+    <meta itemprop="datePublished" content="2011-07-26T00:00:00+03:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Google Friendly Apache Domain Migration
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>I recently migrated a domain for a client, and did it like a noob (as in
+simply copying the db and files, making sure everything’s working, and
+then shutting down the old site). As a result, Google’s pageranks were
+lost, old links were broken and ghost pages were found on Google
+searches.<br />
+After googling around, I found out what I <strong>should</strong> have done, and made
+my own action list.<br />
+<strong>Note:</strong> While this list contains Apache and Google specific steps, you
+can certainly research and replace them with equivalent steps for your
+scenario.<br />
+Also, Google’s change of address only works for root domains (not
+bla.othersite.com)</p>
+<h3 id="1-prepare-destination-environment">1. Prepare destination environment</h3>
+<p>Copy files, dbs etc from to the new site, and make sure it’s working.<br />
+Change whatever absolute (http://bla.com/file) URLs you have in your
+site to point to the new domain <br />
+Before you get to the next stage, make sure your new site is up to date
+(dbs updated etc).</p>
+<h3 id="2-prepare-to-redirect-the-old">2. Prepare to redirect the old</h3>
+<p>site
+Make sure <a href="http://httpd.apache.org/docs/2.2/mod/mod_rewrite.html">mod_rewrite</a> is
+enabled on the old server. Almost all modern Apache hosts have it
+enabled.<br />
+Rename / wipe the old site’s root directory (including deleting sub
+directories). Of course you should back up the files if you delete them.</p>
+
+<h3 id="3-preform-the-actual-redirection">3. Preform the actual redirection</h3>
+<p>Create the <code class="language-plaintext highlighter-rouge">.htaccess</code> in the root directory, and set it to contain:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;ifmodule mod_rewrite.c&gt;
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ http://NEWDOMAIN.COM/$1 [R=301,L]
+&lt;/ifmodule&gt;
+</code></pre></div></div>
+
+<p>This will cause <code class="language-plaintext highlighter-rouge">mod_rewrite</code> to redirect all requests to the new domain,
+except for files that exist in the old site (that’s what the
+RewriteConds do, <code class="language-plaintext highlighter-rouge">-f</code> is for files). It’s useful because that way you can
+keep Google Webmaster Tools’ validation file on the old domain, but it
+won’t be served on the new one.<br />
+Test the redirection by:</p>
+
+<ol>
+  <li>Trying to access the old site and getting redirected to the new
+(working) site</li>
+  <li>Putting a file on the old site (such as <code class="language-plaintext highlighter-rouge">test.txt</code>) and successfully
+downloading it (via <code class="language-plaintext highlighter-rouge">oldsite.com/test.txt</code>)</li>
+</ol>
+
+<h3 id="4-verify-sites-in-google-webmaster-tools">4. Verify sites in Google Webmaster Tools</h3>
+<p>If you haven’t done so already, add both sites to <a href="http://www.google.com/webmasters/tools/">Google Webmaster Tools</a> (it’s free!) and
+validate them according to the site. It’s preferable to use the html
+file validation.</p>
+<h3 id="5-post-a-change-of-address">5. Post a change of address</h3>
+<p>Via Webmaster Tools:</p>
+
+<ol>
+  <li>Open the old site’s dashboard</li>
+  <li>Click <code class="language-plaintext highlighter-rouge">Site Configuration&gt;  Change of Address</code></li>
+  <li>Verify the checklist. Should be overlapping with mine.</li>
+  <li>Select the new site from the dropdown below and submit</li>
+</ol>
+
+<p>That’s it! Make sure to check Webmaster tools every few days to look for
+things such as crawl errors or incoming links pointing to the old
+domain, and make sure to google the old and new site to see if Google’s
+db has updated.<br />
+<code class="language-plaintext highlighter-rouge">.htaccess</code> code taken from <a href="http://stackoverflow.com/questions/6531188/old-to-new-301-redirect-parameters-for-better-google-migration">StackOverflow</a><br />
+Happy migrating!</p>
+
+<p>&lt;/p&gt;</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#apache" class="page__taxonomy-item" rel="tag">Apache</a><span class="sep">, </span>
+    
+      <a href="/tags/#google" class="page__taxonomy-item" rel="tag">Google</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#foss" class="page__taxonomy-item" rel="tag">FOSS</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2011-07-26T00:00:00+03:00">July 26, 2011</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/monitoring-sharepoint-2010-on-scom.html" class="pagination--pager" title="Monitoring SharePoint 2010 on SCOM - Minimal Permissions
+">Previous</a>
+    
+    
+      <a href="/making-sure-your-audit-collection-server-is-collecting.html" class="pagination--pager" title="Making sure your Audit Collection Server is collecting
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/3-loc-760h.html" rel="permalink">Changed 3 lines of code, saved 760 server hours per month
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Act 1, where I write Java
+In the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/sapling-commands.html" rel="permalink">Sapling Commands
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Sapling (the Facebook-released SCM) is great, but the docs are not-great.
+I thought I’d list some commands it took me a while to undertand, for me and for ot...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/foia-calendars-pt1.html" rel="permalink">Processing Israeli FOIA calendars, Part 1
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Preface
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/docker-compose-ecs-nginx-caddy.html" rel="permalink">Caddy is better than Nginx for Docker Compose on ECS
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I recently managed to use Docker Compose to launch a small app in Aamazon’s Elastic Container Services (ECS).
+Overall, the result is pretty incredible. I’m a...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <script>
+  window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+  ga('create','','auto');
+  ga('set', 'anonymizeIp', false);
+  ga('send','pageview')
+</script>
+<script src="https://www.google-analytics.com/analytics.js" async></script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>

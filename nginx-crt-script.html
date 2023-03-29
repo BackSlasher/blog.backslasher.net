@@ -1,0 +1,699 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Preparing Certificate files for Nginx - BackSlasher</title>
+<meta name="description" content="The Story When installing SSL certificates for nginx, assuming you’re using certificate hierarchy (and not a self-signed ceritificate), you’re required to concatenate all of the certificate files (*.crt) to a single file, starting from your site’s certificate up to the root certificate. Today I got this bundle to prepare, courtesy of Comodo: AddTrustExternalCARoot.crt best_site.crt COMODORSAAddTrustCA.crt COMODORSADomainValidationSecureServerCA.crt  Which certificate should follow my site’s? Unclear, even from their documentation. I made this ruby script, which uses some certificate metadata to recognize the relationship between the provided certificates.">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Preparing Certificate files for Nginx">
+<meta property="og:url" content="https://blog.backslasher.net/nginx-crt-script.html">
+
+
+  <meta property="og:description" content="The Story When installing SSL certificates for nginx, assuming you’re using certificate hierarchy (and not a self-signed ceritificate), you’re required to concatenate all of the certificate files (*.crt) to a single file, starting from your site’s certificate up to the root certificate. Today I got this bundle to prepare, courtesy of Comodo: AddTrustExternalCARoot.crt best_site.crt COMODORSAAddTrustCA.crt COMODORSADomainValidationSecureServerCA.crt  Which certificate should follow my site’s? Unclear, even from their documentation. I made this ruby script, which uses some certificate metadata to recognize the relationship between the provided certificates.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2015-07-05T00:00:00+03:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/nginx-crt-script.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Preparing Certificate files for Nginx">
+    <meta itemprop="description" content="The StoryWhen installing SSL certificates for nginx, assuming you’re using certificate hierarchy (and not a self-signed ceritificate), you’re required to concatenate all of the certificate files (*.crt) to a single file, starting from your site’s certificate up to the root certificate.Today I got this bundle to prepare, courtesy of Comodo:AddTrustExternalCARoot.crtbest_site.crtCOMODORSAAddTrustCA.crtCOMODORSADomainValidationSecureServerCA.crtWhich certificate should follow my site’s? Unclear, even from their documentation.I made this ruby script, which uses some certificate metadata to recognize the relationship between the provided certificates.">
+    <meta itemprop="datePublished" content="2015-07-05T00:00:00+03:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Preparing Certificate files for Nginx
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          1 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <h3 id="the-story">The Story</h3>
+<p>When installing SSL certificates for nginx, assuming you’re using certificate hierarchy (and not a self-signed ceritificate), you’re required to concatenate all of the certificate files (<code class="language-plaintext highlighter-rouge">*.crt</code>) to a single file, starting from your site’s certificate up to the root certificate.<br />
+Today I got this bundle to prepare, courtesy of Comodo:</p>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>AddTrustExternalCARoot.crt
+best_site.crt
+COMODORSAAddTrustCA.crt
+COMODORSADomainValidationSecureServerCA.crt
+</code></pre></div></div>
+<p>Which certificate should follow my site’s? Unclear, <a href="https://support.comodo.com/index.php?/Default/Knowledgebase/Article/View/620/0/which-is-root-which-is-intermediate">even from their documentation</a>.<br />
+I made this ruby script, which uses some certificate metadata to recognize the relationship between the provided certificates.</p>
+
+<h3 id="the-script">The Script</h3>
+<p>Provide the CRT file names as arguments, save the script’s output as the new CRT. The proper order is printed to <code class="language-plaintext highlighter-rouge">STDERR</code>.</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'openssl'</span>
+
+<span class="c1"># Load and parse files</span>
+<span class="n">crt_files</span><span class="o">=</span><span class="no">ARGV</span> <span class="c1"># Read all arguments as files</span>
+<span class="n">crts</span> <span class="o">=</span> <span class="n">crt_files</span><span class="p">.</span><span class="nf">map</span><span class="p">{</span><span class="o">|</span><span class="n">f</span><span class="o">|</span>
+  <span class="n">cert</span> <span class="o">=</span> <span class="no">OpenSSL</span><span class="o">::</span><span class="no">X509</span><span class="o">::</span><span class="no">Certificate</span><span class="p">.</span><span class="nf">new</span> <span class="no">File</span><span class="p">.</span><span class="nf">read</span> <span class="n">f</span>
+  <span class="p">{</span>
+    <span class="ss">name: </span><span class="n">f</span><span class="p">,</span>
+    <span class="ss">parent: </span><span class="n">cert</span><span class="p">.</span><span class="nf">extensions</span><span class="p">.</span><span class="nf">find</span><span class="p">{</span><span class="o">|</span><span class="n">m</span><span class="o">|</span><span class="n">m</span><span class="p">.</span><span class="nf">oid</span><span class="o">==</span><span class="s1">'authorityKeyIdentifier'</span><span class="p">}.</span><span class="nf">value</span><span class="p">.</span><span class="nf">split</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">).</span><span class="nf">find</span><span class="p">{</span><span class="o">|</span><span class="n">sf</span><span class="o">|</span><span class="n">sf</span><span class="p">[</span><span class="sr">/^keyid/</span><span class="p">]}.</span><span class="nf">gsub</span><span class="p">(</span><span class="sr">/^keyid:/</span><span class="p">,</span><span class="s1">''</span><span class="p">),</span>
+    <span class="ss">son: </span><span class="n">cert</span><span class="p">.</span><span class="nf">extensions</span><span class="p">.</span><span class="nf">find</span><span class="p">{</span><span class="o">|</span><span class="n">m</span><span class="o">|</span><span class="n">m</span><span class="p">.</span><span class="nf">oid</span><span class="o">==</span><span class="s1">'subjectKeyIdentifier'</span><span class="p">}.</span><span class="nf">value</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1"># Find the root, where parent is son</span>
+<span class="n">root</span> <span class="o">=</span> <span class="n">crts</span><span class="p">.</span><span class="nf">find</span><span class="p">{</span><span class="o">|</span><span class="n">c</span><span class="o">|</span><span class="n">c</span><span class="p">[</span><span class="ss">:parent</span><span class="p">]</span><span class="o">==</span><span class="n">c</span><span class="p">[</span><span class="ss">:son</span><span class="p">]}</span>
+<span class="n">certs_sorted</span><span class="o">=</span><span class="p">[]</span>
+<span class="n">new_certs</span><span class="o">=</span><span class="p">[</span><span class="n">root</span><span class="p">]</span>
+
+<span class="c1"># process new_certs until we're out</span>
+<span class="kp">loop</span> <span class="k">do</span>
+  <span class="n">certs_sorted</span><span class="o">|=</span><span class="n">new_certs</span>
+  <span class="n">new_new_certs</span> <span class="o">=</span> <span class="n">new_certs</span><span class="p">.</span><span class="nf">map</span><span class="p">{</span><span class="o">|</span><span class="n">nc</span><span class="o">|</span>
+    <span class="n">crts</span><span class="p">.</span><span class="nf">select</span><span class="p">{</span><span class="o">|</span><span class="n">c</span><span class="o">|</span><span class="n">c</span><span class="p">[</span><span class="ss">:parent</span><span class="p">]</span><span class="o">==</span><span class="n">nc</span><span class="p">[</span><span class="ss">:son</span><span class="p">]}</span>
+  <span class="p">}.</span><span class="nf">flatten</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="nf">uniq</span>
+  <span class="n">filtered_certs</span> <span class="o">=</span> <span class="n">new_new_certs</span> <span class="o">-</span> <span class="n">new_certs</span>
+  <span class="n">new_certs</span> <span class="o">=</span> <span class="n">filtered_certs</span>
+  <span class="k">break</span> <span class="k">if</span> <span class="n">new_certs</span><span class="p">.</span><span class="nf">empty?</span>
+<span class="k">end</span>
+
+<span class="n">certs_sorted</span><span class="p">.</span><span class="nf">reverse!</span> <span class="c1"># Reverse</span>
+
+<span class="no">STDERR</span><span class="p">.</span><span class="nf">puts</span> <span class="s2">"Certificate order: </span><span class="si">#{</span><span class="n">certs_sorted</span><span class="p">.</span><span class="nf">map</span><span class="p">{</span><span class="o">|</span><span class="n">c</span><span class="o">|</span><span class="n">c</span><span class="p">[</span><span class="ss">:name</span><span class="p">]</span><span class="si">}</span><span class="s2">.join(', ')}"</span>
+<span class="nb">puts</span> <span class="n">certs_sorted</span><span class="p">.</span><span class="nf">map</span><span class="p">{</span><span class="o">|</span><span class="n">c</span><span class="o">|</span> <span class="no">File</span><span class="p">.</span><span class="nf">read</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="ss">:name</span><span class="p">])}.</span><span class="nf">join</span>
+</code></pre></div></div>
+
+<h3 id="interesting-bits">Interesting bits</h3>
+<p>I’m not sure if the method I’m using to construct the certificate tree is standard SSL stuff or unique to Comodo, but I noticed the certificates reference their parents in the <code class="language-plaintext highlighter-rouge">authorityKeyIdentifier</code> extension.<br />
+Oddly enough, they don’t reference the parent’s serial number, but some other serial-like value that I find under <code class="language-plaintext highlighter-rouge">subjectKeyIdentifier</code> of the parent certificate.<br />
+The loop isn’t very interesting, but still full of neat ruby stuff like limited flattening, array subtraction and other stuff that “decent” languages would never allow.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#nginx" class="page__taxonomy-item" rel="tag">nginx</a><span class="sep">, </span>
+    
+      <a href="/tags/#ruby" class="page__taxonomy-item" rel="tag">ruby</a><span class="sep">, </span>
+    
+      <a href="/tags/#scripts" class="page__taxonomy-item" rel="tag">scripts</a><span class="sep">, </span>
+    
+      <a href="/tags/#security" class="page__taxonomy-item" rel="tag">security</a><span class="sep">, </span>
+    
+      <a href="/tags/#ssl" class="page__taxonomy-item" rel="tag">ssl</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#foss" class="page__taxonomy-item" rel="tag">FOSS</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2015-07-05T00:00:00+03:00">July 5, 2015</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/growroot-centos.html" class="pagination--pager" title="Installing Growroot on CentOS
+">Previous</a>
+    
+    
+      <a href="/hbase-graphite-python.html" class="pagination--pager" title="Sending HBase metrics to Graphite using Python
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/3-loc-760h.html" rel="permalink">Changed 3 lines of code, saved 760 server hours per month
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Act 1, where I write Java
+In the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/sapling-commands.html" rel="permalink">Sapling Commands
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Sapling (the Facebook-released SCM) is great, but the docs are not-great.
+I thought I’d list some commands it took me a while to undertand, for me and for ot...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/foia-calendars-pt1.html" rel="permalink">Processing Israeli FOIA calendars, Part 1
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Preface
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/docker-compose-ecs-nginx-caddy.html" rel="permalink">Caddy is better than Nginx for Docker Compose on ECS
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I recently managed to use Docker Compose to launch a small app in Aamazon’s Elastic Container Services (ECS).
+Overall, the result is pretty incredible. I’m a...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <script>
+  window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+  ga('create','','auto');
+  ga('set', 'anonymizeIp', false);
+  ga('send','pageview')
+</script>
+<script src="https://www.google-analytics.com/analytics.js" async></script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>

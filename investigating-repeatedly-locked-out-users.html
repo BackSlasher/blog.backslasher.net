@@ -1,0 +1,822 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Investigating Repeatedly Locked Out Users - BackSlasher</title>
+<meta name="description" content="I often get asked by some other IT guy “why does user XXXXX keep on getting locked out?”">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Investigating Repeatedly Locked Out Users">
+<meta property="og:url" content="https://blog.backslasher.net/investigating-repeatedly-locked-out-users.html">
+
+
+  <meta property="og:description" content="I often get asked by some other IT guy “why does user XXXXX keep on getting locked out?”">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2013-05-14T00:00:00+03:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/investigating-repeatedly-locked-out-users.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Investigating Repeatedly Locked Out Users">
+    <meta itemprop="description" content="I often get asked by some other IT guy “why does user XXXXX keep ongetting locked out?”">
+    <meta itemprop="datePublished" content="2013-05-14T00:00:00+03:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Investigating Repeatedly Locked Out Users
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>I often get asked by some other IT guy “why does user XXXXX keep on
+getting locked out?”</p>
+
+<p><img src="/assets/investigating-repeatedly-locked-out-users/AccountLockedOut.png" alt="" /></p>
+
+<p>Let me clue you in on something - users (almost) always get locked out for the
+same reason: They try the wrong password too many times.The reasons for
+THAT, however, are quite diverse and include:</p>
+
+<ul>
+  <li>People typing in the wrong password</li>
+  <li>Computers trying to renew TGTs with an old password (after a
+different one has been set/reset from somewhere else)</li>
+  <li>Some external system (SAP, VMWare SSO…) is using AD as its user
+store, and is being presented with the wrong credentials from its
+own client (a web browser, for instance)</li>
+</ul>
+
+<p>I also recently learned that turning on <code class="language-plaintext highlighter-rouge">Smart card is required for interactive logon</code> actually scrambles the user’s password as well, so
+people being enforced to use smart cards are often locked out without
+doing anything other than being logged in (with the now old password).<br />
+Finding the root cause is not trivial, but I’ve created a small
+procedure to help the helpdesk  / IT team solve such mysteries:</p>
+
+<h3 id="1-start-working-immediately-after-a-lockout">1. Start working immediately after a lockout</h3>
+<p>Unless you have some fancy enterprise event logging solution (like
+SCOM’s ACS or Symantec’s SIM), you better act quick. Events in DCs don’t
+last for long, because they have limited log size and are constantly
+generating new events. Considering the fact that it’s easier to find
+fresh events anyway, it’s usually a good idea to determine when the
+lockout happens (all the time, every 48 hours…), unlock the account
+and start looking at logs immediately after it’s locked again. Assuming
+you have a functional PDC, it’ll hold the latest user data, so you can
+check on the user using:</p>
+
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Get-ADUser</span><span class="w"> </span><span class="nt">-Server</span><span class="w"> </span><span class="p">(</span><span class="n">Get-ADDomainController</span><span class="w"> </span><span class="nt">-Service</span><span class="w"> </span><span class="nx">PrimaryDC</span><span class="w"> </span><span class="nt">-Discover</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Select</span><span class="w"> </span><span class="nt">-exp</span><span class="w">
+</span><span class="n">hostname</span><span class="p">)</span><span class="w"> </span><span class="n">USERNAME</span><span class="w"> </span><span class="nt">-prop</span><span class="w"> </span><span class="nx">LockedOut</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">select</span><span class="w"> </span><span class="nx">name</span><span class="p">,</span><span class="nx">LockedOut</span><span class="w">
+</span></code></pre></div></div>
+
+<h3 id="2-search-dc-security-logs-for-audit-logon-failures-with-that-user">2. Search DC security logs for audit logon failures with that user</h3>
+<p>If you have enterprise event collection, use it.<br />
+If you don’t (or prefer the hardcore version), you have 3 ways to
+filter:</p>
+
+<ol>
+  <li>
+    <p>Filter every one of your DCs’ logs with the following criteria:</p>
+
+    <ul>
+      <li>Logged (time): The smallest time range you can afford. I usually take 15 minutes</li>
+      <li>Event Logs: <code class="language-plaintext highlighter-rouge">Security</code></li>
+      <li>Event Sources: <code class="language-plaintext highlighter-rouge">Microsoft Windows security auditing.</code> (this dot is actually there)</li>
+      <li>Task Category: <code class="language-plaintext highlighter-rouge">Logon, Kerberos Service Ticket Operations, Kerberos Authentication Service</code></li>
+      <li>Keywords: <code class="language-plaintext highlighter-rouge">Audit Failure</code></li>
+    </ul>
+
+    <p><img src="/assets/investigating-repeatedly-locked-out-users/AccountLockedOutFilter.png" alt="" /></p>
+
+    <p>And manually search (<code class="language-plaintext highlighter-rouge">Ctrl+F</code>) for the user name in the resulting event list</p>
+  </li>
+  <li>
+    <p>Filter every DC’s security log with the following xml criteria:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> :::xml
+ &lt;QueryList&gt;
+   &lt;Query Id="0" Path="Security"&gt;
+     &lt;Select Path="Security"&gt;
+ Event[
+  System[
+   Provider[@Name='Microsoft-Windows-Security-Auditing'] and
+   ( Task = 12544 or Task = 14337 or Task = 14339 ) and
+   (band(Keywords,4503599627370496)) and
+   TimeCreated[timediff(@SystemTime) &gt;= 3600000]
+  ] and
+  EventData[
+   (Data='USERNAMEHERE')
+  ]
+ ]
+     &lt;/Select&gt;
+   &lt;/Query&gt;
+ &lt;/QueryList&gt;
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Execute this script, which extracts the event from all of your
+DCs, and inspect the results:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> :::powershell
+ $timeBack = [timespan]'0:15:0'
+ $userName = 'USERNAME'
+ $msg = Get-ADDomainController -fi * | select -exp hostname | %{
+ Get-WinEvent -ComputerName $_ -LogName 'Security' -FilterXPath "
+ Event[
+  System[
+   Provider[@Name='Microsoft-Windows-Security-Auditing'] and
+   ( Task = 12544 or Task = 14337 or Task = 14339 ) and
+   (band(Keywords,4503599627370496)) and
+   TimeCreated[timediff(@SystemTime) &lt;= $($timeBack.TotalMilliseconds)]
+  ] and
+  EventData[
+   (Data='$userName')
+  ]
+ ]" } | %{([xml]$_.toXml())}
+ $msg
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<h3 id="3-analyze-the-failure-message">3. Analyze the failure message</h3>
+<p>After finding the message, we need to read it to decide why the computer
+is locking out the user.<br />
+It usually involves locating the following parts of the message:</p>
+
+<ul>
+  <li>Machine / workstation name</li>
+  <li>Authentication failure reason: We need to know if this computer is the real culprit (providing wrong passwords) or only a harmless victim (trying to authenticate the account when it’s already locked).<br />
+  These can help:
+    <ul>
+      <li><a href="http://technet.microsoft.com/en-us/library/bb463166.aspx">Keberos error codes</a></li>
+      <li><a href="http://blogs.technet.com/b/askpfeplat/archive/2013/01/28/quick-reference-troubleshooting-netlogon-error-codes.aspx">NTLM error codes</a></li>
+    </ul>
+  </li>
+  <li>Logon Type - It helps to know what type of logon was attempted.<br />
+  For example, it could be physical logon (a good old keyboard-mouse user session) or a service logon (a service with such credentials trying to start). <a href="http://technet.microsoft.com/en-us/library/cc787567%28v=ws.10%29.aspx">Here is a pretty good list</a></li>
+</ul>
+
+<p>With these details, we should have a good idea about the computer
+responsible for the lockout</p>
+
+<h3 id="4-handle-offending-computer">4. Handle offending computer</h3>
+<p>Since there are many root causes and many responses, I’ll just give a
+couple of ideas here, categorised by the logon type:</p>
+
+<ul>
+  <li>2(<code class="language-plaintext highlighter-rouge">Interactive</code>)<br />
+7(<code class="language-plaintext highlighter-rouge">Unlock</code>)<br />
+10(<code class="language-plaintext highlighter-rouge">RemoteInteractive</code>)
+    <ul>
+      <li><strong>A user left a session (Console/RDP) running with the wrong password</strong><br />
+Either restart the computer, log the user off or unlock the session with fresh credentials</li>
+      <li><strong>Someone is typing the wrong password (by mistake)</strong><br />
+Manually inform the user that <a href="http://cdn.memegenerator.net/instances/400x/37280439.jpg">his password is incorrect</a> (physically / via helpdesk)</li>
+      <li><strong>Brute force is being attempted</strong><br />
+Security response team?</li>
+    </ul>
+  </li>
+  <li>3(<code class="language-plaintext highlighter-rouge">Network</code>)<br />
+8(<code class="language-plaintext highlighter-rouge">NetworkClearText</code>)<br />
+<strong>Non-session authentication (basic / network etc.) failing on a domain member</strong><br />
+Some server application is being provided the wrong credentials from a client (e.g. IIS using basic authentication, Windows File Server using NTLM…)<br />
+Open the domain member’s local security log and look for authentication failures to determine the failing computer. Note the <code class="language-plaintext highlighter-rouge">Caller process name</code> field.<br />
+Some applications (like SAP) may record their attempts in their own log and not in Windows’ event log</li>
+  <li>4(<code class="language-plaintext highlighter-rouge">Batch</code>)<br />
+5(<code class="language-plaintext highlighter-rouge">Service</code>)<br />
+<strong>A service / scheduled task is using the wrong credentials to launch</strong><br />
+Find the wrong configuration and fix it. You may use the local computer’s security event log</li>
+  <li>ANY<br />
+<strong>Failed authentication from a non-domain member (e.g. thin client)</strong><br />
+There isn’t a lot you can do with these, because they’re not domain members. Either handle them (e.g. reset the device) or block them from accessing the DC using some firewall.</li>
+</ul>
+
+<p><strong>Remember</strong>: There are other possibilities, these are just some pointers.</p>
+
+<p>Lockout pictures are from:</p>
+
+<ul>
+  <li><a href="http://blogs.technet.com/b/askds/archive/2008/02/15/read-only-domain-controllers-and-account-lockouts.aspx">http://blogs.technet.com/b/askds/archive/2008/02/15/read-only-domain-controllers-and-account-lockouts.aspx</a></li>
+  <li><a href="http://www.petri.co.il/add_unlock_user_option_to_dsa.htm">http://www.petri.co.il/add_unlock_user_option_to_dsa.htm</a></li>
+  <li><a href="http://blog.strictly-software.com/2012/01/remote-desktop-access-denied-error.html">http://blog.strictly-software.com/2012/01/remote-desktop-access-denied-error.html</a></li>
+  <li><a href="http://www.top-password.com/blog/troubleshooting-locked-out-windows-user-account/">http://www.top-password.com/blog/troubleshooting-locked-out-windows-user-account/</a></li>
+</ul>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#active-directory" class="page__taxonomy-item" rel="tag">Active Directory</a><span class="sep">, </span>
+    
+      <a href="/tags/#event-log" class="page__taxonomy-item" rel="tag">Event Log</a><span class="sep">, </span>
+    
+      <a href="/tags/#kerberos" class="page__taxonomy-item" rel="tag">Kerberos</a><span class="sep">, </span>
+    
+      <a href="/tags/#mysteries-solved" class="page__taxonomy-item" rel="tag">Mysteries Solved</a><span class="sep">, </span>
+    
+      <a href="/tags/#powershell" class="page__taxonomy-item" rel="tag">PowerShell</a><span class="sep">, </span>
+    
+      <a href="/tags/#scripts" class="page__taxonomy-item" rel="tag">Scripts</a><span class="sep">, </span>
+    
+      <a href="/tags/#security" class="page__taxonomy-item" rel="tag">Security</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#microsoft" class="page__taxonomy-item" rel="tag">Microsoft</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2013-05-14T00:00:00+03:00">May 14, 2013</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/viewing-detailed-replication-status-using-repadmin-and-powershell.html" class="pagination--pager" title="Viewing detailed replication status using Repadmin and PowerShell
+">Previous</a>
+    
+    
+      <a href="/filtering-windows-event-log-using-xpath.html" class="pagination--pager" title="Filtering Windows Event Log using XPath
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/3-loc-760h.html" rel="permalink">Changed 3 lines of code, saved 760 server hours per month
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Act 1, where I write Java
+In the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/sapling-commands.html" rel="permalink">Sapling Commands
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Sapling (the Facebook-released SCM) is great, but the docs are not-great.
+I thought I’d list some commands it took me a while to undertand, for me and for ot...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/foia-calendars-pt1.html" rel="permalink">Processing Israeli FOIA calendars, Part 1
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Preface
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/docker-compose-ecs-nginx-caddy.html" rel="permalink">Caddy is better than Nginx for Docker Compose on ECS
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I recently managed to use Docker Compose to launch a small app in Aamazon’s Elastic Container Services (ECS).
+Overall, the result is pretty incredible. I’m a...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <script>
+  window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+  ga('create','','auto');
+  ga('set', 'anonymizeIp', false);
+  ga('send','pageview')
+</script>
+<script src="https://www.google-analytics.com/analytics.js" async></script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>

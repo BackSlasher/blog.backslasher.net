@@ -1,0 +1,761 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Setting Up Samba on Raspberry Pi - BackSlasher</title>
+<meta name="description" content="After setting up my rPi TorrentBox, I wanted to let my family access the downloaded files. Since they use Windows (and I don’t want to bother their systems with NFS), I wanted to install Samba on the rPi and create a read-only share (and a weak user for them to access the share with). I found a lot of guides for setting up Samba, but every one was missing something, so I documented my own procedure:  1. Plan Configuration Answer these questions before you start:">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Setting Up Samba on Raspberry Pi">
+<meta property="og:url" content="https://blog.backslasher.net/setting-up-samba-on-raspberry-pi.html">
+
+
+  <meta property="og:description" content="After setting up my rPi TorrentBox, I wanted to let my family access the downloaded files. Since they use Windows (and I don’t want to bother their systems with NFS), I wanted to install Samba on the rPi and create a read-only share (and a weak user for them to access the share with). I found a lot of guides for setting up Samba, but every one was missing something, so I documented my own procedure:  1. Plan Configuration Answer these questions before you start:">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2014-01-13T00:00:00+02:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/setting-up-samba-on-raspberry-pi.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Setting Up Samba on Raspberry Pi">
+    <meta itemprop="description" content="After setting up my rPi TorrentBox, I wanted to let my family access thedownloaded files.Since they use Windows (and I don’t want to bother their systems withNFS), I wanted to install Samba on the rPi and create a read-only share(and a weak user for them to access the share with).I found a lot of guides for setting up Samba, but every one was missingsomething, so I documented my own procedure:1. Plan ConfigurationAnswer these questions before you start:">
+    <meta itemprop="datePublished" content="2014-01-13T00:00:00+02:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Setting Up Samba on Raspberry Pi
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>After setting up my rPi TorrentBox, I wanted to let my family access the
+downloaded files.<br />
+Since they use Windows (and I don’t want to bother their systems with
+NFS), I wanted to install Samba on the rPi and create a read-only share
+(and a weak user for them to access the share with).<br />
+I found a lot of guides for setting up Samba, but every one was missing
+something, so I documented my own procedure:</p>
+
+<h3 id="1-plan-configuration">1. Plan Configuration</h3>
+<p>Answer these questions before you start:</p>
+
+<ul>
+  <li>Shares:
+    <ul>
+      <li>Are you going to use authentication or guest access? (hint:
+authentication is better)</li>
+      <li>Is the share read-only?</li>
+      <li>What is the share name? (best to keep it in lower-case)</li>
+      <li>What is the physical path the share is pointing to? Is it always
+mounted or on a removable drive?</li>
+    </ul>
+  </li>
+  <li>Users / authentication:
+    <ul>
+      <li>Do you need to change the workgroup’s name?</li>
+      <li>Do you need to disable password encryption (VERY old clients)?</li>
+      <li>How many different remote-access users will be required? How are
+they called? </li>
+      <li>Do some users already exist as UNIX users?</li>
+    </ul>
+  </li>
+</ul>
+
+<p>It’s much easier working with a clear understanding of the desired
+configuration.</p>
+<h3 id="2-prepare-access-user">2. Prepare Access User</h3>
+<p>Create the linux user you want to use (in my case “theothers”). You can
+use this command:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>adduser <span class="nt">--shell</span> /bin/false <span class="nt">--no-create-home</span>
+</code></pre></div></div>
+
+<p><strong>Note that:</strong></p>
+
+<ul>
+  <li>Shell is set to <code class="language-plaintext highlighter-rouge">/bin/false</code> to help prevent the user from actually
+logging in</li>
+  <li>No home directory is created, because the user isn’t supposed to
+login anyway</li>
+</ul>
+
+<h3 id="3-prepare-permissions">3. Prepare Permissions</h3>
+<p>Make sure the access user can’t do too much damage, because it might be
+abused. I limited its permissions to read (since I don’t want my family
+messing about the directory anyway).<br />
+I won’t go into the POSIX permissions model, but the best way to test
+the user’s permissions is to impersonate that user using</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>su <span class="nt">-s</span> /bin/bash theothers
+</code></pre></div></div>
+<p>Note that the terminal prompt changes to show the impersonated user,
+like “theothers@bestrpi”. Try and test everything:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">touch</code>: Creating files</li>
+  <li><code class="language-plaintext highlighter-rouge">mkdir</code>: Creating directories</li>
+  <li><code class="language-plaintext highlighter-rouge">ls</code>: Listing directories</li>
+  <li><code class="language-plaintext highlighter-rouge">tail</code>: Reading files</li>
+</ul>
+
+<p>Use <code class="language-plaintext highlighter-rouge">exit</code> when finished to return to your own user</p>
+<h3 id="4-install-samba">4. Install Samba</h3>
+<p>As always, you should update &amp; upgrade before:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt-get update <span class="p">;</span> <span class="nb">sudo </span>apt-get upgrade
+</code></pre></div></div>
+<p>The installation couldn’t be simpler:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt-get <span class="nb">install </span>samba
+</code></pre></div></div>
+<h3 id="5-create-user-mapping">5. Create User Mapping</h3>
+<p>Assuming you’re using the default authentication method (you should!),
+any user accessing Samba should be imported to the Samba user database.<br />
+Use this command to add the user. I’m not sure about password
+synchronization, so I just gave it the same password as the “real”
+user.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>pdbedit <span class="nt">-a</span> <span class="nt">-u</span> theothers
+</code></pre></div></div>
+<h3 id="6-edit-configuration-file">6. Edit Configuration File</h3>
+<p>This is the hardest part. I’d back up the configuration file to
+somewhere safe and start fresh.<br />
+Refer to <a href="http://www.samba.org/samba/docs/using_samba/ch06.html">this site</a> and <a href="http://www.samba.org/samba/docs/man/manpages/smb.conf.5.html">this one</a> for
+how the configuration file should look like.<br />
+After modifying the configuration, restart the Samba service to apply:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>service samba restart
+</code></pre></div></div>
+<p>You can test your shares from gnome, using “connect to server” and using
+the “smb” initial</p>
+
+<p><img src="/assets/setting-up-samba-on-raspberry-pi/ConnectToServer.png" alt="" /></p>
+
+<h3 id="7-apply-to-clients">7. Apply to Clients</h3>
+<p>Make sure everything works. I find it best to restart all involved
+machines and testing again, to make sure all settings are persistent.<br />
+When accessing the shares from Windows, I find it best to use network
+drives. Check “reconnect at sign-in” to make the drive “permanent” and
+check “Connect using different credentials”.</p>
+
+<p><img src="/assets/setting-up-samba-on-raspberry-pi/NetworkDrive.png" alt="" /></p>
+
+<p>(photo from <a href="http://techynotes.net/question-how-do-i-map-a-network-drive-in-windows-8/">techynotes</a>)</p>
+
+<p>Use the workgroup from the Samba configuration as a domain, e..g
+<code class="language-plaintext highlighter-rouge">WORKGROUP\theothers</code>.</p>
+
+<p>Enjoy your Samba server!</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#linux" class="page__taxonomy-item" rel="tag">Linux</a><span class="sep">, </span>
+    
+      <a href="/tags/#raspberry-pi" class="page__taxonomy-item" rel="tag">Raspberry Pi</a><span class="sep">, </span>
+    
+      <a href="/tags/#raspberryseed" class="page__taxonomy-item" rel="tag">raspberrySeed</a><span class="sep">, </span>
+    
+      <a href="/tags/#samba" class="page__taxonomy-item" rel="tag">Samba</a><span class="sep">, </span>
+    
+      <a href="/tags/#security" class="page__taxonomy-item" rel="tag">Security</a><span class="sep">, </span>
+    
+      <a href="/tags/#smb" class="page__taxonomy-item" rel="tag">SMB</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#foss" class="page__taxonomy-item" rel="tag">FOSS</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2014-01-13T00:00:00+02:00">January 13, 2014</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/raspberry-pi-deluge-segmentation-fault.html" class="pagination--pager" title="Raspberry Pi + Deluge = Segmentation Fault
+">Previous</a>
+    
+    
+      <a href="/some-powershell-snippets-for-network-scanning.html" class="pagination--pager" title="Some PowerShell Snippets for Network Scanning
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/3-loc-760h.html" rel="permalink">Changed 3 lines of code, saved 760 server hours per month
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Act 1, where I write Java
+In the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/sapling-commands.html" rel="permalink">Sapling Commands
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Sapling (the Facebook-released SCM) is great, but the docs are not-great.
+I thought I’d list some commands it took me a while to undertand, for me and for ot...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/foia-calendars-pt1.html" rel="permalink">Processing Israeli FOIA calendars, Part 1
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Preface
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/docker-compose-ecs-nginx-caddy.html" rel="permalink">Caddy is better than Nginx for Docker Compose on ECS
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I recently managed to use Docker Compose to launch a small app in Aamazon’s Elastic Container Services (ECS).
+Overall, the result is pretty incredible. I’m a...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <script>
+  window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+  ga('create','','auto');
+  ga('set', 'anonymizeIp', false);
+  ga('send','pageview')
+</script>
+<script src="https://www.google-analytics.com/analytics.js" async></script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>

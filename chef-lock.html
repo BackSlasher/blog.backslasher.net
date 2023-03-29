@@ -1,0 +1,723 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Using a global lock in Chef - BackSlasher</title>
+<meta name="description" content="The Story Our dev team is currently using a Snowflake-like ID generation scheme that looks like this:  (Diagram by Elad Rosenhim, architect and companion at Dynamic Yield. See his post about distributed keys and how to survive managing an HBase cluster)">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Using a global lock in Chef">
+<meta property="og:url" content="https://blog.backslasher.net/chef-lock.html">
+
+
+  <meta property="og:description" content="The Story Our dev team is currently using a Snowflake-like ID generation scheme that looks like this:  (Diagram by Elad Rosenhim, architect and companion at Dynamic Yield. See his post about distributed keys and how to survive managing an HBase cluster)">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2015-12-03T00:00:00+02:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/chef-lock.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Using a global lock in Chef">
+    <meta itemprop="description" content="The StoryOur dev team is currently using a Snowflake-like ID generation scheme that looks like this:(Diagram by Elad Rosenhim, architect and companion at Dynamic Yield. See his post about distributed keys and how to survive managing an HBase cluster)">
+    <meta itemprop="datePublished" content="2015-12-03T00:00:00+02:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Using a global lock in Chef
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <h2 id="the-story">The Story</h2>
+<p>Our dev team is currently using a <a href="https://blog.twitter.com/2010/announcing-snowflake">Snowflake</a>-like ID generation scheme that looks like this:<br />
+<img src="/assets/chef-lock/snowflake.jpg" alt="snowflake diagram" /><br />
+(Diagram by Elad Rosenhim, architect and companion at Dynamic Yield. See <a href="https://www.dynamicyield.com/2015/05/apache-hbase-for-the-win-2/">his post</a> about distributed keys and how to survive managing an HBase cluster)</p>
+
+<p>Those familiar with MongoDB might notice this structure is very similar to <a href="https://docs.mongodb.org/manual/reference/object-id/">MongoDB’s ObjectId</a>.</p>
+
+<p>This ID generator has several advantages over sequential generation, mainly:</p>
+
+<ol>
+  <li>Partitioning-friendly:<br />
+ Because the most significant bits are rotated frequently, consecutive IDs will go to different partitions, avoiding a “hot-zone” problem.</li>
+  <li>Independent generation:<br />
+ Every machine can generate IDs by itself, meaning there’s no single point of failure (as opposed to using MySQL sequences for ID generation)</li>
+  <li>Packed metadata:<br />
+ The key allows including 4 bytes of arbitrary metadata (e.g. user’s country of origin), which can be later inferred from the key, in addition to the creation date. This metadata is “free” (not requiring an auxilary lookup).</li>
+</ol>
+
+<p><strong>The problematic bit for me</strong> is the need to assign a unique ID for every machine (to avoid machines creating duplicate keys).<br />
+As you can see from the diagram, I have 2 bytes allocated for this, which might seem like a lot (255 different machines), but this is not enough space to just put unique machine identifiers I already have (like FQDN, SSH fingerprint, EC2 instance ID).<br />
+I therefore needed to tell Chef to pick a machine ID that no other node has and use that.<br />
+Naively one could do something like this in a Chef recipe:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">unless</span> <span class="n">node</span><span class="p">[</span><span class="s1">'machine'</span><span class="p">][</span><span class="s1">'id'</span><span class="p">]</span> <span class="k">then</span>
+  <span class="n">range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="o">..</span><span class="mi">255</span><span class="p">).</span><span class="nf">to_a</span> <span class="c1"># Total range allowed</span>
+  <span class="c1"># IDs in used, extracted using Chef search:</span>
+  <span class="n">used_ids</span> <span class="o">=</span> <span class="n">search</span><span class="p">(</span><span class="s1">'machine_id:*'</span><span class="p">,</span><span class="n">filter_result</span><span class="p">:{</span><span class="s1">'id'</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">'machine'</span><span class="p">,</span><span class="s1">'id'</span><span class="p">]}).</span>
+    <span class="nf">map</span><span class="p">{</span><span class="o">|</span><span class="n">node</span><span class="o">|</span><span class="n">node</span><span class="p">[</span><span class="s1">'id'</span><span class="p">]}</span>
+  <span class="n">available_ids</span> <span class="o">=</span> <span class="n">range</span> <span class="o">-</span> <span class="n">used_ids</span> <span class="c1"># Deduce remaining pool</span>
+  <span class="k">raise</span> <span class="s1">'No free ids'</span> <span class="k">unless</span> <span class="n">available_ids</span><span class="p">.</span><span class="nf">any?</span> <span class="c1"># Upset if none</span>
+  <span class="n">my_id</span> <span class="o">=</span> <span class="n">available_ids</span><span class="p">.</span><span class="nf">first</span>
+  <span class="n">node</span><span class="p">.</span><span class="nf">normal</span><span class="p">[</span><span class="s1">'machine'</span><span class="p">][</span><span class="s1">'id'</span><span class="p">]</span> <span class="o">=</span> <span class="n">my_id</span> <span class="c1"># save it</span>
+<span class="k">end</span>
+</code></pre></div></div>
+<p><strong>However</strong>, several nodes could be running the same code at the same time, and since Chef offers no concurrency control, those nodes could get identical <code class="language-plaintext highlighter-rouge">available_ids</code> and choose the same <code class="language-plaintext highlighter-rouge">my_id</code>, leading to nodes with duplicate machine IDs, meaning they might create duplicate user IDs.</p>
+
+<h2 id="the-solution">The solution</h2>
+<p>I initially thoguht about outsourcing the ID generation to a single-threaded HTTP application to eliminate any concurrency issues.<br />
+However, this application would have to hold all of the assigned IDs (as opposed to them being stored in the Chef server), and I find stateful applications much harder to maintain (backups, scaling etc).<br />
+Eventually, I thought about keeping the code inside a Chef recipe, but rely on an external service to ensure concurrency.<br />
+I found the <a href="https://github.com/thefab/restful-distributed-lock-manager">RDLM</a> (Restful Distributed Lock Manager) which is a simple global lock holder, where locks are acquired and released via HTTP requests, which was perfect for me.</p>
+
+<p>To utilize the RDLM in Chef recipes, I built the <a href="https://github.com/BackSlasher/chef-lock_rdlm">lock_rdlm</a> cookbook  which includes several interesting functions.<br />
+The first is <a href="https://github.com/BackSlasher/chef-lock_rdlm/#user-content-lockrdlmwith_lock"><code class="language-plaintext highlighter-rouge">LockRDLM::with_lock</code></a>, which executes a code block as a critical section, using a specified lock name.<br />
+One could use it to run a “critical” code section like this:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">LockRDLM</span><span class="o">::</span><span class="n">with_lock</span><span class="p">(</span><span class="n">node</span><span class="p">,</span><span class="s1">'lockname'</span><span class="p">)</span> <span class="k">do</span>
+  <span class="c1"># Code here will be exclusive</span>
+  <span class="n">db</span> <span class="o">=</span> <span class="n">data_bag_item</span><span class="p">(</span><span class="s1">'misc'</span><span class="p">,</span><span class="s1">'last_run'</span><span class="p">)</span>
+  <span class="n">db</span><span class="p">[</span><span class="n">node</span><span class="p">.</span><span class="nf">name</span><span class="p">]</span><span class="o">=</span><span class="no">Time</span><span class="p">.</span><span class="nf">now</span>
+  <span class="n">db</span><span class="p">.</span><span class="nf">save</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>The second is <a href="https://github.com/BackSlasher/chef-lock_rdlm/#user-content-lockrdlmassign_identity"><code class="language-plaintext highlighter-rouge">LockRDLM::assign_identity</code></a>, which uses <code class="language-plaintext highlighter-rouge">with_lock</code> to look for identities of other machines and choose a different one (out of a range) for the current node.<br />
+It’s using the <code class="language-plaintext highlighter-rouge">with_lock</code> method internally, with the critical section doing the following:</p>
+
+<ol>
+  <li>Iterates over all of the nodes in the Chef server and collects their values</li>
+  <li>Chooses a free value for its own use</li>
+  <li>Saves the value in the node object (for the current run).</li>
+  <li>Loads this node’s object from the server, saves the value and immediately saves it back.<br />
+ This is done to ensure that the newly chosen value is present in the server upon leaving the critical section, and not in the run’s end (when the Chef client updates the node object).</li>
+</ol>
+
+<p>I use it to solve my use unique identity issue like this:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">LockRDLM</span><span class="o">::</span><span class="n">assign_identity</span><span class="p">(</span><span class="n">node</span><span class="p">,[</span><span class="ss">:machine</span><span class="p">,</span><span class="ss">:id</span><span class="p">],(</span><span class="mi">1</span><span class="o">..</span><span class="mi">254</span><span class="p">).</span><span class="nf">to_a</span><span class="p">)</span>
+<span class="c1"># Now I can use node['machine']['id']</span>
+</code></pre></div></div>
+
+<h2 id="interesting-bits">Interesting bits</h2>
+<ul>
+  <li>Because the identities are stored in Chef node attributes, they are cleaned up when node objects are removed. This is another benefit over having all of the ID assignment handled in a separate application.</li>
+  <li>When creating the lock handling functions, I couldn’t rely on the Chef HTTP methods because they don’t return HTTP headers, which I needed. I had to fall back to <code class="language-plaintext highlighter-rouge">net/http</code>, but it wasn’t so bad.</li>
+  <li>I found <a href="https://github.com/websterclay/chef-dominodes">Dominodes</a> that solves the same problem (critical sections accross nodes), but uses data bag items as the locks.<br />
+  I didn’t take it becaue it doesn’t seem to handle race conditions. Also, it’s unmaintained since 2011, and I don’t think it’s because it’s perfect.</li>
+  <li>I use the helper function <code class="language-plaintext highlighter-rouge">LockRDLM::find_duplicate_identity</code> to monitor for duplicates. One can use this function in their recipe to fail a Chef run if a duplicate is found - I prefer having servers with an assigned identity not depending on the lock during run and one server being in charge of looking for duplicates.</li>
+</ul>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#chef" class="page__taxonomy-item" rel="tag">Chef</a><span class="sep">, </span>
+    
+      <a href="/tags/#lock" class="page__taxonomy-item" rel="tag">Lock</a><span class="sep">, </span>
+    
+      <a href="/tags/#mutex" class="page__taxonomy-item" rel="tag">Mutex</a><span class="sep">, </span>
+    
+      <a href="/tags/#ruby" class="page__taxonomy-item" rel="tag">Ruby</a><span class="sep">, </span>
+    
+      <a href="/tags/#scripts" class="page__taxonomy-item" rel="tag">Scripts</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#foss" class="page__taxonomy-item" rel="tag">FOSS</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2015-12-03T00:00:00+02:00">December 3, 2015</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/packer-erb.html" class="pagination--pager" title="Enhancing Packer Templates with eRuby
+">Previous</a>
+    
+    
+      <a href="/open-gridview.html" class="pagination--pager" title="Open-Gridview - the FOSS Out-Gridview
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/3-loc-760h.html" rel="permalink">Changed 3 lines of code, saved 760 server hours per month
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Act 1, where I write Java
+In the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/sapling-commands.html" rel="permalink">Sapling Commands
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Sapling (the Facebook-released SCM) is great, but the docs are not-great.
+I thought I’d list some commands it took me a while to undertand, for me and for ot...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/foia-calendars-pt1.html" rel="permalink">Processing Israeli FOIA calendars, Part 1
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Preface
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/docker-compose-ecs-nginx-caddy.html" rel="permalink">Caddy is better than Nginx for Docker Compose on ECS
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I recently managed to use Docker Compose to launch a small app in Aamazon’s Elastic Container Services (ECS).
+Overall, the result is pretty incredible. I’m a...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <script>
+  window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+  ga('create','','auto');
+  ga('set', 'anonymizeIp', false);
+  ga('send','pageview')
+</script>
+<script src="https://www.google-analytics.com/analytics.js" async></script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>

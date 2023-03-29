@@ -1,0 +1,795 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Detecting Invalid External References in Group Policy Preferences - BackSlasher</title>
+<meta name="description" content="Guest post This is a post written by my former colleague, Ofri Sherf. I’ve been bugging her to upload her script and write how it works because it sounded interesting to me.">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Detecting Invalid External References in Group Policy Preferences">
+<meta property="og:url" content="https://blog.backslasher.net/gpp-external-references.html">
+
+
+  <meta property="og:description" content="Guest post This is a post written by my former colleague, Ofri Sherf. I’ve been bugging her to upload her script and write how it works because it sounded interesting to me.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2015-11-03T00:00:00+02:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/gpp-external-references.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Detecting Invalid External References in Group Policy Preferences">
+    <meta itemprop="description" content="Guest postThis is a post written by my former colleague, Ofri Sherf.I’ve been bugging her to upload her script and write how it works because it sounded interesting to me.">
+    <meta itemprop="datePublished" content="2015-11-03T00:00:00+02:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Detecting Invalid External References in Group Policy Preferences
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <h2 id="guest-post">Guest post</h2>
+<p>This is a post written by my former colleague, <a href="https://il.linkedin.com/pub/ofri-sherf/108/295/6a0">Ofri Sherf</a>.<br />
+I’ve been bugging her to upload her script and write how it works because it sounded interesting to me.</p>
+
+<h2 id="the-story">The story</h2>
+
+<p>I was asked to arrange Group Policy in one of our networks - e.g delete all unneccessary GPOs.<br />
+That sounded like it was going to be a tedious, frustrating, I-wanna-stab-my-neck-with-a-fork kind of work, so naturally I wanted to make my job a little bit easier by scripting it.</p>
+
+<p>I divided my work into three stages:</p>
+<h3 id="1-obvious-cases">1. Obvious cases</h3>
+<p>To find the following, first we need to retrieve all Group Policy Objects:</p>
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$GPOs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Get-GPO</span><span class="w"> </span><span class="nt">-All</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">select</span><span class="w"> </span><span class="nt">-exp</span><span class="w"> </span><span class="nx">ID</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">select</span><span class="w"> </span><span class="nt">-exp</span><span class="w"> </span><span class="nx">GUID</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="o">%</span><span class="p">{[</span><span class="n">xml</span><span class="p">](</span><span class="n">Get-GPOReport</span><span class="w"> </span><span class="nt">-Guid</span><span class="w"> </span><span class="bp">$_</span><span class="w"> </span><span class="nt">-ReportType</span><span class="w"> </span><span class="nx">XML</span><span class="p">)}</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">select</span><span class="w"> </span><span class="nt">-exp</span><span class="w"> </span><span class="nx">GPO</span><span class="w">
+</span></code></pre></div></div>
+<p>I searched for GPOs (Group Policy objects) that are either:</p>
+
+<ul>
+  <li>
+    <p>Unlinked (a GPO that has no links in the AD, so it doesn’t apply anywhere):</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  :::powershell
+  $GPOs | ?{!($_.LinksTo)}
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Empty (a GPO that contains no definition, so even if applied it contains nothing):</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  :::powershell
+  $GPOs | ?{!($_.Computer.ExtensionData) -and !($_.User.ExtensionData)}
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Both “Computer settings” and “User settings” segments are disabled:<br />
+<img src="/assets/gpp-external-references/disabled-example.png" alt="" /></p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  :::powershell
+  $GPOs | ?{!($_.Computer.Enabled) -and !($_.User.Enabled)}
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h3 id="2-invalid-administrative-templates--windows-settings">2. Invalid “Administrative Templates” / “Windows Settings”:</h3>
+<p>Here I targeted GPOs that have bad settings in either the “Administrative Templates” or “Windows Settings” segments. I have a script for this, but it’s cumbersome and not fit for release. I might publish it after I clean it up.</p>
+
+<h3 id="3-invalid-group-policy-preferences">3. Invalid Group Policy Preferences</h3>
+<p>The same invalid settings could be found in <a href="https://technet.microsoft.com/en-us/library/dn581922.aspx">Group Policy Preference</a>. However, preferences don’t show up properly in the XML document generated by <a href="https://technet.microsoft.com/en-us/library/ee461057.aspx"><code class="language-plaintext highlighter-rouge">Get-GPOReport</code></a>, so I didn’t handle them in phase 2.<br />
+My script solved this issue by directly checking the XML files used to define these settings in the SYSVOL.<br />
+It produces a list of GPOs and the path to the file marking them as problematic by checking every XML and searching for something that looks like a path / AD SID, and checking it actually exists.</p>
+
+<p>Note that if you’re using a version of powershell &lt; 3, you need to add these two lines to the start of the script:</p>
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Import-Module</span><span class="w"> </span><span class="nx">ActiveDirectory</span><span class="w">
+</span><span class="n">Import-Module</span><span class="w"> </span><span class="nx">GroupPolicy</span><span class="w">
+</span></code></pre></div></div>
+<p>And here is the script:</p>
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># This script searches for GPOs who refer to something that does not exist</span><span class="w">
+</span><span class="c"># Ofri Sherf</span><span class="w">
+</span><span class="c"># sherf.ofri@gmail.com</span><span class="w">
+
+</span><span class="c">#region Params</span><span class="w">
+</span><span class="c"># Domain to be checked. Defaults to the current domain</span><span class="w">
+</span><span class="nv">$domain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">Get-ADDomain</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">select</span><span class="w"> </span><span class="nt">-exp</span><span class="w"> </span><span class="nx">NetBIOSName</span><span class="p">)</span><span class="w">
+</span><span class="c"># FQDN of domain to be checked</span><span class="w">
+</span><span class="nv">$fullDomain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">Get-ADDomain</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">select</span><span class="w"> </span><span class="nt">-exp</span><span class="w"> </span><span class="nx">DNSRoot</span><span class="p">)</span><span class="w">
+</span><span class="c"># Policy segments to check. E.g. modify to "Machine" to avoid checking the user segment</span><span class="w">
+</span><span class="nv">$type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">@(</span><span class="s2">"Machine"</span><span class="p">,</span><span class="s2">"User"</span><span class="p">)</span><span class="w"> 
+</span><span class="c">#endregion</span><span class="w">
+
+</span><span class="bp">$Error</span><span class="n">ActionPreference</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"SilentlyContinue"</span><span class="w">
+
+</span><span class="c"># Group Policy Preference to go over</span><span class="w">
+</span><span class="nv">$preferenceType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">@{</span><span class="w">
+    </span><span class="s2">"Drives"</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'path="([^"]+)"'</span><span class="p">;</span><span class="w">
+    </span><span class="s2">"Files"</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'fromPath="([^"]+)"'</span><span class="p">;</span><span class="w">
+    </span><span class="s2">"Groups"</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'Member name="([^"]+)"'</span><span class="p">;</span><span class="w">
+    </span><span class="s2">"NetworkShares"</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'path="([^"]+)"'</span><span class="p">;</span><span class="w">
+    </span><span class="s2">"Shortcuts"</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'targetPath="([^"]+)"'</span><span class="p">;</span><span class="w">
+    </span><span class="s2">"IniFiles"</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'path="([^"]+)"'</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span><span class="nv">$preferenceType</span><span class="o">.</span><span class="nf">GetEnumerator</span><span class="p">()</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="o">%</span><span class="p">{</span><span class="w">
+
+    </span><span class="nv">$currPreference</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="bp">$_</span><span class="o">.</span><span class="nf">Name</span><span class="w">
+    </span><span class="nv">$pattern</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="bp">$_</span><span class="o">.</span><span class="nf">Value</span><span class="w">
+
+    </span><span class="c"># Analyze segment</span><span class="w">
+    </span><span class="nv">$type</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="o">%</span><span class="p">{</span><span class="w">
+        </span><span class="nv">$currType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="bp">$_</span><span class="w">
+        </span><span class="c"># Find all GPOs</span><span class="w">
+        </span><span class="n">ls</span><span class="w"> </span><span class="nx">\\</span><span class="nv">$fullDomain</span><span class="nx">\sysvol\</span><span class="nv">$fullDomain</span><span class="nx">\Policies</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="o">%</span><span class="p">{</span><span class="w">
+            </span><span class="nv">$setting</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">New-Object</span><span class="w"> </span><span class="nx">object</span><span class="w">
+            </span><span class="nv">$setting</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Add-Member</span><span class="w"> </span><span class="nt">-MemberType</span><span class="w"> </span><span class="nx">NoteProperty</span><span class="w"> </span><span class="nt">-Name</span><span class="w"> </span><span class="nx">GPGuid</span><span class="w"> </span><span class="se">` </span><span class="w">
+            </span><span class="nt">-Value</span><span class="w"> </span><span class="p">(</span><span class="bp">$_</span><span class="o">.</span><span class="nf">Name</span><span class="w"> </span><span class="o">-replace</span><span class="w"> </span><span class="s2">"\{|\}"</span><span class="p">,</span><span class="s2">""</span><span class="p">)</span><span class="w">
+            </span><span class="nv">$setting</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Add-Member</span><span class="w"> </span><span class="nt">-MemberType</span><span class="w"> </span><span class="nx">NoteProperty</span><span class="w"> </span><span class="nt">-Name</span><span class="w"> </span><span class="nx">GPName</span><span class="w"> </span><span class="se">` </span><span class="w">
+            </span><span class="nt">-Value</span><span class="w"> </span><span class="p">(</span><span class="bp">$_</span><span class="o">.</span><span class="nf">GPGuid</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="o">%</span><span class="p">{</span><span class="n">Get-GPO</span><span class="w"> </span><span class="nt">-Guid</span><span class="w"> </span><span class="bp">$_</span><span class="p">}</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">select</span><span class="w"> </span><span class="nt">-exp</span><span class="w"> </span><span class="nx">DisplayName</span><span class="p">)</span><span class="w">
+            </span><span class="nv">$setting</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Add-Member</span><span class="w"> </span><span class="nt">-MemberType</span><span class="w"> </span><span class="nx">NoteProperty</span><span class="w"> </span><span class="nt">-Name</span><span class="w"> </span><span class="nx">Preference</span><span class="w"> </span><span class="nt">-Value</span><span class="w"> </span><span class="p">(</span><span class="nv">$currPreference</span><span class="p">)</span><span class="w">
+            </span><span class="nv">$setting</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Add-Member</span><span class="w"> </span><span class="nt">-MemberType</span><span class="w"> </span><span class="nx">NoteProperty</span><span class="w"> </span><span class="nt">-Name</span><span class="w"> </span><span class="nx">Path</span><span class="w"> </span><span class="nt">-Value</span><span class="w"> </span><span class="s2">""</span><span class="w">
+            </span><span class="nv">$GPName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="bp">$_</span><span class="o">.</span><span class="nf">Name</span><span class="w">
+
+        </span><span class="c"># Check if GPO contains relevant GPP</span><span class="w">
+        </span><span class="kr">if</span><span class="p">(</span><span class="n">Test-Path</span><span class="w"> </span><span class="s2">"\\</span><span class="nv">$fullDomain</span><span class="s2">\sysvol\</span><span class="nv">$fullDomain</span><span class="s2">\Policies\</span><span class="nv">$GPName</span><span class="s2">\</span><span class="nv">$currType</span><span class="s2">\Preferences\</span><span class="nv">$currPreference</span><span class="s2">\</span><span class="nv">$currPreference</span><span class="s2">.xml"</span><span class="p">){</span><span class="w">
+            </span><span class="nv">$file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Get-Content</span><span class="w"> </span><span class="s2">"\\</span><span class="nv">$fullDomain</span><span class="s2">\sysvol\</span><span class="nv">$fullDomain</span><span class="s2">\Policies\</span><span class="nv">$GPName</span><span class="s2">\</span><span class="nv">$currType</span><span class="s2">\Preferences\</span><span class="nv">$currPreference</span><span class="s2">\</span><span class="nv">$currPreference</span><span class="s2">.xml"</span><span class="w"> </span><span class="nt">-Encoding</span><span class="w"> </span><span class="nx">UTF8</span><span class="w">
+            </span><span class="nv">$file</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="o">%</span><span class="p">{</span><span class="w">
+                </span><span class="c"># If GPP file matches the pattern of "external references"</span><span class="w">
+                </span><span class="kr">if</span><span class="p">(</span><span class="bp">$_</span><span class="w"> </span><span class="o">-match</span><span class="w"> </span><span class="nv">$pattern</span><span class="p">){</span><span class="w">
+                    </span><span class="kr">switch</span><span class="p">(</span><span class="nv">$currPreference</span><span class="p">)</span><span class="w">
+                    </span><span class="p">{</span><span class="w">
+                        </span><span class="s2">"Groups"</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c"># This is a SID reference. Look for it in AD</span><span class="w">
+                            </span><span class="nv">$user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="bp">$null</span><span class="w">
+                            </span><span class="nv">$group</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="bp">$null</span><span class="w">
+                            </span><span class="kr">if</span><span class="p">(</span><span class="bp">$Matches</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">-like</span><span class="w"> </span><span class="s2">"</span><span class="nv">$domain</span><span class="s2">*"</span><span class="p">){</span><span class="w">
+                                </span><span class="nv">$name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="bp">$Matches</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">-replace</span><span class="w"> </span><span class="s2">"</span><span class="nv">$domain</span><span class="s2">\\"</span><span class="p">,</span><span class="s2">""</span><span class="w">
+                                </span><span class="nv">$user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Get-ADUser</span><span class="w"> </span><span class="nv">$name</span><span class="w">
+                                </span><span class="nv">$group</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Get-ADGroup</span><span class="w"> </span><span class="nv">$name</span><span class="w">
+                                </span><span class="kr">if</span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="w"> </span><span class="o">-and</span><span class="w"> </span><span class="o">!</span><span class="p">(</span><span class="nv">$group</span><span class="p">)){</span><span class="w">
+                                    </span><span class="nv">$setting</span><span class="o">.</span><span class="nf">path</span><span class="w"> </span><span class="o">+=</span><span class="s2">",</span><span class="nv">$name</span><span class="s2">"</span><span class="w">
+                                </span><span class="p">}</span><span class="w">
+                                </span><span class="kr">break</span><span class="p">;</span><span class="w">
+                            </span><span class="p">}</span><span class="w">
+                        </span><span class="p">}</span><span class="w">
+                        </span><span class="s2">"Shortcuts"</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c"># This is a shortcut. It can point to a URL (http://)</span><span class="w">
+                            </span><span class="kr">if</span><span class="p">(</span><span class="bp">$_</span><span class="w"> </span><span class="o">-match</span><span class="w"> </span><span class="s1">'targetPath="(http.+?)"'</span><span class="p">){</span><span class="w">
+                                </span><span class="nv">$web</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Invoke-WebRequest</span><span class="w"> </span><span class="bp">$Matches</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="nt">-UseDefaultCredentials</span><span class="w">
+                                </span><span class="kr">if</span><span class="p">(</span><span class="o">!</span><span class="nv">$web</span><span class="p">){</span><span class="w">
+                                    </span><span class="nv">$setting</span><span class="o">.</span><span class="nf">path</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s2">","</span><span class="w"> </span><span class="o">+</span><span class="bp">$Matches</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w">
+                                </span><span class="p">}</span><span class="w">
+                            </span><span class="p">}</span><span class="w">
+                            </span><span class="c"># If it's not HTTP, fall-through</span><span class="w">
+                        </span><span class="p">}</span><span class="w">
+                        </span><span class="n">default</span><span class="w"> </span><span class="p">{</span><span class="w">
+                            </span><span class="c"># This is a path</span><span class="w">
+                            </span><span class="c"># Check if the path is a network path</span><span class="w">
+                            </span><span class="kr">if</span><span class="p">(</span><span class="bp">$Matches</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">-like</span><span class="w"> </span><span class="s2">"\\*"</span><span class="p">){</span><span class="w">
+                                </span><span class="c"># Check if path is accessible</span><span class="w">
+                                </span><span class="kr">if</span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">Test-Path</span><span class="w"> </span><span class="bp">$Matches</span><span class="p">[</span><span class="mi">1</span><span class="p">])){</span><span class="w">
+                                    </span><span class="c"># Check if path exists yet inaccessible</span><span class="w">
+                                    </span><span class="kr">if</span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="bp">$Error</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="nf">Exception</span><span class="w"> </span><span class="o">-match</span><span class="w"> </span><span class="s2">"Access is denied"</span><span class="p">)){</span><span class="w">
+                                        </span><span class="nv">$setting</span><span class="o">.</span><span class="nf">path</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s2">","</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="bp">$Matches</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w">
+                                    </span><span class="p">}</span><span class="w">
+                                </span><span class="p">}</span><span class="w">
+                            </span><span class="p">}</span><span class="w">
+                        </span><span class="p">}</span><span class="w">
+                    </span><span class="p">}</span><span class="w">
+
+                    </span><span class="kr">if</span><span class="p">(</span><span class="nv">$setting</span><span class="o">.</span><span class="nf">path</span><span class="p">){</span><span class="nv">$setting</span><span class="p">}</span><span class="w"> </span><span class="c"># If the GPO has invalid settings, pipe it out</span><span class="w">
+                </span><span class="p">}</span><span class="w">
+            </span><span class="p">}</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span></code></pre></div></div>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#group-policy" class="page__taxonomy-item" rel="tag">Group Policy</a><span class="sep">, </span>
+    
+      <a href="/tags/#powershell" class="page__taxonomy-item" rel="tag">Powershell</a><span class="sep">, </span>
+    
+      <a href="/tags/#scripts" class="page__taxonomy-item" rel="tag">Scripts</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#microsoft" class="page__taxonomy-item" rel="tag">Microsoft</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2015-11-03T00:00:00+02:00">November 3, 2015</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/complex-hbase-shell.html" class="pagination--pager" title="Writing Complex Scripts in HBase Shell
+">Previous</a>
+    
+    
+      <a href="/chef-licenses.html" class="pagination--pager" title="Listing Chef Cookbook Licenses
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/3-loc-760h.html" rel="permalink">Changed 3 lines of code, saved 760 server hours per month
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Act 1, where I write Java
+In the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/sapling-commands.html" rel="permalink">Sapling Commands
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Sapling (the Facebook-released SCM) is great, but the docs are not-great.
+I thought I’d list some commands it took me a while to undertand, for me and for ot...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/foia-calendars-pt1.html" rel="permalink">Processing Israeli FOIA calendars, Part 1
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Preface
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/docker-compose-ecs-nginx-caddy.html" rel="permalink">Caddy is better than Nginx for Docker Compose on ECS
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I recently managed to use Docker Compose to launch a small app in Aamazon’s Elastic Container Services (ECS).
+Overall, the result is pretty incredible. I’m a...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <script>
+  window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+  ga('create','','auto');
+  ga('set', 'anonymizeIp', false);
+  ga('send','pageview')
+</script>
+<script src="https://www.google-analytics.com/analytics.js" async></script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>

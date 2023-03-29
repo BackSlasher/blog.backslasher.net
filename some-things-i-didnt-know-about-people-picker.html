@@ -1,0 +1,736 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Some Things I Didn’t Know About People Picker - BackSlasher</title>
+<meta name="description" content="Recently I got to mess with SharePoint 2010’s People Picker - a control that emulates Windows’ “Directory Object Picker”, allowing the user to select security principals">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Some Things I Didn’t Know About People Picker">
+<meta property="og:url" content="https://blog.backslasher.net/some-things-i-didnt-know-about-people-picker.html">
+
+
+  <meta property="og:description" content="Recently I got to mess with SharePoint 2010’s People Picker - a control that emulates Windows’ “Directory Object Picker”, allowing the user to select security principals">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2012-09-27T00:00:00+02:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/some-things-i-didnt-know-about-people-picker.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Some Things I Didn’t Know About People Picker">
+    <meta itemprop="description" content="Recently I got to mess with SharePoint 2010’s People Picker - a controlthat emulates Windows’ “Directory Object Picker”, allowing the user toselect security principals">
+    <meta itemprop="datePublished" content="2012-09-27T00:00:00+02:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Some Things I Didn’t Know About People Picker
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>Recently I got to mess with SharePoint 2010’s People Picker - a control
+that emulates Windows’ “Directory Object Picker”, allowing the user to
+select security principals</p>
+
+<ul>
+  <li>Active Directory’s People Picker:<br />
+<img src="/assets/some-things-i-didnt-know-about-people-picker/ActiveDirectoryObjectPickerDialog.gif" alt="" /></li>
+  <li>The SharePoint 2010 Variant:<br />
+<img src="/assets/some-things-i-didnt-know-about-people-picker/24-browse-for-users.jpg" alt="" /></li>
+</ul>
+
+<p>After the Devs asked me to customize it for them, I went rummaging
+through the dark corners of the internet (pages 5+ on Google), and came
+back with several facts that weren’t included in the <a href="http://technet.microsoft.com/en-us/library/gg602075.aspx">regular TechNet
+documentation</a>
+and I think should have been:</p>
+
+<h3 id="changes-can-and-even-should-be-made-from-powershell">Changes can (and even should) be made from PowerShell</h3>
+<p>Although the official documentation states that there are no PowerShell
+commands (as seen in the picture),<br />
+<img src="/assets/some-things-i-didnt-know-about-people-picker/Capture.png" alt="" /><br />
+changes don’t have to be made from the <code class="language-plaintext highlighter-rouge">stsadm</code> utility.<br />
+You can instead find the relevant <code class="language-plaintext highlighter-rouge">SPWebApplication</code> object and use its
+PeoplePickerSettings property to modify the PeoplePicker configuration:</p>
+
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$webApp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Get-SPWebApplication</span><span class="w"> </span><span class="s1">'SharePoint - 80'</span><span class="w">
+</span><span class="nv">$webApp</span><span class="o">.</span><span class="nf">PeoplePickerSettings</span><span class="w">
+</span></code></pre></div></div>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>SearchActiveDirectoryDomains                     : {}
+ActiveDirectoryCustomQuery                       : 
+ActiveDirectoryCustomFilter                      : 
+OnlySearchWithinSiteCollection                   : False
+PeopleEditorOnlyResolveWithinSiteCollection      : False
+DistributionListSearchDomains                    : {}
+ActiveDirectorySearchTimeout                     : 00:00:30
+NoWindowsAccountsForNonWindowsAuthenticationMode : True
+ServiceAccountDirectoryPaths                     : {}
+ReferralChasingOption                            : None
+ActiveDirectoryRestrictIsolatedNameLevel         : False
+AllowLocalAccount                                : True
+UpgradedPersistedProperties                      : {}
+</code></pre></div></div>
+<p>Just make sure that you update after modifying!</p>
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$webApp</span><span class="o">.</span><span class="nf">Update</span><span class="p">()</span><span class="w">
+</span></code></pre></div></div>
+
+<h3 id="changes-apply-immediately">Changes apply immediately</h3>
+<p>After making a change, there is no need for an application pool recycle
+or even a page reload. You only need to press the search / check name
+button again!</p>
+
+<h3 id="people-picker-always-queries-the-external-data-source-eg-active-directory-unless-specifically-told-not-to">People Picker always queries the external data source (e.g. Active Directory), unless specifically told not to</h3>
+
+<p>Unless told to limit external queries (see “Force People Picker to pick
+only from users in the site collection” on TechNet), the People Picker
+will always query the data source, even if you have a perfect match in
+the local site’s user collection. I think it’s a good thing, but you can
+always limit external queries using <code class="language-plaintext highlighter-rouge">ActiveDirectoryRestrictIsolatedNameLevel</code> or <code class="language-plaintext highlighter-rouge">OnlySearchWithinSiteCollection</code></p>
+
+<h3 id="the-active-directory-query-differs-between-check-names-and-browse">The Active Directory query differs between “Check Names” and “Browse”</h3>
+<p>There are two ways to search for users using the people picker - using
+the “check names” button and using the “browse” dialog</p>
+
+<p><img src="/assets/some-things-i-didnt-know-about-people-picker/PP.png" alt="" /></p>
+
+<p>According to the MS documentation, the queries sent to AD after clicking
+each one are different, and search for different attributes in users.<br />
+The “check names” command searches those attributes in users:<br />
+<code class="language-plaintext highlighter-rouge">name</code>, <code class="language-plaintext highlighter-rouge">displayName</code>, <code class="language-plaintext highlighter-rouge">cn</code>, <code class="language-plaintext highlighter-rouge">SamAccountName</code>, <code class="language-plaintext highlighter-rouge">mail</code>, <code class="language-plaintext highlighter-rouge">proxyAddresses</code><br />
+The “browse” command <strong>additionally</strong> searches the attribute <code class="language-plaintext highlighter-rouge">sn</code> (last name).<br />
+Both commands search the following attributes in groups:<br />
+<code class="language-plaintext highlighter-rouge">name</code>, <code class="language-plaintext highlighter-rouge">displayName</code>, <code class="language-plaintext highlighter-rouge">cn</code>, <code class="language-plaintext highlighter-rouge">samAccountName</code><br />
+Sources:<br />
+<a href="http://msdn.microsoft.com/en-us/library/dd357076%28v=prot.13%29.aspx">Active Directory: People Picker Browse Display
+UI</a><br />
+<a href="http://msdn.microsoft.com/en-us/library/dd303522%28v=prot.13%29.aspx">Active Directory: People Picker Check Name
+UI</a> </p>
+
+<h3 id="the-active-directory-custom-query-can-only-add-results">The Active Directory custom query can only add results</h3>
+
+<p>Any custom query added to the people picker through
+<code class="language-plaintext highlighter-rouge">ActiveDirectoryCustomQuery</code> is concatenated using an “or” sign (<code class="language-plaintext highlighter-rouge">|</code>) to
+its own query. The implication is that you should only add additional
+attributes you want to search, and don’t have to rewrite the original
+query.</p>
+
+<h3 id="in-active-directory-mode-the-user-profile-application-is-not-queried">In Active Directory mode, the User Profile Application is not queried</h3>
+
+<p>Even if you have a working UPA in the farm, it’s not queried on AD mode.
+The only places that matter are the current site (<code class="language-plaintext highlighter-rouge">SPWeb</code>)’s local user
+collection and the AD.</p>
+
+<p>Enjoy picking some people!</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#active-directory" class="page__taxonomy-item" rel="tag">Active Directory</a><span class="sep">, </span>
+    
+      <a href="/tags/#powershell" class="page__taxonomy-item" rel="tag">PowerShell</a><span class="sep">, </span>
+    
+      <a href="/tags/#sharepoint" class="page__taxonomy-item" rel="tag">SharePoint</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#microsoft" class="page__taxonomy-item" rel="tag">Microsoft</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2012-09-27T00:00:00+02:00">September 27, 2012</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/windows-event-collection.html" class="pagination--pager" title="Windows Event Collection
+">Previous</a>
+    
+    
+      <a href="/updating-vmware-discovery-info-in-active-directory.html" class="pagination--pager" title="Updating VMware discovery info in Active Directory
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/3-loc-760h.html" rel="permalink">Changed 3 lines of code, saved 760 server hours per month
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Act 1, where I write Java
+In the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/sapling-commands.html" rel="permalink">Sapling Commands
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Sapling (the Facebook-released SCM) is great, but the docs are not-great.
+I thought I’d list some commands it took me a while to undertand, for me and for ot...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/foia-calendars-pt1.html" rel="permalink">Processing Israeli FOIA calendars, Part 1
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Preface
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/docker-compose-ecs-nginx-caddy.html" rel="permalink">Caddy is better than Nginx for Docker Compose on ECS
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I recently managed to use Docker Compose to launch a small app in Aamazon’s Elastic Container Services (ECS).
+Overall, the result is pretty incredible. I’m a...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <script>
+  window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+  ga('create','','auto');
+  ga('set', 'anonymizeIp', false);
+  ga('send','pageview')
+</script>
+<script src="https://www.google-analytics.com/analytics.js" async></script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>

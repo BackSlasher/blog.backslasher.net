@@ -1,0 +1,763 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Stsadm / new SPSite is slow - BackSlasher</title>
+<meta name="description" content="Update: Get the script here The Story A couple of days ago, developer extraordinaire Itay Shakury was doing performance tuning on one of our SharePoint applications, and came to me with a problem - creating a new SPSite object took about 30 secs. The stranger part was that only the first creation of SPSite in every appDomain is slow. We’ve tried the usual things:                 [Reflection.Assembly]::LoadWithPartialName(‘Microsoft.Sharepoint’)       Out-Null;">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Stsadm / new SPSite is slow">
+<meta property="og:url" content="https://blog.backslasher.net/stsadm-new-spsite-is-slow.html">
+
+
+  <meta property="og:description" content="Update: Get the script here The Story A couple of days ago, developer extraordinaire Itay Shakury was doing performance tuning on one of our SharePoint applications, and came to me with a problem - creating a new SPSite object took about 30 secs. The stranger part was that only the first creation of SPSite in every appDomain is slow. We’ve tried the usual things:                 [Reflection.Assembly]::LoadWithPartialName(‘Microsoft.Sharepoint’)       Out-Null;">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2010-12-14T00:00:00+02:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/stsadm-new-spsite-is-slow.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Stsadm / new SPSite is slow">
+    <meta itemprop="description" content="Update: Get the script hereThe StoryA couple of days ago, developer extraordinaire ItayShakury was doingperformance tuning on one of our SharePoint applications, and came to me witha problem - creating a new SPSite object took about 30 secs. Thestranger part was that only the first creation of SPSite in everyappDomain is slow.We’ve tried the usual things:            [Reflection.Assembly]::LoadWithPartialName(‘Microsoft.Sharepoint’)      Out-Null;      ">
+    <meta itemprop="datePublished" content="2010-12-14T00:00:00+02:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Stsadm / new SPSite is slow
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p><strong>Update:</strong> Get the script <a href="|filename|/disabling-generate-publisher-evidence.md">here</a></p>
+<h3 id="the-story">The Story</h3>
+<p>A couple of days ago, developer extraordinaire <a href="http://blogs.microsoft.co.il/blogs/itaysk/">Itay
+Shakury</a> was doing
+performance tuning on one of our SharePoint applications, and came to me with
+a problem - creating a new SPSite object took about 30 secs. The
+stranger part was that <strong>only the first creation of SPSite in every
+appDomain is slow</strong>.<br />
+We’ve tried the usual things:</p>
+
+<ul>
+  <li>Using SQL Profiler to check for DB-delays. Nope, all queries were as
+quick as a fox</li>
+  <li>Perfmoning the servers to death, looking for CPU/memory/disk spikes.
+No luck again</li>
+</ul>
+
+<p>By the way, we used this bit of code to check exactly how slow the
+SPSite creation is:</p>
+
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">function</span><span class="w"> </span><span class="nf">Log-Message</span><span class="p">(</span><span class="nv">$Message</span><span class="p">)</span><span class="w"> </span><span class="p">{[</span><span class="n">DateTime</span><span class="p">]::</span><span class="n">Now.ToString</span><span class="p">(</span><span class="s1">'[hh:mm:ss.fff]'</span><span class="p">)</span><span class="o">+</span><span class="s2">" </span><span class="nv">$Message</span><span class="s2">"</span><span class="p">}</span><span class="w">
+</span><span class="nv">$Url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'http://SERVER/Url'</span><span class="p">;</span><span class="w">
+</span><span class="n">Log-Message</span><span class="w"> </span><span class="s1">'Loading Assembly'</span><span class="w">
+</span><span class="p">[</span><span class="n">Reflection.Assembly</span><span class="p">]::</span><span class="n">LoadWithPartialName</span><span class="p">(</span><span class="s1">'Microsoft.Sharepoint'</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Out-Null</span><span class="p">;</span><span class="w">
+</span><span class="n">Log-Message</span><span class="w"> </span><span class="s1">'Creating SPSite'</span><span class="w">
+</span><span class="nv">$Site</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">new-object</span><span class="w"> </span><span class="nx">Microsoft.Sharepoint.SPSite</span><span class="w"> </span><span class="nv">$Url</span><span class="w">
+</span><span class="n">Log-Message</span><span class="w"> </span><span class="s1">'Finished'</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Now I did some thinkning. What happens only one time in an AppDomain? I
+thought of 3 things:</p>
+
+<ul>
+  <li><strong>Poorly written singletons</strong>. If that were the case, people all
+around the world would be having problems, and not just us.</li>
+  <li><strong>Connections to DBs</strong>. Using SQL Profiler we found out that the
+connection to the ConfigDB only happens in the last of the 30
+seconds, meaning the DB is not to blame…</li>
+  <li><strong>Lazy loading</strong>. (Spoiler: This is it) For those of us who forgot
+what it is, lazy loading is “don’t look for / load dlls until the
+first time they’re actually needed”. How can we check that<span style="font-size: 125%;"><span class="Unicode">‽</span></span></li>
+</ul>
+
+<p>I suddenly remembered some problem I hadn’t run into myself, but is
+famous in my team:<br />
+SQL Server Management Studio was slow to load (<a href="http://support.microsoft.com/?kbid=918644">KB918644</a>). It happened
+because the studio’s assemblies (dlls) were digitally signed by MS using
+Authenticode, that uses some sort of SSL-like certificates, and the
+studio was trying to check MS’s CRL (Certificate Revocation List) to
+make sure the digisignature isn’t revoked. Because we work in a
+disconnected environment, it couldn’t succeed.<br />
+I’ve decided to NetMon the sever, and sure enough, my script was
+DNS-querying for <code class="language-plaintext highlighter-rouge">crl.microsoft.com</code>, and obviously failing.<br />
+After solving this issue, as a bonus, my <code class="language-plaintext highlighter-rouge">Stsadm.exe</code> commands were WAY
+faster. Until now, it would take the process about 1 min to tell me I
+have the wrong input, and I would die a little bit inside.</p>
+
+<h3 id="possible-solutions">Possible Solutions</h3>
+<h4 id="1-allow-access-to-crlmicrosoftcom">1. Allow access to crl.microsoft.com</h4>
+<p>If you’re lucky(?) enough to be working in a blocked, not disconnected
+environment, consider simply allowing traffic to the crl site through
+your proxy/firewall/whatever.</p>
+
+<h4 id="2-stop-checking-for-crls">2. Stop checking for CRLs</h4>
+<p>If you ouldn’t care less if someone stole MS’s certificate and created an evil
+<code class="language-plaintext highlighter-rouge">harepoint.dll</code> just kidding. We all fear that), you can tell Windows to
+stop checking for CRLs altogether.<br />
+<strong>The user-specific way:</strong><br />
+<strong>Note:</strong> This setting affects all software run by that user. You shouldn’t use turn it off if this user on this server is used to process smartcard logons, for
+example.<br />
+Either turn off <code class="language-plaintext highlighter-rouge">Inetcpl.cpl &gt; Advanced &gt; Security &gt; Check for publisher's certificate revocation</code> Or set
+this regkey:</p>
+<pre><code class="language-registry">HKCU\Software\Microsoft\Windows\CurrentVersion\WinTrust\Trust Providers\Software Publishing:State=00023e00
+</code></pre>
+<p><strong>Another note:</strong> Iv’e seen people scripting something to change the settings for all keys under <code class="language-plaintext highlighter-rouge">HKEY_USERS</code>. While this <strong>seems</strong> ok, it will actually change settings for all new users (through <code class="language-plaintext highlighter-rouge">.DEFAULT</code>) and for all existing users <strong>with their registry hive currently loaded. Not all users have their hive
+loaded at every moment!</strong> If you’re into automation, you’re better off
+with using Group Policy Preferences (use user preferences, and
+server-name-based targeting).
+<strong>The machine / app specific way:</strong><br />
+Use the machine/app/web.config to disable generation of publisher evidence,
+the CRL-related process, thusly:</p>
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;configuration&gt;</span>
+      <span class="nt">&lt;runtime&gt;</span>
+              <span class="nt">&lt;generatePublisherEvidence</span> <span class="na">enabled=</span><span class="s">"false"</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/runtime&gt;</span>
+<span class="nt">&lt;/configuration&gt;</span>
+</code></pre></div></div>
+<p>(Of course you don’t blank your .config files, only add this setting)
+<strong>Update (27/12):</strong> Apparently, on x64 machines, you should change <strong>both</strong>the x86 and the x64 .config files.<br />
+<strong>Update (28/1/14):</strong> I uploaded <a href="|filename|/disabling-generate-publisher-evidence.md">the script</a> we used</p>
+<h4 id="3-fetch-the-crls-yourself">3. Fetch the CRLs yourself</h4>
+<p>If the CRLs stored in the server’s certificate store are fresh enough,
+it <strong>shouldn’t</strong> dial home for new ones.<br />
+Download these:</p>
+
+<ul>
+  <li><a href="http://crl.microsoft.com/pki/crl/products/CodeSignPCA.crl">http://crl.microsoft.com/pki/crl/products/CodeSignPCA.crl</a></li>
+  <li><a href="http://crl.microsoft.com/pki/crl/products/CodeSignPCA2.crl">http://crl.microsoft.com/pki/crl/products/CodeSignPCA2.crl</a></li>
+</ul>
+
+<p>Add to certificate store:</p>
+<div class="language-bat highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">certutil</span> <span class="na">-addstore </span><span class="kd">CA</span> <span class="kd">CodeSignPCA</span>.crl   
+<span class="nb">certutil</span> <span class="na">-addstore </span><span class="kd">CA</span> <span class="kd">CodeSignPCA2</span>.crl
+</code></pre></div></div>
+<p>Could be distributed through Group Policy as well, but I didn’t try it.</p>
+<h4 id="4-mess-with-the-process">4. Mess with the process</h4>
+<p>I don’t like this option, but If you’re feeling malicious, you can just use your
+<code class="language-plaintext highlighter-rouge">hosts</code> file to point <code class="language-plaintext highlighter-rouge">crl.microsoft.com</code> into one of your servers (e.g. <code class="language-plaintext highlighter-rouge">127.0.0.1</code>), causing windows to skip the 15-sec timeout issue and fail immediatly, when the server will refuse to hand him the CRLs.</p>
+
+<h3 id="credit">Credit</h3>
+<p>Kudos for <a href="http://dirkvandenberghe.com/2009/01/08/speed-up-sharepoint-spin-up-and-stsadm-execution-time-by-jeroen-ritmeijer.html">Dirk Van den Berghe</a> for handing out the methods for solving the issue.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#mysteries-solved" class="page__taxonomy-item" rel="tag">Mysteries Solved</a><span class="sep">, </span>
+    
+      <a href="/tags/#performance" class="page__taxonomy-item" rel="tag">Performance</a><span class="sep">, </span>
+    
+      <a href="/tags/#pki" class="page__taxonomy-item" rel="tag">PKI</a><span class="sep">, </span>
+    
+      <a href="/tags/#powershell" class="page__taxonomy-item" rel="tag">PowerShell</a><span class="sep">, </span>
+    
+      <a href="/tags/#programming" class="page__taxonomy-item" rel="tag">Programming</a><span class="sep">, </span>
+    
+      <a href="/tags/#scripts" class="page__taxonomy-item" rel="tag">Scripts</a><span class="sep">, </span>
+    
+      <a href="/tags/#sharepoint" class="page__taxonomy-item" rel="tag">SharePoint</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#microsoft" class="page__taxonomy-item" rel="tag">Microsoft</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2010-12-14T00:00:00+02:00">December 14, 2010</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/windowsidentitygetcurrent-and-changing-usernames.html" class="pagination--pager" title="WindowsIdentity.GetCurrent and changing usernames
+">Previous</a>
+    
+    
+      <a href="/vanishing-permissions-on-ad-objects.html" class="pagination--pager" title="Vanishing permissions on AD objects
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/3-loc-760h.html" rel="permalink">Changed 3 lines of code, saved 760 server hours per month
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Act 1, where I write Java
+In the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/sapling-commands.html" rel="permalink">Sapling Commands
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Sapling (the Facebook-released SCM) is great, but the docs are not-great.
+I thought I’d list some commands it took me a while to undertand, for me and for ot...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/foia-calendars-pt1.html" rel="permalink">Processing Israeli FOIA calendars, Part 1
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Preface
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/docker-compose-ecs-nginx-caddy.html" rel="permalink">Caddy is better than Nginx for Docker Compose on ECS
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I recently managed to use Docker Compose to launch a small app in Aamazon’s Elastic Container Services (ECS).
+Overall, the result is pretty incredible. I’m a...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <script>
+  window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+  ga('create','','auto');
+  ga('set', 'anonymizeIp', false);
+  ga('send','pageview')
+</script>
+<script src="https://www.google-analytics.com/analytics.js" async></script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>

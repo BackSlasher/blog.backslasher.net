@@ -1,0 +1,894 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>SSH vs OpenVPN for Tunneling - BackSlasher</title>
+<meta name="description" content="Update 28.01.16 I found some sites referring to this post. Below are the common complaints I saw, and my replies:">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="SSH vs OpenVPN for Tunneling">
+<meta property="og:url" content="https://blog.backslasher.net/ssh-openvpn-tunneling.html">
+
+
+  <meta property="og:description" content="Update 28.01.16 I found some sites referring to this post. Below are the common complaints I saw, and my replies:">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2014-12-18T00:00:00+02:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/ssh-openvpn-tunneling.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="SSH vs OpenVPN for Tunneling">
+    <meta itemprop="description" content="Update 28.01.16I found some sites referring to this post. Below are the common complaints I saw, and my replies:">
+    <meta itemprop="datePublished" content="2014-12-18T00:00:00+02:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">SSH vs OpenVPN for Tunneling
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          5 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <h3 id="update-280116">Update 28.01.16</h3>
+<p>I found some sites referring to this post. Below are the common complaints I saw, and my replies:</p>
+
+<ul>
+  <li><strong>I’m criminally bad with setting up OpenVPN, meaning the testing is completely off</strong><br />
+  I’m not an expert in networking, but I have a working knowledge of it and I spent around 2 work days on messing around with the OpenVPN parameters. This is as good as I got, compared to the SSH setup which required no optimization.<br />
+  I’ll be <strong>delighted</strong> to see a better-performing OpenVPN config. Here is how to recreate my testing:
+    <ul>
+      <li>One machine on each AWS region <code class="language-plaintext highlighter-rouge">US-EAST-1</code>, <code class="language-plaintext highlighter-rouge">EU-WEST-1</code></li>
+      <li>Size <code class="language-plaintext highlighter-rouge">c3.4xlarge</code> (I think)</li>
+      <li>Vanilla CentOS 6 OS</li>
+      <li>No interface configuration (can be modified if needed)</li>
+      <li>All packages installed from CentOS repo</li>
+    </ul>
+
+    <p>Make sure you show your configuration and your results!</p>
+  </li>
+  <li><strong>Comparing OpenVPN and SSH tunneling is like <a href="https://en.wikipedia.org/wiki/Apples_and_oranges">apples and oranges</a></strong><br />
+  This is nonsense. I had 2 tools to solve my issue. I tuned them both to the bst of my ability and tested them. One outperformed the other, so I chose it.</li>
+</ul>
+
+<p>Also, have a comment section, and I’ll be happy if people with interesting replies drop me a line down there so I can learn something new.<br />
+Finally, I fixed my diagrams below.</p>
+
+<h3 id="the-story">The Story</h3>
+<p>I was asked to take care of a security challange - setup Redis replication between two VMs over the internet.<br />
+The VMs were in different continents, so I had keep the bandwidth impact to a minimum.
+I thought of 3 options:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">stunnel</code>, which uses tunnels TCP connections via SSL</li>
+  <li>SSH, which has TCP tunneling over it’s secure channel (<a href="/assets/ssh-openvpn-tunneling/inquisition.jpg">amongst its weponary</a>)</li>
+  <li>OpenVPN, which is designed to encapsulate, encrypt and compress traffic among two machines</li>
+</ul>
+
+<p>I quickly dropped stunnel because its setup is nontrivial compared to the other two (no logging, no init file…), and decided to test SSH and OpenVPN.<br />
+I was sure that when it comes to speed, OpenVPN will be the best, because:</p>
+
+<ol>
+  <li>The first Google results say so (and they even look credible)
+    <ul>
+      <li><a href="http://superuser.com/a/238801">http://superuser.com/a/238801</a></li>
+      <li><a href="http://security.stackexchange.com/a/68367">http://security.stackexchange.com/a/68367</a></li>
+      <li><a href="http://support.vpnsecure.me/articles/tips-tricks/comparison-chart-openvpn-pptp-ssh-tunnel">http://support.vpnsecure.me/articles/tips-tricks/comparison-chart-openvpn-pptp-ssh-tunnel</a></li>
+    </ul>
+  </li>
+  <li>Logic dictates that SSH tunneling will suffer from <a href="http://sites.inka.de/bigred/devel/tcp-tcp.html">TCP over TCP</a>, since SSH runs over TCP</li>
+  <li>OpenVPN, being a VPN software, is solely designed to move packets from one place to another.</li>
+</ol>
+
+<p>I was so sure of that, that I <em>almost</em> didn’t test.<br />
+I was quite surprised.</p>
+
+<h3 id="test-1">Test 1</h3>
+<p>I only compared speed, since I decided the encryption of both programs will be enough.<br />
+My test consisted of this procedure:</p>
+
+<ol>
+  <li>Create a functioning, data-filled Redis instance in <code class="language-plaintext highlighter-rouge">server A</code>, port 6379</li>
+  <li>Start an empty Redis instance in <code class="language-plaintext highlighter-rouge">server B</code>, port 6379</li>
+  <li>Setup tunneling (according to the method I was testing)</li>
+  <li>Execute <code class="language-plaintext highlighter-rouge">redis-cli -p 6379 slaveof &lt;Target port&gt;</code> on <code class="language-plaintext highlighter-rouge">server B</code></li>
+  <li>Wait for <code class="language-plaintext highlighter-rouge">MASTER &lt;-&gt; SLAVE sync started</code> to appear on <code class="language-plaintext highlighter-rouge">server B</code>’s Redis</li>
+  <li>Wait for <code class="language-plaintext highlighter-rouge">MASTER &lt;-&gt; SLAVE sync: Finished with success</code> to appear on <code class="language-plaintext highlighter-rouge">server B</code>’s Redis</li>
+  <li>Cleanup</li>
+</ol>
+
+<p>I recorded the time it took <code class="language-plaintext highlighter-rouge">server B</code> to go from step 5 to step 6, effectivly measuring the duration of a full replication.<br />
+The Redis data set was about 1GB. Not the biggest I’ve ever seen, but enough for my tests.
+I played around with a few parameters, and these are my results:</p>
+
+<style type="text/css">th,td{padding: 20px;}</style>
+
+<table>
+  <thead>
+    <tr>
+      <th>platform</th>
+      <th>protocol</th>
+      <th>compression</th>
+      <th>duration</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>OpenVPN</td>
+      <td>TCP</td>
+      <td>no</td>
+      <td>21m</td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td> </td>
+      <td>yes</td>
+      <td>15m</td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td>UDP</td>
+      <td>no</td>
+      <td>6m</td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td> </td>
+      <td>yes</td>
+      <td>5m</td>
+    </tr>
+    <tr>
+      <td>SSH</td>
+      <td>TCP</td>
+      <td>default</td>
+      <td>1m50s</td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td> </td>
+      <td>no</td>
+      <td>1m30s</td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td> </td>
+      <td>yes</td>
+      <td>2m30s</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>As you can see, SSH beats OpenVPN. By far.<br />
+I was surprised to see this, so I did some additional tests, using <code class="language-plaintext highlighter-rouge">iperf</code>.</p>
+
+<h3 id="test-2">Test 2</h3>
+<p>My second test utilized <code class="language-plaintext highlighter-rouge">iperf</code>, and I left OpenVPN compression on, because disabling it clearly wasn’t helping.<br />
+Server A was running the iperf server, using <code class="language-plaintext highlighter-rouge">iperf -s</code>.<br />
+Server B was running the iperf client, using <code class="language-plaintext highlighter-rouge">iperf -c &lt;SERVER ADDRESS&gt; -p &lt;PORT&gt;</code>.<br />
+Below is my test summary.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>platform</th>
+      <th>protocol</th>
+      <th>encrpytion</th>
+      <th>speed (M<strong>b</strong>/s)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>OpenVPN</td>
+      <td>TCP</td>
+      <td>BlowFish</td>
+      <td>13</td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td> </td>
+      <td>AES-256-CBC</td>
+      <td>12</td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td>UDP</td>
+      <td>BlowFish</td>
+      <td>43</td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td> </td>
+      <td>AES-256-CBC</td>
+      <td>36</td>
+    </tr>
+    <tr>
+      <td>SSH</td>
+      <td>TCP</td>
+      <td>AWS128-CTR</td>
+      <td>91</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Although the gap is reduced, SSH stil wins.
+After some helpful hints at <a href="http://serverfault.com/questions/653211/ssh-tunneling-is-faster-than-openvpn-could-it-be">ServerFault</a>, I understood why, contrary to public opinion, SSH is faster.</p>
+
+<h3 id="the-solution">The solution</h3>
+<p>The difference between SSH and OpenVPN, giving SSH its edge, is on which <a href="http://en.wikipedia.org/wiki/OSI_model">OSI layer</a> they work.</p>
+
+<h4 id="openvpn">OpenVPN</h4>
+<p>Being a VPN service, OpenVPN can operate as:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">TUN</code>, a level 3 (IP) device</li>
+  <li><code class="language-plaintext highlighter-rouge">TAP</code>, a level 2 (MAC) device</li>
+</ul>
+
+<p>Being a network device allows OpenVPN to support diverse protocols (anything over IP with <code class="language-plaintext highlighter-rouge">TUN</code> and anything over Eth802.3 with <code class="language-plaintext highlighter-rouge">TAP</code>) with diverse destinations (different IP addresses, broadcasts etc.) and diverse ports. However, to do that, it has to preserve the original packet structure, so it has to take most of the original packet, wrap it in its own packet (to encrypt and give it a new destination), and send it to ther other OpenVPN instance, where it’s unpacked.<br />
+This generates overhead, like this:</p>
+
+<p><img src="/assets/ssh-openvpn-tunneling/diag-openvpn.jpg" alt="" /></p>
+
+<h4 id="ssh-connection-forwarding">SSH connection forwarding</h4>
+<p>On the other hand, SSH connection forwarding operates at layer 4 (TCP). Because of that, you can only forward one port (unless you’re using dynamic forwarding, which has its own overhead), and it has to be on TCP/IP.
+However, because SSH operates at a higher OSI layer, less of the original data has to be preseved, so it has less overhead. It looks like this:</p>
+
+<p><img src="/assets/ssh-openvpn-tunneling/diag-ssh.jpg" alt="" /></p>
+
+<h3 id="some-ssh-netstats">Some SSH <code class="language-plaintext highlighter-rouge">netstat</code>s</h3>
+<p>I recorded my socket status when running <code class="language-plaintext highlighter-rouge">redis-cli</code> over SSH forwarding.<br />
+The redis server is listening on port 6379, and the forwarding is on port 20000.<br />
+The commands I used are:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh <span class="nt">-f</span> &lt;SERVER IP&gt; <span class="nt">-L</span> 20000:127.0.0.1:6379 <span class="nt">-N</span>
+redis-cli <span class="nt">-p</span> 20000
+</code></pre></div></div>
+<p>I removed the listening <code class="language-plaintext highlighter-rouge">sshd</code> socket, because it’s irrelevant.<br />
+<strong>Before running <code class="language-plaintext highlighter-rouge">redis-cli</code></strong>, we can see SSH has an established a tunnel and  listening <code class="language-plaintext highlighter-rouge">localhost</code> socket on the client</p>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>backslasher@client$ netstat -nap | grep -P '(ssh|redis)'
+...
+tcp        0      0 127.0.0.1:20000             0.0.0.0:*                   LISTEN      20879/ssh
+tcp        0      0 10.105.16.225:53142         &lt;SERVER IP&gt;:22              ESTABLISHED 20879/ssh
+...
+
+backslasher@server$ netstat -nap | grep -P '(ssh|redis)'
+...
+tcp        0      0 0.0.0.0:6379                0.0.0.0:*                   LISTEN      54328/redis-server
+tcp        0      0 &lt;SERVER IP&gt;:22              &lt;CLIENT IP&gt;:53142           ESTABLISHED 53692/sshd
+...
+</code></pre></div></div>
+<p><strong>After running <code class="language-plaintext highlighter-rouge">redis-cli</code></strong>, we can see the redis socket on the server, originating from sshd</p>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>backslasher@client$ netstat -nap | grep -P '(ssh|redis)'
+...
+tcp        0      0 127.0.0.1:20000             0.0.0.0:*                   LISTEN      20879/ssh
+tcp        0      0 127.0.0.1:20000             127.0.0.1:53142             ESTABLISHED 20879/ssh
+tcp        0      0 127.0.0.1:53142             127.0.0.1:20000             ESTABLISHED 21692/redis-cli
+...
+
+backslasher@server$ netstat -nap | grep -P '(ssh|redis)'
+...
+tcp        0      0 0.0.0.0:6379                0.0.0.0:*                   LISTEN      54328/redis-server
+tcp        0      0 127.0.0.1:6379              127.0.0.1:42680             ESTABLISHED 54328/redis-server
+tcp        0      0 127.0.0.1:42680             127.0.0.1:6379              ESTABLISHED 54333/sshd
+tcp        0      0 &lt;SERVER IP&gt;:22              &lt;CLIENT IP&gt;:53142           ESTABLISHED 52889/sshd
+...
+</code></pre></div></div>
+<p>As we can see, SSH creates a loopback port on both client and server, so neither address each other directly.<br />
+Thanks to that, this information (client IP/port, server IP/port) doesn’t have to be transferred, saving overhead.</p>
+
+<h3 id="tldr">TL;DR</h3>
+<p>As long as you only need one TCP port forwarded, SSH is a much faster choice, because it has less overhead.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#linux" class="page__taxonomy-item" rel="tag">Linux</a><span class="sep">, </span>
+    
+      <a href="/tags/#mysteries-solved" class="page__taxonomy-item" rel="tag">Mysteries Solved</a><span class="sep">, </span>
+    
+      <a href="/tags/#networking" class="page__taxonomy-item" rel="tag">Networking</a><span class="sep">, </span>
+    
+      <a href="/tags/#security" class="page__taxonomy-item" rel="tag">Security</a><span class="sep">, </span>
+    
+      <a href="/tags/#ssh" class="page__taxonomy-item" rel="tag">SSH</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#foss" class="page__taxonomy-item" rel="tag">FOSS</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2014-12-18T00:00:00+02:00">December 18, 2014</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/aws-block-device-centos.html" class="pagination--pager" title="AWS’s Block Device Mapping in CentOS
+">Previous</a>
+    
+    
+      <a href="/troubleshooting-statsd.html" class="pagination--pager" title="Troubleshooting StatsD
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/3-loc-760h.html" rel="permalink">Changed 3 lines of code, saved 760 server hours per month
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Act 1, where I write Java
+In the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/sapling-commands.html" rel="permalink">Sapling Commands
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Sapling (the Facebook-released SCM) is great, but the docs are not-great.
+I thought I’d list some commands it took me a while to undertand, for me and for ot...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/foia-calendars-pt1.html" rel="permalink">Processing Israeli FOIA calendars, Part 1
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Preface
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/docker-compose-ecs-nginx-caddy.html" rel="permalink">Caddy is better than Nginx for Docker Compose on ECS
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I recently managed to use Docker Compose to launch a small app in Aamazon’s Elastic Container Services (ECS).
+Overall, the result is pretty incredible. I’m a...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <script>
+  window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+  ga('create','','auto');
+  ga('set', 'anonymizeIp', false);
+  ga('send','pageview')
+</script>
+<script src="https://www.google-analytics.com/analytics.js" async></script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>

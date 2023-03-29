@@ -1,0 +1,826 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Troubleshooting story - Java HTTP client crashes on connections - BackSlasher</title>
+<meta name="description" content="Google Bait This post isn’t about the solution, but rather about the methodology. Anyway, to help people experiencing the same issue find this post:">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Troubleshooting story - Java HTTP client crashes on connections">
+<meta property="og:url" content="https://blog.backslasher.net/java-ssl-crash.html">
+
+
+  <meta property="og:description" content="Google Bait This post isn’t about the solution, but rather about the methodology. Anyway, to help people experiencing the same issue find this post:">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2015-08-12T00:00:00+03:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/java-ssl-crash.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Troubleshooting story - Java HTTP client crashes on connections">
+    <meta itemprop="description" content="Google BaitThis post isn’t about the solution, but rather about the methodology. Anyway, to help people experiencing the same issue find this post:">
+    <meta itemprop="datePublished" content="2015-08-12T00:00:00+03:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Troubleshooting story - Java HTTP client crashes on connections
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <h2 id="google-bait">Google Bait</h2>
+<p>This post isn’t about the solution, but rather about the methodology. Anyway, to help people experiencing the same issue find this post:</p>
+
+<ul>
+  <li>CentOS 6.6 (fresh from <code class="language-plaintext highlighter-rouge">chef/centos-6.6</code> Vagrant Box)</li>
+  <li>Java 1.7.0 (<code class="language-plaintext highlighter-rouge">java-1.7.0-openjdk</code>)</li>
+  <li>DOES NOT happen with Java 1.8.0 (<code class="language-plaintext highlighter-rouge">java-1.8.0-openjdk</code>)</li>
+  <li>Happens because of interaction with <code class="language-plaintext highlighter-rouge">nss</code> (was version <code class="language-plaintext highlighter-rouge">3.16.1</code>, resolved when upgrading to <code class="language-plaintext highlighter-rouge">3.19.1</code>).</li>
+</ul>
+
+<h2 id="the-story">The story</h2>
+<p>One of our boxes ships with Elasticsearch, and we also include a plugin called <a href="http://bigdesk.org/">BigDesk</a> which provides monitoring.
+To do so, we run the following command (with Chef):</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/usr/share/elasticsearch/bin/plugin <span class="nt">-install</span> lukas-vlcek/bigdesk/2.5.0
+</code></pre></div></div>
+<p>Recently, it started failing on our Vagrant development VMs. When trying with <code class="language-plaintext highlighter-rouge">--verbose</code>, I got this:</p>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Trying http://download.elasticsearch.org/lukas-vlcek/bigdesk/bigdesk-2.5.0.zip...
+Failed: IOException[Can't get http://download.elasticsearch.org/lukas-vlcek/bigdesk/bigdesk-2.5.0.zip to /usr/share/elasticsearch/plugins/bigdesk.zip]; nested: FileNotFoundException[http://download.elasticsearch.org/lukas-vlcek/bigdesk/bigdesk-2.5.0.zip]; nested: FileNotFoundException[http://download.elasticsearch.org/lukas-vlcek/bigdesk/bigdesk-2.5.0.zip]; 
+Trying http://search.maven.org/remotecontent?filepath=lukas-vlcek/bigdesk/2.5.0/bigdesk-2.5.0.zip...
+Failed: SSLException[java.security.ProviderException: java.security.KeyException]; nested: ProviderException[java.security.KeyException]; nested: KeyException; 
+Trying https://oss.sonatype.org/service/local/repositories/releases/content/lukas-vlcek/bigdesk/2.5.0/bigdesk-2.5.0.zip...
+Failed: SSLException[java.security.ProviderException: java.security.KeyException]; nested: ProviderException[java.security.KeyException]; nested: KeyException; 
+Trying https://github.com/lukas-vlcek/bigdesk/archive/2.5.0.zip...
+Failed: SSLException[java.security.ProviderException: java.security.KeyException]; nested: ProviderException[java.security.KeyException]; nested: KeyException; 
+Trying https://github.com/lukas-vlcek/bigdesk/archive/master.zip...
+Failed: SSLException[java.security.ProviderException: java.security.KeyException]; nested: ProviderException[java.security.KeyException]; nested: KeyException; 
+Failed to install lukas-vlcek/bigdesk/2.5.0, reason: failed to download out of all possible locations..., use --verbose to get detailed information
+</code></pre></div></div>
+<p>As we can see, there is probably something wrong with the SSL handshake. cURLing to these URLs worked, so this is a client-specific issue.</p>
+
+<h2 id="basic-troubleshooting">Basic troubleshooting</h2>
+<p>I made this snippet to test the HTTP handshake and get the real error:</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">java.net.HttpURLConnection</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.net.URL</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Bla</span><span class="o">{</span>
+  <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">print</span><span class="o">(</span><span class="s">"Hello\n"</span><span class="o">);</span>
+    <span class="nc">String</span> <span class="n">url</span><span class="o">=</span><span class="s">"https://github.com/lukas-vlcek/bigdesk/archive/2.5.0.zip"</span><span class="o">;</span>
+    <span class="k">try</span><span class="o">{</span>
+      <span class="nc">HttpURLConnection</span> <span class="n">httpConnection</span> <span class="o">=</span> <span class="o">(</span><span class="nc">HttpURLConnection</span><span class="o">)</span> <span class="k">new</span> <span class="no">URL</span><span class="o">(</span><span class="n">url</span><span class="o">).</span><span class="na">openConnection</span><span class="o">();</span>
+      <span class="n">httpConnection</span><span class="o">.</span><span class="na">connect</span><span class="o">();</span>
+    <span class="o">}</span>
+    <span class="k">catch</span> <span class="o">(</span><span class="nc">Exception</span> <span class="n">e</span><span class="o">){</span>
+      <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+      <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">print</span><span class="o">(</span><span class="s">"Error\n"</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">print</span><span class="o">(</span><span class="s">"About to loop\n"</span><span class="o">);</span>
+    <span class="k">while</span><span class="o">(</span><span class="kc">true</span><span class="o">){</span><span class="nc">Thread</span><span class="o">.</span><span class="na">currentThread</span><span class="o">().</span><span class="na">sleep</span><span class="o">(</span><span class="mi">1000</span><span class="o">);}</span> <span class="c1">//Crudest debug ever</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>When running it, I got something like this:</p>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Hello
+javax.net.ssl.SSLException: java.security.ProviderException: java.security.KeyException
+        at sun.security.ssl.Alerts.getSSLException(Alerts.java:208)
+        at sun.security.ssl.SSLSocketImpl.fatal(SSLSocketImpl.java:1916)
+        at sun.security.ssl.SSLSocketImpl.fatal(SSLSocketImpl.java:1874)
+        at sun.security.ssl.SSLSocketImpl.handleException(SSLSocketImpl.java:1857)
+        at sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:1378)
+        at sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:1355)
+        at sun.net.www.protocol.https.HttpsClient.afterConnect(HttpsClient.java:559)
+        at sun.net.www.protocol.https.AbstractDelegateHttpsURLConnection.connect(AbstractDelegateHttpsURLConnection.java:185)
+        at sun.net.www.protocol.https.HttpsURLConnectionImpl.connect(HttpsURLConnectionImpl.java:153)
+        at Bla.main(Bla.java:10)
+Caused by: java.security.ProviderException: java.security.KeyException
+        at sun.security.ec.ECKeyPairGenerator.generateKeyPair(ECKeyPairGenerator.java:146)
+        at java.security.KeyPairGenerator$Delegate.generateKeyPair(KeyPairGenerator.java:704)
+        at sun.security.ssl.ECDHCrypt.&lt;init&gt;(ECDHCrypt.java:78)
+        at sun.security.ssl.ClientHandshaker.serverKeyExchange(ClientHandshaker.java:714)
+        at sun.security.ssl.ClientHandshaker.processMessage(ClientHandshaker.java:278)
+        at sun.security.ssl.Handshaker.processLoop(Handshaker.java:913)
+        at sun.security.ssl.Handshaker.process_record(Handshaker.java:849)
+        at sun.security.ssl.SSLSocketImpl.readRecord(SSLSocketImpl.java:1035)
+        at sun.security.ssl.SSLSocketImpl.performInitialHandshake(SSLSocketImpl.java:1344)
+        at sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:1371)
+        ... 5 more
+Caused by: java.security.KeyException
+        at sun.security.ec.ECKeyPairGenerator.generateECKeyPair(Native Method)
+        at sun.security.ec.ECKeyPairGenerator.generateKeyPair(ECKeyPairGenerator.java:126)
+        ... 14 more
+Error
+About to loop
+</code></pre></div></div>
+<p>This, however, worked:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.51-1.b16.el6_7.x86_64/jre/bin/java Bla
+</code></pre></div></div>
+<p>Meaning this problem was java-1.7.0 specific.<br />
+Upgrading everything (<code class="language-plaintext highlighter-rouge">sudo yum upgrade -y</code>) also solved it, but upgrading <code class="language-plaintext highlighter-rouge">java-1.7.0-openjdk</code> didn’t, so it must be some external library.<br />
+Running with SSL debugging, like <code class="language-plaintext highlighter-rouge">java -Djavax.net.debug=all Bla</code>, printed a lot of output, where the interesting part is:</p>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>...
+main, handling exception: java.security.ProviderException: java.security.KeyException
+%% Invalidated:  [Session-1, TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA]
+main, SEND TLSv1 ALERT:  fatal, description = internal_error
+...
+</code></pre></div></div>
+<p>So it’s definitely some weird error (not something like untrusted CA or key expiration).</p>
+
+<h2 id="sysadmin-trickery">Sysadmin Trickery</h2>
+<p>Thanks to putting my small snippet in an infinite loop, I could browse its <code class="language-plaintext highlighter-rouge">/proc</code> directory and dig around.<br />
+I was really interested in which libraries it was using, since it wasn’t cURL (which worked).<br />
+I executed something like:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">cat</span> /proc/<span class="si">$(</span>pgrep <span class="nt">-f</span> Bla<span class="si">)</span>/maps  | perl <span class="nt">-a</span> <span class="nt">-ne</span> <span class="s1">'print $F[5],$/'</span> | <span class="nb">sort</span> | <span class="nb">uniq</span>
+</code></pre></div></div>
+<p>And got all of the memory-mapped files, which include loaded libraries. It looked like this:</p>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+[heap]
+/lib64/ld-2.12.so
+/lib64/libc-2.12.so
+/lib64/libdbus-1.so.3.4.0
+/lib64/libdl-2.12.so
+/lib64/libgcc_s-4.4.7-20120601.so.1
+/lib64/libglib-2.0.so.0.2800.8
+/lib64/libgmodule-2.0.so.0.2800.8
+/lib64/libgobject-2.0.so.0.2800.8
+/lib64/libgthread-2.0.so.0.2800.8
+/lib64/libm-2.12.so
+/lib64/libnspr4.so
+/lib64/libnss_dns-2.12.so
+/lib64/libnss_files-2.12.so
+/lib64/libplc4.so
+/lib64/libplds4.so
+/lib64/libpthread-2.12.so
+/lib64/libresolv-2.12.so
+/lib64/librt-2.12.so
+/lib64/libz.so.1.2.3
+[stack]
+/tmp/hsperfdata_vagrant/26329
+/usr/lib64/libgconf-2.so.4.1.5
+/usr/lib64/libnss3.so
+/usr/lib64/libnssutil3.so
+/usr/lib64/libORBit-2.so.0.1.0
+/usr/lib64/libsmime3.so
+/usr/lib64/libssl3.so
+/usr/lib64/libstdc++.so.6.0.13
+/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.85.x86_64/jre/bin/java
+/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.85.x86_64/jre/lib/amd64/jli/libjli.so
+/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.85.x86_64/jre/lib/amd64/libjava.so
+/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.85.x86_64/jre/lib/amd64/libnet.so
+/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.85.x86_64/jre/lib/amd64/libsunec.so
+/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.85.x86_64/jre/lib/amd64/libverify.so
+/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.85.x86_64/jre/lib/amd64/libzip.so
+/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.85.x86_64/jre/lib/amd64/server/libjvm.so
+/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.85.x86_64/jre/lib/ext/gnome-java-bridge.jar
+/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.85.x86_64/jre/lib/ext/pulse-java.jar
+/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.85.x86_64/jre/lib/ext/sunec.jar
+/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.85.x86_64/jre/lib/ext/sunjce_provider.jar
+/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.85.x86_64/jre/lib/ext/sunpkcs11.jar
+/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.85.x86_64/jre/lib/jce.jar
+/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.85.x86_64/jre/lib/jsse.jar
+/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.85.x86_64/jre/lib/resources.jar
+/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.85.x86_64/jre/lib/rt.jar
+/usr/lib/locale/locale-archive
+[vdso]
+[vsyscall]
+</code></pre></div></div>
+<p>The interesting bit is obviously <code class="language-plaintext highlighter-rouge">/usr/lib64/libssl3.so</code>, so I wanted to see where it’s coming from:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>yum provides /usr/lib64/libssl3.so
+</code></pre></div></div>
+<p>Which got me <code class="language-plaintext highlighter-rouge">nss</code>.<br />
+Upgrading <code class="language-plaintext highlighter-rouge">nss</code> (<code class="language-plaintext highlighter-rouge">sudo yum upgrade nss</code>) solved the problem.</p>
+
+<h2 id="post-op-tests">Post-op tests</h2>
+<p>I was curious about why Java 1.8.0 works, and used the same looping trick to inspect its loaded libraries. Turns out it wasn’t loading nss but rather using some internal SSL implementation.<br />
+This was confirmed by <a href="https://bugzilla.redhat.com/show_bug.cgi?id=1167153#c26">some comment</a> on the RedHat bugtracker.</p>
+
+<h2 id="my-solution">My solution</h2>
+<p>Since this problem only occurs in our Vagrant VMs (because the production machines are kept up to date, and the Vagrant ones are created from the same template over and over), I chose to use some Chef hackery:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">package</span> <span class="s1">'nss'</span> <span class="k">do</span>
+  <span class="n">version</span> <span class="s1">'3.19.1-3.el6_6'</span>
+  <span class="n">only_if</span> <span class="p">{</span>
+    <span class="n">vagrant?</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="c1"># Checking if current node is a Vagrant VM</span>
+  <span class="p">}</span>
+<span class="k">end</span>
+</code></pre></div></div>
+<p>Now everything is working.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#centos" class="page__taxonomy-item" rel="tag">CentOS</a><span class="sep">, </span>
+    
+      <a href="/tags/#http" class="page__taxonomy-item" rel="tag">HTTP</a><span class="sep">, </span>
+    
+      <a href="/tags/#java" class="page__taxonomy-item" rel="tag">Java</a><span class="sep">, </span>
+    
+      <a href="/tags/#linux" class="page__taxonomy-item" rel="tag">Linux</a><span class="sep">, </span>
+    
+      <a href="/tags/#ramblings" class="page__taxonomy-item" rel="tag">Ramblings</a><span class="sep">, </span>
+    
+      <a href="/tags/#ssl" class="page__taxonomy-item" rel="tag">SSL</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#foss" class="page__taxonomy-item" rel="tag">FOSS</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2015-08-12T00:00:00+03:00">August 12, 2015</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/graphite-migrate-dashboards.html" class="pagination--pager" title="Migrating Graphite’s Dashboards
+">Previous</a>
+    
+    
+      <a href="/chef-inline.html" class="pagination--pager" title="How Chef’s use_inline_resources works
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/3-loc-760h.html" rel="permalink">Changed 3 lines of code, saved 760 server hours per month
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Act 1, where I write Java
+In the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/sapling-commands.html" rel="permalink">Sapling Commands
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Sapling (the Facebook-released SCM) is great, but the docs are not-great.
+I thought I’d list some commands it took me a while to undertand, for me and for ot...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/foia-calendars-pt1.html" rel="permalink">Processing Israeli FOIA calendars, Part 1
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Preface
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/docker-compose-ecs-nginx-caddy.html" rel="permalink">Caddy is better than Nginx for Docker Compose on ECS
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I recently managed to use Docker Compose to launch a small app in Aamazon’s Elastic Container Services (ECS).
+Overall, the result is pretty incredible. I’m a...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <script>
+  window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+  ga('create','','auto');
+  ga('set', 'anonymizeIp', false);
+  ga('send','pageview')
+</script>
+<script src="https://www.google-analytics.com/analytics.js" async></script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>

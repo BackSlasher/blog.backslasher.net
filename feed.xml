@@ -1,0 +1,477 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2023-03-29T14:53:05+03:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">Changed 3 lines of code, saved 760 server hours per month</title><link href="https://blog.backslasher.net/3-loc-760h.html" rel="alternate" type="text/html" title="Changed 3 lines of code, saved 760 server hours per month" /><published>2023-03-27T00:00:00+03:00</published><updated>2023-03-27T00:00:00+03:00</updated><id>https://blog.backslasher.net/3-loc-760h</id><content type="html" xml:base="https://blog.backslasher.net/3-loc-760h.html">&lt;h2 id=&quot;act-1-where-i-write-java&quot;&gt;Act 1, where I write Java&lt;/h2&gt;
+&lt;p&gt;In the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus was on the networking and container environment, a hackathon presented an opportunity to dive deeper into the app’s functionality. I discovered that the server was utilizing an excessive amount of CPU time, approximately 0.5% of the total, to check a particular feature flag. Recognizing the potential for cost savings, I implemented a caching mechanism to store the flag for five-second intervals, thus saving the company a tidy sum.&lt;/p&gt;
+
+&lt;p&gt;During the development process, I observed that every update I made to my pull request (PR) required over 20 minutes for validation. Upon further investigation of the PR signals, I discovered that the end-to-end (e2e) signal was the clear outlier, consistently taking nearly 20 minutes, while all the other signals took less than two minutes. After the hackathon, I revisited this issue to identify the root cause.&lt;/p&gt;
+
+&lt;h2 id=&quot;act-2-with-big-plans-for-great-things&quot;&gt;Act 2, with big plans for great things&lt;/h2&gt;
+&lt;p&gt;I consulted with the engineer responsible for our e2e infrastructure to inquire about the validation delays I had been experiencing. In response, they confirmed that the entire system was subpar, and that there were plans to restructure it in the coming months.
+They said the following was missing:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Utilizing previously-built or partially-built artifacts&lt;/li&gt;
+  &lt;li&gt;Building production rather than debug code (including minified assets and no symbols)&lt;/li&gt;
+  &lt;li&gt;Connecting to a common log analysis framework to identify specific issues&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;While these sounded good to me, I couldn’t resist taking a closer look at the code myself.
+What I found there shocked me.&lt;/p&gt;
+
+&lt;h2 id=&quot;act-3-where-i-spot-a-problem&quot;&gt;Act 3, where I spot a problem&lt;/h2&gt;
+&lt;p&gt;The e2e code was hard to read (non-common PHP dialect, sprinkled with JavaScript), but I figured out a specific piece that looked weird to me.
+Translated to JavaScript, it looked a bit like this:&lt;/p&gt;
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;e2eTest&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;commit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;checkOut&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;commit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// ...&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;await&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;runProcess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;server/build.sh&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// ...&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;artifact&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;await&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;androidBuilder&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;buildApk&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;commit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;client&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// ...&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;serverProcess&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;runProcess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;java server/server.jar localhost:8000&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// Magic to ensure server is running&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;await&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;androidTestRunner&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;artifact&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;localhost:8000&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;serverProcess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;kill&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;If you feel annoyed, it means you can see what I saw:&lt;br /&gt;
+&lt;strong&gt;We’re waiting for the server build to finish before even starting client build&lt;/strong&gt;&lt;br /&gt;
+To avoid wasting time building the APK when there are issues with the server, we have a process in place to wait for the server to finish before building the client. However, this approach results in unnecessary delays since the two builds do not benefit from being run sequentially. I confirmed this and approached the owner of the end-to-end (e2e) process to address the issue. The owner appeared indifferent and casually mentioned that they planned to implement a new build system that automatically parallelizes the build steps next half. After undrestanding that this is not being currently handled, I went to work.&lt;/p&gt;
+
+&lt;h2 id=&quot;act-4-cut-and-paste-is-used&quot;&gt;Act 4. Cut and paste is used&lt;/h2&gt;
+&lt;p&gt;Using my limited knowledge of parallelism in our e2e codebase, I rewrote the above to something like:&lt;/p&gt;
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;e2eTest&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;commit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;checkOut&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;commit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// ...&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;artifact&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;Promise&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;all&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;await&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;runProcess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;server/build.sh&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;await&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;androidBuilder&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;buildApk&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;commit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;client&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;]);&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// ...&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;serverProcess&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;runProcess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;java server/server.jar localhost:8000&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// Magic to ensure server is running&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;await&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;androidTestRunner&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;artifact&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;localhost:8000&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;serverProcess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;kill&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;With the new build system in place, we are now able to build both the server and client in parallel and wait for both to complete before initiating testing. I tested and deployed this change promptly and effortlessly, as it was a small change only rearranging the execution methods in a particular area.&lt;/p&gt;
+
+&lt;p&gt;To our delight, this minor modification reduced the e2e signal’s run time from 20 minutes to 11 minutes, resulting in significant time savings for our engineering team, who no longer had to wait as long for PRs to be ready. While this achievement was appreciated by the team, the server runtime savings were more easily measured.&lt;br /&gt;
+By decreasing the e2e runtime, we were able to reduce the worker time that our build system consumed. Analyzing our build system’s utilization logs, I discovered that this simple change eliminated &lt;em&gt;760 hours&lt;/em&gt; of worker time per month, which is a substantial amount.&lt;/p&gt;
+
+&lt;h2 id=&quot;epilogue-big-plans-are-crashing&quot;&gt;Epilogue: big plans are crashing&lt;/h2&gt;
+&lt;p&gt;Upon informing my colleagues of the improvement in e2e testing, I received feedback from the e2e specialist. They expressed dissatisfaction because their six-month plan to optimize the process would be more challenging to justify since the expected gains were now less significant. They had anticipated achieving a 7-minute e2e suite run time, which is a considerable improvement from 20 minutes, but less impressive compared to the new 11 minutes. After discussing the situation, we concluded that if the overhaul was less attractive now, it would be best to focus on other areas that could yield more significant gains. For instance, there may be other areas of the codebase with inefficient feature-flag checks that consume unnecessary CPU time, and optimizing these areas could save us a considerable amount of money.&lt;/p&gt;
+
+&lt;p&gt;I ended up moving to another team shortly after, but I will forever remember how my 3-line change saved our company a whole worker a month.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="Ramblings" /><summary type="html">Act 1, where I write Java In the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus was on the networking and container environment, a hackathon presented an opportunity to dive deeper into the app’s functionality. I discovered that the server was utilizing an excessive amount of CPU time, approximately 0.5% of the total, to check a particular feature flag. Recognizing the potential for cost savings, I implemented a caching mechanism to store the flag for five-second intervals, thus saving the company a tidy sum.</summary></entry><entry><title type="html">Sapling Commands</title><link href="https://blog.backslasher.net/sapling-commands.html" rel="alternate" type="text/html" title="Sapling Commands" /><published>2023-03-12T00:00:00+02:00</published><updated>2023-03-12T00:00:00+02:00</updated><id>https://blog.backslasher.net/sapling-commands</id><content type="html" xml:base="https://blog.backslasher.net/sapling-commands.html">&lt;p&gt;&lt;a href=&quot;https://sapling-scm.com/&quot;&gt;Sapling&lt;/a&gt; (the Facebook-released SCM) is great, but the docs are not-great.&lt;br /&gt;
+I thought I’d list some commands it took me a while to undertand, for me and for others&lt;/p&gt;
+
+&lt;h2 id=&quot;create-remote-tag&quot;&gt;Create remote tag&lt;/h2&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sl push --to tags/v0.0.5
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Where &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;v0.0.5&lt;/code&gt; is the tag name.&lt;br /&gt;
+The “remote” is because there are no local tags in Sapling&lt;/p&gt;
+
+&lt;h2 id=&quot;delete-remote-branch&quot;&gt;Delete remote branch&lt;/h2&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sl push --delete main default
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Where “main” is the name of the branch, and “default” is the path (aka origin in git-talk)&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="Linux" /><category term="Sapling" /><category term="Git" /><summary type="html">Sapling (the Facebook-released SCM) is great, but the docs are not-great. I thought I’d list some commands it took me a while to undertand, for me and for others</summary></entry><entry><title type="html">Processing Israeli FOIA calendars, Part 1</title><link href="https://blog.backslasher.net/foia-calendars-pt1.html" rel="alternate" type="text/html" title="Processing Israeli FOIA calendars, Part 1" /><published>2023-02-01T00:00:00+02:00</published><updated>2023-02-01T00:00:00+02:00</updated><id>https://blog.backslasher.net/foia-calendars-pt1</id><content type="html" xml:base="https://blog.backslasher.net/foia-calendars-pt1.html">&lt;h2 id=&quot;preface&quot;&gt;Preface&lt;/h2&gt;
+
+&lt;p&gt;I’m a volunteer in the Israeli Public Knowledge Workshop (&lt;a href=&quot;https://he.wikipedia.org/wiki/%D7%94%D7%A1%D7%93%D7%A0%D7%90_%D7%9C%D7%99%D7%93%D7%A2_%D7%A6%D7%99%D7%91%D7%95%D7%A8%D7%99&quot;&gt;wiki&lt;/a&gt;), which is a nonprofit working to increase transparency of Israeli’s ruling bodies (e.g. Goverment, Municipal authorities, courts).&lt;br /&gt;
+I recently picked up a nice project that I thought would be worth a read.&lt;/p&gt;
+
+&lt;p&gt;Under the &lt;a href=&quot;https://he.wikipedia.org/wiki/%D7%97%D7%95%D7%A7_%D7%97%D7%95%D7%A4%D7%A9_%D7%94%D7%9E%D7%99%D7%93%D7%A2&quot;&gt;Israeli equivalent of FOIA&lt;/a&gt; (Freedom Of Information Act), citizens are able to request information form public authorities.&lt;br /&gt;
+Some nonprofits are using this law to try and acquire calendars/diaries/journals of various public servants, and publish them to the public.&lt;/p&gt;
+
+&lt;p&gt;Aside from the obvious advantage in being able to ensure that a public servant spends their time in actually serving the public, there are instances where these calendars are useful in exposing conspiracies and hints of corruption (&lt;a href=&quot;https://www.haaretz.co.il/blogs/tomeravital/2018-06-18/ty-article/0000017f-f8df-d044-adff-fbff9e040000&quot;&gt;article in Hebrew&lt;/a&gt;).&lt;/p&gt;
+
+&lt;p&gt;We now have a lot of these calendars as individual files. We’d like to do some more advanced analytics on them, including cross-referencing them with one another, and for that we’d like to load them all up into a nice database.&lt;br /&gt;
+This is my mission.&lt;/p&gt;
+
+&lt;p&gt;I called this project “Dear Diary”, as the Hebrew words for “Calendar” and “Diary” are identical.&lt;/p&gt;
+
+&lt;h2 id=&quot;series-logistics&quot;&gt;Series Logistics&lt;/h2&gt;
+&lt;p&gt;Instead of making a huge post, I’m going to divide it into a series to make it easier to read (and to write).&lt;br /&gt;
+I’ll also try to make it readable for people who are not Linux / Python / whatever pros. Hopefully my family and friends will be able to read it and understand what I’m working on 😀&lt;/p&gt;
+
+&lt;p&gt;If you’re not a programmer, feel free to skip the code bits.&lt;/p&gt;
+
+&lt;p&gt;This is part 1&lt;/p&gt;
+
+&lt;h2 id=&quot;data-exploration-and-what-were-targeting&quot;&gt;Data exploration and what we’re targeting&lt;/h2&gt;
+
+&lt;p&gt;The first thing I wanted to do is to understand which data I’m dealing with.
+I went into the website that holds all of the FOIA-collected documents we have, and searched for “יומן” (Hebrew for “Calendar”).
+The URL looks like this:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;https://www.odata.org.il/dataset?q=%D7%99%D7%95%D7%9E%D7%9F
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/2023-02-01-foia-calendars-pt1/ui.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Looks promising. I now tried to find an API equivalent, and it wasn’t that hard. Reading the docs and poking at some URLs gave me this:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;https://www.odata.org.il/api/3/action/resource_search?query=name:יומן
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;You can try the url on your browser, and you’ll get a huge &lt;a href=&quot;https://en.wikipedia.org/wiki/JSON#Syntax&quot;&gt;JSON&lt;/a&gt; object, detailing all of the files relating to calendars.&lt;br /&gt;
+&lt;img src=&quot;/assets/2023-02-01-foia-calendars-pt1/json.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Using cURL (which fetches the list) and feeding the result to jq (which allows us to dive into the JSON), we can see what a single item looks like:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ curl -s 'https://www.odata.org.il/api/3/action/resource_search?query=name:יומן' | jq '.result.results[0]'
+{
+  &quot;mimetype&quot;: null,
+  &quot;cache_url&quot;: null,
+  &quot;state&quot;: &quot;active&quot;,
+  &quot;hash&quot;: &quot;&quot;,
+  &quot;description&quot;: &quot;&quot;,
+  &quot;format&quot;: &quot;PDF&quot;,
+  &quot;url&quot;: &quot;https://www.odata.org.il/dataset/39092605-8599-470a-ba76-36e434acd2f7/resource/81d2cc0b-beae-46a3-81d7-e7d529ae9fb8/download/-2013.pdf&quot;,
+  &quot;datastore_active&quot;: false,
+  &quot;created&quot;: &quot;2017-06-19T11:48:30.996554&quot;,
+  &quot;cache_last_updated&quot;: null,
+  &quot;package_id&quot;: &quot;39092605-8599-470a-ba76-36e434acd2f7&quot;,
+  &quot;mimetype_inner&quot;: null,
+  &quot;last_modified&quot;: &quot;2017-06-19T11:48:30.969395&quot;,
+  &quot;position&quot;: 0,
+  &quot;revision_id&quot;: &quot;6ed049da-8e71-4c9f-a8e2-25315290412c&quot;,
+  &quot;size&quot;: null,
+  &quot;url_type&quot;: &quot;upload&quot;,
+  &quot;id&quot;: &quot;81d2cc0b-beae-46a3-81d7-e7d529ae9fb8&quot;,
+  &quot;resource_type&quot;: null,
+  &quot;name&quot;: &quot;יומן ראש עיריית באר שבע 2013.pdf&quot;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;There are a lot of interesting fields, but for now we’ll look into “mimetype” (&lt;a href=&quot;https://en.wikipedia.org/wiki/Media_type&quot;&gt;wiki&lt;/a&gt;), which is a web standard indicating of what kind of file this is.&lt;br /&gt;
+Unfortunately, this file has “null” (meaning unknown), but most of the files don’t.&lt;br /&gt;
+In order to see what we’re dealing with, we’re going to do a more complex command, that gets all the mimetypes and groups them, showing us the most common ones.&lt;br /&gt;
+The command and result look like this:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ curl -s 'https://www.odata.org.il/api/3/action/resource_search?query=name:יומן' | jq '.result.results[].mimetype' | sortiq | head
+    799 &quot;application/pdf&quot;
+    357 &quot;application/vnd.openxmlformats-officedocument.spreadsheetml.sheet&quot;
+     78 &quot;text/csv&quot;
+     63 null
+     47 &quot;application/vnd.ms-Excel&quot;
+      9 &quot;application/vnd.openxmlformats-officedocument.wordprocessingml.document&quot;
+      6 &quot;image/tiff&quot;
+      4 &quot;application/zip&quot;
+      3 &quot;text/calendar&quot;
+      2 &quot;application/vnd.openxmlformats-officedocument.spreadsheetml.template&quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;We can see that most of the files are in the PDF format, with “officedocument.spreadsheetml.sheet” (Excel 2007+ spreadsheets) in second place.
+From manually looking at some of the PDF files, I saw that they’re hard to read.&lt;br /&gt;
+Examples:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.odata.org.il/dataset/5cf1f784-5b6c-4506-8a5a-a63c453a4486/resource/911a7c7c-7e92-45f3-803a-bebcc98ad6e2/download/-2015-1-30.pdf&quot;&gt;this&lt;/a&gt; is a printed and scanned document, which is completly unintelligible for a machine without a lot of guesswork.
+&lt;img src=&quot;/assets/2023-02-01-foia-calendars-pt1/pdf-scanned.png&quot; alt=&quot;&quot; /&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.odata.org.il/dataset/fa354f46-9630-4446-9e7c-5ed2a2a80aeb/resource/2c6dff24-62f2-4090-a9d6-fcff6d40d77a/download/-2019.pdf&quot;&gt;this&lt;/a&gt;, while made of text, is nontrivial for a computer to understand.
+&lt;img src=&quot;/assets/2023-02-01-foia-calendars-pt1/pdf-calendar.png&quot; alt=&quot;&quot; /&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Because the PDFs seemed to be problematic, I decided to start looking at Excel files as a first step.&lt;/p&gt;
+
+&lt;p&gt;Now that we know that we want the Excel files, we should download them locally so we can experiment on them.&lt;br /&gt;
+For this, we’re going to get all of the files, filter out only the Excel ones, and download them all to a specific directory.&lt;br /&gt;
+Let’s do this:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ curl 'https://www.odata.org.il/api/3/action/resource_search?query=name:יומן' -s | jq '.result.results[] | select(.mimetype == &quot;application/vnd.openxmlformats-officedocument.spreadsheetml.sheet&quot;) | &quot;mkdir -p output/reapings/\(.id) &amp;amp;&amp;amp; curl -s \(.url) -o \&quot;output/reapings/\(.id)/\(.name)\&quot;&quot;' -r | parallel
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;The result in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;output/reapings&lt;/code&gt; is a bunch of directories, each one named after a file ID. inside, there are files:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ ls output/reapings/ | head
+00181757-0c0d-4f82-b389-b3624bdeec87
+00caa5ea-f127-4da4-882b-0dd32e350a1d
+012d05b8-6378-47f0-a0c2-ec0804a2b53e
+018f36ba-5052-46be-8bd2-b5e29d2f83db
+026b6b8e-43da-4c0b-8fcb-f75ae4f1acc0
+05a626d9-8830-4d50-b514-f64fade06ab8
+05d0a3fe-1f1b-4c7b-8977-65ad34a13939
+0616d2bf-f8e3-4a09-ab77-ed13071ac9e9
+06e244f5-4b9c-4f83-9166-75815d73dafa
+07048613-e656-4229-935e-9f8522e49194
+
+$ ls output/reapings/00181757-0c0d-4f82-b389-b3624bdeec87
+'יומן מנכל העירייה 1.1.22-30.6.22.xlsx'
+
+$ ls output/reapings/0616d2bf-f8e3-4a09-ab77-ed13071ac9e9
+'יומן מרב מיכאלי.xlsx'
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Let’s do a quick check of how many files we have:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ find -type f | wc -l
+2013
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Let’s also ask how much space this directory takes:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ du -hs output/reapings/
+34M	output/reapings/
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;So we now have 2013 Excel files, weighing 34 MegaBytes. Neat.&lt;/p&gt;
+
+&lt;h2 id=&quot;next-episode&quot;&gt;Next episode&lt;/h2&gt;
+&lt;p&gt;Chewing, or how to take these Excel files and extract specific calendar events.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="Python" /><category term="Israel" /><summary type="html">Preface</summary></entry><entry><title type="html">Caddy is better than Nginx for Docker Compose on ECS</title><link href="https://blog.backslasher.net/docker-compose-ecs-nginx-caddy.html" rel="alternate" type="text/html" title="Caddy is better than Nginx for Docker Compose on ECS" /><published>2023-01-09T00:00:00+02:00</published><updated>2023-01-09T00:00:00+02:00</updated><id>https://blog.backslasher.net/docker-compose-ecs-nginx-caddy</id><content type="html" xml:base="https://blog.backslasher.net/docker-compose-ecs-nginx-caddy.html">&lt;p&gt;I recently managed to use Docker Compose to launch a small app in Aamazon’s Elastic Container Services (ECS).&lt;br /&gt;
+Overall, the result is pretty incredible. I’m able to run all of my containers in AWS, with volumes and netowrks and all, with only a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;docker-compose.yaml&lt;/code&gt; file needed.&lt;br /&gt;
+However, my biggest issue was with getting nginx to work, and I ended up ditching it to Caddy.&lt;/p&gt;
+
+&lt;h2 id=&quot;why-you-need-nginx&quot;&gt;Why you need nginx&lt;/h2&gt;
+&lt;p&gt;As can be seen in the &lt;a href=&quot;https://docs.docker.com/cloud/ecs-compose-features/#exposing-ports&quot;&gt;ECS integration Compose features&lt;/a&gt; page, the way to accept incoming requests to your Compose project is by defining a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;port&lt;/code&gt; in the Compose file (e.g. 80), and AWS will create a single load balancer that will unconditionally forward all incoming requests on that port to that service.&lt;br /&gt;
+This means that you can only have one service listening on HTTP/HTTPS, and this service has to do all of the “gateway” work (TLS veritifcation and / or termination, routing to upstream, filtering paths etc). nginx is great for this job.&lt;br /&gt;
+The interesting part in my nginx config looks like this:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;server {
+  listen 443 ssl;
+  server_name project.site;
+  ssl_certificate     /ssl/fullchain.pem;
+  ssl_certificate_key /ssl/privkey.pem;
+  ssl_client_certificate /ssl/...;
+  ssl_verify_client on;
+
+  # Always shortcircuit requests from ELB
+  if ($http_user_agent = &quot;ELB-HealthChecker/2.0&quot;) {
+    return 200;
+  }
+
+  location /{
+    proxy_pass http://backend/;
+  }
+
+  location /debug {
+    proxy_pass http://debug;
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Which means:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Listen on 443, respond to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;project.site&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Where my SSL certificate is stored, and how to validate client certificates&lt;/li&gt;
+  &lt;li&gt;Demand SSL certificates from incoming connections and verify them&lt;/li&gt;
+  &lt;li&gt;If the “User-Agent” string looks like the ELB healthchecker, return “OK”.&lt;/li&gt;
+  &lt;li&gt;Pass all requests to the “backend” service&lt;/li&gt;
+  &lt;li&gt;If the request’s path starts with “/debug”, pass it to the “debug” service&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;why-nginx-doesnt-cut-it&quot;&gt;Why nginx doesn’t cut it&lt;/h2&gt;
+&lt;p&gt;Each service (e.g. “backend”) has multiple containers providing this service, each with its own IP.&lt;br /&gt;
+Container runtimes (k8s, Docker, ECS) provide “service discovery”, usually using DNS (in ECS it’s called &lt;a href=&quot;https://aws.amazon.com/cloud-map/&quot;&gt;CloudMap&lt;/a&gt;).&lt;br /&gt;
+Simply put, this means that doing a DNS query for “backend” will return the IP addresses of containers running the “backend” service.&lt;br /&gt;
+This allows nginx, as the gateway, to find a server to forward the HTTP request to (and hopefully get a response).&lt;br /&gt;
+The problem starts with nginx being so speed oriented that it doesn’t re-translate the name “backend” into a new IP address every now and then. Instead, it keeps the mapping (e.g. “backend –&amp;gt; 127.0.0.4”) forever.&lt;br /&gt;
+This means that whenever I create a new container for &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;backend&lt;/code&gt; and remove the old one (as containers are immutable), nginx remembers the &lt;em&gt;wrong IP address&lt;/em&gt;, and will fail forwarding the requests until nginx is restarted.&lt;br /&gt;
+This is obviously not ideal, as I’d like my gateways to adapt to changes in my backend without having to restart them.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.nginx.com/blog/dns-service-discovery-nginx-plus/&quot;&gt;This article&lt;/a&gt; offers two alternatives to the “never refresh IPs” approach:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Use variables (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;set $upstream = backend; proxy_pass http://$upstream/&lt;/code&gt;) and a custom resolver&lt;/li&gt;
+  &lt;li&gt;Buy nginx pro, create an upstream, and add a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;resolve&lt;/code&gt; extension to the server entry in the upstream.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Buying pro is out of the question, as it requires talking to a human (I can’t just pay for a license on the site).&lt;br /&gt;
+Using variables works, with the following cavaets:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Unlike in Docker, the address of the DNS server is not known during image build time.&lt;br /&gt;
+Instead, I created a script that runs on the container initialization, uses perl to extract the DNS server from &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;resolv.conf&lt;/code&gt;, and creates an nginx config to set the resolver to that&lt;/li&gt;
+  &lt;li&gt;nginx using its own DNS resolver means we’re missing out on the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;search&lt;/code&gt; option in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;resolv.conf&lt;/code&gt;, which is a shame because in ECS the names are actually &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;backend.project.local&lt;/code&gt;, which means that just using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;backend&lt;/code&gt; in the nginx config won’t work.&lt;br /&gt;
+I created an additional script that extracts the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;search&lt;/code&gt; option from &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;resolve.conf&lt;/code&gt; and replaces all upstream configurations in all of the nginx files.&lt;br /&gt;
+This is comlete tomfoolery, but I wanted things to work already.&lt;/li&gt;
+  &lt;li&gt;Usually, nginx is smart about rewriting the URLs that are forwarded to upstream.&lt;br /&gt;
+In the above config file, a request for &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/debug/memdump&lt;/code&gt; &lt;strong&gt;should&lt;/strong&gt; be forwarded to the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;debug&lt;/code&gt; service, with the URL being &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/memdump&lt;/code&gt;.&lt;br /&gt;
+This doesn’t work when using variables in comoposing the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;proxy_pass&lt;/code&gt; directive, which messes up my URL structure in my backends.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;The DNS refresh seemed like such a small thing, but it left nginx completely unsuitable to be my “gateway”. &lt;br /&gt;
+I seriously considered switching to httpd, even though it’s not as shiny, just so I can get something working.&lt;br /&gt;
+While searching for options, I randomly stumbled upon Caddy&lt;/p&gt;
+
+&lt;h2 id=&quot;caddy-is-nice&quot;&gt;Caddy is nice&lt;/h2&gt;
+&lt;p&gt;Simply put, Caddy just works.&lt;br /&gt;
+I don’t use the shinier features of auto-acquiring certificates from LetsEncrypt.&lt;br /&gt;
+My config file is as basic as can be:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;project.site {
+  tls /ssl/fullchain.pem /ssl/privkey.pem {
+    client_auth {
+      mode require_and_verify
+      trusted_leaf_cert_file /ssl/...
+      trusted_ca_cert_file /ssl/...
+    }
+  }
+
+  @awsHealthCheck {
+    header User-Agent 'ELB-HealthChecker/2.0'
+  }
+  respond @awsHealthCheck 200
+
+  handle_path /* {
+    reverse_proxy backend
+  }
+
+  handle_path /debug/* {
+    reverse_proxy debug
+  }
+}
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;You can see the directives are pretty similar (I had to compromise on &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/debug&lt;/code&gt; and replace it with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/debug/&lt;/code&gt;), but it works. No trickery to get it to refresh the records, no variables, no upselling to the Pro version that forces you to talk to a human.&lt;/p&gt;
+
+&lt;p&gt;I’m very happy with Caddy, and planning to further use it in the future.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="Linux" /><category term="Docker" /><category term="AWS" /><summary type="html">I recently managed to use Docker Compose to launch a small app in Aamazon’s Elastic Container Services (ECS). Overall, the result is pretty incredible. I’m able to run all of my containers in AWS, with volumes and netowrks and all, with only a docker-compose.yaml file needed. However, my biggest issue was with getting nginx to work, and I ended up ditching it to Caddy.</summary></entry><entry><title type="html">Quick Docker Compose commands for ECS</title><link href="https://blog.backslasher.net/docker-commands.html" rel="alternate" type="text/html" title="Quick Docker Compose commands for ECS" /><published>2023-01-06T00:00:00+02:00</published><updated>2023-01-06T00:00:00+02:00</updated><id>https://blog.backslasher.net/docker-commands</id><content type="html" xml:base="https://blog.backslasher.net/docker-commands.html">&lt;p&gt;I’m pretty new to Dockering in the wild, and I’m trying to use the new ECS integration to push all of my tiny app to the cloud.&lt;/p&gt;
+
+&lt;p&gt;This is a list of tiny helpers I wrote.&lt;/p&gt;
+
+&lt;h2 id=&quot;logout-of-all-registries&quot;&gt;Logout of all registries&lt;/h2&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; ~/.docker/config.json | jq &lt;span class=&quot;s1&quot;&gt;'.auths | keys[]'&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; | xargs &lt;span class=&quot;nt&quot;&gt;-rn1&lt;/span&gt; docker &lt;span class=&quot;nb&quot;&gt;logout&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Basically get existing sessions from the confing file, then logout on each.&lt;/p&gt;
+
+&lt;h2 id=&quot;login-to-my-aws-ecrs&quot;&gt;Login to my AWS ECRs&lt;/h2&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;PROFILE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;best-profile
+&lt;span class=&quot;nv&quot;&gt;REGION&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;us-east-1
+
+&lt;span class=&quot;nv&quot;&gt;REPOSITORIES&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;aws ecr &lt;span class=&quot;nt&quot;&gt;--region&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$REGION&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--profile&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$PROFILE&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; describe-repositories | jq &lt;span class=&quot;s1&quot;&gt;'.repositories[].repositoryUri'&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; | perl &lt;span class=&quot;nt&quot;&gt;-pe&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'s|(amazonaws.com)/.*|\1|'&lt;/span&gt; | &lt;span class=&quot;nb&quot;&gt;sort&lt;/span&gt; | &lt;span class=&quot;nb&quot;&gt;uniq&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;PASS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;aws ecr get-login-password &lt;span class=&quot;nt&quot;&gt;--region&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$REGION&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--profile&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$PROFILE&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$REPOSITORIES&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; | xargs &lt;span class=&quot;nt&quot;&gt;-I&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{}&lt;/span&gt; docker login &lt;span class=&quot;nt&quot;&gt;--username&lt;/span&gt; AWS &lt;span class=&quot;nt&quot;&gt;--password&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$PASS&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Get all repositories, for each get the registry and login to each.&lt;/p&gt;
+
+&lt;h2 id=&quot;deploy-everything&quot;&gt;Deploy everything&lt;/h2&gt;
+&lt;p&gt;Create context:&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;docker-compose-cli context create ecs best-context
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Deploy stuff:&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;docker compose build
+docker compose push
+docker-compose-cli &lt;span class=&quot;nt&quot;&gt;--context&lt;/span&gt; best-context compose up &lt;span class=&quot;nt&quot;&gt;--build&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Nitzan</name></author><category term="Linux" /><category term="Docker" /><category term="AWS" /><summary type="html">I’m pretty new to Dockering in the wild, and I’m trying to use the new ECS integration to push all of my tiny app to the cloud.</summary></entry><entry><title type="html">Arch Linux ARM ethernet card rename (eth0 to end0)</title><link href="https://blog.backslasher.net/alarm-eth-rename.html" rel="alternate" type="text/html" title="Arch Linux ARM ethernet card rename (eth0 to end0)" /><published>2022-12-25T00:00:00+02:00</published><updated>2022-12-25T00:00:00+02:00</updated><id>https://blog.backslasher.net/alarm-eth-rename</id><content type="html" xml:base="https://blog.backslasher.net/alarm-eth-rename.html">&lt;p&gt;Yesterday I installed updates and rebooted my Arch Linux rpi before going to sleep.&lt;br /&gt;
+First of all, this is a mistake because you shouldn’t install updates if you don’t have time to troubleshoot the fallout 🥲&lt;br /&gt;
+Secondly, I discovered I no longer had network access to my rpi.&lt;br /&gt;
+Today, after troubleshooting, I figured out the problem.&lt;/p&gt;
+
+&lt;h2 id=&quot;recovering-from-no-connectivity-checklist&quot;&gt;Recovering from no-connectivity checklist&lt;/h2&gt;
+&lt;ol&gt;
+  &lt;li&gt;Ensure you have a user-password login&lt;br /&gt;
+I didn’t, because I only connected to this machine with ssh key auth.
+    &lt;ol&gt;
+      &lt;li&gt;Grab the root storage, mount on another laptop&lt;/li&gt;
+      &lt;li&gt;Grant yourself a password by editing &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/shadow&lt;/code&gt; manually.&lt;/li&gt;
+      &lt;li&gt;Reassemble things back&lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Connect display / keyboard, boot and login&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ip addr show&lt;/code&gt; to see what’s wrong with the network interface&lt;/li&gt;
+  &lt;li&gt;Manually connect wifi, if the interface is still there&lt;br /&gt;
+&lt;a href=&quot;https://wiki.archlinux.org/title/Network_configuration/Wireless&quot;&gt;Arch Wiki&lt;/a&gt;&lt;br /&gt;
+I created a temporary no encryption network to go around having to deal with WPA supplicant.&lt;br /&gt;
+You might want to create &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/systemd/network/wlan0.network&lt;/code&gt; based on &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/systemd/network/eth0.network&lt;/code&gt; so you’ll have DHCP.&lt;/li&gt;
+  &lt;li&gt;Continue troubleshooting via SSH.&lt;br /&gt;
+Note that if you restart things, you might lose your wifi config&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;After surviving a reboot&lt;/strong&gt;, you can disconnect things, delete your password etc.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;the-real-problem&quot;&gt;The real problem&lt;/h2&gt;
+&lt;p&gt;It seems some update in the last weeks caused the first network interface to change from &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;eth0&lt;/code&gt; to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;end0&lt;/code&gt;.&lt;br /&gt;
+I’m not sure what’s the prereqs (maybe having Docker installed is involved), but I found &lt;a href=&quot;https://hup.hu/node/180161&quot;&gt;some&lt;/a&gt; &lt;a href=&quot;https://forums.opensuse.org/t/rpi4-eth0-changed-to-end0-lost-lan-access/153905&quot;&gt;complaints&lt;/a&gt; about it, so it’s not just me.&lt;/p&gt;
+
+&lt;p&gt;Creating a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;end0&lt;/code&gt; config in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/systemd/network&lt;/code&gt; solved my problem, and things are back to normal.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="Linux" /><summary type="html">Yesterday I installed updates and rebooted my Arch Linux rpi before going to sleep. First of all, this is a mistake because you shouldn’t install updates if you don’t have time to troubleshoot the fallout 🥲 Secondly, I discovered I no longer had network access to my rpi. Today, after troubleshooting, I figured out the problem.</summary></entry><entry><title type="html">CSV to JSON stream converter in Python</title><link href="https://blog.backslasher.net/python-csv-to-json.html" rel="alternate" type="text/html" title="CSV to JSON stream converter in Python" /><published>2022-12-22T00:00:00+02:00</published><updated>2022-12-22T00:00:00+02:00</updated><id>https://blog.backslasher.net/python-csv-to-json</id><content type="html" xml:base="https://blog.backslasher.net/python-csv-to-json.html">&lt;p&gt;I’ve been working with some govermental data that is available as huge (&amp;gt;50G) CSV files.&lt;br /&gt;
+While there are workarounds to working with large files, I wanted to keep the stream processing I do with JSON files.&lt;br /&gt;
+However, this was not a JSON file. Stream processin with CSV is hard. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jq&lt;/code&gt; is so much easier.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;#!/bin/env python3
+&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;csv&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;sys&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;json&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;csv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;field_size_limit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sys&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;maxsize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;row&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;csv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DictReader&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sys&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stdin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;sys&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stdout&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;write&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;json&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dumps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;row&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;This tiny Python script reads STDIN line by line, converting each line from CSV to JSON and printing it out.&lt;br /&gt;
+I then can use my standard tooling to continue chewing on the file:&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;python /tmp/convert.py &amp;lt;/tmp/big_file.csv &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+| jq &lt;span class=&quot;s1&quot;&gt;'select(.type==&quot;049&quot; or .type==&quot;048&quot;) | .url'&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+| &lt;span class=&quot;nb&quot;&gt;head&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-n20&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+| xargs wget
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Nitzan</name></author><category term="Python" /><summary type="html">I’ve been working with some govermental data that is available as huge (&amp;gt;50G) CSV files. While there are workarounds to working with large files, I wanted to keep the stream processing I do with JSON files. However, this was not a JSON file. Stream processin with CSV is hard. jq is so much easier.</summary></entry><entry><title type="html">Productivity tips for a FAANG engineer</title><link href="https://blog.backslasher.net/productivity-tips-faang.html" rel="alternate" type="text/html" title="Productivity tips for a FAANG engineer" /><published>2022-10-14T00:00:00+03:00</published><updated>2022-10-14T00:00:00+03:00</updated><id>https://blog.backslasher.net/productivity-tips-faang</id><content type="html" xml:base="https://blog.backslasher.net/productivity-tips-faang.html">&lt;p&gt;Here are some things I learnt during my career in Facebook, and think could benefit someone new to the field.&lt;br /&gt;
+As an engineer in Facebook, you have a great degree of freedom for managing your time, and you’re mostly judged about the “impact” you provide.&lt;br /&gt;
+Ordered by decsending order of importance, these might help you make more of the time you spend working, thus increasing your “impact-to-effort” ratio.&lt;/p&gt;
+
+&lt;h2 id=&quot;small-diffs&quot;&gt;Small diffs&lt;/h2&gt;
+&lt;p&gt;Keep your diffs (or PRs) small. Makes them easy to read, easy to test.&lt;br /&gt;
+We support stacked diffs, so you can submit multiple commits that make one change, but have each commit reviewed separately.&lt;/p&gt;
+
+&lt;h2 id=&quot;be-async&quot;&gt;Be &lt;a href=&quot;https://en.wikipedia.org/wiki/Async/await&quot;&gt;Async&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;Have a pool of things to do, so when you’re blocked on one because of some external element (e.g. waiting for someone on the other side of the world to review your work), you have something else to progress on.&lt;br /&gt;
+When you get blocked / finish that, you can check if your original task is suddenly unblocked.&lt;/p&gt;
+&lt;h2 id=&quot;yagni&quot;&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/You_aren%27t_gonna_need_it&quot;&gt;YAGNI&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;Prefer investing in things that are impactful now.&lt;br /&gt;
+There is no use solving a problem &lt;em&gt;now&lt;/em&gt;, when that will only arrive in 1 year, since the requirements might shift.&lt;/p&gt;
+
+&lt;h2 id=&quot;timeout-and-escalate&quot;&gt;Timeout and escalate&lt;/h2&gt;
+&lt;p&gt;If you’re stuck on something for a large amount of time, escalate to an adult. Don’t sit for a week on a problem when it can be solved in 1 hour by a veteran.&lt;br /&gt;
+If you time out too quickly, they’ll let you know.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="Ramblings" /><summary type="html">Here are some things I learnt during my career in Facebook, and think could benefit someone new to the field. As an engineer in Facebook, you have a great degree of freedom for managing your time, and you’re mostly judged about the “impact” you provide. Ordered by decsending order of importance, these might help you make more of the time you spend working, thus increasing your “impact-to-effort” ratio.</summary></entry><entry><title type="html">Arduino Mouse Mover</title><link href="https://blog.backslasher.net/arduino-mousemove.html" rel="alternate" type="text/html" title="Arduino Mouse Mover" /><published>2022-05-04T00:00:00+03:00</published><updated>2022-05-04T00:00:00+03:00</updated><id>https://blog.backslasher.net/arduino-mousemove</id><content type="html" xml:base="https://blog.backslasher.net/arduino-mousemove.html">&lt;p&gt;I have a friend who is working from home.
+This friend has a manager who’s way of measuring people’s productivity is ensuring said people are active on Slack.
+My friend staretd limiting themselves from taking lunch breaks, which is not ideal. Something had do be done to keep the manager happy while my friend is away from their computer.&lt;/p&gt;
+
+&lt;p&gt;I thought about running some sort of sofrware that moves the mouse every couple of seconds, but since the computer is managed I didn’t want to run anything suspicious on it.
+Instead, I grabbed a spare Arduion-Leonardo-compatible board I had. Those things are tiny and can identify as an HID (human input device) via their USB connection.
+I programmed it to move the mouse a tiny bit every second. It was very easy and works great.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-code&quot;&gt;The code&lt;/h2&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;#include &amp;lt;Mouse.h&amp;gt;
+
+void setup() {
+  // put your setup code here, to run once:
+  Mouse.begin();
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  delay(1000);
+  Mouse.move(1, 0, 0);
+  delay(1000);
+  Mouse.move(-1, 0, 0);
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/2022-05-04-arduino-mousemove/20220504_150232.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="FOSS" /><category term="Arduino" /><summary type="html">I have a friend who is working from home. This friend has a manager who’s way of measuring people’s productivity is ensuring said people are active on Slack. My friend staretd limiting themselves from taking lunch breaks, which is not ideal. Something had do be done to keep the manager happy while my friend is away from their computer.</summary></entry><entry><title type="html">Switching audio bluetooth profiles with a script</title><link href="https://blog.backslasher.net/bluetooth-profile-script.html" rel="alternate" type="text/html" title="Switching audio bluetooth profiles with a script" /><published>2021-12-15T00:00:00+02:00</published><updated>2021-12-15T00:00:00+02:00</updated><id>https://blog.backslasher.net/bluetooth-profile-script</id><content type="html" xml:base="https://blog.backslasher.net/bluetooth-profile-script.html">&lt;p&gt;I wanted to be able to switch between “listening to music” and “using the headphone’s microphone” easily.
+i3blocks allows me to write scripts emit a status line, and can accept “clicks” in the form of environment variables to respond.
+I wrote one that, using the pulseaudio CLI:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Checks how many audio bluetooth devices are connected&lt;/li&gt;
+  &lt;li&gt;If there are none / more than one, prints that and exits&lt;/li&gt;
+  &lt;li&gt;If there was a mouse left click, choose the “other profile” and apply it&lt;/li&gt;
+  &lt;li&gt;Print the current profile&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;It’s pretty short and sweet, so I thought I’d share it&lt;/p&gt;
+
+&lt;h2 id=&quot;the-script&quot;&gt;The Script&lt;/h2&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;#!/bin/bash
+set -Eeuo pipefail
+
+INDEXES=&quot;$(pacmd list-cards | (grep 'name: &amp;lt;bluez_card.' -B2 || true) | perl -ne 'print $1,$/ if /index: (\d+)/')&quot;
+INDEX_COUNT=&quot;$(echo &quot;$INDEXES&quot; | wc -l)&quot;
+if [[ &quot;$INDEX_COUNT&quot; &amp;gt; 1 ]]; then
+  echo &quot;MULTIPLE&quot;
+  exit
+elif [[ &quot;$INDEX_COUNT&quot; &amp;lt; 1 || &quot;$INDEXES&quot; == &quot;&quot; ]]; then
+  echo &quot;NONE&quot;
+  exit
+fi
+
+# Only one
+INDEX=&quot;$INDEXES&quot;
+
+get_profile() {
+  pacmd list-cards | grep &quot;index: ${INDEX}&quot; -A22 | perl -ne 'print $1,$/ if /active profile: &amp;lt;(.+)&amp;gt;/'
+}
+
+# left click
+if [[ &quot;${BLOCK_BUTTON:-0}&quot; == 1 ]]; then
+  if [[ &quot;$(get_profile)&quot; == &quot;a2dp_sink&quot; ]]; then
+    NEXT_PROFILE=&quot;handsfree_head_unit&quot;
+  else
+    NEXT_PROFILE=&quot;a2dp_sink&quot;
+  fi
+  pacmd set-card-profile &quot;$INDEX&quot; &quot;$NEXT_PROFILE&quot;
+fi
+
+get_profile
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Nitzan</name></author><category term="FOSS" /><category term="Scripts" /><category term="Linux" /><summary type="html">I wanted to be able to switch between “listening to music” and “using the headphone’s microphone” easily. i3blocks allows me to write scripts emit a status line, and can accept “clicks” in the form of environment variables to respond. I wrote one that, using the pulseaudio CLI:</summary></entry></feed>

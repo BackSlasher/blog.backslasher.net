@@ -1,0 +1,747 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Setting Dynamic RPC Port Ranges - BackSlasher</title>
+<meta name="description" content="We recently had to manually set the dynamic RPC port range in our servers, mainly because Exchange 2010 sets the port range so wide that the firewall guys (rightfully) refused to create a rule with that range. Warning - at your own risk! When I found out about those settings, I stupidly tried applying these to my entire environment, which crippled my Hyper-V cluster, for example. So my conclusion - don’t apply it to everything without testing first! RP-Wut? For those not familiar with it, RPC (Remote Procedure Call) is an important part of Windows’ communication matchanism that is widely used with Microsoft and non-Microsoft software. A feature of RPC is called dynamic RPC port allocation, allowing server software to be allocated incoming ports dynamically, thus avoiding port conflicts. This feature has a range of ports to select from, and that is the “dynamic RPC port range”. The default ranges in Windows are:">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Setting Dynamic RPC Port Ranges">
+<meta property="og:url" content="https://blog.backslasher.net/setting-dynamic-rpc-port-ranges.html">
+
+
+  <meta property="og:description" content="We recently had to manually set the dynamic RPC port range in our servers, mainly because Exchange 2010 sets the port range so wide that the firewall guys (rightfully) refused to create a rule with that range. Warning - at your own risk! When I found out about those settings, I stupidly tried applying these to my entire environment, which crippled my Hyper-V cluster, for example. So my conclusion - don’t apply it to everything without testing first! RP-Wut? For those not familiar with it, RPC (Remote Procedure Call) is an important part of Windows’ communication matchanism that is widely used with Microsoft and non-Microsoft software. A feature of RPC is called dynamic RPC port allocation, allowing server software to be allocated incoming ports dynamically, thus avoiding port conflicts. This feature has a range of ports to select from, and that is the “dynamic RPC port range”. The default ranges in Windows are:">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2011-05-02T00:00:00+03:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/setting-dynamic-rpc-port-ranges.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Setting Dynamic RPC Port Ranges">
+    <meta itemprop="description" content="We recently had to manually set the dynamic RPC port range in ourservers, mainly because Exchange 2010 sets the port range so wide thatthe firewall guys (rightfully) refused to create a rule with thatrange.Warning - at your own risk!When I found out about those settings, I stupidly tried applying theseto my entire environment, which crippled my Hyper-V cluster, forexample. So my conclusion - don’t apply it to everything without testingfirst!RP-Wut?For those not familiar with it, RPC (Remote ProcedureCall)is an important part of Windows’ communication matchanism that is widely used with Microsoft and non-Microsoft software. A feature of RPC is called dynamic RPC port allocation, allowing server software to be allocated incoming ports dynamically, thus avoiding port conflicts. This feature has a range ofports to select from, and that is the “dynamic RPC port range”.The default ranges in Windows are:">
+    <meta itemprop="datePublished" content="2011-05-02T00:00:00+03:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Setting Dynamic RPC Port Ranges
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>We recently had to manually set the dynamic RPC port range in our
+servers, mainly because Exchange 2010 sets the port range so wide that
+the firewall guys (rightfully) refused to create a rule with that
+range.</p>
+<h3 id="warning---at-your-own-risk">Warning - at your own risk!</h3>
+<p>When I found out about those settings, I stupidly tried applying these
+to my entire environment, which crippled my Hyper-V cluster, for
+example. So my conclusion - don’t apply it to everything without testing
+first!</p>
+<h3 id="rp-wut">RP-Wut?</h3>
+<p>For those not familiar with it, RPC (<a href="http://technet.microsoft.com/en-us/library/cc738291%28WS.10%29.aspx">Remote Procedure
+Call</a>)
+is an important part of Windows’ communication matchanism that is widely used with Microsoft and non-Microsoft software. A feature of RPC is called dynamic RPC port allocation, allowing server software to be allocated incoming ports dynamically, thus avoiding port conflicts. This feature has a range of
+ports to select from, and that is the “dynamic RPC port range”.<br />
+The default ranges in Windows are:</p>
+
+<ul>
+  <li>Windows 2003: 1025-5000</li>
+  <li>Windows 2008+: 49152-65535</li>
+  <li>Windows + Exchange 2010: 6005-59530</li>
+</ul>
+
+<p>As you can see, passing Exchange’s default port range through a firewall
+is definitely not a good idea.</p>
+
+<p>According to <a href="http://support.microsoft.com/kb/154596">KB154596</a>, the 2
+ways of doing so is either by using <code class="language-plaintext highlighter-rouge">RPCCfg.exe</code> on the server (yukk) or
+by modifying the Registry.<br />
+The quick version is:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">HKLM\Software\Microsoft\Rpc\Internet</code> (Key): The key that
+will contain all of the following values</li>
+  <li><code class="language-plaintext highlighter-rouge">Ports</code> (<code class="language-plaintext highlighter-rouge">REG_MULTI_SZ</code>): A list of ports Windows is allowed to
+use for dynamic port allocation. Can be a single port (1234) or a
+range (5555-5560). Numbers should be between 0 and 65535.<br />
+   <strong>Note:</strong> If you mess this part up (by entering an invalid value),
+the entire configuration becomes invalid.</li>
+  <li><code class="language-plaintext highlighter-rouge">PortsInternetAvailable</code> (<code class="language-plaintext highlighter-rouge">REG_SZ</code>): Set to <code class="language-plaintext highlighter-rouge">Y</code> (case
+insensitive) to make Windows use the <code class="language-plaintext highlighter-rouge">Ports</code> list as a whitelist (only
+use those ports), and <code class="language-plaintext highlighter-rouge">N</code> to use “Ports” as a blacklist (use all
+other ports). I see no sense in setting this to <code class="language-plaintext highlighter-rouge">N</code>, but…</li>
+  <li><code class="language-plaintext highlighter-rouge">UseInternetPorts</code> (<code class="language-plaintext highlighter-rouge">REG_SZ</code>): Set to <code class="language-plaintext highlighter-rouge">Y</code>. I don’t realize what
+setting <code class="language-plaintext highlighter-rouge">N</code> would do, but I assume it won’t serve our cause.</li>
+</ul>
+
+<p>You can utilize Group Policy Preferences to deploy these settings to
+several servers in one hit.<br />
+Set these values on your machine, restart it, and you’re set! Only
+several remarks:</p>
+
+<ol>
+  <li><strong>These settings apply to the RPC <em>server</em></strong><br />
+   Ports for outgoing connections from the machine will still be
+determined by the RPC server (therefore, the other machine).</li>
+  <li><strong>Apply ALL settings, and do it right!</strong><br />
+   Make sure you’re using correct values (and not some stupid mistake
+like an extra dash in the <code class="language-plaintext highlighter-rouge">Ports</code> key), because invalid
+configuration will stop the RPC server from handing any outgoing
+ports, which will severely impact many remote-related OS features
+like DCOM, remote event viewer etc.<br />
+   For the same reason, if you’re using Group Poilcy or some script to
+deploy these settings, make sure ALL of the keys are created,
+because I had an issue of missing keys that crippled both my
+clusters and my remote-management apps. It turns out that Group
+Policy Preferences doesn’t create the key with the proper
+permissions, so you have to change the key permissions through
+<code class="language-plaintext highlighter-rouge">Policies &gt; Windows Settings &gt; Security Settings &gt; Registry</code>.</li>
+  <li><strong>Leave enough ports</strong><br />
+   Don’t give RPC a range of 10 ports to play with, because you’ll run
+out pretty fast. A lot of client applications use more than one
+connection, and you’ll be surprised how many use RPC. I recommend
+giving <em>at least</em> 1000 ports</li>
+</ol>
+
+<h3 id="netsh-set-dynamicport"><code class="language-plaintext highlighter-rouge">Netsh set dynamicport</code></h3>
+<p>I recently found out that the Netsh command <code class="language-plaintext highlighter-rouge">set dynamicport</code> mentioned
+in <a href="http://support.microsoft.com/kb/929851">http://support.microsoft.com/kb/929851</a> does not modify the RPC
+server at all, but rather changes the windows firewall exceptions.
+Therefor, it’s useless when using an external firewall (like we do).<br />
+Source:
+<a href="http://social.technet.microsoft.com/Forums/en-US/winserverDS/thread/7c2aa64e-84a0-4cc3-b6e8-690bb150a735/">http://social.technet.microsoft.com/Forums/en-US/winserverDS/thread/7c2aa64e-84a0-4cc3-b6e8-690bb150a735/</a></p>
+<h3 id="validating-configuration">Validating Configuration</h3>
+<p>I think that the best way to validate the changes is to use a sniffer to
+record traffic and use remote WMI (that uses RPC) through PowerShell:</p>
+
+<ol>
+  <li>Prepare a test machine and a second one, and make sure the second
+machine can access the test machine in the configured ports and 135
+(the RPC port mapper)</li>
+  <li>Install Network Monitor (or another sniffer) on one of the machines
+and record RPC traffic</li>
+  <li>
+    <p>Execute the following PowerShell command from the second machine:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>:::powershell
+gwmi win32_operatingsystem -comp TEST
+</code></pre></div>    </div>
+  </li>
+  <li>Make sure the call executes successfully (no errors) and the
+recorded traffic is in the port range we configured earlier</li>
+</ol>
+
+<p>Happy Registry-editing-without-burning-your-servers!</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#firewall" class="page__taxonomy-item" rel="tag">Firewall</a><span class="sep">, </span>
+    
+      <a href="/tags/#group-policy" class="page__taxonomy-item" rel="tag">Group Policy</a><span class="sep">, </span>
+    
+      <a href="/tags/#registry" class="page__taxonomy-item" rel="tag">Registry</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#microsoft" class="page__taxonomy-item" rel="tag">Microsoft</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2011-05-02T00:00:00+03:00">May 2, 2011</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/making-your-pages-more-facebook-shareable.html" class="pagination--pager" title="Making your pages more Facebook shareable
+">Previous</a>
+    
+    
+      <a href="/dumping-your-mysql-db-using-php.html" class="pagination--pager" title="Dumping your MySQL db using PHP
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/3-loc-760h.html" rel="permalink">Changed 3 lines of code, saved 760 server hours per month
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Act 1, where I write Java
+In the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/sapling-commands.html" rel="permalink">Sapling Commands
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Sapling (the Facebook-released SCM) is great, but the docs are not-great.
+I thought I’d list some commands it took me a while to undertand, for me and for ot...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/foia-calendars-pt1.html" rel="permalink">Processing Israeli FOIA calendars, Part 1
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Preface
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/docker-compose-ecs-nginx-caddy.html" rel="permalink">Caddy is better than Nginx for Docker Compose on ECS
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I recently managed to use Docker Compose to launch a small app in Aamazon’s Elastic Container Services (ECS).
+Overall, the result is pretty incredible. I’m a...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <script>
+  window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+  ga('create','','auto');
+  ga('set', 'anonymizeIp', false);
+  ga('send','pageview')
+</script>
+<script src="https://www.google-analytics.com/analytics.js" async></script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>

@@ -1,0 +1,680 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Listing Chef Cookbook Licenses - BackSlasher</title>
+<meta name="description" content="As part of a compliance check for our company, I was required to print the name/version of all FOSS proejcts I’m using. Most of it was digging around Gemfiles and setup.pys, which isn’t that interesting. The neat part was this snippet to extract license information from cookbooks installed on Chef server: require &#39;chef&#39; config_path=File.expand_path(&quot;~/.chef/knife.rb&quot;) Chef::Config.from_file(config_path) rest = Chef::REST.new(Chef::Config[:chef_server_url]) cbs = rest.get_rest(&quot;/cookbooks?num_versions=1&quot;) # Get all cookbooks, latest version cbs.reject!{|k,v|k[/^slasher-/]} # Remove my cookbooks vers = cbs.map{|k,v| # Extract details   url=v[&#39;versions&#39;].first[&#39;url&#39;]   deet = rest.get_rest(url)   lic = deet.metadata.license   {name: k,license:lic} } # Extract to CSV require &#39;csv&#39; csv_string = CSV.generate do |csv|   keys=[:name,:license]   csv &lt;&lt; keys   vers.each{|r| csv&lt;&lt;r.values_at(*keys)} end puts csv_string  Execute it using chef exec ruby The result looks something like this: name,license rvm,Apache 2.0 yum-mysql-community,Apache 2.0 deploy_wrapper,none tomcat,Apache 2.0 elasticsearch,Apache 2.0 ... graphite,Apache 2.0 curl,Apache 2.0">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Listing Chef Cookbook Licenses">
+<meta property="og:url" content="https://blog.backslasher.net/chef-licenses.html">
+
+
+  <meta property="og:description" content="As part of a compliance check for our company, I was required to print the name/version of all FOSS proejcts I’m using. Most of it was digging around Gemfiles and setup.pys, which isn’t that interesting. The neat part was this snippet to extract license information from cookbooks installed on Chef server: require &#39;chef&#39; config_path=File.expand_path(&quot;~/.chef/knife.rb&quot;) Chef::Config.from_file(config_path) rest = Chef::REST.new(Chef::Config[:chef_server_url]) cbs = rest.get_rest(&quot;/cookbooks?num_versions=1&quot;) # Get all cookbooks, latest version cbs.reject!{|k,v|k[/^slasher-/]} # Remove my cookbooks vers = cbs.map{|k,v| # Extract details   url=v[&#39;versions&#39;].first[&#39;url&#39;]   deet = rest.get_rest(url)   lic = deet.metadata.license   {name: k,license:lic} } # Extract to CSV require &#39;csv&#39; csv_string = CSV.generate do |csv|   keys=[:name,:license]   csv &lt;&lt; keys   vers.each{|r| csv&lt;&lt;r.values_at(*keys)} end puts csv_string  Execute it using chef exec ruby The result looks something like this: name,license rvm,Apache 2.0 yum-mysql-community,Apache 2.0 deploy_wrapper,none tomcat,Apache 2.0 elasticsearch,Apache 2.0 ... graphite,Apache 2.0 curl,Apache 2.0">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2015-11-11T00:00:00+02:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/chef-licenses.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Listing Chef Cookbook Licenses">
+    <meta itemprop="description" content="As part of a compliance check for our company, I was required to print the name/version of all FOSS proejcts I’m using.Most of it was digging around Gemfiles and setup.pys, which isn’t that interesting. The neat part was this snippet to extract license information from cookbooks installed on Chef server:require &#39;chef&#39;config_path=File.expand_path(&quot;~/.chef/knife.rb&quot;)Chef::Config.from_file(config_path)rest = Chef::REST.new(Chef::Config[:chef_server_url])cbs = rest.get_rest(&quot;/cookbooks?num_versions=1&quot;) # Get all cookbooks, latest versioncbs.reject!{|k,v|k[/^slasher-/]} # Remove my cookbooksvers = cbs.map{|k,v| # Extract details  url=v[&#39;versions&#39;].first[&#39;url&#39;]  deet = rest.get_rest(url)  lic = deet.metadata.license  {name: k,license:lic}}# Extract to CSVrequire &#39;csv&#39;csv_string = CSV.generate do |csv|  keys=[:name,:license]  csv &lt;&lt; keys  vers.each{|r| csv&lt;&lt;r.values_at(*keys)}endputs csv_stringExecute it using chef exec rubyThe result looks something like this:name,licenservm,Apache 2.0yum-mysql-community,Apache 2.0deploy_wrapper,nonetomcat,Apache 2.0elasticsearch,Apache 2.0...graphite,Apache 2.0curl,Apache 2.0">
+    <meta itemprop="datePublished" content="2015-11-11T00:00:00+02:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Listing Chef Cookbook Licenses
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>As part of a compliance check for our company, I was required to print the name/version of all FOSS proejcts I’m using.<br />
+Most of it was digging around <code class="language-plaintext highlighter-rouge">Gemfile</code>s and <code class="language-plaintext highlighter-rouge">setup.py</code>s, which isn’t that interesting. The neat part was this snippet to extract license information from cookbooks installed on Chef server:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'chef'</span>
+<span class="n">config_path</span><span class="o">=</span><span class="no">File</span><span class="p">.</span><span class="nf">expand_path</span><span class="p">(</span><span class="s2">"~/.chef/knife.rb"</span><span class="p">)</span>
+<span class="no">Chef</span><span class="o">::</span><span class="no">Config</span><span class="p">.</span><span class="nf">from_file</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span>
+<span class="n">rest</span> <span class="o">=</span> <span class="no">Chef</span><span class="o">::</span><span class="no">REST</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="no">Chef</span><span class="o">::</span><span class="no">Config</span><span class="p">[</span><span class="ss">:chef_server_url</span><span class="p">])</span>
+<span class="n">cbs</span> <span class="o">=</span> <span class="n">rest</span><span class="p">.</span><span class="nf">get_rest</span><span class="p">(</span><span class="s2">"/cookbooks?num_versions=1"</span><span class="p">)</span> <span class="c1"># Get all cookbooks, latest version</span>
+<span class="n">cbs</span><span class="p">.</span><span class="nf">reject!</span><span class="p">{</span><span class="o">|</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="o">|</span><span class="n">k</span><span class="p">[</span><span class="sr">/^slasher-/</span><span class="p">]}</span> <span class="c1"># Remove my cookbooks</span>
+<span class="n">vers</span> <span class="o">=</span> <span class="n">cbs</span><span class="p">.</span><span class="nf">map</span><span class="p">{</span><span class="o">|</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="o">|</span> <span class="c1"># Extract details</span>
+  <span class="n">url</span><span class="o">=</span><span class="n">v</span><span class="p">[</span><span class="s1">'versions'</span><span class="p">].</span><span class="nf">first</span><span class="p">[</span><span class="s1">'url'</span><span class="p">]</span>
+  <span class="n">deet</span> <span class="o">=</span> <span class="n">rest</span><span class="p">.</span><span class="nf">get_rest</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+  <span class="n">lic</span> <span class="o">=</span> <span class="n">deet</span><span class="p">.</span><span class="nf">metadata</span><span class="p">.</span><span class="nf">license</span>
+  <span class="p">{</span><span class="ss">name: </span><span class="n">k</span><span class="p">,</span><span class="n">license</span><span class="ss">:lic</span><span class="p">}</span>
+<span class="p">}</span>
+<span class="c1"># Extract to CSV</span>
+<span class="nb">require</span> <span class="s1">'csv'</span>
+<span class="n">csv_string</span> <span class="o">=</span> <span class="no">CSV</span><span class="p">.</span><span class="nf">generate</span> <span class="k">do</span> <span class="o">|</span><span class="n">csv</span><span class="o">|</span>
+  <span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="ss">:name</span><span class="p">,</span><span class="ss">:license</span><span class="p">]</span>
+  <span class="n">csv</span> <span class="o">&lt;&lt;</span> <span class="n">keys</span>
+  <span class="n">vers</span><span class="p">.</span><span class="nf">each</span><span class="p">{</span><span class="o">|</span><span class="n">r</span><span class="o">|</span> <span class="n">csv</span><span class="o">&lt;&lt;</span><span class="no">r</span><span class="p">.</span><span class="nf">values_at</span><span class="p">(</span><span class="o">*</span><span class="n">keys</span><span class="p">)}</span><span class="sh">
+end
+puts csv_string
+</span></code></pre></div></div>
+<p>Execute it using <code class="language-plaintext highlighter-rouge">chef exec ruby</code><br />
+The result looks something like this:</p>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>name,license
+rvm,Apache 2.0
+yum-mysql-community,Apache 2.0
+deploy_wrapper,none
+tomcat,Apache 2.0
+elasticsearch,Apache 2.0
+...
+graphite,Apache 2.0
+curl,Apache 2.0
+</code></pre></div></div>
+
+<p>The interesting bit is extracting the cookbook list and information using <code class="language-plaintext highlighter-rouge">Chef::REST</code>. This is how <code class="language-plaintext highlighter-rouge">knife cookbook list</code> does it.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#chef" class="page__taxonomy-item" rel="tag">Chef</a><span class="sep">, </span>
+    
+      <a href="/tags/#licensing" class="page__taxonomy-item" rel="tag">Licensing</a><span class="sep">, </span>
+    
+      <a href="/tags/#ruby" class="page__taxonomy-item" rel="tag">Ruby</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#foss" class="page__taxonomy-item" rel="tag">FOSS</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2015-11-11T00:00:00+02:00">November 11, 2015</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/gpp-external-references.html" class="pagination--pager" title="Detecting Invalid External References in Group Policy Preferences
+">Previous</a>
+    
+    
+      <a href="/packer-erb.html" class="pagination--pager" title="Enhancing Packer Templates with eRuby
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/3-loc-760h.html" rel="permalink">Changed 3 lines of code, saved 760 server hours per month
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Act 1, where I write Java
+In the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/sapling-commands.html" rel="permalink">Sapling Commands
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Sapling (the Facebook-released SCM) is great, but the docs are not-great.
+I thought I’d list some commands it took me a while to undertand, for me and for ot...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/foia-calendars-pt1.html" rel="permalink">Processing Israeli FOIA calendars, Part 1
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Preface
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/docker-compose-ecs-nginx-caddy.html" rel="permalink">Caddy is better than Nginx for Docker Compose on ECS
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I recently managed to use Docker Compose to launch a small app in Aamazon’s Elastic Container Services (ECS).
+Overall, the result is pretty incredible. I’m a...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <script>
+  window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+  ga('create','','auto');
+  ga('set', 'anonymizeIp', false);
+  ga('send','pageview')
+</script>
+<script src="https://www.google-analytics.com/analytics.js" async></script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>
