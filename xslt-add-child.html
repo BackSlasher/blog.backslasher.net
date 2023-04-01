@@ -289,33 +289,33 @@
         
         <p>I recently had to edit a big XML file, and add a child elemnt to every element within.
 To simplify matters, say I had something like this:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;rooty xmlns:ppl="some_identifier"&gt;
-  &lt;ppl:person&gt;
-    &lt;age&gt;42&lt;/age&gt;
-    &lt;name&gt;bob&lt;/name&gt;
-  &lt;/ppl:person&gt;
-  &lt;ppl:person&gt;
-    &lt;age&gt;53&lt;/age&gt;
-    &lt;name&gt;doggo&lt;/name&gt;
-  &lt;/ppl:person&gt;
-&lt;/rooty&gt;
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="nt">&lt;rooty</span> <span class="na">xmlns:ppl=</span><span class="s">"some_identifier"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;ppl:person&gt;</span>
+    <span class="nt">&lt;age&gt;</span>42<span class="nt">&lt;/age&gt;</span>
+    <span class="nt">&lt;name&gt;</span>bob<span class="nt">&lt;/name&gt;</span>
+  <span class="nt">&lt;/ppl:person&gt;</span>
+  <span class="nt">&lt;ppl:person&gt;</span>
+    <span class="nt">&lt;age&gt;</span>53<span class="nt">&lt;/age&gt;</span>
+    <span class="nt">&lt;name&gt;</span>doggo<span class="nt">&lt;/name&gt;</span>
+  <span class="nt">&lt;/ppl:person&gt;</span>
+<span class="nt">&lt;/rooty&gt;</span>
 </code></pre></div></div>
 
 <p>I wanted to add a <code class="language-plaintext highlighter-rouge">&lt;cow&gt;</code> element to every person, like so:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;rooty xmlns:ppl="some_identifier"&gt;
-  &lt;ppl:person&gt;
-    &lt;age&gt;42&lt;/age&gt;
-    &lt;name&gt;bob&lt;/name&gt;
-    &lt;cow&gt;Bessy&lt;/cow&gt;
-  &lt;/ppl:person&gt;
-  &lt;ppl:person&gt;
-    &lt;age&gt;53&lt;/age&gt;
-    &lt;name&gt;doggo&lt;/name&gt;
-    &lt;cow&gt;Bessy&lt;/cow&gt;
-  &lt;/ppl:person&gt;
-&lt;/rooty&gt;
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="nt">&lt;rooty</span> <span class="na">xmlns:ppl=</span><span class="s">"some_identifier"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;ppl:person&gt;</span>
+    <span class="nt">&lt;age&gt;</span>42<span class="nt">&lt;/age&gt;</span>
+    <span class="nt">&lt;name&gt;</span>bob<span class="nt">&lt;/name&gt;</span>
+    <span class="nt">&lt;cow&gt;</span>Bessy<span class="nt">&lt;/cow&gt;</span>
+  <span class="nt">&lt;/ppl:person&gt;</span>
+  <span class="nt">&lt;ppl:person&gt;</span>
+    <span class="nt">&lt;age&gt;</span>53<span class="nt">&lt;/age&gt;</span>
+    <span class="nt">&lt;name&gt;</span>doggo<span class="nt">&lt;/name&gt;</span>
+    <span class="nt">&lt;cow&gt;</span>Bessy<span class="nt">&lt;/cow&gt;</span>
+  <span class="nt">&lt;/ppl:person&gt;</span>
+<span class="nt">&lt;/rooty&gt;</span>
 </code></pre></div></div>
 
 <p>My first approach was to spend 10 minutes manually editing the file, but why do that when you can spend <strong>30 minutes</strong> writing automation to do it for you?<br />
@@ -327,25 +327,25 @@ I decided then that the “right” way to do it was using XSLT.</p>
 <p>I still don’t fully understand <a href="https://en.wikipedia.org/wiki/XSLT">XSLT</a>, so I won’t try and explain it.<br />
 After some help from <a href="https://stackoverflow.com/q/52205660/950275">StackOverflow</a>, I got a working XSLT file, which I’m happy to share:</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ppl="some_identifier" version="1.0"&gt;
-  &lt;xsl:output omit-xml-declaration="no" indent="yes" encoding="UTF-8"/&gt;
-  &lt;xsl:strip-space elements="*"/&gt;
-  &lt;!-- Identity transform --&gt;
-  &lt;xsl:template match="@* | node()"&gt;
-    &lt;xsl:copy&gt;
-      &lt;xsl:apply-templates select="@* | node()"/&gt;
-    &lt;/xsl:copy&gt;
-  &lt;/xsl:template&gt;
-  &lt;!-- Add cow to a person --&gt;
-  &lt;xsl:template match="ppl:person"&gt;
-    &lt;xsl:copy&gt;
-      &lt;xsl:copy-of select="@*"/&gt;
-      &lt;xsl:copy-of select="node()"/&gt;
-      &lt;cow&gt;Bessy&lt;/cow&gt;
-    &lt;/xsl:copy&gt;
-  &lt;/xsl:template&gt;
-&lt;/xsl:stylesheet&gt;
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="nt">&lt;xsl:stylesheet</span> <span class="na">xmlns:xsl=</span><span class="s">"http://www.w3.org/1999/XSL/Transform"</span> <span class="na">xmlns:ppl=</span><span class="s">"some_identifier"</span> <span class="na">version=</span><span class="s">"1.0"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;xsl:output</span> <span class="na">omit-xml-declaration=</span><span class="s">"no"</span> <span class="na">indent=</span><span class="s">"yes"</span> <span class="na">encoding=</span><span class="s">"UTF-8"</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;xsl:strip-space</span> <span class="na">elements=</span><span class="s">"*"</span><span class="nt">/&gt;</span>
+  <span class="c">&lt;!-- Identity transform --&gt;</span>
+  <span class="nt">&lt;xsl:template</span> <span class="na">match=</span><span class="s">"@* | node()"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;xsl:copy&gt;</span>
+      <span class="nt">&lt;xsl:apply-templates</span> <span class="na">select=</span><span class="s">"@* | node()"</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/xsl:copy&gt;</span>
+  <span class="nt">&lt;/xsl:template&gt;</span>
+  <span class="c">&lt;!-- Add cow to a person --&gt;</span>
+  <span class="nt">&lt;xsl:template</span> <span class="na">match=</span><span class="s">"ppl:person"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;xsl:copy&gt;</span>
+      <span class="nt">&lt;xsl:copy-of</span> <span class="na">select=</span><span class="s">"@*"</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;xsl:copy-of</span> <span class="na">select=</span><span class="s">"node()"</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;cow&gt;</span>Bessy<span class="nt">&lt;/cow&gt;</span>
+    <span class="nt">&lt;/xsl:copy&gt;</span>
+  <span class="nt">&lt;/xsl:template&gt;</span>
+<span class="nt">&lt;/xsl:stylesheet&gt;</span>
 </code></pre></div></div>
 
 <p>I run it using <code class="language-plaintext highlighter-rouge">xsltproc</code>, which is widely available for Linux distros, and the command looks like <code class="language-plaintext highlighter-rouge">xsltproc XSLT_PATH XML_PATH</code></p>
@@ -353,30 +353,30 @@ After some help from <a href="https://stackoverflow.com/q/52205660/950275">Stack
 <p>The file, broken down, looks like this:</p>
 
 <h3 id="formatting">Formatting</h3>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  &lt;xsl:output omit-xml-declaration="no" indent="yes" encoding="UTF-8"/&gt;
-  &lt;xsl:strip-space elements="*"/&gt;
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nt">&lt;xsl:output</span> <span class="na">omit-xml-declaration=</span><span class="s">"no"</span> <span class="na">indent=</span><span class="s">"yes"</span> <span class="na">encoding=</span><span class="s">"UTF-8"</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;xsl:strip-space</span> <span class="na">elements=</span><span class="s">"*"</span><span class="nt">/&gt;</span>
 </code></pre></div></div>
 <p>The above part controls the formatting. Without it, the resulting XML might have weird linebreaks and spaces.</p>
 
 <h3 id="identity-transform">Identity transform</h3>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  &lt;!-- Identity transform --&gt;
-  &lt;xsl:template match="@* | node()"&gt;
-    &lt;xsl:copy&gt;
-      &lt;xsl:apply-templates select="@* | node()"/&gt;
-    &lt;/xsl:copy&gt;
-  &lt;/xsl:template&gt;
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c">&lt;!-- Identity transform --&gt;</span>
+  <span class="nt">&lt;xsl:template</span> <span class="na">match=</span><span class="s">"@* | node()"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;xsl:copy&gt;</span>
+      <span class="nt">&lt;xsl:apply-templates</span> <span class="na">select=</span><span class="s">"@* | node()"</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/xsl:copy&gt;</span>
+  <span class="nt">&lt;/xsl:template&gt;</span>
 </code></pre></div></div>
 <p>This part makes every node appear in the transformed document.</p>
 
 <h3 id="adding-the-child-elemennt">Adding the child elemennt</h3>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  &lt;!-- Add cow to a person --&gt;
-  &lt;xsl:template match="ppl:person"&gt;
-    &lt;xsl:copy&gt;
-      &lt;xsl:copy-of select="@*"/&gt;
-      &lt;xsl:copy-of select="node()"/&gt;
-      &lt;cow&gt;Bessy&lt;/cow&gt;
-    &lt;/xsl:copy&gt;
-  &lt;/xsl:template&gt;
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c">&lt;!-- Add cow to a person --&gt;</span>
+  <span class="nt">&lt;xsl:template</span> <span class="na">match=</span><span class="s">"ppl:person"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;xsl:copy&gt;</span>
+      <span class="nt">&lt;xsl:copy-of</span> <span class="na">select=</span><span class="s">"@*"</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;xsl:copy-of</span> <span class="na">select=</span><span class="s">"node()"</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;cow&gt;</span>Bessy<span class="nt">&lt;/cow&gt;</span>
+    <span class="nt">&lt;/xsl:copy&gt;</span>
+  <span class="nt">&lt;/xsl:template&gt;</span>
 </code></pre></div></div>
 <p>This part matches only the elements we want to add children to.<br />
 We tell the transformer to copy the node, and include all of the original attributes (<code class="language-plaintext highlighter-rouge">@*</code>) and child elements (<code class="language-plaintext highlighter-rouge">node()</code>), and add our own new child element (the <code class="language-plaintext highlighter-rouge">&lt;cow&gt;</code> part).<br />
