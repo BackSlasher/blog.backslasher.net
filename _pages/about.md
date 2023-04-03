@@ -1,3 +1,8 @@
+----
+-permalink: /about/
+-title: "About"
+----
+
 ## Background
 I'm an avid programmer and  spent the last 6+ years at Facebook as a Production Engineer (also known as SRE in other places), where I helped multiple teams make their services more reliable, squeeze more out of the hardware, and generally do more with less. 
 In my free time I help non-profits and work on automating my home.  
