@@ -669,6 +669,9 @@
 <lastmod>2023-03-29T00:00:00+03:00</lastmod>
 </url>
 <url>
+<loc>https://blog.backslasher.net/about/</loc>
+</url>
+<url>
 <loc>https://blog.backslasher.net/</loc>
 </url>
 <url>
@@ -682,8 +685,5 @@
 </url>
 <url>
 <loc>https://blog.backslasher.net/pages/this-is-my-new-blog.html</loc>
-</url>
-<url>
-<loc>https://blog.backslasher.net/_pages/about</loc>
 </url>
 </urlset>
