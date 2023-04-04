@@ -379,9 +379,8 @@ pre-creating a computer account, you have to perform these actions:</p>
 computers container. To check what is the current default computers
 container in your domain, you can try:</p>
 
-    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>:::powershell
-(Get-ADDomain).ComputersContainer
-</code></pre></div>    </div>
+    <div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="n">Get-ADDomain</span><span class="p">)</span><span class="o">.</span><span class="nf">ComputersContainer</span><span class="w">
+</span></code></pre></div>    </div>
   </li>
   <li>
     <p>Prevent users from using the “Add workstations to domain” privilege.

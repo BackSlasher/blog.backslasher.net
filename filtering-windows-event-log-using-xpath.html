@@ -388,14 +388,12 @@ Create a new custom view if you intend to reuse the query. Note that it’s save
         <p><code class="language-plaintext highlighter-rouge">Wevtutil</code><br />
   This tool is useful when managing event logs in general, but it also can be used to query for events. The usage is:</p>
 
-        <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  :::bat
-  wevtutil qe LogName /q:"XpathQuery"
+        <div class="language-bat highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">wevtutil</span> <span class="kd">qe</span> <span class="kd">LogName</span> <span class="na">/q</span>:<span class="s2">"XpathQuery"</span>
 </code></pre></div>        </div>
 
         <p>For more info, run:</p>
 
-        <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  :::bat
-  wevtutil qe /?
+        <div class="language-bat highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">wevtutil</span> <span class="kd">qe</span> /<span class="o">?</span>
 </code></pre></div>        </div>
       </li>
     </ul>
@@ -416,9 +414,8 @@ Create a new custom view if you intend to reuse the query. Note that it’s save
         <p>For example, to view the top 5 events matching our query (ID 4624
   and “Process ID” is “0x2b0”) on computer “comp”, you can try:</p>
 
-        <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  :::powershell
-  Get-WinEvent -ComputerName 'Comp' -LogName 'Security' -FilterXPath 'Event[System[EventID=4624] and EventData[Data[@Name="ProcessId"]="0x2b0"]]' -MaxEvents 5
-</code></pre></div>        </div>
+        <div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Get-WinEvent</span><span class="w"> </span><span class="nt">-ComputerName</span><span class="w"> </span><span class="s1">'Comp'</span><span class="w"> </span><span class="nt">-LogName</span><span class="w"> </span><span class="s1">'Security'</span><span class="w"> </span><span class="nt">-FilterXPath</span><span class="w"> </span><span class="s1">'Event[System[EventID=4624] and EventData[Data[@Name="ProcessId"]="0x2b0"]]'</span><span class="w"> </span><span class="nt">-MaxEvents</span><span class="w"> </span><span class="nx">5</span><span class="w">
+</span></code></pre></div>        </div>
       </li>
     </ul>
   </li>
@@ -436,23 +433,20 @@ redundant.</li>
   <li>
     <p>The event-specific properties are contained in “Data” elements. To search for named properties, use something like:</p>
 
-    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>:::text
-Event[EventData[Data[@Name="PropertyName"]="RequiredValue"]]
-</code></pre></div>    </div>
+    <div class="language-xpath highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">Event</span><span class="p">[</span><span class="nt">EventData</span><span class="p">[</span><span class="nt">Data</span><span class="p">[</span><span class="na">@Name</span><span class="o">=</span><span class="s">"PropertyName"</span><span class="p">]</span><span class="o">=</span><span class="s">"RequiredValue"</span><span class="p">]]</span><span class="w">
+</span></code></pre></div>    </div>
 
     <p>To search for that value in any property (kind of like searching for
 the value in the entire message), use:</p>
 
-    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>:::text
-Event[EventData[Data="RequiredValue"]]
-</code></pre></div>    </div>
+    <div class="language-xpath highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">Event</span><span class="p">[</span><span class="nt">EventData</span><span class="p">[</span><span class="nt">Data</span><span class="o">=</span><span class="s">"RequiredValue"</span><span class="p">]]</span><span class="w">
+</span></code></pre></div>    </div>
   </li>
   <li>
     <p>To search for two fields, use something like:</p>
 
-    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>:::text
-Event[ EventData[  Data[@Name="PropA"]="ValueA" and  Data[@Name="PropB"]="ValueB" ]]
-</code></pre></div>    </div>
+    <div class="language-xpath highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">Event</span><span class="p">[</span><span class="nt">EventData</span><span class="p">[</span><span class="nt">Data</span><span class="p">[</span><span class="na">@Name</span><span class="o">=</span><span class="s">"PropA"</span><span class="p">]</span><span class="o">=</span><span class="s">"ValueA"</span><span class="w"> </span><span class="ow">and</span><span class="w">  </span><span class="nt">Data</span><span class="p">[</span><span class="na">@Name</span><span class="o">=</span><span class="s">"PropB"</span><span class="p">]</span><span class="o">=</span><span class="s">"ValueB"</span><span class="w"> </span><span class="p">]]</span><span class="w">
+</span></code></pre></div>    </div>
   </li>
 </ul>
 
