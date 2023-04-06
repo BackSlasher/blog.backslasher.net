@@ -1000,4 +1000,10 @@ var store = [{
         "tags": ["Linux","Bash","Android","JQ"],
         "url": "/android-app-sizes.html",
         "teaser": null
+      },{
+        "title": "a 1.5GB string",
+        "excerpt":"In my previous role, I supported a Java service that operated similarly to RDP or Citrix by enabling remote UI functionality. This service relied on sessions, which consisted of interconnected Java objects that were supposed to be cleaned up either when a user logged out or after a predetermined timeout...","categories": [],
+        "tags": ["Java","Ramblings"],
+        "url": "/1.5GB-string.html",
+        "teaser": null
       },]

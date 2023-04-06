@@ -1,0 +1,724 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>a 1.5GB string - BackSlasher</title>
+<meta name="description" content="In my previous role, I supported a Java service that operated similarly to RDP or Citrix by enabling remote UI functionality. This service relied on sessions, which consisted of interconnected Java objects that were supposed to be cleaned up either when a user logged out or after a predetermined timeout period.">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="a 1.5GB string">
+<meta property="og:url" content="https://blog.backslasher.net/1.5GB-string.html">
+
+
+  <meta property="og:description" content="In my previous role, I supported a Java service that operated similarly to RDP or Citrix by enabling remote UI functionality. This service relied on sessions, which consisted of interconnected Java objects that were supposed to be cleaned up either when a user logged out or after a predetermined timeout period.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2023-04-06T00:00:00+03:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/1.5GB-string.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="a 1.5GB string">
+    <meta itemprop="description" content="In my previous role, I supported a Java service that operated similarly to RDP or Citrix by enabling remote UI functionality. This service relied on sessions, which consisted of interconnected Java objects that were supposed to be cleaned up either when a user logged out or after a predetermined timeout period.">
+    <meta itemprop="datePublished" content="2023-04-06T00:00:00+03:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">a 1.5GB string
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>In my previous role, I supported a Java service that operated similarly to RDP or Citrix by enabling remote UI functionality. This service relied on sessions, which consisted of interconnected Java objects that were supposed to be cleaned up either when a user logged out or after a predetermined timeout period.</p>
+
+<p>During the course of our capacity planning, we discovered a significant memory waste that I wanted to share with you.</p>
+
+<h2 id="capacity-planning">Capacity Planning</h2>
+<p>Part of my routine work with the team included capacity planning for the next year.
+By analyzing our usage metrics, growth patterns, and population research, our data scientists were able to predict <em>how many users we could expect to have in the coming year</em>.</p>
+
+<p>To determine the necessary infrastructure required to support this anticipated user base, we employed a sophisticated formula:</p>
+
+\[\text{Number of Servers} = { \text{Number of Users} \over \text{Users per Server} } * \text{Safety Buffer}\]
+
+<p>To know how many <em>servers</em> we need to have for next year.</p>
+
+<p>One of our capacity planning sessions revealed that, due to the immense popularity of our service, we were anticipating a significant growth in the number of users in the coming year. Our calculations indicated that we would require more servers than we had available to accommodate this increased demand. Consequently, we were faced with the challenge of figuring out how to fit more users onto each individual server in order to support the projected user base.</p>
+
+<h2 id="what-are-we-bound-on">What are we bound on?</h2>
+<p>With capacity measurement, we can pinpoint the bottleneck in our system, and in this case, it is the memory. As more users are added to the server, the system begins to falter under the increased load, ultimately running out of memory. Understanding we are <em>memory-bound</em> is crucial, as it directs our efforts towards reducing memory consumption in order to accommodate more users on the server.</p>
+
+<h2 id="investigating-memory-usage">Investigating memory usage</h2>
+<p>We had a crude estimation of our per-user memory consumption using this:</p>
+
+\[\text{Per User Memory} = { \text{Server Memory} \over \text{User Capacity} }\]
+
+<p>Using imaginary numbers, we can say something like:</p>
+
+\[\text{Per User Memory} = \text{300MB} = { \text{90 GB} \over \text{300} }\]
+
+<p>So we can approxiamte per-user memory requirement as 300MB.
+In order to understand how to reduce this number, we went into more serious memory management.</p>
+
+<p>We began analyzing the Java memory dump of our servers to identify potential areas for improvement. Initially, we reviewed the dumps manually, but due to the sheer number of servers, we developed a custom script to automate the process. Using this script, we were able to identify memory-wasting objects that were attributed to specific sessions. By pinpointing these issues, we can effectively eliminate the waste and optimize our system’s memory usage.</p>
+
+<p>I might cover the script and analysis in another post, but for now I want to focus on a specific quick win the memory analysis gave us.</p>
+
+<h2 id="a-very-big-string">A very big string</h2>
+<p>We started with going over our thousands of memdumps and looking for very big objects. Our biggest whale was a 1.5GB string. It looked something like this:</p>
+
+<p><img src="/assets/1.5GB-string/quote.png" alt="\\\\\\\\\\\\\\\\\\\&quot;" /></p>
+
+<p>In case the picture didn’t convey the message, the string contained many many backslashes. We found similar smaller ones, but this one was the biggest.</p>
+
+<p>Investigating what the purpose of the string was, I saw that we had classes that looked like this:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="kd">class</span> <span class="nc">Screen</span> <span class="o">{</span>
+  <span class="c1">//...</span>
+  <span class="kd">private</span> <span class="nc">Screen</span> <span class="n">previous</span><span class="o">;</span>
+
+  <span class="kd">public</span> <span class="nc">String</span> <span class="nf">toJson</span><span class="o">()</span> <span class="o">{</span>
+    <span class="nc">JSONObject</span> <span class="n">jo</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">JSONObject</span><span class="o">();</span>
+    <span class="c1">//...</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">previous</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+      <span class="n">jo</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"previous"</span><span class="o">,</span> <span class="n">previous</span><span class="o">.</span><span class="na">toJson</span><span class="o">());</span>
+    <span class="o">}</span>
+    <span class="c1">//...</span>
+    <span class="k">return</span> <span class="n">jo</span><span class="o">.</span><span class="na">toString</span><span class="o">();</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">class</span> <span class="nc">Session</span> <span class="o">{</span>
+  <span class="c1">//...</span>
+  <span class="nc">String</span> <span class="n">currentScreen</span><span class="o">;</span>
+
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setUrl</span><span class="o">(</span><span class="nc">Screen</span> <span class="n">s</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">currentScreen</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="na">toJson</span><span class="o">();</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+
+</code></pre></div></div>
+
+<p>So each screen has the previous screen the user visited, to allow the user to go “back” and get the exact screen they were in before (state, scrolling position, validation notices etc). The user session also has the current screen the user is in, so if the user reconnects to an existing session, we can return to where they were.</p>
+
+<p>There are two design problems here:</p>
+<ol>
+  <li>The “back” stack is unlimited, meaning we’re saving more and more state until we explode</li>
+  <li>by running <code class="language-plaintext highlighter-rouge">jo.put("previous", previous.toJson());</code>, we’re converting the JSON dictionary to a string. Since JSON fields have quotes, and those quotes need to be escaped when stored in a string, they are stored as <code class="language-plaintext highlighter-rouge">\"</code>.
+That backslash needs to be escaped when this string is stored inside another string, compouding into <code class="language-plaintext highlighter-rouge">\\\"</code>. A couple more rounds of this, and we get <code class="language-plaintext highlighter-rouge">\\\\\\\\\\\\\\\\"</code></li>
+</ol>
+
+<p>It turns out that a user with a session with lots of screens produced a <code class="language-plaintext highlighter-rouge">currentScreen</code> String of gigantic proportions.</p>
+
+<h2 id="handling-and-followup">Handling and followup</h2>
+<p>We divided the problem into a quick fix and a long-term one:</p>
+
+<p>The quick fix was truncating the “previous” string if it goes over a specific char amount (e.g. not letting it go over 100MB).
+While this is not a complete solution and might impact the user experience, it was very quick to implement and easy to test, boosting our reliability (preventing a specific session from inflating and bringing the server down).</p>
+
+<p>The long-term fix was rewriting the “previous” stack solution completely, creating a dedicated real stack with self-imposed size limits and reporting.
+It took a long time to write, and longer to test and slowly release, but it really prevented memory waste, rather than only hide away whale-strings as another form of memory (e.g. very deep JSON objects).</p>
+
+<h2 id="epilogue">Epilogue</h2>
+<p>We continued to use the memory-dump analysis tool and found more nonsense we killed, but nothing as easy as this.</p>
+
+<p>My main takeway from this story is that sometimes, checking the details of how your program uses resources (e.g. examining a memdump rather than just measuring overall memory utilization) is crucial for success and produces quick wins from the start.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#java" class="page__taxonomy-item" rel="tag">Java</a><span class="sep">, </span>
+    
+      <a href="/tags/#ramblings" class="page__taxonomy-item" rel="tag">Ramblings</a>
+    
+    </span>
+  </p>
+
+
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2023-04-06T00:00:00+03:00">April 6, 2023</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/android-app-sizes.html" class="pagination--pager" title="Get Android App Sizes with ADB
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/android-app-sizes.html" rel="permalink">Get Android App Sizes with ADB
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Upon receiving a notification from my NVidia Shield indicating that it was running low on storage space, I attempted to use the device’s interface to trouble...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/3-loc-760h.html" rel="permalink">Changed 3 lines of code, saved 760 server hours per month
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Act 1, where I write Java
+In the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/sapling-commands.html" rel="permalink">Sapling Commands
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Sapling (the Facebook-released SCM) is great, but the docs are not-great.
+I thought I’d list some commands it took me a while to undertand, for me and for ot...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/foia-calendars-pt1.html" rel="permalink">Processing Israeli FOIA calendars, Part 1
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Preface
+
+</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S2WYJL3VQ7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-S2WYJL3VQ7', { 'anonymize_ip': true});
+</script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>
