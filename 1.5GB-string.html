@@ -316,7 +316,7 @@ By analyzing our usage metrics, growth patterns, and population research, our da
 \[\text{Per User Memory} = \text{300MB} = { \text{90 GB} \over \text{300} }\]
 
 <p>So we can approxiamte per-user memory requirement as 300MB.
-In order to understand how to reduce this number, we went into more serious memory management.</p>
+In order to understand how to reduce this number, we went into more serious memory measurement.</p>
 
 <p>We began analyzing the Java memory dump of our servers to identify potential areas for improvement. Initially, we reviewed the dumps manually, but due to the sheer number of servers, we developed a custom script to automate the process. Using this script, we were able to identify memory-wasting objects that were attributed to specific sessions. By pinpointing these issues, we can effectively eliminate the waste and optimize our system’s memory usage.</p>
 
