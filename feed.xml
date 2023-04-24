@@ -1,4 +1,96 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2023-04-10T13:11:23+03:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">a 1.5GB string</title><link href="https://blog.backslasher.net/1.5GB-string.html" rel="alternate" type="text/html" title="a 1.5GB string" /><published>2023-04-06T00:00:00+03:00</published><updated>2023-04-06T00:00:00+03:00</updated><id>https://blog.backslasher.net/1.5GB-string</id><content type="html" xml:base="https://blog.backslasher.net/1.5GB-string.html">&lt;p&gt;In my previous role, I supported a Java service that operated similarly to RDP or Citrix by enabling remote UI functionality. This service relied on sessions, which consisted of interconnected Java objects that were supposed to be cleaned up either when a user logged out or after a predetermined timeout period.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2023-04-24T21:10:48+03:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">Is this really an emergency?</title><link href="https://blog.backslasher.net/is-this-an-emergency.html" rel="alternate" type="text/html" title="Is this really an emergency?" /><published>2023-04-24T00:00:00+03:00</published><updated>2023-04-24T00:00:00+03:00</updated><id>https://blog.backslasher.net/is-this-an-emergency</id><content type="html" xml:base="https://blog.backslasher.net/is-this-an-emergency.html">&lt;p&gt;One of the teams I worked with would do an “engineering pain-point” survey twice a year.
+During one of those surveys, the main complaint was that on-calls had a hard time getting help from other teams or even engineers from their own team. I shadowed an on-call rotation for a couple of weeks and noticed this pattern:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;The on-call receives a notification of a problem, either through an alert, a graph indicating an issue, or a report from a colleague.&lt;/li&gt;
+  &lt;li&gt;The on-call needs to perform a remedial action. Usually:
+    &lt;ol&gt;
+      &lt;li&gt;Reverting a code change by someone else&lt;/li&gt;
+      &lt;li&gt;Disabling a feature flag owned by a different team&lt;/li&gt;
+      &lt;li&gt;Approaching someone from another team to get their opinion or ask them to revert something. Sometimes, this meant waking up that person.&lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;In each of these cases, because the on-call was interrupting someone else, a discussion often followed (civil or otherwise) about whether the problem was ‘a real’ emergency.
+I have personally experienced a situation where I had to wake up the network on-call engineer at the company because all of the servers in a region were running an healthy, but were inaccessible to users.
+The response I received (understandable given that it was 3 AM on a weekend) was:&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;“&lt;strong&gt;Is this really an emergency?&lt;/strong&gt; You have other regions.”
+I insisted, and eventually the network on-call found a load balancer that was accepting connections but blackholing the traffic.
+I could imagine that a less experienced version of myself stuggling to stand my ground, delaying the resolution of the problem by at least a day.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;At this point, we had no consensus, either inside or outside the team, on what consistutes an emergency.
+Edge cases were obvious - the whole service being down is bad, and an image being off by one pixel can wait for working hours.
+Intermediaries, such as “we can’t release to prod because our end-to-end testing is broken” or “We have increased latency because a CDN wasn’t retaining our assets”, were not obvious, and on every incident necessitated a lengthy “how bad is it” discussion.&lt;/p&gt;
+
+&lt;p&gt;This is exhausting, especially when this happens at 3 am and you’re not very proficient at handling crises.&lt;/p&gt;
+
+&lt;p&gt;I started working on this guideline for “what is an emergency?” and getting everyone onboard.&lt;/p&gt;
+
+&lt;h2 id=&quot;solution-process&quot;&gt;Solution process&lt;/h2&gt;
+&lt;p&gt;To establish a consensus on “what kind of problems can we have, and how bad are they?” I used a mostly-growing concentric circle approach:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;I started with myself, drawing on my past memories and reviewing historical documentation of emergencies we had faced.&lt;/li&gt;
+  &lt;li&gt;My SRE comrades formed the second tier. We likely had at least one of us involved in any emergency and had more context and passion about the prioritization problem.&lt;/li&gt;
+  &lt;li&gt;All of our team’s engineers came third. Involving them had multiple advantages:
+    &lt;ol&gt;
+      &lt;li&gt;It reflected the work being done and demonstrated that we care about the problem.&lt;/li&gt;
+      &lt;li&gt;It provided insight into emergencies that we might be missing, as we were sometimes blind to emergencies that we were not currently monitoring for.&lt;/li&gt;
+      &lt;li&gt;It identified interested parties who might be willing to work on this consensus or promote it within the team.&lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Non-tech stakeholders were then consulted. They were able to ratify what we consider to be emergencies, and what are the threshold (e.g. what amount user disconnects should be considered an emergency).&lt;/li&gt;
+  &lt;li&gt;The external teams that we depended on (networking, hardware) were next. Having them in the loop meant that once we agreed on what constituted an emergency, pushback on our requests for help could be ended by referring to the document.&lt;/li&gt;
+  &lt;li&gt;The external teams that depended on us (e.g. video, which owned their user experience end-to-end) formed the final tier. This worked like the networking team but in reverse. We were less likely to be asked to stop our release pipeline or be woken up at night for something that we did not agree was an emergency.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;I maintained a comprehensive record of the entire process in a Google document and ensured its accessibility to anyone interested in it. Additionally, I regularly revisited the document to ensure that:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;We accurately defined thresholds, such as “How many users can we lose before we need to wake up?”&lt;/li&gt;
+  &lt;li&gt;We kept the definitions simple and easy to understand, avoiding complex graphs, decision trees, or jargon. This made it possible for external teams or non-engineers to comprehend our criteria and confirm its validity.&lt;/li&gt;
+  &lt;li&gt;We established a real-time metric that notified us within a minute of detecting an issue, and if necessary, created one.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;After the document was approved by everybody, I worked on mirroring it in our monitoring infrastructure, making sure that we are woken up iff (if and only if) there is a matching emergency criteria in the document.&lt;/p&gt;
+
+&lt;h2 id=&quot;how-the-solution-looked&quot;&gt;How the solution looked&lt;/h2&gt;
+
+&lt;p&gt;The actual numbers and metrics aren’t that interesting as much as the overall structure, so this is what I’ll share&lt;/p&gt;
+
+&lt;h3 id=&quot;types-of-emergency&quot;&gt;Types of emergency&lt;/h3&gt;
+&lt;ol&gt;
+  &lt;li&gt;“Things are on fire”: This type of emergency requires immediate attention, and it’s acceptable to wake people up or reach out to them on weekends.&lt;/li&gt;
+  &lt;li&gt;“Problem”: This type of emergency is a high priority but should only be addressed during work hours. There’s no need to wake people up, but other work should be deprioritized to resolve the problem.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&quot;metrics&quot;&gt;Metrics&lt;/h3&gt;
+
+&lt;p&gt;We ensured that every metric was clearly defined and accompanied by a brief explanation of why it was important to measure. Our metric selection process involved three types of metrics:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;strong&gt;User experience proxies:&lt;/strong&gt; Metrics such as average response time, session crash rate, and number of engagements per second were easily measurable and indicative of a bad user experience. We reached a quick consensus on these metrics as they aligned with our team’s top priority of ensuring a positive user experience.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Pure infra:&lt;/strong&gt; Metrics such as CPU/memory utilization, ingress/egress rate, and process restarts were hotly debated as to whether they should trigger an alert. However, our experience showed that these metrics were often the leading indicators of an impending user experience issue. Thus, we agreed to wake up on extreme values of these metrics, even if user engagement was not immediately affected.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Delayed user experience metrics:&lt;/strong&gt; Metrics such as time spent, monthly active users, and bug reports were important to non-technical stakeholders but were not easily measurable in real time. Although it was possible to approximate these metrics with some automation, we ultimately decided to manually check them and keep them as slow metrics. We left the door open to revisiting this decision later.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&quot;conditions&quot;&gt;Conditions&lt;/h3&gt;
+&lt;p&gt;These conditions are straightforward and easy to understand, even during the middle of the night. They look like this:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;If the average response time goes over 1.5 seconds for 20 minutes, it’s an emergency class 2 (problem).&lt;/li&gt;
+  &lt;li&gt;If the average response time goes over 3 seconds for 10 minutes, it’s an emergency class 1 (things are on fire).&lt;/li&gt;
+  &lt;li&gt;If the memory utilization goes over 90% for 10 minutes, it’s an emergency class 2.&lt;/li&gt;
+  &lt;li&gt;If the time spent today drops 20% compared to the same day last week, it’s an emergency class 2.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;epilogue&quot;&gt;Epilogue&lt;/h2&gt;
+
+&lt;p&gt;The project’s didn’t end by publishing the document. We continuously refined the document and the corresponding monitoring infrastructure by adjusting thresholds and metrics.&lt;br /&gt;
+Additionally, I monitored the on-call team’s efforts to request assistance and was pleased to observe a significant reduction in issues. The document’s acceptance by the teams provided a shared point of reference that helped to minimize any potential friction.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="Ramblings" /><category term="ops" /><summary type="html">One of the teams I worked with would do an “engineering pain-point” survey twice a year. During one of those surveys, the main complaint was that on-calls had a hard time getting help from other teams or even engineers from their own team. I shadowed an on-call rotation for a couple of weeks and noticed this pattern:</summary></entry><entry><title type="html">a 1.5GB string</title><link href="https://blog.backslasher.net/1.5GB-string.html" rel="alternate" type="text/html" title="a 1.5GB string" /><published>2023-04-06T00:00:00+03:00</published><updated>2023-04-06T00:00:00+03:00</updated><id>https://blog.backslasher.net/1.5GB-string</id><content type="html" xml:base="https://blog.backslasher.net/1.5GB-string.html">&lt;p&gt;In my previous role, I supported a Java service that operated similarly to RDP or Citrix by enabling remote UI functionality. This service relied on sessions, which consisted of interconnected Java objects that were supposed to be cleaned up either when a user logged out or after a predetermined timeout period.&lt;/p&gt;
 
 &lt;p&gt;During the course of our capacity planning, we discovered a significant memory waste that I wanted to share with you.&lt;/p&gt;
 
@@ -546,21 +638,4 @@ I then can use my standard tooling to continue chewing on the file:&lt;/p&gt;
 | jq &lt;span class=&quot;s1&quot;&gt;'select(.type==&quot;049&quot; or .type==&quot;048&quot;) | .url'&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
 | &lt;span class=&quot;nb&quot;&gt;head&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-n20&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
 | xargs wget
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Nitzan</name></author><category term="Python" /><summary type="html">I’ve been working with some govermental data that is available as huge (&amp;gt;50G) CSV files. While there are workarounds to working with large files, I wanted to keep the stream processing I do with JSON files. However, this was not a JSON file. Stream processin with CSV is hard. jq is so much easier.</summary></entry><entry><title type="html">Productivity tips for a FAANG engineer</title><link href="https://blog.backslasher.net/productivity-tips-faang.html" rel="alternate" type="text/html" title="Productivity tips for a FAANG engineer" /><published>2022-10-14T00:00:00+03:00</published><updated>2022-10-14T00:00:00+03:00</updated><id>https://blog.backslasher.net/productivity-tips-faang</id><content type="html" xml:base="https://blog.backslasher.net/productivity-tips-faang.html">&lt;p&gt;Here are some things I learnt during my career in Facebook, and think could benefit someone new to the field.&lt;br /&gt;
-As an engineer in Facebook, you have a great degree of freedom for managing your time, and you’re mostly judged about the “impact” you provide.&lt;br /&gt;
-Ordered by decsending order of importance, these might help you make more of the time you spend working, thus increasing your “impact-to-effort” ratio.&lt;/p&gt;
-
-&lt;h2 id=&quot;small-diffs&quot;&gt;Small diffs&lt;/h2&gt;
-&lt;p&gt;Keep your diffs (or PRs) small. Makes them easy to read, easy to test.&lt;br /&gt;
-We support stacked diffs, so you can submit multiple commits that make one change, but have each commit reviewed separately.&lt;/p&gt;
-
-&lt;h2 id=&quot;be-async&quot;&gt;Be &lt;a href=&quot;https://en.wikipedia.org/wiki/Async/await&quot;&gt;Async&lt;/a&gt;&lt;/h2&gt;
-&lt;p&gt;Have a pool of things to do, so when you’re blocked on one because of some external element (e.g. waiting for someone on the other side of the world to review your work), you have something else to progress on.&lt;br /&gt;
-When you get blocked / finish that, you can check if your original task is suddenly unblocked.&lt;/p&gt;
-&lt;h2 id=&quot;yagni&quot;&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/You_aren%27t_gonna_need_it&quot;&gt;YAGNI&lt;/a&gt;&lt;/h2&gt;
-&lt;p&gt;Prefer investing in things that are impactful now.&lt;br /&gt;
-There is no use solving a problem &lt;em&gt;now&lt;/em&gt;, when that will only arrive in 1 year, since the requirements might shift.&lt;/p&gt;
-
-&lt;h2 id=&quot;timeout-and-escalate&quot;&gt;Timeout and escalate&lt;/h2&gt;
-&lt;p&gt;If you’re stuck on something for a large amount of time, escalate to an adult. Don’t sit for a week on a problem when it can be solved in 1 hour by a veteran.&lt;br /&gt;
-If you time out too quickly, they’ll let you know.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="Ramblings" /><summary type="html">Here are some things I learnt during my career in Facebook, and think could benefit someone new to the field. As an engineer in Facebook, you have a great degree of freedom for managing your time, and you’re mostly judged about the “impact” you provide. Ordered by decsending order of importance, these might help you make more of the time you spend working, thus increasing your “impact-to-effort” ratio.</summary></entry></feed>
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Nitzan</name></author><category term="Python" /><summary type="html">I’ve been working with some govermental data that is available as huge (&amp;gt;50G) CSV files. While there are workarounds to working with large files, I wanted to keep the stream processing I do with JSON files. However, this was not a JSON file. Stream processin with CSV is hard. jq is so much easier.</summary></entry></feed>

@@ -1006,4 +1006,10 @@ var store = [{
         "tags": ["Java","Ramblings"],
         "url": "/1.5GB-string.html",
         "teaser": null
+      },{
+        "title": "Is this really an emergency?",
+        "excerpt":"One of the teams I worked with would do an “engineering pain-point” survey twice a year. During one of those surveys, the main complaint was that on-calls had a hard time getting help from other teams or even engineers from their own team. I shadowed an on-call rotation for a...","categories": [],
+        "tags": ["Ramblings","ops"],
+        "url": "/is-this-an-emergency.html",
+        "teaser": null
       },]
