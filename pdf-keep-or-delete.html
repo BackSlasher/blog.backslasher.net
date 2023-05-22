@@ -297,8 +297,8 @@ Instead of spending 10 minutes manually sorting them, I invested 20 minutes in w
   <li>The viewer is then closed.<br />
 This step posed a challenge since GDK apps tend to fork, making it insufficient to grab the child PID using <code class="language-plaintext highlighter-rouge">$!</code>.
 To overcome this, I utilized <code class="language-plaintext highlighter-rouge">lsof</code> to identify all processes that had the file open and terminated them.</li>
-  <li>If the response is “N,” the file is sent to the trash.
-I opted for using gio trash since that’s the trash utility I have installed.</li>
+  <li>If the response is “N,” the file is sent to the trash.<br />
+I opted for using <code class="language-plaintext highlighter-rouge">gio trash</code> since that’s the trash utility I have installed.</li>
 </ol>
 
 <p>This script transformed a tedious chore into an enjoyable task.</p>
