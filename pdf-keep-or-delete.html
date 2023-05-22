@@ -9,8 +9,8 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Quick Docker Compose commands for ECS - BackSlasher</title>
-<meta name="description" content="I’m pretty new to Dockering in the wild, and I’m trying to use the new ECS integration to push all of my tiny app to the cloud.">
+<!-- begin _includes/seo.html --><title>Bash “Keep or Delete” script for PDFs - BackSlasher</title>
+<meta name="description" content="I recently discovered that I had over 100 PDFs in my “Downloads” directory and needed to determine which ones I wanted to keep. Instead of spending 10 minutes manually sorting them, I invested 20 minutes in writing a script to assist me.">
 
 
   <meta name="author" content="Nitzan">
@@ -22,26 +22,26 @@
 <meta property="og:type" content="article">
 <meta property="og:locale" content="en_US">
 <meta property="og:site_name" content="BackSlasher">
-<meta property="og:title" content="Quick Docker Compose commands for ECS">
-<meta property="og:url" content="https://blog.backslasher.net/docker-commands.html">
+<meta property="og:title" content="Bash “Keep or Delete” script for PDFs">
+<meta property="og:url" content="https://blog.backslasher.net/pdf-keep-or-delete.html">
 
 
-  <meta property="og:description" content="I’m pretty new to Dockering in the wild, and I’m trying to use the new ECS integration to push all of my tiny app to the cloud.">
-
-
-
-
-
-
-
-  <meta property="article:published_time" content="2023-01-06T00:00:00+02:00">
+  <meta property="og:description" content="I recently discovered that I had over 100 PDFs in my “Downloads” directory and needed to determine which ones I wanted to keep. Instead of spending 10 minutes manually sorting them, I invested 20 minutes in writing a script to assist me.">
 
 
 
 
 
 
-<link rel="canonical" href="https://blog.backslasher.net/docker-commands.html">
+
+  <meta property="article:published_time" content="2023-05-22T00:00:00+03:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/pdf-keep-or-delete.html">
 
 
 
@@ -251,15 +251,15 @@
 
 
   <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
-    <meta itemprop="headline" content="Quick Docker Compose commands for ECS">
-    <meta itemprop="description" content="I’m pretty new to Dockering in the wild, and I’m trying to use the new ECS integration to push all of my tiny app to the cloud.">
-    <meta itemprop="datePublished" content="2023-01-06T00:00:00+02:00">
+    <meta itemprop="headline" content="Bash “Keep or Delete” script for PDFs">
+    <meta itemprop="description" content="I recently discovered that I had over 100 PDFs in my “Downloads” directory and needed to determine which ones I wanted to keep.Instead of spending 10 minutes manually sorting them, I invested 20 minutes in writing a script to assist me.">
+    <meta itemprop="datePublished" content="2023-05-22T00:00:00+03:00">
     
 
     <div class="page__inner-wrap">
       
         <header>
-          <h1 id="page-title" class="page__title" itemprop="headline">Quick Docker Compose commands for ECS
+          <h1 id="page-title" class="page__title" itemprop="headline">Bash “Keep or Delete” script for PDFs
 </h1>
           
 
@@ -275,7 +275,7 @@
       <span class="page__meta-readtime">
         <i class="far fa-clock" aria-hidden="true"></i>
         
-          less than 1 minute read
+          1 minute read
         
       </span>
     
@@ -287,34 +287,59 @@
 
       <section class="page__content" itemprop="text">
         
-        <p>I’m pretty new to Dockering in the wild, and I’m trying to use the new ECS integration to push all of my tiny app to the cloud.</p>
+        <p>I recently discovered that I had over 100 PDFs in my “Downloads” directory and needed to determine which ones I wanted to keep.
+Instead of spending 10 minutes manually sorting them, I invested 20 minutes in writing a script to assist me.</p>
 
-<p>This is a list of tiny helpers I wrote.</p>
+<p>The script iterates through all the provided arguments and performs the following steps for each file:</p>
+<ol>
+  <li>It opens the file in preview mode using Evince (this can be easily customized).</li>
+  <li>A prompt appears asking whether to keep the file.</li>
+  <li>The viewer is then closed.<br />
+This step posed a challenge since GDK apps tend to fork, making it insufficient to grab the child PID using <code class="language-plaintext highlighter-rouge">$!</code>.
+To overcome this, I utilized <code class="language-plaintext highlighter-rouge">lsof</code> to identify all processes that had the file open and terminated them.</li>
+  <li>If the response is “N,” the file is sent to the trash.
+I opted for using gio trash since that’s the trash utility I have installed.</li>
+</ol>
 
-<h2 id="logout-of-all-registries">Logout of all registries</h2>
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> ~/.docker/config.json | jq <span class="s1">'.auths | keys[]'</span> <span class="nt">-r</span> | xargs <span class="nt">-rn1</span> docker <span class="nb">logout</span>
-</code></pre></div></div>
-<p>Basically get existing sessions from the confing file, then logout on each.</p>
+<p>This script transformed a tedious chore into an enjoyable task.</p>
 
-<h2 id="login-to-my-aws-ecrs">Login to my AWS ECRs</h2>
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">PROFILE</span><span class="o">=</span>best-profile
-<span class="nv">REGION</span><span class="o">=</span>us-east-1
+<h2 id="the-script">The Script</h2>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+<span class="nb">set</span> <span class="nt">-euo</span> pipefail
 
-<span class="nv">REPOSITORIES</span><span class="o">=</span><span class="s2">"</span><span class="si">$(</span>aws ecr <span class="nt">--region</span> <span class="s2">"</span><span class="nv">$REGION</span><span class="s2">"</span> <span class="nt">--profile</span> <span class="s2">"</span><span class="nv">$PROFILE</span><span class="s2">"</span> describe-repositories | jq <span class="s1">'.repositories[].repositoryUri'</span> <span class="nt">-r</span> | perl <span class="nt">-pe</span> <span class="s1">'s|(amazonaws.com)/.*|\1|'</span> | <span class="nb">sort</span> | <span class="nb">uniq</span><span class="si">)</span><span class="s2">"</span>
-<span class="nv">PASS</span><span class="o">=</span><span class="s2">"</span><span class="si">$(</span>aws ecr get-login-password <span class="nt">--region</span> <span class="s2">"</span><span class="nv">$REGION</span><span class="s2">"</span> <span class="nt">--profile</span> <span class="s2">"</span><span class="nv">$PROFILE</span><span class="s2">"</span><span class="si">)</span><span class="s2">"</span>
-<span class="nb">echo</span> <span class="s2">"</span><span class="nv">$REPOSITORIES</span><span class="s2">"</span> | xargs <span class="nt">-I</span> <span class="o">{}</span> docker login <span class="nt">--username</span> AWS <span class="nt">--password</span> <span class="s2">"</span><span class="nv">$PASS</span><span class="s2">"</span> <span class="o">{}</span>
-</code></pre></div></div>
+<span class="k">function </span>yes_or_no <span class="o">{</span>
+    <span class="k">while </span><span class="nb">true</span><span class="p">;</span> <span class="k">do
+        </span><span class="nb">read</span> <span class="nt">-p</span> <span class="s2">"</span><span class="nv">$*</span><span class="s2"> [y/n]: "</span> yn
+        <span class="k">case</span> <span class="nv">$yn</span> <span class="k">in</span>
+            <span class="o">[</span>Yy]<span class="k">*</span><span class="p">)</span> <span class="k">return </span>0  <span class="p">;;</span>
+            <span class="o">[</span>Nn]<span class="k">*</span><span class="p">)</span> <span class="nb">echo</span> <span class="s2">"Aborted"</span> <span class="p">;</span> <span class="k">return  </span>1 <span class="p">;;</span>
+        <span class="k">esac</span>
+    <span class="k">done</span>
+<span class="o">}</span>
 
-<p>Get all repositories, for each get the registry and login to each.</p>
+<span class="k">function </span>open <span class="o">{</span>
+  evince <span class="nt">-w</span> <span class="s2">"</span><span class="nv">$1</span><span class="s2">"</span> 2&gt;/dev/null
+<span class="o">}</span>
 
-<h2 id="deploy-everything">Deploy everything</h2>
-<p>Create context:</p>
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker-compose-cli context create ecs best-context
-</code></pre></div></div>
-<p>Deploy stuff:</p>
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker compose build
-docker compose push
-docker-compose-cli <span class="nt">--context</span> best-context compose up <span class="nt">--build</span>
+<span class="k">function </span>killviewer <span class="o">{</span>
+  lsof <span class="s2">"</span><span class="nv">$1</span><span class="s2">"</span> 2&gt;/dev/null | <span class="nb">awk</span> <span class="s1">'NR==2 {print $2}'</span> | xargs <span class="nt">-r</span> <span class="nb">kill</span>
+<span class="o">}</span>
+
+<span class="k">function </span>trash <span class="o">{</span>
+    gio trash <span class="s2">"</span><span class="nv">$1</span><span class="s2">"</span>
+<span class="o">}</span>
+
+<span class="k">for </span>INPUT <span class="k">in</span> <span class="s2">"</span><span class="nv">$@</span><span class="s2">"</span><span class="p">;</span> <span class="k">do
+  </span>open <span class="s2">"</span><span class="nv">$INPUT</span><span class="s2">"</span> &amp;
+  <span class="nv">KEEP</span><span class="o">=</span><span class="s2">"</span><span class="si">$(</span>yes_or_no <span class="s2">"Keep </span><span class="nv">$INPUT</span><span class="s2">?"</span><span class="p">;</span> <span class="nb">echo</span> <span class="nv">$?</span><span class="si">)</span><span class="s2">"</span><span class="p">;</span>
+  killviewer <span class="s2">"</span><span class="nv">$INPUT</span><span class="s2">"</span>
+  <span class="k">if</span>  <span class="o">[[</span> <span class="s2">"</span><span class="nv">$KEEP</span><span class="s2">"</span> <span class="o">==</span> 0 <span class="o">]]</span><span class="p">;</span><span class="k">then
+    </span><span class="nb">echo</span> <span class="s2">"keeping"</span>
+  <span class="k">else
+    </span><span class="nb">echo</span> <span class="s2">"deleting"</span>
+    trash <span class="s2">"</span><span class="nv">$INPUT</span><span class="s2">"</span>
+  <span class="k">fi
+done</span>
 </code></pre></div></div>
 
         
@@ -332,11 +357,11 @@ docker-compose-cli <span class="nt">--context</span> best-context compose up <sp
     <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
     <span itemprop="keywords">
     
-      <a href="/tags/#aws" class="page__taxonomy-item" rel="tag">AWS</a><span class="sep">, </span>
+      <a href="/tags/#bash" class="page__taxonomy-item" rel="tag">Bash</a><span class="sep">, </span>
     
-      <a href="/tags/#docker" class="page__taxonomy-item" rel="tag">Docker</a><span class="sep">, </span>
+      <a href="/tags/#linux" class="page__taxonomy-item" rel="tag">Linux</a><span class="sep">, </span>
     
-      <a href="/tags/#linux" class="page__taxonomy-item" rel="tag">Linux</a>
+      <a href="/tags/#pdf" class="page__taxonomy-item" rel="tag">PDF</a>
     
     </span>
   </p>
@@ -346,7 +371,7 @@ docker-compose-cli <span class="nt">--context</span> best-context compose up <sp
 
         
 
-  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2023-01-06T00:00:00+02:00">January 6, 2023</time></p>
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2023-05-22T00:00:00+03:00">May 22, 2023</time></p>
 
 
       </footer>
@@ -356,12 +381,11 @@ docker-compose-cli <span class="nt">--context</span> best-context compose up <sp
       
   <nav class="pagination">
     
-      <a href="/alarm-eth-rename.html" class="pagination--pager" title="Arch Linux ARM ethernet card rename (eth0 to end0)
+      <a href="/is-this-an-emergency.html" class="pagination--pager" title="Is this really an emergency?
 ">Previous</a>
     
     
-      <a href="/docker-compose-ecs-nginx-caddy.html" class="pagination--pager" title="Caddy is better than Nginx for Docker Compose on ECS
-">Next</a>
+      <a href="#" class="pagination--pager disabled">Next</a>
     
   </nav>
 
@@ -416,46 +440,6 @@ docker-compose-cli <span class="nt">--context</span> best-context compose up <sp
       </div>
       <h2 class="page__related-title">You May Also Enjoy</h2>
       <div class="grid__wrapper">
-        
-          
-
-
-
-<div class="grid__item">
-  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
-    
-    <h2 class="archive__item-title no_toc" itemprop="headline">
-      
-        <a href="/pdf-keep-or-delete.html" rel="permalink">Bash “Keep or Delete” script for PDFs
-</a>
-      
-    </h2>
-    
-
-  <p class="page__meta">
-    
-
-    
-
-    
-      
-      
-
-      <span class="page__meta-readtime">
-        <i class="far fa-clock" aria-hidden="true"></i>
-        
-          1 minute read
-        
-      </span>
-    
-  </p>
-
-
-    <p class="archive__item-excerpt" itemprop="description">I recently discovered that I had over 100 PDFs in my “Downloads” directory and needed to determine which ones I wanted to keep.
-Instead of spending 10 minute...</p>
-  </article>
-</div>
-
         
           
 
@@ -571,6 +555,46 @@ During one of those surveys, the main complaint was that on-calls ha...</p>
 
 
     <p class="archive__item-excerpt" itemprop="description">Upon receiving a notification from my NVidia Shield indicating that it was running low on storage space, I attempted to use the device’s interface to trouble...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/3-loc-760h.html" rel="permalink">Changed 3 lines of code, saved 760 server hours per month
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Act 1, where I write Java
+In the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus ...</p>
   </article>
 </div>
 

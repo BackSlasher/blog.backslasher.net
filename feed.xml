@@ -1,4 +1,57 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2023-04-24T21:10:48+03:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">Is this really an emergency?</title><link href="https://blog.backslasher.net/is-this-an-emergency.html" rel="alternate" type="text/html" title="Is this really an emergency?" /><published>2023-04-24T00:00:00+03:00</published><updated>2023-04-24T00:00:00+03:00</updated><id>https://blog.backslasher.net/is-this-an-emergency</id><content type="html" xml:base="https://blog.backslasher.net/is-this-an-emergency.html">&lt;p&gt;One of the teams I worked with would do an “engineering pain-point” survey twice a year.
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2023-05-22T14:59:22+03:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">Bash “Keep or Delete” script for PDFs</title><link href="https://blog.backslasher.net/pdf-keep-or-delete.html" rel="alternate" type="text/html" title="Bash “Keep or Delete” script for PDFs" /><published>2023-05-22T00:00:00+03:00</published><updated>2023-05-22T00:00:00+03:00</updated><id>https://blog.backslasher.net/pdf-keep-or-delete</id><content type="html" xml:base="https://blog.backslasher.net/pdf-keep-or-delete.html">&lt;p&gt;I recently discovered that I had over 100 PDFs in my “Downloads” directory and needed to determine which ones I wanted to keep.
+Instead of spending 10 minutes manually sorting them, I invested 20 minutes in writing a script to assist me.&lt;/p&gt;
+
+&lt;p&gt;The script iterates through all the provided arguments and performs the following steps for each file:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;It opens the file in preview mode using Evince (this can be easily customized).&lt;/li&gt;
+  &lt;li&gt;A prompt appears asking whether to keep the file.&lt;/li&gt;
+  &lt;li&gt;The viewer is then closed.&lt;br /&gt;
+This step posed a challenge since GDK apps tend to fork, making it insufficient to grab the child PID using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$!&lt;/code&gt;.
+To overcome this, I utilized &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;lsof&lt;/code&gt; to identify all processes that had the file open and terminated them.&lt;/li&gt;
+  &lt;li&gt;If the response is “N,” the file is sent to the trash.
+I opted for using gio trash since that’s the trash utility I have installed.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;This script transformed a tedious chore into an enjoyable task.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-script&quot;&gt;The Script&lt;/h2&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/bash&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-euo&lt;/span&gt; pipefail
+
+&lt;span class=&quot;k&quot;&gt;function &lt;/span&gt;yes_or_no &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;while &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do
+        &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;read&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$*&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; [y/n]: &quot;&lt;/span&gt; yn
+        &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$yn&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt;
+            &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;Yy]&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;return &lt;/span&gt;0  &lt;span class=&quot;p&quot;&gt;;;&lt;/span&gt;
+            &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;Nn]&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Aborted&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;return  &lt;/span&gt;1 &lt;span class=&quot;p&quot;&gt;;;&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;esac&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;done&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;function &lt;/span&gt;open &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  evince &lt;span class=&quot;nt&quot;&gt;-w&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$1&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; 2&amp;gt;/dev/null
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;function &lt;/span&gt;killviewer &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  lsof &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$1&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; 2&amp;gt;/dev/null | &lt;span class=&quot;nb&quot;&gt;awk&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'NR==2 {print $2}'&lt;/span&gt; | xargs &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;kill&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;function &lt;/span&gt;trash &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    gio trash &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$1&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;INPUT &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$@&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do
+  &lt;/span&gt;open &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$INPUT&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &amp;amp;
+  &lt;span class=&quot;nv&quot;&gt;KEEP&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;yes_or_no &lt;span class=&quot;s2&quot;&gt;&quot;Keep &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$INPUT&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;?&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$?&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  killviewer &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$INPUT&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;[[&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$KEEP&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; 0 &lt;span class=&quot;o&quot;&gt;]]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;then
+    &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;keeping&quot;&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;else
+    &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;deleting&quot;&lt;/span&gt;
+    trash &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$INPUT&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;fi
+done&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Nitzan</name></author><category term="Linux" /><category term="PDF" /><category term="Bash" /><summary type="html">I recently discovered that I had over 100 PDFs in my “Downloads” directory and needed to determine which ones I wanted to keep. Instead of spending 10 minutes manually sorting them, I invested 20 minutes in writing a script to assist me.</summary></entry><entry><title type="html">Is this really an emergency?</title><link href="https://blog.backslasher.net/is-this-an-emergency.html" rel="alternate" type="text/html" title="Is this really an emergency?" /><published>2023-04-24T00:00:00+03:00</published><updated>2023-04-24T00:00:00+03:00</updated><id>https://blog.backslasher.net/is-this-an-emergency</id><content type="html" xml:base="https://blog.backslasher.net/is-this-an-emergency.html">&lt;p&gt;One of the teams I worked with would do an “engineering pain-point” survey twice a year.
 During one of those surveys, the main complaint was that on-calls had a hard time getting help from other teams or even engineers from their own team. I shadowed an on-call rotation for a couple of weeks and noticed this pattern:&lt;/p&gt;
 
 &lt;ol&gt;
@@ -617,25 +670,4 @@ Note that if you restart things, you might lose your wifi config&lt;/li&gt;
 &lt;p&gt;It seems some update in the last weeks caused the first network interface to change from &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;eth0&lt;/code&gt; to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;end0&lt;/code&gt;.&lt;br /&gt;
 I’m not sure what’s the prereqs (maybe having Docker installed is involved), but I found &lt;a href=&quot;https://hup.hu/node/180161&quot;&gt;some&lt;/a&gt; &lt;a href=&quot;https://forums.opensuse.org/t/rpi4-eth0-changed-to-end0-lost-lan-access/153905&quot;&gt;complaints&lt;/a&gt; about it, so it’s not just me.&lt;/p&gt;
 
-&lt;p&gt;Creating a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;end0&lt;/code&gt; config in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/systemd/network&lt;/code&gt; solved my problem, and things are back to normal.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="Linux" /><summary type="html">Yesterday I installed updates and rebooted my Arch Linux rpi before going to sleep. First of all, this is a mistake because you shouldn’t install updates if you don’t have time to troubleshoot the fallout 🥲 Secondly, I discovered I no longer had network access to my rpi. Today, after troubleshooting, I figured out the problem.</summary></entry><entry><title type="html">CSV to JSON stream converter in Python</title><link href="https://blog.backslasher.net/python-csv-to-json.html" rel="alternate" type="text/html" title="CSV to JSON stream converter in Python" /><published>2022-12-22T00:00:00+02:00</published><updated>2022-12-22T00:00:00+02:00</updated><id>https://blog.backslasher.net/python-csv-to-json</id><content type="html" xml:base="https://blog.backslasher.net/python-csv-to-json.html">&lt;p&gt;I’ve been working with some govermental data that is available as huge (&amp;gt;50G) CSV files.&lt;br /&gt;
-While there are workarounds to working with large files, I wanted to keep the stream processing I do with JSON files.&lt;br /&gt;
-However, this was not a JSON file. Stream processin with CSV is hard. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jq&lt;/code&gt; is so much easier.&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;#!/bin/env python3
-&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;csv&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;sys&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;json&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;csv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;field_size_limit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sys&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;maxsize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
-&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;row&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;csv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DictReader&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sys&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stdin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;sys&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stdout&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;write&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;json&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dumps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;row&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;This tiny Python script reads STDIN line by line, converting each line from CSV to JSON and printing it out.&lt;br /&gt;
-I then can use my standard tooling to continue chewing on the file:&lt;/p&gt;
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;python /tmp/convert.py &amp;lt;/tmp/big_file.csv &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-| jq &lt;span class=&quot;s1&quot;&gt;'select(.type==&quot;049&quot; or .type==&quot;048&quot;) | .url'&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-| &lt;span class=&quot;nb&quot;&gt;head&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-n20&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-| xargs wget
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Nitzan</name></author><category term="Python" /><summary type="html">I’ve been working with some govermental data that is available as huge (&amp;gt;50G) CSV files. While there are workarounds to working with large files, I wanted to keep the stream processing I do with JSON files. However, this was not a JSON file. Stream processin with CSV is hard. jq is so much easier.</summary></entry></feed>
+&lt;p&gt;Creating a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;end0&lt;/code&gt; config in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/systemd/network&lt;/code&gt; solved my problem, and things are back to normal.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="Linux" /><summary type="html">Yesterday I installed updates and rebooted my Arch Linux rpi before going to sleep. First of all, this is a mistake because you shouldn’t install updates if you don’t have time to troubleshoot the fallout 🥲 Secondly, I discovered I no longer had network access to my rpi. Today, after troubleshooting, I figured out the problem.</summary></entry></feed>

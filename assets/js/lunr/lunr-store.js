@@ -1012,4 +1012,10 @@ var store = [{
         "tags": ["Ramblings","ops"],
         "url": "/is-this-an-emergency.html",
         "teaser": null
+      },{
+        "title": "Bash \"Keep or Delete\" script for PDFs",
+        "excerpt":"I recently discovered that I had over 100 PDFs in my “Downloads” directory and needed to determine which ones I wanted to keep. Instead of spending 10 minutes manually sorting them, I invested 20 minutes in writing a script to assist me. The script iterates through all the provided arguments...","categories": [],
+        "tags": ["Linux","PDF","Bash"],
+        "url": "/pdf-keep-or-delete.html",
+        "teaser": null
       },]
