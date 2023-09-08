@@ -1,4 +1,129 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2023-05-22T15:01:12+03:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">Bash “Keep or Delete” script for PDFs</title><link href="https://blog.backslasher.net/pdf-keep-or-delete.html" rel="alternate" type="text/html" title="Bash “Keep or Delete” script for PDFs" /><published>2023-05-22T00:00:00+03:00</published><updated>2023-05-22T00:00:00+03:00</updated><id>https://blog.backslasher.net/pdf-keep-or-delete</id><content type="html" xml:base="https://blog.backslasher.net/pdf-keep-or-delete.html">&lt;p&gt;I recently discovered that I had over 100 PDFs in my “Downloads” directory and needed to determine which ones I wanted to keep.
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2023-09-08T19:20:31+03:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">WSL for non-programming security analysts</title><link href="https://blog.backslasher.net/wsl-security-analysts.html" rel="alternate" type="text/html" title="WSL for non-programming security analysts" /><published>2023-09-08T00:00:00+03:00</published><updated>2023-09-08T00:00:00+03:00</updated><id>https://blog.backslasher.net/wsl-security-analysts</id><content type="html" xml:base="https://blog.backslasher.net/wsl-security-analysts.html">&lt;p&gt;I have a friend who isn’t a developer and believes that coding is beyond their grasp. They work as a security analyst and prefer using Windows as their operating system. I discovered that introducing them to the Windows Subsystem for Linux significantly enhanced their daily tasks. It allowed them to replace inefficient online tools or labor-intensive manual processes with simple command-line solutions.&lt;br /&gt;
+I’d like to share these tricks with a wider audience.&lt;/p&gt;
+
+&lt;h3 id=&quot;what-youll-need&quot;&gt;What you’ll need&lt;/h3&gt;
+&lt;ol&gt;
+  &lt;li&gt;&lt;a href=&quot;https://learn.microsoft.com/en-us/windows/wsl/install&quot;&gt;Install WSL&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://learn.microsoft.com/en-us/training/modules/wsl-introduction/&quot;&gt;WSL introduction&lt;/a&gt;, especially “Run basic WSL commands”&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://learn.microsoft.com/en-us/windows/wsl/filesystems&quot;&gt;Accessing Windows files on WSL, and vice versa&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&quot;how-this-works&quot;&gt;How this works&lt;/h3&gt;
+&lt;p&gt;Each use case serves as a demonstration of a specific tool. Given the ubiquity of these tools, you can easily find online resources to further maximize their utility.&lt;br /&gt;
+Lines initiated with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$&lt;/code&gt; denote user input, while lines without it represent the computer’s responses.&lt;/p&gt;
+
+&lt;p&gt;Furthermore, these tools can be combined to perform more intricate tasks. For instance, you can use them to filter a list of domains and only display those registered by BestCompany. If you’re interested in learning how to harness these capabilities, you can explore bash tutorials like &lt;a href=&quot;https://linuxconfig.org/bash-scripting-tutorial-for-beginners&quot;&gt;this one&lt;/a&gt;, among many others.&lt;/p&gt;
+
+&lt;h2 id=&quot;who-owns-this-domain-whois&quot;&gt;Who owns this domain (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;whois&lt;/code&gt;)&lt;/h2&gt;
+&lt;p&gt;Instead of using random sites, get the data yourself firsthand&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ whois google.com
+   Domain Name: GOOGLE.COM
+   Registry Domain ID: 2138514_DOMAIN_COM-VRSN
+   Registrar WHOIS Server: whois.markmonitor.com
+   Registrar URL: http://www.markmonitor.com
+   Updated Date: 2019-09-09T15:39:04Z
+   Creation Date: 1997-09-15T04:00:00Z
+   Registry Expiry Date: 2028-09-14T04:00:00Z
+   Registrar: MarkMonitor Inc.
+   Registrar IANA ID: 292
+   Registrar Abuse Contact Email: abusecomplaints@markmonitor.com
+   Registrar Abuse Contact Phone: +1.2086851750
+   Domain Status: clientDeleteProhibited https://icann.org/epp#clientDeleteProhibited
+   Domain Status: clientTransferProhibited https://icann.org/epp#clientTransferProhibited
+   Domain Status: clientUpdateProhibited https://icann.org/epp#clientUpdateProhibited
+   Domain Status: serverDeleteProhibited https://icann.org/epp#serverDeleteProhibited
+   Domain Status: serverTransferProhibited https://icann.org/epp#serverTransferProhibited
+   Domain Status: serverUpdateProhibited https://icann.org/epp#serverUpdateProhibited
+   Name Server: NS1.GOOGLE.COM
+   Name Server: NS2.GOOGLE.COM
+   Name Server: NS3.GOOGLE.COM
+   Name Server: NS4.GOOGLE.COM
+   DNSSEC: unsigned
+   URL of the ICANN Whois Inaccuracy Complaint Form: https://www.icann.org/wicf/
+&amp;gt;&amp;gt;&amp;gt; Last update of whois database: 2023-09-08T15:27:09Z &amp;lt;&amp;lt;&amp;lt;
+...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;search-a-directory-for-specific-text-grep&quot;&gt;Search a directory for specific text (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;grep&lt;/code&gt;)&lt;/h2&gt;
+&lt;p&gt;Need to search for the word “password” in a directory containing a trillion files?&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ grep -r password
+page2.txt:password
+page2.txt:passwords
+page2.txt:password's
+page1.txt:This is my password: 1232
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Just looking to list the files containing the word “password”?&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ grep -r -l password
+page2.txt
+page1.txt
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Case insensitive match (“Password” or “pAssWoRd”)?&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ grep -r -i password
+page3.txt:the SeCreT PassWord is potato
+page2.txt:password
+page2.txt:passwords
+page2.txt:password's
+page1.txt:This is my password: 1232
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;what-kind-of-file-is-this-file&quot;&gt;What kind of file is this (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;file&lt;/code&gt;)&lt;/h2&gt;
+&lt;p&gt;Looking to determine the file type of a file that lacks an extension?&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ file riddle 
+riddle: Zip archive data, at least v1.0 to extract, compression method=store
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Interested in determining the file types for all files in your directory, even those without extensions?&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ file *
+dunno:    SQLite 3.x database, last written using SQLite version 3041002, file counter 973, database pages 2280, 1st free page 744, free pages 638, cookie 0x272, schema 4, UTF-8, version-valid-for 973
+enigma:   SVG Scalable Vector Graphics image
+mystery:  JSON text data
+riddle:   Zip archive data, at least v1.0 to extract, compression method=store
+unclear:  OpenDocument Spreadsheet
+unknown:  Microsoft Word 2007+
+whoknows: Composite Document File V2 Document, Little Endian, Os: Windows, Version 1.0, Code page: -535, Revision Number: 1, Total Editing Time: 00:13, Create Time/Date: Fri Sep  8 16:32:55 2023, Last Saved Time/Date: Fri Sep  8 16:33:08 2023
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;dns-information-host-dig&quot;&gt;DNS information (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;host&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dig&lt;/code&gt;)&lt;/h2&gt;
+&lt;p&gt;Need a brief summary of where a specific domain is currently pointing?&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ host gmail.com
+gmail.com has address 172.217.18.5
+gmail.com has IPv6 address 2a00:1450:4001:812::2005
+gmail.com mail is handled by 30 alt3.gmail-smtp-in.l.google.com.
+gmail.com mail is handled by 10 alt1.gmail-smtp-in.l.google.com.
+gmail.com mail is handled by 5 gmail-smtp-in.l.google.com.
+gmail.com mail is handled by 40 alt4.gmail-smtp-in.l.google.com.
+gmail.com mail is handled by 20 alt2.gmail-smtp-in.l.google.com.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;And translate an IP to a name, if available&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ host 172.217.18.5
+5.18.217.172.in-addr.arpa domain name pointer fra24s22-in-f5.1e100.net.
+5.18.217.172.in-addr.arpa domain name pointer fra15s28-in-f5.1e100.net.
+5.18.217.172.in-addr.arpa domain name pointer fra02s19-in-f5.1e100.net.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;For detailed answers to specific questions, you can utilize the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dig&lt;/code&gt; command.&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ dig gmail.com
+
+; &amp;lt;&amp;lt;&amp;gt;&amp;gt; DiG 9.18.18 &amp;lt;&amp;lt;&amp;gt;&amp;gt; gmail.com
+;; global options: +cmd
+;; Got answer:
+;; -&amp;gt;&amp;gt;HEADER&amp;lt;&amp;lt;- opcode: QUERY, status: NOERROR, id: 17879
+;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 65494
+;; QUESTION SECTION:
+;gmail.com.			IN	A
+
+;; ANSWER SECTION:
+gmail.com.		234	IN	A	172.217.18.5
+
+;; Query time: 3 msec
+;; SERVER: 127.0.0.53#53(127.0.0.53) (UDP)
+;; WHEN: Fri Sep 08 18:40:44 IDT 2023
+;; MSG SIZE  rcvd: 54
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;there-is-more&quot;&gt;There is more&lt;/h2&gt;
+&lt;p&gt;This list is not exhaustive. Linux, which relies heavily on command-line interfaces, offers a multitude of powerful tools that are readily installable with ample documentation available. You can tap into the knowledge of Linux-savvy friends or conduct online searches to discover numerous options that can significantly simplify your life.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="Linux" /><category term="Windows" /><category term="WSL" /><category term="Bash" /><summary type="html">I have a friend who isn’t a developer and believes that coding is beyond their grasp. They work as a security analyst and prefer using Windows as their operating system. I discovered that introducing them to the Windows Subsystem for Linux significantly enhanced their daily tasks. It allowed them to replace inefficient online tools or labor-intensive manual processes with simple command-line solutions. I’d like to share these tricks with a wider audience.</summary></entry><entry><title type="html">Bash “Keep or Delete” script for PDFs</title><link href="https://blog.backslasher.net/pdf-keep-or-delete.html" rel="alternate" type="text/html" title="Bash “Keep or Delete” script for PDFs" /><published>2023-05-22T00:00:00+03:00</published><updated>2023-05-22T00:00:00+03:00</updated><id>https://blog.backslasher.net/pdf-keep-or-delete</id><content type="html" xml:base="https://blog.backslasher.net/pdf-keep-or-delete.html">&lt;p&gt;I recently discovered that I had over 100 PDFs in my “Downloads” directory and needed to determine which ones I wanted to keep.
 Instead of spending 10 minutes manually sorting them, I invested 20 minutes in writing a script to assist me.&lt;/p&gt;
 
 &lt;p&gt;The script iterates through all the provided arguments and performs the following steps for each file:&lt;/p&gt;
@@ -640,34 +765,4 @@ My config file is as basic as can be:&lt;/p&gt;
 &lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;docker compose build
 docker compose push
 docker-compose-cli &lt;span class=&quot;nt&quot;&gt;--context&lt;/span&gt; best-context compose up &lt;span class=&quot;nt&quot;&gt;--build&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Nitzan</name></author><category term="Linux" /><category term="Docker" /><category term="AWS" /><summary type="html">I’m pretty new to Dockering in the wild, and I’m trying to use the new ECS integration to push all of my tiny app to the cloud.</summary></entry><entry><title type="html">Arch Linux ARM ethernet card rename (eth0 to end0)</title><link href="https://blog.backslasher.net/alarm-eth-rename.html" rel="alternate" type="text/html" title="Arch Linux ARM ethernet card rename (eth0 to end0)" /><published>2022-12-25T00:00:00+02:00</published><updated>2022-12-25T00:00:00+02:00</updated><id>https://blog.backslasher.net/alarm-eth-rename</id><content type="html" xml:base="https://blog.backslasher.net/alarm-eth-rename.html">&lt;p&gt;Yesterday I installed updates and rebooted my Arch Linux rpi before going to sleep.&lt;br /&gt;
-First of all, this is a mistake because you shouldn’t install updates if you don’t have time to troubleshoot the fallout 🥲&lt;br /&gt;
-Secondly, I discovered I no longer had network access to my rpi.&lt;br /&gt;
-Today, after troubleshooting, I figured out the problem.&lt;/p&gt;
-
-&lt;h2 id=&quot;recovering-from-no-connectivity-checklist&quot;&gt;Recovering from no-connectivity checklist&lt;/h2&gt;
-&lt;ol&gt;
-  &lt;li&gt;Ensure you have a user-password login&lt;br /&gt;
-I didn’t, because I only connected to this machine with ssh key auth.
-    &lt;ol&gt;
-      &lt;li&gt;Grab the root storage, mount on another laptop&lt;/li&gt;
-      &lt;li&gt;Grant yourself a password by editing &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/shadow&lt;/code&gt; manually.&lt;/li&gt;
-      &lt;li&gt;Reassemble things back&lt;/li&gt;
-    &lt;/ol&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Connect display / keyboard, boot and login&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ip addr show&lt;/code&gt; to see what’s wrong with the network interface&lt;/li&gt;
-  &lt;li&gt;Manually connect wifi, if the interface is still there&lt;br /&gt;
-&lt;a href=&quot;https://wiki.archlinux.org/title/Network_configuration/Wireless&quot;&gt;Arch Wiki&lt;/a&gt;&lt;br /&gt;
-I created a temporary no encryption network to go around having to deal with WPA supplicant.&lt;br /&gt;
-You might want to create &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/systemd/network/wlan0.network&lt;/code&gt; based on &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/systemd/network/eth0.network&lt;/code&gt; so you’ll have DHCP.&lt;/li&gt;
-  &lt;li&gt;Continue troubleshooting via SSH.&lt;br /&gt;
-Note that if you restart things, you might lose your wifi config&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;After surviving a reboot&lt;/strong&gt;, you can disconnect things, delete your password etc.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h2 id=&quot;the-real-problem&quot;&gt;The real problem&lt;/h2&gt;
-&lt;p&gt;It seems some update in the last weeks caused the first network interface to change from &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;eth0&lt;/code&gt; to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;end0&lt;/code&gt;.&lt;br /&gt;
-I’m not sure what’s the prereqs (maybe having Docker installed is involved), but I found &lt;a href=&quot;https://hup.hu/node/180161&quot;&gt;some&lt;/a&gt; &lt;a href=&quot;https://forums.opensuse.org/t/rpi4-eth0-changed-to-end0-lost-lan-access/153905&quot;&gt;complaints&lt;/a&gt; about it, so it’s not just me.&lt;/p&gt;
-
-&lt;p&gt;Creating a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;end0&lt;/code&gt; config in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/systemd/network&lt;/code&gt; solved my problem, and things are back to normal.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="Linux" /><summary type="html">Yesterday I installed updates and rebooted my Arch Linux rpi before going to sleep. First of all, this is a mistake because you shouldn’t install updates if you don’t have time to troubleshoot the fallout 🥲 Secondly, I discovered I no longer had network access to my rpi. Today, after troubleshooting, I figured out the problem.</summary></entry></feed>
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Nitzan</name></author><category term="Linux" /><category term="Docker" /><category term="AWS" /><summary type="html">I’m pretty new to Dockering in the wild, and I’m trying to use the new ECS integration to push all of my tiny app to the cloud.</summary></entry></feed>

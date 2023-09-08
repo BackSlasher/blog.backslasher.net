@@ -1018,4 +1018,10 @@ var store = [{
         "tags": ["Linux","PDF","Bash"],
         "url": "/pdf-keep-or-delete.html",
         "teaser": null
+      },{
+        "title": "WSL for non-programming security analysts",
+        "excerpt":"I have a friend who isn’t a developer and believes that coding is beyond their grasp. They work as a security analyst and prefer using Windows as their operating system. I discovered that introducing them to the Windows Subsystem for Linux significantly enhanced their daily tasks. It allowed them to...","categories": [],
+        "tags": ["Linux","Windows","WSL","Bash"],
+        "url": "/wsl-security-analysts.html",
+        "teaser": null
       },]
