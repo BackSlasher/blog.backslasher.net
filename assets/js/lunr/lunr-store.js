@@ -1024,4 +1024,10 @@ var store = [{
         "tags": ["Linux","Windows","WSL","Bash"],
         "url": "/wsl-security-analysts.html",
         "teaser": null
+      },{
+        "title": "`javax.mail:mail` 1.4.7 is broken, and how to workaround",
+        "excerpt":"javax.mail and I One of the current tasks on my agenda involves the modernization of a project that is currently built on Java 8. Given that this project is actively in use and under continuous development, a complete freeze of the codebase for a one-time migration isn’t a feasible option....","categories": [],
+        "tags": ["Java"],
+        "url": "/javax-mail-1.4.7.html",
+        "teaser": null
       },]

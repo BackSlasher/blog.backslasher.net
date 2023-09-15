@@ -1,4 +1,92 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2023-09-08T19:20:31+03:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">WSL for non-programming security analysts</title><link href="https://blog.backslasher.net/wsl-security-analysts.html" rel="alternate" type="text/html" title="WSL for non-programming security analysts" /><published>2023-09-08T00:00:00+03:00</published><updated>2023-09-08T00:00:00+03:00</updated><id>https://blog.backslasher.net/wsl-security-analysts</id><content type="html" xml:base="https://blog.backslasher.net/wsl-security-analysts.html">&lt;p&gt;I have a friend who isn’t a developer and believes that coding is beyond their grasp. They work as a security analyst and prefer using Windows as their operating system. I discovered that introducing them to the Windows Subsystem for Linux significantly enhanced their daily tasks. It allowed them to replace inefficient online tools or labor-intensive manual processes with simple command-line solutions.&lt;br /&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2023-09-15T16:13:09+03:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">`javax.mail:mail` 1.4.7 is broken, and how to workaround</title><link href="https://blog.backslasher.net/javax-mail-1.4.7.html" rel="alternate" type="text/html" title="`javax.mail:mail` 1.4.7 is broken, and how to workaround" /><published>2023-09-15T00:00:00+03:00</published><updated>2023-09-15T00:00:00+03:00</updated><id>https://blog.backslasher.net/javax-mail-1.4.7</id><content type="html" xml:base="https://blog.backslasher.net/javax-mail-1.4.7.html">&lt;h1 id=&quot;javaxmail-and-i&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;javax.mail&lt;/code&gt; and I&lt;/h1&gt;
+&lt;p&gt;One of the current tasks on my agenda involves the modernization of a project that is currently built on Java 8.
+Given that this project is actively in use and under continuous development, a complete freeze of the codebase for a one-time migration isn’t a feasible option.
+The reason being, such an approach would necessitate extensive library upgrades and rewrites to the code using them.
+Instead, I’ve devised a more pragmatic plan:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Start with building and running on Java 8.&lt;/li&gt;
+  &lt;li&gt;Modify code and imports to still build and run on Java 8, but also be able to build and run on Java 11.&lt;/li&gt;
+  &lt;li&gt;Switch the run and build environment to Java 11.&lt;/li&gt;
+  &lt;li&gt;Modify code and imports to build and run on both Java 11 and Java 17.&lt;/li&gt;
+  &lt;li&gt;Switch the run and build environment to Java 17.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;I’ve decided to insert an intermediate step involving Java 11. This choice stems from the substantial gap between Java 8 and 17, making it unlikely for me to locate compatible versions of imports (e.g., Spring) that cater to both Java versions.&lt;/p&gt;
+
+&lt;p&gt;When attempting to build our code using Java 11, I promptly identified the absence of certain classes. These omissions were attributed to components of Java categorized as “Enterprise,” which were present in Java 8, deprecated in Java 9, and entirely eliminated in Java 11.&lt;/p&gt;
+
+&lt;p&gt;To ensure the availability of these classes, I made the following addition to our &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pom.xml&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;lt;dependency&amp;gt;
+    &amp;lt;groupId&amp;gt;javax.mail&amp;lt;/groupId&amp;gt;
+    &amp;lt;artifactId&amp;gt;mail&amp;lt;/artifactId&amp;gt;
+    &amp;lt;version&amp;gt;1.4.7&amp;lt;/version&amp;gt;
+&amp;lt;/dependency&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Where version 1.4.7 represented the latest stable release &lt;a href=&quot;https://mvnrepository.com/artifact/javax.mail/mail&quot;&gt;mvnrepository&lt;/a&gt;) of that library.
+This adjustment allowed my code to compile successfully, as it encompassed all the classes and methods essential for its operation.&lt;/p&gt;
+
+&lt;h1 id=&quot;the-runtime-problem&quot;&gt;The runtime problem&lt;/h1&gt;
+&lt;p&gt;The code compiled successfully; however, I encountered a peculiar error while testing our email sending functionality:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;java.lang.NoSuchMethodError: com.sun.mail.util.LineOutputStream.&amp;lt;init&amp;gt;(Ljava/io/OutputStream;Z)V
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;I searched through our codebase and found no references to ‘LineOutputStream,’ so it doesn’t appear to be a misuse of any external library on my part. It was time to delve into the stack trace:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;...
+Caused by: java.lang.NoSuchMethodError: com.sun.mail.util.LineOutputStream.&amp;lt;init&amp;gt;(Ljava/io/OutputStream;Z)V
+	at javax.mail.internet.MimeBodyPart.writeTo(MimeBodyPart.java:1631)
+	at javax.mail.internet.MimeMessage.writeTo(MimeMessage.java:1889)
+	at javax.mail.internet.MimeMessage.writeTo(MimeMessage.java:1863)
+    at net.backslasher.EmailSender.send(EmailSender.java:69)
+...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;So somehow the library code is calling a nonexistent constructor. Weird!
+Digging through the decompiled code with IDEA, I found the following call:&lt;/p&gt;
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// MimeBodyPart.class&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;writeTo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;MimePart&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;part&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;OutputStream&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;os&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ignoreList&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;throws&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;IOException&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;MessagingException&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nc&quot;&gt;LineOutputStream&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;los&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;os&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;instanceof&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;LineOutputStream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;los&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;LineOutputStream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;os&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;los&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;LineOutputStream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;os&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;allowutf8&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;While the actual constructor looks like this:&lt;/p&gt;
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// LineOutputStream.class&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;LineOutputStream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;OutputStream&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;super&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;By reading the &lt;a href=&quot;https://docs.oracle.com/javase/1.5.0/docs/guide/jni/spec/types.html#wp276&quot;&gt;Java type signature list&lt;/a&gt;, we can see that this is what the exception is complaining about - it’s looking for a constructor with 2 arguments - OutputStream and a boolean (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;lt;init&amp;gt;(Ljava/io/OutputStream;Z)V&lt;/code&gt;), but finds no such thing.&lt;/p&gt;
+
+&lt;p&gt;I had some questions.&lt;/p&gt;
+
+&lt;h2 id=&quot;how-did-this-happen&quot;&gt;How did this happen?&lt;/h2&gt;
+&lt;p&gt;From inspecting the code of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;javax.mail:mail:1.4.7&lt;/code&gt; thoroughly, I can only conclude that the package itself has an internal contradiction.
+It provides a class with a specific constructor, but calls a different one.
+I was baffled as to how this library was able to be produced.
+This served as a reminder that it is possible to manually package Class files from different compilation runs in the same JAR, and their incompatibility only becomes apparent when attempting to use them together – which is precisely what I encountered.&lt;/p&gt;
+
+&lt;h2 id=&quot;how-did-i-manage-to-compile&quot;&gt;How did I manage to compile?&lt;/h2&gt;
+&lt;p&gt;Since I downloaded precompiled code (as in a collection of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Class&lt;/code&gt; files and not &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;java&lt;/code&gt; files), my compiler didn’t run on that code and missed the incompatibility.
+If we draw a parallel to C code compilation, we would typically have a final “linkage” step that scans all cross-file references and fails if any of them are incompatible. However, in this context, such a linkage step does not apply.&lt;/p&gt;
+
+&lt;h2 id=&quot;what-should-i-do-now&quot;&gt;what should I do now?&lt;/h2&gt;
+&lt;p&gt;One might say the “right” thing would be upgrading to the library that replaces &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;javax.mail:mail&lt;/code&gt; (which is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;javax.mail:javax.mail-api&lt;/code&gt;, which was itself replaced by &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jakarta.mail:jakarta.mail-api&lt;/code&gt;), as it brings us the most up-to-date (and hopefully problem free) code.
+However, after 15 minutes of trying this I saw that there’s too much of our code we’d need to change as a resutlt.
+Instead, I went for the minimal effective change, and tried different version of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;java.mail:mail&lt;/code&gt; until I found one that didn’t have this internal contradiction - &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;1.4.4&lt;/code&gt;.
+I changed our &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pom.xml&lt;/code&gt; to look like:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;lt;dependency&amp;gt;
+    &amp;lt;groupId&amp;gt;javax.mail&amp;lt;/groupId&amp;gt;
+    &amp;lt;artifactId&amp;gt;mail&amp;lt;/artifactId&amp;gt;
+    &amp;lt;version&amp;gt;1.4.4&amp;lt;/version&amp;gt;
+&amp;lt;/dependency&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;And things went back to normal&lt;/p&gt;
+
+&lt;h1 id=&quot;next-steps&quot;&gt;Next steps&lt;/h1&gt;
+&lt;p&gt;Once we stabilize on Java 11, I’m planning to replace this package with the “correct” one (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jakarta.mail:jakarta.mail-api&lt;/code&gt;) Until we get there, this quick fix will do.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="Java" /><summary type="html">javax.mail and I One of the current tasks on my agenda involves the modernization of a project that is currently built on Java 8. Given that this project is actively in use and under continuous development, a complete freeze of the codebase for a one-time migration isn’t a feasible option. The reason being, such an approach would necessitate extensive library upgrades and rewrites to the code using them. Instead, I’ve devised a more pragmatic plan:</summary></entry><entry><title type="html">WSL for non-programming security analysts</title><link href="https://blog.backslasher.net/wsl-security-analysts.html" rel="alternate" type="text/html" title="WSL for non-programming security analysts" /><published>2023-09-08T00:00:00+03:00</published><updated>2023-09-08T00:00:00+03:00</updated><id>https://blog.backslasher.net/wsl-security-analysts</id><content type="html" xml:base="https://blog.backslasher.net/wsl-security-analysts.html">&lt;p&gt;I have a friend who isn’t a developer and believes that coding is beyond their grasp. They work as a security analyst and prefer using Windows as their operating system. I discovered that introducing them to the Windows Subsystem for Linux significantly enhanced their daily tasks. It allowed them to replace inefficient online tools or labor-intensive manual processes with simple command-line solutions.&lt;br /&gt;
 I’d like to share these tricks with a wider audience.&lt;/p&gt;
 
 &lt;h3 id=&quot;what-youll-need&quot;&gt;What you’ll need&lt;/h3&gt;
@@ -737,32 +825,4 @@ My config file is as basic as can be:&lt;/p&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 &lt;p&gt;You can see the directives are pretty similar (I had to compromise on &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/debug&lt;/code&gt; and replace it with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/debug/&lt;/code&gt;), but it works. No trickery to get it to refresh the records, no variables, no upselling to the Pro version that forces you to talk to a human.&lt;/p&gt;
 
-&lt;p&gt;I’m very happy with Caddy, and planning to further use it in the future.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="Linux" /><category term="Docker" /><category term="AWS" /><summary type="html">I recently managed to use Docker Compose to launch a small app in Aamazon’s Elastic Container Services (ECS). Overall, the result is pretty incredible. I’m able to run all of my containers in AWS, with volumes and netowrks and all, with only a docker-compose.yaml file needed. However, my biggest issue was with getting nginx to work, and I ended up ditching it to Caddy.</summary></entry><entry><title type="html">Quick Docker Compose commands for ECS</title><link href="https://blog.backslasher.net/docker-commands.html" rel="alternate" type="text/html" title="Quick Docker Compose commands for ECS" /><published>2023-01-06T00:00:00+02:00</published><updated>2023-01-06T00:00:00+02:00</updated><id>https://blog.backslasher.net/docker-commands</id><content type="html" xml:base="https://blog.backslasher.net/docker-commands.html">&lt;p&gt;I’m pretty new to Dockering in the wild, and I’m trying to use the new ECS integration to push all of my tiny app to the cloud.&lt;/p&gt;
-
-&lt;p&gt;This is a list of tiny helpers I wrote.&lt;/p&gt;
-
-&lt;h2 id=&quot;logout-of-all-registries&quot;&gt;Logout of all registries&lt;/h2&gt;
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; ~/.docker/config.json | jq &lt;span class=&quot;s1&quot;&gt;'.auths | keys[]'&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; | xargs &lt;span class=&quot;nt&quot;&gt;-rn1&lt;/span&gt; docker &lt;span class=&quot;nb&quot;&gt;logout&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Basically get existing sessions from the confing file, then logout on each.&lt;/p&gt;
-
-&lt;h2 id=&quot;login-to-my-aws-ecrs&quot;&gt;Login to my AWS ECRs&lt;/h2&gt;
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;PROFILE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;best-profile
-&lt;span class=&quot;nv&quot;&gt;REGION&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;us-east-1
-
-&lt;span class=&quot;nv&quot;&gt;REPOSITORIES&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;aws ecr &lt;span class=&quot;nt&quot;&gt;--region&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$REGION&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--profile&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$PROFILE&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; describe-repositories | jq &lt;span class=&quot;s1&quot;&gt;'.repositories[].repositoryUri'&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; | perl &lt;span class=&quot;nt&quot;&gt;-pe&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'s|(amazonaws.com)/.*|\1|'&lt;/span&gt; | &lt;span class=&quot;nb&quot;&gt;sort&lt;/span&gt; | &lt;span class=&quot;nb&quot;&gt;uniq&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;PASS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;aws ecr get-login-password &lt;span class=&quot;nt&quot;&gt;--region&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$REGION&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--profile&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$PROFILE&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
-&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$REPOSITORIES&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; | xargs &lt;span class=&quot;nt&quot;&gt;-I&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{}&lt;/span&gt; docker login &lt;span class=&quot;nt&quot;&gt;--username&lt;/span&gt; AWS &lt;span class=&quot;nt&quot;&gt;--password&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$PASS&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Get all repositories, for each get the registry and login to each.&lt;/p&gt;
-
-&lt;h2 id=&quot;deploy-everything&quot;&gt;Deploy everything&lt;/h2&gt;
-&lt;p&gt;Create context:&lt;/p&gt;
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;docker-compose-cli context create ecs best-context
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Deploy stuff:&lt;/p&gt;
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;docker compose build
-docker compose push
-docker-compose-cli &lt;span class=&quot;nt&quot;&gt;--context&lt;/span&gt; best-context compose up &lt;span class=&quot;nt&quot;&gt;--build&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Nitzan</name></author><category term="Linux" /><category term="Docker" /><category term="AWS" /><summary type="html">I’m pretty new to Dockering in the wild, and I’m trying to use the new ECS integration to push all of my tiny app to the cloud.</summary></entry></feed>
+&lt;p&gt;I’m very happy with Caddy, and planning to further use it in the future.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="Linux" /><category term="Docker" /><category term="AWS" /><summary type="html">I recently managed to use Docker Compose to launch a small app in Aamazon’s Elastic Container Services (ECS). Overall, the result is pretty incredible. I’m able to run all of my containers in AWS, with volumes and netowrks and all, with only a docker-compose.yaml file needed. However, my biggest issue was with getting nginx to work, and I ended up ditching it to Caddy.</summary></entry></feed>

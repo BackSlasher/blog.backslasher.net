@@ -1,0 +1,714 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>javax.mail:mail 1.4.7 is broken, and how to workaround - BackSlasher</title>
+<meta name="description" content="javax.mail and I One of the current tasks on my agenda involves the modernization of a project that is currently built on Java 8. Given that this project is actively in use and under continuous development, a complete freeze of the codebase for a one-time migration isn’t a feasible option. The reason being, such an approach would necessitate extensive library upgrades and rewrites to the code using them. Instead, I’ve devised a more pragmatic plan:">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="javax.mail:mail 1.4.7 is broken, and how to workaround">
+<meta property="og:url" content="https://blog.backslasher.net/javax-mail-1.4.7.html">
+
+
+  <meta property="og:description" content="javax.mail and I One of the current tasks on my agenda involves the modernization of a project that is currently built on Java 8. Given that this project is actively in use and under continuous development, a complete freeze of the codebase for a one-time migration isn’t a feasible option. The reason being, such an approach would necessitate extensive library upgrades and rewrites to the code using them. Instead, I’ve devised a more pragmatic plan:">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2023-09-15T00:00:00+03:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/javax-mail-1.4.7.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="javax.mail:mail 1.4.7 is broken, and how to workaround">
+    <meta itemprop="description" content="javax.mail and IOne of the current tasks on my agenda involves the modernization of a project that is currently built on Java 8.Given that this project is actively in use and under continuous development, a complete freeze of the codebase for a one-time migration isn’t a feasible option.The reason being, such an approach would necessitate extensive library upgrades and rewrites to the code using them.Instead, I’ve devised a more pragmatic plan:">
+    <meta itemprop="datePublished" content="2023-09-15T00:00:00+03:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline"><code class="language-plaintext highlighter-rouge">javax.mail:mail</code> 1.4.7 is broken, and how to workaround
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <h1 id="javaxmail-and-i"><code class="language-plaintext highlighter-rouge">javax.mail</code> and I</h1>
+<p>One of the current tasks on my agenda involves the modernization of a project that is currently built on Java 8.
+Given that this project is actively in use and under continuous development, a complete freeze of the codebase for a one-time migration isn’t a feasible option.
+The reason being, such an approach would necessitate extensive library upgrades and rewrites to the code using them.
+Instead, I’ve devised a more pragmatic plan:</p>
+
+<ol>
+  <li>Start with building and running on Java 8.</li>
+  <li>Modify code and imports to still build and run on Java 8, but also be able to build and run on Java 11.</li>
+  <li>Switch the run and build environment to Java 11.</li>
+  <li>Modify code and imports to build and run on both Java 11 and Java 17.</li>
+  <li>Switch the run and build environment to Java 17.</li>
+</ol>
+
+<p>I’ve decided to insert an intermediate step involving Java 11. This choice stems from the substantial gap between Java 8 and 17, making it unlikely for me to locate compatible versions of imports (e.g., Spring) that cater to both Java versions.</p>
+
+<p>When attempting to build our code using Java 11, I promptly identified the absence of certain classes. These omissions were attributed to components of Java categorized as “Enterprise,” which were present in Java 8, deprecated in Java 9, and entirely eliminated in Java 11.</p>
+
+<p>To ensure the availability of these classes, I made the following addition to our <code class="language-plaintext highlighter-rouge">pom.xml</code>:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;dependency&gt;
+    &lt;groupId&gt;javax.mail&lt;/groupId&gt;
+    &lt;artifactId&gt;mail&lt;/artifactId&gt;
+    &lt;version&gt;1.4.7&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre></div></div>
+<p>Where version 1.4.7 represented the latest stable release <a href="https://mvnrepository.com/artifact/javax.mail/mail">mvnrepository</a>) of that library.
+This adjustment allowed my code to compile successfully, as it encompassed all the classes and methods essential for its operation.</p>
+
+<h1 id="the-runtime-problem">The runtime problem</h1>
+<p>The code compiled successfully; however, I encountered a peculiar error while testing our email sending functionality:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>java.lang.NoSuchMethodError: com.sun.mail.util.LineOutputStream.&lt;init&gt;(Ljava/io/OutputStream;Z)V
+</code></pre></div></div>
+<p>I searched through our codebase and found no references to ‘LineOutputStream,’ so it doesn’t appear to be a misuse of any external library on my part. It was time to delve into the stack trace:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>...
+Caused by: java.lang.NoSuchMethodError: com.sun.mail.util.LineOutputStream.&lt;init&gt;(Ljava/io/OutputStream;Z)V
+	at javax.mail.internet.MimeBodyPart.writeTo(MimeBodyPart.java:1631)
+	at javax.mail.internet.MimeMessage.writeTo(MimeMessage.java:1889)
+	at javax.mail.internet.MimeMessage.writeTo(MimeMessage.java:1863)
+    at net.backslasher.EmailSender.send(EmailSender.java:69)
+...
+</code></pre></div></div>
+<p>So somehow the library code is calling a nonexistent constructor. Weird!
+Digging through the decompiled code with IDEA, I found the following call:</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// MimeBodyPart.class</span>
+<span class="kd">static</span> <span class="kt">void</span> <span class="nf">writeTo</span><span class="o">(</span><span class="nc">MimePart</span> <span class="n">part</span><span class="o">,</span> <span class="nc">OutputStream</span> <span class="n">os</span><span class="o">,</span> <span class="nc">String</span><span class="o">[]</span> <span class="n">ignoreList</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">IOException</span><span class="o">,</span> <span class="nc">MessagingException</span> <span class="o">{</span>
+    <span class="nc">LineOutputStream</span> <span class="n">los</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">os</span> <span class="k">instanceof</span> <span class="nc">LineOutputStream</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">los</span> <span class="o">=</span> <span class="o">(</span><span class="nc">LineOutputStream</span><span class="o">)</span><span class="n">os</span><span class="o">;</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+        <span class="n">los</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">LineOutputStream</span><span class="o">(</span><span class="n">os</span><span class="o">,</span> <span class="n">allowutf8</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">...</span>
+</code></pre></div></div>
+<p>While the actual constructor looks like this:</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// LineOutputStream.class</span>
+<span class="kd">public</span> <span class="nf">LineOutputStream</span><span class="o">(</span><span class="nc">OutputStream</span> <span class="n">out</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">super</span><span class="o">(</span><span class="n">out</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>By reading the <a href="https://docs.oracle.com/javase/1.5.0/docs/guide/jni/spec/types.html#wp276">Java type signature list</a>, we can see that this is what the exception is complaining about - it’s looking for a constructor with 2 arguments - OutputStream and a boolean (<code class="language-plaintext highlighter-rouge">&lt;init&gt;(Ljava/io/OutputStream;Z)V</code>), but finds no such thing.</p>
+
+<p>I had some questions.</p>
+
+<h2 id="how-did-this-happen">How did this happen?</h2>
+<p>From inspecting the code of <code class="language-plaintext highlighter-rouge">javax.mail:mail:1.4.7</code> thoroughly, I can only conclude that the package itself has an internal contradiction.
+It provides a class with a specific constructor, but calls a different one.
+I was baffled as to how this library was able to be produced.
+This served as a reminder that it is possible to manually package Class files from different compilation runs in the same JAR, and their incompatibility only becomes apparent when attempting to use them together – which is precisely what I encountered.</p>
+
+<h2 id="how-did-i-manage-to-compile">How did I manage to compile?</h2>
+<p>Since I downloaded precompiled code (as in a collection of <code class="language-plaintext highlighter-rouge">Class</code> files and not <code class="language-plaintext highlighter-rouge">java</code> files), my compiler didn’t run on that code and missed the incompatibility.
+If we draw a parallel to C code compilation, we would typically have a final “linkage” step that scans all cross-file references and fails if any of them are incompatible. However, in this context, such a linkage step does not apply.</p>
+
+<h2 id="what-should-i-do-now">what should I do now?</h2>
+<p>One might say the “right” thing would be upgrading to the library that replaces <code class="language-plaintext highlighter-rouge">javax.mail:mail</code> (which is <code class="language-plaintext highlighter-rouge">javax.mail:javax.mail-api</code>, which was itself replaced by <code class="language-plaintext highlighter-rouge">jakarta.mail:jakarta.mail-api</code>), as it brings us the most up-to-date (and hopefully problem free) code.
+However, after 15 minutes of trying this I saw that there’s too much of our code we’d need to change as a resutlt.
+Instead, I went for the minimal effective change, and tried different version of <code class="language-plaintext highlighter-rouge">java.mail:mail</code> until I found one that didn’t have this internal contradiction - <code class="language-plaintext highlighter-rouge">1.4.4</code>.
+I changed our <code class="language-plaintext highlighter-rouge">pom.xml</code> to look like:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;dependency&gt;
+    &lt;groupId&gt;javax.mail&lt;/groupId&gt;
+    &lt;artifactId&gt;mail&lt;/artifactId&gt;
+    &lt;version&gt;1.4.4&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre></div></div>
+<p>And things went back to normal</p>
+
+<h1 id="next-steps">Next steps</h1>
+<p>Once we stabilize on Java 11, I’m planning to replace this package with the “correct” one (<code class="language-plaintext highlighter-rouge">jakarta.mail:jakarta.mail-api</code>) Until we get there, this quick fix will do.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#java" class="page__taxonomy-item" rel="tag">Java</a>
+    
+    </span>
+  </p>
+
+
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2023-09-15T00:00:00+03:00">September 15, 2023</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/wsl-security-analysts.html" class="pagination--pager" title="WSL for non-programming security analysts
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/wsl-security-analysts.html" rel="permalink">WSL for non-programming security analysts
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I have a friend who isn’t a developer and believes that coding is beyond their grasp. They work as a security analyst and prefer using Windows as their opera...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/pdf-keep-or-delete.html" rel="permalink">Bash “Keep or Delete” script for PDFs
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I recently discovered that I had over 100 PDFs in my “Downloads” directory and needed to determine which ones I wanted to keep.
+Instead of spending 10 minute...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/is-this-an-emergency.html" rel="permalink">Is this really an emergency?
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          6 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">One of the teams I worked with would do an “engineering pain-point” survey twice a year.
+During one of those surveys, the main complaint was that on-calls ha...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/1.5GB-string.html" rel="permalink">a 1.5GB string
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">In my previous role, I supported a Java service that operated similarly to RDP or Citrix by enabling remote UI functionality. This service relied on sessions...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S2WYJL3VQ7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-S2WYJL3VQ7', { 'anonymize_ip': true});
+</script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>
