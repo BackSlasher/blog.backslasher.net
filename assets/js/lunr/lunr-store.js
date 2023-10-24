@@ -1030,4 +1030,10 @@ var store = [{
         "tags": ["Java"],
         "url": "/javax-mail-1.4.7.html",
         "teaser": null
+      },{
+        "title": "Patching a Java JAR",
+        "excerpt":"I’m working with a company that uses smart IoT devices produced far away. The main troubleshooting tool is a Java utility provided by the manufacturer. This utility is provided as a ZIP file containing a JAR with the main logic, and some additional libraries. Executing this JAR works well on...","categories": [],
+        "tags": ["Java","Python"],
+        "url": "/jar-patch.html",
+        "teaser": null
       },]

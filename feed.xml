@@ -1,4 +1,189 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2023-09-15T16:13:09+03:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">`javax.mail:mail` 1.4.7 is broken, and how to workaround</title><link href="https://blog.backslasher.net/javax-mail-1.4.7.html" rel="alternate" type="text/html" title="`javax.mail:mail` 1.4.7 is broken, and how to workaround" /><published>2023-09-15T00:00:00+03:00</published><updated>2023-09-15T00:00:00+03:00</updated><id>https://blog.backslasher.net/javax-mail-1.4.7</id><content type="html" xml:base="https://blog.backslasher.net/javax-mail-1.4.7.html">&lt;h1 id=&quot;javaxmail-and-i&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;javax.mail&lt;/code&gt; and I&lt;/h1&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2023-10-24T13:08:11+03:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">Patching a Java JAR</title><link href="https://blog.backslasher.net/jar-patch.html" rel="alternate" type="text/html" title="Patching a Java JAR" /><published>2023-10-24T00:00:00+03:00</published><updated>2023-10-24T00:00:00+03:00</updated><id>https://blog.backslasher.net/jar-patch</id><content type="html" xml:base="https://blog.backslasher.net/jar-patch.html">&lt;p&gt;I’m working with a company that uses smart IoT devices produced far away.
+The main troubleshooting tool is a Java utility provided by the manufacturer.
+This utility is provided as a ZIP file containing a JAR with the main logic, and some additional libraries.
+Executing this JAR works well on Windows/MacOS, but it seems the manufacturer didn’t account for Linux, where the utilty crashes.
+I was asked to help make this utility run on the Linux-using engineers’ laptops.&lt;/p&gt;
+
+&lt;p&gt;Since I had a good experience with reading already-compiled JARs with IntelliJ IDEA, I figured I can do the following:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Extract the JAR to a directory (as it’s just a ZIP file with a specific file structure inside)&lt;/li&gt;
+  &lt;li&gt;Decompile some &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;class&lt;/code&gt; files into their &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;java&lt;/code&gt; equivalents&lt;/li&gt;
+  &lt;li&gt;Modify said &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;java&lt;/code&gt; files (in my case, to support Linux)&lt;/li&gt;
+  &lt;li&gt;Recompile the java files, placing the new resulting &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;class&lt;/code&gt; instead of the original ones&lt;/li&gt;
+  &lt;li&gt;Repackage the JAR&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;I did this manually and things went great. As an aside, the actual change looked something like this:&lt;/p&gt;
+&lt;div class=&quot;language-patch highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  if (Util.isWindows()) {
+    ...
+  } else if (Util.isMac()) {
+    ...
+&lt;span class=&quot;gi&quot;&gt;+ } else {
++   ...
+&lt;/span&gt;  }
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now that I spent 15 minutes doing it manually, I obviously had to spend a couple of hours automating it.
+The resulting script does pretty much the above, except automatically.
+It takes:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Source JAR&lt;/li&gt;
+  &lt;li&gt;Destination JAR filename&lt;/li&gt;
+  &lt;li&gt;Patch file to apply&lt;/li&gt;
+  &lt;li&gt;Where IntelliJ IDEA lives (for the disassembly part)&lt;/li&gt;
+  &lt;li&gt;Optional class/JAR files needed for compilation&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;The algorithm works as follows:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Unpack source JAR to a temp directory (directory A)&lt;/li&gt;
+  &lt;li&gt;Decompile the entire directory using the IDEA component into another temp directory (directory B)&lt;/li&gt;
+  &lt;li&gt;Create a git repository from directory B&lt;/li&gt;
+  &lt;li&gt;Use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;git apply&lt;/code&gt; with the provided patch (using git because the original &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;patch&lt;/code&gt; only works on a single file)&lt;/li&gt;
+  &lt;li&gt;Use the plumbing equivalent of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;git status&lt;/code&gt; to see which files were affected by the patch (easier than parsing the patch file)&lt;/li&gt;
+  &lt;li&gt;Recompile those specific files back into &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;class&lt;/code&gt; files&lt;/li&gt;
+  &lt;li&gt;Copy those class files back into directory A&lt;/li&gt;
+  &lt;li&gt;Repackage directory A as a JAR into the destination filename&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;interesting-facts&quot;&gt;Interesting facts&lt;/h2&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Using git seems a bit werid, but not only does it make applying patches easy, it also allows easily generating them (using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;git diff&lt;/code&gt; on the directory)&lt;/li&gt;
+  &lt;li&gt;The decompilation process is not perfect, and sometimes produces code that won’t compile without some modifications.&lt;br /&gt;
+While some of these may be bugs, a little bit of blame goes to &lt;a href=&quot;https://en.wikipedia.org/wiki/Type_erasure&quot;&gt;type erasure&lt;/a&gt; of generics, where all &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;List&amp;lt;x&amp;gt;&lt;/code&gt; only survive as &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;List&lt;/code&gt;, and you have to convice the compiler that what’s inside isn’t &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Object&lt;/code&gt; but rather a concrete type&lt;/li&gt;
+  &lt;li&gt;I was surprised to find that lambdas survive decompilation. I thought they’ll get converted to some autogenerated class.&lt;/li&gt;
+  &lt;li&gt;At first I was experimenting with Java commands to extract/build a JAR, thinking that there’s a secret to how these are created.&lt;br /&gt;
+There isn’t. Just re-zipping the same directory structure works.&lt;/li&gt;
+  &lt;li&gt;There might be significance to which Java version you’re using to recompile, depending on who/what is using the rebuilt JAR.&lt;/li&gt;
+  &lt;li&gt;Python’s &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;check_call&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;check_output&lt;/code&gt; are so convenient.&lt;/li&gt;
+  &lt;li&gt;While Python’s &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;zipfile&lt;/code&gt; module is OK for extracting an entire directory, it was very inconvenient for doing the opposite. I ended up using the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;zip&lt;/code&gt; CLI tool.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;the-script&quot;&gt;The script&lt;/h2&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;#!/usr/bin/env python3
+&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;re&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;argparse&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;zipfile&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;tempfile&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;subprocess&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;os&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;os.path&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;glob&lt;/span&gt;
+
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;zipdir&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;zip_file&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;subprocess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;check_call&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;zip&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;-qr&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;zip_file&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;.&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cwd&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;parse_args&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;parser&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;argparse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ArgumentParser&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;parser&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add_argument&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;source&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;help&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Source JAR to read&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;parser&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add_argument&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;&quot;-cp&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;--classpath&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;action&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;append&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;help&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;classes needed for compilation&quot;&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;parser&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add_argument&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;&quot;-jcp&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;&quot;--jar-classpath&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;action&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;append&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;help&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;directories with jars needed for compilation&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;parser&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add_argument&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;&quot;-p&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;&quot;--patch&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;help&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;patch file to apply. If not specified, compilation will be skipped. Avoid specifying to just look at the decompiled files&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;parser&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add_argument&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;&quot;-id&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;&quot;--idea-path&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;default&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;/snap/intellij-idea-community/current&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;help&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;path to IntelliJ IDEA. Needed for the decompilation logic&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;parser&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add_argument&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;dest&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;help&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Filename for re-compiled JAR&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;parser&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;parse_args&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;compose_classpath&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;classpath&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;jar_classpath&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;ret&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;classpath&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;ret&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;extend&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;classpath&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;jar_classpath&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;ret&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;extend&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;os&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;join&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;*&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;jar_classpath&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;:&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;join&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ret&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;tmpdir&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;with&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tempfile&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TemporaryDirectory&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;
+
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;parse_args&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;classpath&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;compose_classpath&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;classpath&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;jar_classpath&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;# unzip to tmpdir
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;a_dir&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tmpdir&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sa&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;extracted directory: &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a_dir&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;with&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;zipfile&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ZipFile&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;source&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;r&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;z&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;z&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;extractall&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a_dir&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;# decompile
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;b_dir&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tmpdir&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;os&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mkdir&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b_dir&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sa&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;decompiled directory: &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b_dir&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;subprocess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;check_call&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+            &lt;span class=&quot;sa&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;idea_path&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;/jbr/bin/java&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;s&quot;&gt;&quot;-jar&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;sa&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;idea_path&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;/plugins/java-decompiler/lib/java-decompiler.jar&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;s&quot;&gt;&quot;-dhs=true&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;a_dir&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;b_dir&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;stdout&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;subprocess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DEVNULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;# Create repo
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;subprocess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;check_call&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;git&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;-C&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b_dir&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;init&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;.&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;-b&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;master&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;subprocess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;check_call&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;git&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;-C&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b_dir&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;add&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;:/&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;subprocess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;check_call&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;git&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;-C&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b_dir&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;commit&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;-m&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;initial&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;stdout&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;subprocess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DEVNULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;patch_file&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;patch&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;patch_file&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;no patch file, just extracting&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;# apply patch
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;subprocess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;check_call&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;git&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;-C&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b_dir&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;apply&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;os&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;realpath&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;patch_file&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)])&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;touched_files&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;subprocess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;check_output&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;git&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;ls-files&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;-m&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cwd&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b_dir&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;split&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;touched_files&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;touched_files&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;# compile
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;subprocess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;check_call&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;java&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;-cp&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;sa&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a_dir&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;classpath&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;touched_files&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cwd&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b_dir&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;# Copy back to A dir
+&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;java_file&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;touched_files&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;base_name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;re&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sub&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sa&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;\.java$&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;java_file&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;files&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;glob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;glob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sa&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;base_name&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;*.class&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;root_dir&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b_dir&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;file&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;files&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;os&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rename&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sa&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b_dir&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;file&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;sa&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a_dir&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;file&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;# rezip a dir
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;zipdir&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a_dir&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dest&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+
+&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Nitzan</name></author><category term="Java" /><category term="Python" /><summary type="html">I’m working with a company that uses smart IoT devices produced far away. The main troubleshooting tool is a Java utility provided by the manufacturer. This utility is provided as a ZIP file containing a JAR with the main logic, and some additional libraries. Executing this JAR works well on Windows/MacOS, but it seems the manufacturer didn’t account for Linux, where the utilty crashes. I was asked to help make this utility run on the Linux-using engineers’ laptops.</summary></entry><entry><title type="html">`javax.mail:mail` 1.4.7 is broken, and how to workaround</title><link href="https://blog.backslasher.net/javax-mail-1.4.7.html" rel="alternate" type="text/html" title="`javax.mail:mail` 1.4.7 is broken, and how to workaround" /><published>2023-09-15T00:00:00+03:00</published><updated>2023-09-15T00:00:00+03:00</updated><id>https://blog.backslasher.net/javax-mail-1.4.7</id><content type="html" xml:base="https://blog.backslasher.net/javax-mail-1.4.7.html">&lt;h1 id=&quot;javaxmail-and-i&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;javax.mail&lt;/code&gt; and I&lt;/h1&gt;
 &lt;p&gt;One of the current tasks on my agenda involves the modernization of a project that is currently built on Java 8.
 Given that this project is actively in use and under continuous development, a complete freeze of the codebase for a one-time migration isn’t a feasible option.
 The reason being, such an approach would necessitate extensive library upgrades and rewrites to the code using them.
@@ -720,109 +905,4 @@ $ ls output/reapings/0616d2bf-f8e3-4a09-ab77-ed13071ac9e9
 &lt;p&gt;So we now have 2013 Excel files, weighing 34 MegaBytes. Neat.&lt;/p&gt;
 
 &lt;h2 id=&quot;next-episode&quot;&gt;Next episode&lt;/h2&gt;
-&lt;p&gt;Chewing, or how to take these Excel files and extract specific calendar events.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="Python" /><category term="Israel" /><summary type="html">Preface</summary></entry><entry><title type="html">Caddy is better than Nginx for Docker Compose on ECS</title><link href="https://blog.backslasher.net/docker-compose-ecs-nginx-caddy.html" rel="alternate" type="text/html" title="Caddy is better than Nginx for Docker Compose on ECS" /><published>2023-01-09T00:00:00+02:00</published><updated>2023-01-09T00:00:00+02:00</updated><id>https://blog.backslasher.net/docker-compose-ecs-nginx-caddy</id><content type="html" xml:base="https://blog.backslasher.net/docker-compose-ecs-nginx-caddy.html">&lt;p&gt;I recently managed to use Docker Compose to launch a small app in Aamazon’s Elastic Container Services (ECS).&lt;br /&gt;
-Overall, the result is pretty incredible. I’m able to run all of my containers in AWS, with volumes and netowrks and all, with only a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;docker-compose.yaml&lt;/code&gt; file needed.&lt;br /&gt;
-However, my biggest issue was with getting nginx to work, and I ended up ditching it to Caddy.&lt;/p&gt;
-
-&lt;h2 id=&quot;why-you-need-nginx&quot;&gt;Why you need nginx&lt;/h2&gt;
-&lt;p&gt;As can be seen in the &lt;a href=&quot;https://docs.docker.com/cloud/ecs-compose-features/#exposing-ports&quot;&gt;ECS integration Compose features&lt;/a&gt; page, the way to accept incoming requests to your Compose project is by defining a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;port&lt;/code&gt; in the Compose file (e.g. 80), and AWS will create a single load balancer that will unconditionally forward all incoming requests on that port to that service.&lt;br /&gt;
-This means that you can only have one service listening on HTTP/HTTPS, and this service has to do all of the “gateway” work (TLS veritifcation and / or termination, routing to upstream, filtering paths etc). nginx is great for this job.&lt;br /&gt;
-The interesting part in my nginx config looks like this:&lt;/p&gt;
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;server {
-  listen 443 ssl;
-  server_name project.site;
-  ssl_certificate     /ssl/fullchain.pem;
-  ssl_certificate_key /ssl/privkey.pem;
-  ssl_client_certificate /ssl/...;
-  ssl_verify_client on;
-
-  # Always shortcircuit requests from ELB
-  if ($http_user_agent = &quot;ELB-HealthChecker/2.0&quot;) {
-    return 200;
-  }
-
-  location /{
-    proxy_pass http://backend/;
-  }
-
-  location /debug {
-    proxy_pass http://debug;
-  }
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Which means:&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;Listen on 443, respond to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;project.site&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;Where my SSL certificate is stored, and how to validate client certificates&lt;/li&gt;
-  &lt;li&gt;Demand SSL certificates from incoming connections and verify them&lt;/li&gt;
-  &lt;li&gt;If the “User-Agent” string looks like the ELB healthchecker, return “OK”.&lt;/li&gt;
-  &lt;li&gt;Pass all requests to the “backend” service&lt;/li&gt;
-  &lt;li&gt;If the request’s path starts with “/debug”, pass it to the “debug” service&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h2 id=&quot;why-nginx-doesnt-cut-it&quot;&gt;Why nginx doesn’t cut it&lt;/h2&gt;
-&lt;p&gt;Each service (e.g. “backend”) has multiple containers providing this service, each with its own IP.&lt;br /&gt;
-Container runtimes (k8s, Docker, ECS) provide “service discovery”, usually using DNS (in ECS it’s called &lt;a href=&quot;https://aws.amazon.com/cloud-map/&quot;&gt;CloudMap&lt;/a&gt;).&lt;br /&gt;
-Simply put, this means that doing a DNS query for “backend” will return the IP addresses of containers running the “backend” service.&lt;br /&gt;
-This allows nginx, as the gateway, to find a server to forward the HTTP request to (and hopefully get a response).&lt;br /&gt;
-The problem starts with nginx being so speed oriented that it doesn’t re-translate the name “backend” into a new IP address every now and then. Instead, it keeps the mapping (e.g. “backend –&amp;gt; 127.0.0.4”) forever.&lt;br /&gt;
-This means that whenever I create a new container for &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;backend&lt;/code&gt; and remove the old one (as containers are immutable), nginx remembers the &lt;em&gt;wrong IP address&lt;/em&gt;, and will fail forwarding the requests until nginx is restarted.&lt;br /&gt;
-This is obviously not ideal, as I’d like my gateways to adapt to changes in my backend without having to restart them.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://www.nginx.com/blog/dns-service-discovery-nginx-plus/&quot;&gt;This article&lt;/a&gt; offers two alternatives to the “never refresh IPs” approach:&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;Use variables (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;set $upstream = backend; proxy_pass http://$upstream/&lt;/code&gt;) and a custom resolver&lt;/li&gt;
-  &lt;li&gt;Buy nginx pro, create an upstream, and add a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;resolve&lt;/code&gt; extension to the server entry in the upstream.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;Buying pro is out of the question, as it requires talking to a human (I can’t just pay for a license on the site).&lt;br /&gt;
-Using variables works, with the following cavaets:&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;Unlike in Docker, the address of the DNS server is not known during image build time.&lt;br /&gt;
-Instead, I created a script that runs on the container initialization, uses perl to extract the DNS server from &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;resolv.conf&lt;/code&gt;, and creates an nginx config to set the resolver to that&lt;/li&gt;
-  &lt;li&gt;nginx using its own DNS resolver means we’re missing out on the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;search&lt;/code&gt; option in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;resolv.conf&lt;/code&gt;, which is a shame because in ECS the names are actually &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;backend.project.local&lt;/code&gt;, which means that just using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;backend&lt;/code&gt; in the nginx config won’t work.&lt;br /&gt;
-I created an additional script that extracts the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;search&lt;/code&gt; option from &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;resolve.conf&lt;/code&gt; and replaces all upstream configurations in all of the nginx files.&lt;br /&gt;
-This is comlete tomfoolery, but I wanted things to work already.&lt;/li&gt;
-  &lt;li&gt;Usually, nginx is smart about rewriting the URLs that are forwarded to upstream.&lt;br /&gt;
-In the above config file, a request for &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/debug/memdump&lt;/code&gt; &lt;strong&gt;should&lt;/strong&gt; be forwarded to the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;debug&lt;/code&gt; service, with the URL being &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/memdump&lt;/code&gt;.&lt;br /&gt;
-This doesn’t work when using variables in comoposing the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;proxy_pass&lt;/code&gt; directive, which messes up my URL structure in my backends.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;The DNS refresh seemed like such a small thing, but it left nginx completely unsuitable to be my “gateway”. &lt;br /&gt;
-I seriously considered switching to httpd, even though it’s not as shiny, just so I can get something working.&lt;br /&gt;
-While searching for options, I randomly stumbled upon Caddy&lt;/p&gt;
-
-&lt;h2 id=&quot;caddy-is-nice&quot;&gt;Caddy is nice&lt;/h2&gt;
-&lt;p&gt;Simply put, Caddy just works.&lt;br /&gt;
-I don’t use the shinier features of auto-acquiring certificates from LetsEncrypt.&lt;br /&gt;
-My config file is as basic as can be:&lt;/p&gt;
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;project.site {
-  tls /ssl/fullchain.pem /ssl/privkey.pem {
-    client_auth {
-      mode require_and_verify
-      trusted_leaf_cert_file /ssl/...
-      trusted_ca_cert_file /ssl/...
-    }
-  }
-
-  @awsHealthCheck {
-    header User-Agent 'ELB-HealthChecker/2.0'
-  }
-  respond @awsHealthCheck 200
-
-  handle_path /* {
-    reverse_proxy backend
-  }
-
-  handle_path /debug/* {
-    reverse_proxy debug
-  }
-}
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;You can see the directives are pretty similar (I had to compromise on &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/debug&lt;/code&gt; and replace it with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/debug/&lt;/code&gt;), but it works. No trickery to get it to refresh the records, no variables, no upselling to the Pro version that forces you to talk to a human.&lt;/p&gt;
-
-&lt;p&gt;I’m very happy with Caddy, and planning to further use it in the future.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="Linux" /><category term="Docker" /><category term="AWS" /><summary type="html">I recently managed to use Docker Compose to launch a small app in Aamazon’s Elastic Container Services (ECS). Overall, the result is pretty incredible. I’m able to run all of my containers in AWS, with volumes and netowrks and all, with only a docker-compose.yaml file needed. However, my biggest issue was with getting nginx to work, and I ended up ditching it to Caddy.</summary></entry></feed>
+&lt;p&gt;Chewing, or how to take these Excel files and extract specific calendar events.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="Python" /><category term="Israel" /><summary type="html">Preface</summary></entry></feed>

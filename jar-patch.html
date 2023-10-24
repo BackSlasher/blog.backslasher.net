@@ -1,0 +1,815 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Patching a Java JAR - BackSlasher</title>
+<meta name="description" content="I’m working with a company that uses smart IoT devices produced far away. The main troubleshooting tool is a Java utility provided by the manufacturer. This utility is provided as a ZIP file containing a JAR with the main logic, and some additional libraries. Executing this JAR works well on Windows/MacOS, but it seems the manufacturer didn’t account for Linux, where the utilty crashes. I was asked to help make this utility run on the Linux-using engineers’ laptops.">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Patching a Java JAR">
+<meta property="og:url" content="https://blog.backslasher.net/jar-patch.html">
+
+
+  <meta property="og:description" content="I’m working with a company that uses smart IoT devices produced far away. The main troubleshooting tool is a Java utility provided by the manufacturer. This utility is provided as a ZIP file containing a JAR with the main logic, and some additional libraries. Executing this JAR works well on Windows/MacOS, but it seems the manufacturer didn’t account for Linux, where the utilty crashes. I was asked to help make this utility run on the Linux-using engineers’ laptops.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2023-10-24T00:00:00+03:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/jar-patch.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Patching a Java JAR">
+    <meta itemprop="description" content="I’m working with a company that uses smart IoT devices produced far away.The main troubleshooting tool is a Java utility provided by the manufacturer.This utility is provided as a ZIP file containing a JAR with the main logic, and some additional libraries.Executing this JAR works well on Windows/MacOS, but it seems the manufacturer didn’t account for Linux, where the utilty crashes.I was asked to help make this utility run on the Linux-using engineers’ laptops.">
+    <meta itemprop="datePublished" content="2023-10-24T00:00:00+03:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Patching a Java JAR
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>I’m working with a company that uses smart IoT devices produced far away.
+The main troubleshooting tool is a Java utility provided by the manufacturer.
+This utility is provided as a ZIP file containing a JAR with the main logic, and some additional libraries.
+Executing this JAR works well on Windows/MacOS, but it seems the manufacturer didn’t account for Linux, where the utilty crashes.
+I was asked to help make this utility run on the Linux-using engineers’ laptops.</p>
+
+<p>Since I had a good experience with reading already-compiled JARs with IntelliJ IDEA, I figured I can do the following:</p>
+
+<ol>
+  <li>Extract the JAR to a directory (as it’s just a ZIP file with a specific file structure inside)</li>
+  <li>Decompile some <code class="language-plaintext highlighter-rouge">class</code> files into their <code class="language-plaintext highlighter-rouge">java</code> equivalents</li>
+  <li>Modify said <code class="language-plaintext highlighter-rouge">java</code> files (in my case, to support Linux)</li>
+  <li>Recompile the java files, placing the new resulting <code class="language-plaintext highlighter-rouge">class</code> instead of the original ones</li>
+  <li>Repackage the JAR</li>
+</ol>
+
+<p>I did this manually and things went great. As an aside, the actual change looked something like this:</p>
+<div class="language-patch highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  if (Util.isWindows()) {
+    ...
+  } else if (Util.isMac()) {
+    ...
+<span class="gi">+ } else {
++   ...
+</span>  }
+</code></pre></div></div>
+
+<p>Now that I spent 15 minutes doing it manually, I obviously had to spend a couple of hours automating it.
+The resulting script does pretty much the above, except automatically.
+It takes:</p>
+<ol>
+  <li>Source JAR</li>
+  <li>Destination JAR filename</li>
+  <li>Patch file to apply</li>
+  <li>Where IntelliJ IDEA lives (for the disassembly part)</li>
+  <li>Optional class/JAR files needed for compilation</li>
+</ol>
+
+<p>The algorithm works as follows:</p>
+<ol>
+  <li>Unpack source JAR to a temp directory (directory A)</li>
+  <li>Decompile the entire directory using the IDEA component into another temp directory (directory B)</li>
+  <li>Create a git repository from directory B</li>
+  <li>Use <code class="language-plaintext highlighter-rouge">git apply</code> with the provided patch (using git because the original <code class="language-plaintext highlighter-rouge">patch</code> only works on a single file)</li>
+  <li>Use the plumbing equivalent of <code class="language-plaintext highlighter-rouge">git status</code> to see which files were affected by the patch (easier than parsing the patch file)</li>
+  <li>Recompile those specific files back into <code class="language-plaintext highlighter-rouge">class</code> files</li>
+  <li>Copy those class files back into directory A</li>
+  <li>Repackage directory A as a JAR into the destination filename</li>
+</ol>
+
+<h2 id="interesting-facts">Interesting facts</h2>
+
+<ol>
+  <li>Using git seems a bit werid, but not only does it make applying patches easy, it also allows easily generating them (using <code class="language-plaintext highlighter-rouge">git diff</code> on the directory)</li>
+  <li>The decompilation process is not perfect, and sometimes produces code that won’t compile without some modifications.<br />
+While some of these may be bugs, a little bit of blame goes to <a href="https://en.wikipedia.org/wiki/Type_erasure">type erasure</a> of generics, where all <code class="language-plaintext highlighter-rouge">List&lt;x&gt;</code> only survive as <code class="language-plaintext highlighter-rouge">List</code>, and you have to convice the compiler that what’s inside isn’t <code class="language-plaintext highlighter-rouge">Object</code> but rather a concrete type</li>
+  <li>I was surprised to find that lambdas survive decompilation. I thought they’ll get converted to some autogenerated class.</li>
+  <li>At first I was experimenting with Java commands to extract/build a JAR, thinking that there’s a secret to how these are created.<br />
+There isn’t. Just re-zipping the same directory structure works.</li>
+  <li>There might be significance to which Java version you’re using to recompile, depending on who/what is using the rebuilt JAR.</li>
+  <li>Python’s <code class="language-plaintext highlighter-rouge">check_call</code> and <code class="language-plaintext highlighter-rouge">check_output</code> are so convenient.</li>
+  <li>While Python’s <code class="language-plaintext highlighter-rouge">zipfile</code> module is OK for extracting an entire directory, it was very inconvenient for doing the opposite. I ended up using the <code class="language-plaintext highlighter-rouge">zip</code> CLI tool.</li>
+</ol>
+
+<h2 id="the-script">The script</h2>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#!/usr/bin/env python3
+</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">zipfile</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">os.path</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+
+
+<span class="k">def</span> <span class="nf">zipdir</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">zip_file</span><span class="p">):</span>
+    <span class="n">subprocess</span><span class="p">.</span><span class="n">check_call</span><span class="p">([</span><span class="s">"zip"</span><span class="p">,</span> <span class="s">"-qr"</span><span class="p">,</span> <span class="n">zip_file</span><span class="p">,</span> <span class="s">"."</span><span class="p">],</span> <span class="n">cwd</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">parse_args</span><span class="p">():</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="p">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+    <span class="n">parser</span><span class="p">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">"source"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">"Source JAR to read"</span><span class="p">)</span>
+    <span class="n">parser</span><span class="p">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s">"-cp"</span><span class="p">,</span> <span class="s">"--classpath"</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">"append"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">"classes needed for compilation"</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="p">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s">"-jcp"</span><span class="p">,</span>
+        <span class="s">"--jar-classpath"</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s">"append"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s">"directories with jars needed for compilation"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="p">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s">"-p"</span><span class="p">,</span>
+        <span class="s">"--patch"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s">"patch file to apply. If not specified, compilation will be skipped. Avoid specifying to just look at the decompiled files"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="p">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s">"-id"</span><span class="p">,</span>
+        <span class="s">"--idea-path"</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s">"/snap/intellij-idea-community/current"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s">"path to IntelliJ IDEA. Needed for the decompilation logic"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="p">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">"dest"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">"Filename for re-compiled JAR"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">parser</span><span class="p">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">compose_classpath</span><span class="p">(</span><span class="n">classpath</span><span class="p">,</span> <span class="n">jar_classpath</span><span class="p">):</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">classpath</span><span class="p">:</span>
+        <span class="n">ret</span><span class="p">.</span><span class="n">extend</span><span class="p">(</span><span class="n">classpath</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">jar_classpath</span><span class="p">:</span>
+        <span class="n">ret</span><span class="p">.</span><span class="n">extend</span><span class="p">([</span><span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="s">"*"</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">jar_classpath</span><span class="p">])</span>
+    <span class="k">return</span> <span class="s">":"</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">tmpdir</span><span class="p">():</span>
+    <span class="k">with</span> <span class="n">tempfile</span><span class="p">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">d</span><span class="p">:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">d</span>
+    <span class="k">return</span> <span class="n">name</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parse_args</span><span class="p">()</span>
+    <span class="n">classpath</span> <span class="o">=</span> <span class="n">compose_classpath</span><span class="p">(</span><span class="n">args</span><span class="p">.</span><span class="n">classpath</span><span class="p">,</span> <span class="n">args</span><span class="p">.</span><span class="n">jar_classpath</span><span class="p">)</span>
+    <span class="c1"># unzip to tmpdir
+</span>    <span class="n">a_dir</span> <span class="o">=</span> <span class="n">tmpdir</span><span class="p">()</span>
+    <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"extracted directory: </span><span class="si">{</span><span class="n">a_dir</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">zipfile</span><span class="p">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">args</span><span class="p">.</span><span class="n">source</span><span class="p">,</span> <span class="s">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">z</span><span class="p">:</span>
+        <span class="n">z</span><span class="p">.</span><span class="n">extractall</span><span class="p">(</span><span class="n">a_dir</span><span class="p">)</span>
+
+    <span class="c1"># decompile
+</span>    <span class="n">b_dir</span> <span class="o">=</span> <span class="n">tmpdir</span><span class="p">()</span>
+    <span class="n">os</span><span class="p">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">b_dir</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"decompiled directory: </span><span class="si">{</span><span class="n">b_dir</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+    <span class="n">subprocess</span><span class="p">.</span><span class="n">check_call</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="sa">f</span><span class="s">"</span><span class="si">{</span><span class="n">args</span><span class="p">.</span><span class="n">idea_path</span><span class="si">}</span><span class="s">/jbr/bin/java"</span><span class="p">,</span>
+            <span class="s">"-jar"</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s">"</span><span class="si">{</span><span class="n">args</span><span class="p">.</span><span class="n">idea_path</span><span class="si">}</span><span class="s">/plugins/java-decompiler/lib/java-decompiler.jar"</span><span class="p">,</span>
+            <span class="s">"-dhs=true"</span><span class="p">,</span>
+            <span class="n">a_dir</span><span class="p">,</span>
+            <span class="n">b_dir</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="p">.</span><span class="n">DEVNULL</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Create repo
+</span>    <span class="n">subprocess</span><span class="p">.</span><span class="n">check_call</span><span class="p">([</span><span class="s">"git"</span><span class="p">,</span> <span class="s">"-C"</span><span class="p">,</span> <span class="n">b_dir</span><span class="p">,</span> <span class="s">"init"</span><span class="p">,</span> <span class="s">"."</span><span class="p">,</span> <span class="s">"-b"</span><span class="p">,</span> <span class="s">"master"</span><span class="p">])</span>
+    <span class="n">subprocess</span><span class="p">.</span><span class="n">check_call</span><span class="p">([</span><span class="s">"git"</span><span class="p">,</span> <span class="s">"-C"</span><span class="p">,</span> <span class="n">b_dir</span><span class="p">,</span> <span class="s">"add"</span><span class="p">,</span> <span class="s">":/"</span><span class="p">])</span>
+    <span class="n">subprocess</span><span class="p">.</span><span class="n">check_call</span><span class="p">(</span>
+        <span class="p">[</span><span class="s">"git"</span><span class="p">,</span> <span class="s">"-C"</span><span class="p">,</span> <span class="n">b_dir</span><span class="p">,</span> <span class="s">"commit"</span><span class="p">,</span> <span class="s">"-m"</span><span class="p">,</span> <span class="s">"initial"</span><span class="p">],</span>
+        <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="p">.</span><span class="n">DEVNULL</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">patch_file</span> <span class="o">=</span> <span class="n">args</span><span class="p">.</span><span class="n">patch</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">patch_file</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"no patch file, just extracting"</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="c1"># apply patch
+</span>    <span class="n">subprocess</span><span class="p">.</span><span class="n">check_call</span><span class="p">([</span><span class="s">"git"</span><span class="p">,</span> <span class="s">"-C"</span><span class="p">,</span> <span class="n">b_dir</span><span class="p">,</span> <span class="s">"apply"</span><span class="p">,</span> <span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">patch_file</span><span class="p">)])</span>
+
+    <span class="n">touched_files</span> <span class="o">=</span> <span class="n">subprocess</span><span class="p">.</span><span class="n">check_output</span><span class="p">(</span>
+        <span class="p">[</span><span class="s">"git"</span><span class="p">,</span> <span class="s">"ls-files"</span><span class="p">,</span> <span class="s">"-m"</span><span class="p">],</span> <span class="n">text</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="n">b_dir</span>
+    <span class="p">).</span><span class="n">split</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+    <span class="n">touched_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">touched_files</span> <span class="k">if</span> <span class="n">t</span><span class="p">]</span>
+
+    <span class="c1"># compile
+</span>    <span class="n">subprocess</span><span class="p">.</span><span class="n">check_call</span><span class="p">(</span>
+        <span class="p">[</span><span class="s">"java"</span><span class="p">,</span> <span class="s">"-cp"</span><span class="p">,</span> <span class="sa">f</span><span class="s">"</span><span class="si">{</span><span class="n">a_dir</span><span class="si">}</span><span class="s">:</span><span class="si">{</span><span class="n">classpath</span><span class="si">}</span><span class="s">"</span><span class="p">,</span> <span class="o">*</span><span class="n">touched_files</span><span class="p">],</span> <span class="n">cwd</span><span class="o">=</span><span class="n">b_dir</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Copy back to A dir
+</span>    <span class="k">for</span> <span class="n">java_file</span> <span class="ow">in</span> <span class="n">touched_files</span><span class="p">:</span>
+        <span class="n">base_name</span> <span class="o">=</span> <span class="n">re</span><span class="p">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s">"\.java$"</span><span class="p">,</span> <span class="s">""</span><span class="p">,</span> <span class="n">java_file</span><span class="p">)</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="n">glob</span><span class="p">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s">"</span><span class="si">{</span><span class="n">base_name</span><span class="si">}</span><span class="s">*.class"</span><span class="p">,</span> <span class="n">root_dir</span><span class="o">=</span><span class="n">b_dir</span><span class="p">)</span>
+        <span class="k">for</span> <span class="nb">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="n">os</span><span class="p">.</span><span class="n">rename</span><span class="p">(</span><span class="sa">f</span><span class="s">"</span><span class="si">{</span><span class="n">b_dir</span><span class="si">}</span><span class="s">/</span><span class="si">{</span><span class="nb">file</span><span class="si">}</span><span class="s">"</span><span class="p">,</span> <span class="sa">f</span><span class="s">"</span><span class="si">{</span><span class="n">a_dir</span><span class="si">}</span><span class="s">/</span><span class="si">{</span><span class="nb">file</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+
+    <span class="c1"># rezip a dir
+</span>    <span class="n">zipdir</span><span class="p">(</span><span class="n">a_dir</span><span class="p">,</span> <span class="n">args</span><span class="p">.</span><span class="n">dest</span><span class="p">)</span>
+
+
+<span class="n">main</span><span class="p">()</span>
+</code></pre></div></div>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#java" class="page__taxonomy-item" rel="tag">Java</a><span class="sep">, </span>
+    
+      <a href="/tags/#python" class="page__taxonomy-item" rel="tag">Python</a>
+    
+    </span>
+  </p>
+
+
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2023-10-24T00:00:00+03:00">October 24, 2023</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/javax-mail-1.4.7.html" class="pagination--pager" title="javax.mail:mail 1.4.7 is broken, and how to workaround
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/javax-mail-1.4.7.html" rel="permalink"><code class="language-plaintext highlighter-rouge">javax.mail:mail</code> 1.4.7 is broken, and how to workaround
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">javax.mail and I
+One of the current tasks on my agenda involves the modernization of a project that is currently built on Java 8.
+Given that this project is ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/wsl-security-analysts.html" rel="permalink">WSL for non-programming security analysts
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I have a friend who isn’t a developer and believes that coding is beyond their grasp. They work as a security analyst and prefer using Windows as their opera...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/pdf-keep-or-delete.html" rel="permalink">Bash “Keep or Delete” script for PDFs
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I recently discovered that I had over 100 PDFs in my “Downloads” directory and needed to determine which ones I wanted to keep.
+Instead of spending 10 minute...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/is-this-an-emergency.html" rel="permalink">Is this really an emergency?
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          6 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">One of the teams I worked with would do an “engineering pain-point” survey twice a year.
+During one of those surveys, the main complaint was that on-calls ha...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S2WYJL3VQ7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-S2WYJL3VQ7', { 'anonymize_ip': true});
+</script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>
