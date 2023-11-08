@@ -1,4 +1,66 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2023-10-24T13:08:11+03:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">Patching a Java JAR</title><link href="https://blog.backslasher.net/jar-patch.html" rel="alternate" type="text/html" title="Patching a Java JAR" /><published>2023-10-24T00:00:00+03:00</published><updated>2023-10-24T00:00:00+03:00</updated><id>https://blog.backslasher.net/jar-patch</id><content type="html" xml:base="https://blog.backslasher.net/jar-patch.html">&lt;p&gt;I’m working with a company that uses smart IoT devices produced far away.
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2023-11-08T23:37:23+02:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">We don’t do DST at this company</title><link href="https://blog.backslasher.net/no-dst.html" rel="alternate" type="text/html" title="We don’t do DST at this company" /><published>2023-11-08T00:00:00+02:00</published><updated>2023-11-08T00:00:00+02:00</updated><id>https://blog.backslasher.net/no-dst</id><content type="html" xml:base="https://blog.backslasher.net/no-dst.html">&lt;p&gt;Once, a long time ago, I used to have a consulting gig in some big enterprise-y company. It had a lot of unique challenges, being disconnected from the internet (for security reasons, I was told) and therefore having practically everything in-house.&lt;br /&gt;
+I spent my time with not only the proto-devops-people (this was before devops was cool), but also with the hardcore sysadmins.&lt;br /&gt;
+They were in charge of the un-sexy infrastructure that kept the organization ticking. I’m talking about E-Mail, Active Directory, DNS, workstation provisioning etc. We used to joke that they were the IT equivalent of sanitation - when everything worked, no one knew you were there, toiling. When things broke, they suddenly remembered who’s responsible for this thing and where to find them.&lt;br /&gt;
+Summer was coming, and I inquired with the person in charge of WSUS (Windows Server Update Services, the Microsoft-blessed way to distribute Windows updates in offline environments) whether they’ve deployed the latest DST-related patches (the DST schedule was modified that year). They replied that no, and in fact they’d like some help in ensuring DST transitioning is disabled on all workstations/servers, as this is how things work here.&lt;/p&gt;
+
+&lt;h2 id=&quot;short-break---how-is-dst-implemented&quot;&gt;Short break - how is DST implemented&lt;/h2&gt;
+&lt;p&gt;Unlike your microwave or your alarm clock radio, when you enter &lt;a href=&quot;https://en.wikipedia.org/wiki/Daylight_saving_time&quot;&gt;Daylight Saving Time&lt;/a&gt;, your computer’s internal clock doesn’t actually go forward or back one hour. Instead, your timezone (GMT+X or UTC+X) is changed, so the time you see as a user is different.&lt;br /&gt;
+This technique has several advantages over moving the actual clock, mainly that when talking with other computers (that may be in different geographical regions), they still agree on what time it is right now.&lt;br /&gt;
+This also means that software running on a computer while it’s changing its timezone doesn’t experience a time skip or a repeat, as long as it’s working internally in UTC time.&lt;/p&gt;
+
+&lt;h2 id=&quot;back-to-the-story&quot;&gt;Back to the story&lt;/h2&gt;
+&lt;p&gt;After being internally in shock for a bit, I said that sure, no problem. We did some research on the relevant registry settings for disabling DST transition, and made a plan on what to actually do come summer time (more on that later).&lt;br /&gt;
+I casually asked why we’re not using DST, and was answered that it was the devops’ requirement.
+Following up with the devops team (and digging a bit myself) helped me understand the situation better. Buckle up.&lt;/p&gt;
+
+&lt;p&gt;The in-house development team built a .NET-based software that was in charge of handling, amongst other things, delivery times of equipment into the company’s warehouses. Each delivery window / event had a start/end datetime that had to be shared with the truck drivers, warehouse operators, security etc.&lt;/p&gt;
+
+&lt;p&gt;Come summer, the support crew for this software would encounter a persistent weird problem - &lt;strong&gt;all shipping events advanced exactly one hour after saving them.&lt;/strong&gt;&lt;br /&gt;
+You create an event for tomorrow 08:00, save it, and upon viewing it it’s now at 09:00. You edit it, save it again without touching anything, and it’s now at 10:00.&lt;br /&gt;
+Obviously this is insufferable, but luckily someone found out that when disabling DST on every machine involved, things went back to normal.&lt;br /&gt;
+We have an expression that loosely translates as “there’s nothing more permanent than a temporary fix”, and so it was. DST was forbidden ever since in that company’s environment, otherwise chaos would ensue in the shipping schedule.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-problem-revealed&quot;&gt;The problem revealed&lt;/h2&gt;
+&lt;p&gt;I had some time to spare and was dying to know what’s going on, so I did some research. Said research involved a bit of code-reading, but mostly talking to the dinosaurs in both devops and coding to understand what the system is doing.
+My results are as follows:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;The shipping software persisted its data in a database, which is perfectly reasonable.&lt;/li&gt;
+  &lt;li&gt;The data was kept in-DB as giant XML strings. While this sounds ridiculous now, keep in mind that this was before NoSQL, and the organization’s developers had no table structure modification access. This was their way of getting a flexible record structure they can modify on their own.&lt;/li&gt;
+  &lt;li&gt;The XML was de-serialized back into .NET objects by a standard .NET library. However, due to some additional permission checks and validation, the serialization (converting classes into XML strings) was built in-house.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Since this was long ago, I didn’t have good read access to .NET’s serialization logic. What I did have, though, is the ability to write a stupid “Console Application” and see how the library behaves.&lt;br /&gt;
+I noticed that the .NET library was treating all datetime strings as UTC+0, so when loading such an object into a timezone-naive datetime object, it would use Windows’ timezone logic to convert it into a local one.&lt;br /&gt;
+The in-house-written logic that was written to emulate the .NET library, however, did no such thing. Instead, it subtracted 2 hours (Israel’s regular UTC offset) from the datetime object, and stuck the result in the XML. Easy.
+During non-DST times, this would work great.&lt;br /&gt;
+Any event at 08:00 would be persisted in the DB as 06:00, and when deserialized would be converted back into 08:00.&lt;br /&gt;
+However, &lt;em&gt;when DST was in effect&lt;/em&gt;, 08:00 would be serialized as 06:00 (-2 hours), but then deserialized back as 09:00 (as the DST timezone of Israel is UTC+3), which caused the mysterious offset people complained about.&lt;/p&gt;
+
+&lt;h2 id=&quot;how-does-an-org-run-without-dst&quot;&gt;How does an org run without DST&lt;/h2&gt;
+&lt;p&gt;In short - not great.
+Although the sysadmins couldn’t use the DST mechanism in Windows, people still wanted the computers’ clocks to match their wall clocks, so we had to actually move the machine’s internal clock.&lt;br /&gt;
+Worse, the company was 24/7 operational, so we had to do the transition quickly, and at nighttime (the clocks shift from 01:00 to 02:00, or from 02:00 to 01:00).&lt;br /&gt;
+The plan we worked out together was as follows:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;&lt;em&gt;A week before&lt;/em&gt; - prepare emergency local credentials for all important servers, in case network authentication fails due to time differences.&lt;/li&gt;
+  &lt;li&gt;&lt;em&gt;A day before&lt;/em&gt; - Increase the tolerance of all systems that limit ticket validity (back then it was Kerberos, a modern example might be JWT) to at least 1 hour.&lt;br /&gt;
+This allowed two machines to communicate, even if the first clock was moved already and the second clock was not.&lt;/li&gt;
+  &lt;li&gt;&lt;em&gt;1 hour before&lt;/em&gt; - Stop every task scheduler we cared about, fearing it’d double-execute tasks (or skip executing them).&lt;/li&gt;
+  &lt;li&gt;&lt;em&gt;At the time of the switch&lt;/em&gt; - manually shift the clock of the NTP source of truth&lt;/li&gt;
+  &lt;li&gt;Execute a script that iterates over all of our important servers (Active Directory Domain Controllers, SQL servers, application servers) and has them immediately sync their clock from the NTP master.&lt;/li&gt;
+  &lt;li&gt;Execute the same script over all servers and workstations in the company, skipping ones that are turned off.&lt;/li&gt;
+  &lt;li&gt;Return any disabled services from before, after verifying their servers have the new time&lt;/li&gt;
+  &lt;li&gt;Manually handle stragglers that for some reason didn’t get the new time set. Not only servers, but also workstations of VIP personnel that had the sysadmin’s manager’s mobile and were not afraid to use it&lt;/li&gt;
+  &lt;li&gt;&lt;em&gt;The morning after&lt;/em&gt; - Disable local credentials, return time tolerances of security mechanisms to sane borders.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Overall a very exhausting process, and I’m happy I didn’t get to witness it too many times.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-end&quot;&gt;The end&lt;/h2&gt;
+&lt;p&gt;When I left my gig at this company, DST was still being disabled.&lt;br /&gt;
+The reasoning that I got is that management preferred paying (whether in overtime or lost productivity) for the sysadmins to do the above ritual twice a year, rather than risk breaking the delicate equilibrium of the application’s DB persistence.&lt;br /&gt;
+At the time, I heard a bit of resentment from the sysadmins. They felt like it’s easier for the company to compromise their workflow and system stability rather than the software developers’. I did my best to explain that it’s not that the devs were enjoying the situation, or even unwilling to remedy it. It’s the organization that chose to not invest the time in ironing the process out, and instead preferred to have the devs’ time spent in developing new features, or solving bugs that didn’t have such a well-established workaround.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="Microsoft" /><category term="Windows" /><category term="DST" /><summary type="html">Once, a long time ago, I used to have a consulting gig in some big enterprise-y company. It had a lot of unique challenges, being disconnected from the internet (for security reasons, I was told) and therefore having practically everything in-house. I spent my time with not only the proto-devops-people (this was before devops was cool), but also with the hardcore sysadmins. They were in charge of the un-sexy infrastructure that kept the organization ticking. I’m talking about E-Mail, Active Directory, DNS, workstation provisioning etc. We used to joke that they were the IT equivalent of sanitation - when everything worked, no one knew you were there, toiling. When things broke, they suddenly remembered who’s responsible for this thing and where to find them. Summer was coming, and I inquired with the person in charge of WSUS (Windows Server Update Services, the Microsoft-blessed way to distribute Windows updates in offline environments) whether they’ve deployed the latest DST-related patches (the DST schedule was modified that year). They replied that no, and in fact they’d like some help in ensuring DST transitioning is disabled on all workstations/servers, as this is how things work here.</summary></entry><entry><title type="html">Patching a Java JAR</title><link href="https://blog.backslasher.net/jar-patch.html" rel="alternate" type="text/html" title="Patching a Java JAR" /><published>2023-10-24T00:00:00+03:00</published><updated>2023-10-24T00:00:00+03:00</updated><id>https://blog.backslasher.net/jar-patch</id><content type="html" xml:base="https://blog.backslasher.net/jar-patch.html">&lt;p&gt;I’m working with a company that uses smart IoT devices produced far away.
 The main troubleshooting tool is a Java utility provided by the manufacturer.
 This utility is provided as a ZIP file containing a JAR with the main logic, and some additional libraries.
 Executing this JAR works well on Windows/MacOS, but it seems the manufacturer didn’t account for Linux, where the utilty crashes.
@@ -773,136 +835,4 @@ The “remote” is because there are no local tags in Sapling&lt;/p&gt;
 &lt;h2 id=&quot;delete-remote-branch&quot;&gt;Delete remote branch&lt;/h2&gt;
 &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sl push --delete main default
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Where “main” is the name of the branch, and “default” is the path (aka origin in git-talk)&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="Linux" /><category term="Sapling" /><category term="Git" /><summary type="html">Sapling (the Facebook-released SCM) is great, but the docs are not-great. I thought I’d list some commands it took me a while to undertand, for me and for others</summary></entry><entry><title type="html">Processing Israeli FOIA calendars, Part 1</title><link href="https://blog.backslasher.net/foia-calendars-pt1.html" rel="alternate" type="text/html" title="Processing Israeli FOIA calendars, Part 1" /><published>2023-02-01T00:00:00+02:00</published><updated>2023-02-01T00:00:00+02:00</updated><id>https://blog.backslasher.net/foia-calendars-pt1</id><content type="html" xml:base="https://blog.backslasher.net/foia-calendars-pt1.html">&lt;h2 id=&quot;preface&quot;&gt;Preface&lt;/h2&gt;
-
-&lt;p&gt;I’m a volunteer in the Israeli Public Knowledge Workshop (&lt;a href=&quot;https://he.wikipedia.org/wiki/%D7%94%D7%A1%D7%93%D7%A0%D7%90_%D7%9C%D7%99%D7%93%D7%A2_%D7%A6%D7%99%D7%91%D7%95%D7%A8%D7%99&quot;&gt;wiki&lt;/a&gt;), which is a nonprofit working to increase transparency of Israeli’s ruling bodies (e.g. Goverment, Municipal authorities, courts).&lt;br /&gt;
-I recently picked up a nice project that I thought would be worth a read.&lt;/p&gt;
-
-&lt;p&gt;Under the &lt;a href=&quot;https://he.wikipedia.org/wiki/%D7%97%D7%95%D7%A7_%D7%97%D7%95%D7%A4%D7%A9_%D7%94%D7%9E%D7%99%D7%93%D7%A2&quot;&gt;Israeli equivalent of FOIA&lt;/a&gt; (Freedom Of Information Act), citizens are able to request information form public authorities.&lt;br /&gt;
-Some nonprofits are using this law to try and acquire calendars/diaries/journals of various public servants, and publish them to the public.&lt;/p&gt;
-
-&lt;p&gt;Aside from the obvious advantage in being able to ensure that a public servant spends their time in actually serving the public, there are instances where these calendars are useful in exposing conspiracies and hints of corruption (&lt;a href=&quot;https://www.haaretz.co.il/blogs/tomeravital/2018-06-18/ty-article/0000017f-f8df-d044-adff-fbff9e040000&quot;&gt;article in Hebrew&lt;/a&gt;).&lt;/p&gt;
-
-&lt;p&gt;We now have a lot of these calendars as individual files. We’d like to do some more advanced analytics on them, including cross-referencing them with one another, and for that we’d like to load them all up into a nice database.&lt;br /&gt;
-This is my mission.&lt;/p&gt;
-
-&lt;p&gt;I called this project “Dear Diary”, as the Hebrew words for “Calendar” and “Diary” are identical.&lt;/p&gt;
-
-&lt;h2 id=&quot;series-logistics&quot;&gt;Series Logistics&lt;/h2&gt;
-&lt;p&gt;Instead of making a huge post, I’m going to divide it into a series to make it easier to read (and to write).&lt;br /&gt;
-I’ll also try to make it readable for people who are not Linux / Python / whatever pros. Hopefully my family and friends will be able to read it and understand what I’m working on 😀&lt;/p&gt;
-
-&lt;p&gt;If you’re not a programmer, feel free to skip the code bits.&lt;/p&gt;
-
-&lt;p&gt;This is part 1&lt;/p&gt;
-
-&lt;h2 id=&quot;data-exploration-and-what-were-targeting&quot;&gt;Data exploration and what we’re targeting&lt;/h2&gt;
-
-&lt;p&gt;The first thing I wanted to do is to understand which data I’m dealing with.
-I went into the website that holds all of the FOIA-collected documents we have, and searched for “יומן” (Hebrew for “Calendar”).
-The URL looks like this:&lt;/p&gt;
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;https://www.odata.org.il/dataset?q=%D7%99%D7%95%D7%9E%D7%9F
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;img src=&quot;/assets/2023-02-01-foia-calendars-pt1/ui.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Looks promising. I now tried to find an API equivalent, and it wasn’t that hard. Reading the docs and poking at some URLs gave me this:&lt;/p&gt;
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;https://www.odata.org.il/api/3/action/resource_search?query=name:יומן
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;You can try the url on your browser, and you’ll get a huge &lt;a href=&quot;https://en.wikipedia.org/wiki/JSON#Syntax&quot;&gt;JSON&lt;/a&gt; object, detailing all of the files relating to calendars.&lt;br /&gt;
-&lt;img src=&quot;/assets/2023-02-01-foia-calendars-pt1/json.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Using cURL (which fetches the list) and feeding the result to jq (which allows us to dive into the JSON), we can see what a single item looks like:&lt;/p&gt;
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ curl -s 'https://www.odata.org.il/api/3/action/resource_search?query=name:יומן' | jq '.result.results[0]'
-{
-  &quot;mimetype&quot;: null,
-  &quot;cache_url&quot;: null,
-  &quot;state&quot;: &quot;active&quot;,
-  &quot;hash&quot;: &quot;&quot;,
-  &quot;description&quot;: &quot;&quot;,
-  &quot;format&quot;: &quot;PDF&quot;,
-  &quot;url&quot;: &quot;https://www.odata.org.il/dataset/39092605-8599-470a-ba76-36e434acd2f7/resource/81d2cc0b-beae-46a3-81d7-e7d529ae9fb8/download/-2013.pdf&quot;,
-  &quot;datastore_active&quot;: false,
-  &quot;created&quot;: &quot;2017-06-19T11:48:30.996554&quot;,
-  &quot;cache_last_updated&quot;: null,
-  &quot;package_id&quot;: &quot;39092605-8599-470a-ba76-36e434acd2f7&quot;,
-  &quot;mimetype_inner&quot;: null,
-  &quot;last_modified&quot;: &quot;2017-06-19T11:48:30.969395&quot;,
-  &quot;position&quot;: 0,
-  &quot;revision_id&quot;: &quot;6ed049da-8e71-4c9f-a8e2-25315290412c&quot;,
-  &quot;size&quot;: null,
-  &quot;url_type&quot;: &quot;upload&quot;,
-  &quot;id&quot;: &quot;81d2cc0b-beae-46a3-81d7-e7d529ae9fb8&quot;,
-  &quot;resource_type&quot;: null,
-  &quot;name&quot;: &quot;יומן ראש עיריית באר שבע 2013.pdf&quot;
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;There are a lot of interesting fields, but for now we’ll look into “mimetype” (&lt;a href=&quot;https://en.wikipedia.org/wiki/Media_type&quot;&gt;wiki&lt;/a&gt;), which is a web standard indicating of what kind of file this is.&lt;br /&gt;
-Unfortunately, this file has “null” (meaning unknown), but most of the files don’t.&lt;br /&gt;
-In order to see what we’re dealing with, we’re going to do a more complex command, that gets all the mimetypes and groups them, showing us the most common ones.&lt;br /&gt;
-The command and result look like this:&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ curl -s 'https://www.odata.org.il/api/3/action/resource_search?query=name:יומן' | jq '.result.results[].mimetype' | sortiq | head
-    799 &quot;application/pdf&quot;
-    357 &quot;application/vnd.openxmlformats-officedocument.spreadsheetml.sheet&quot;
-     78 &quot;text/csv&quot;
-     63 null
-     47 &quot;application/vnd.ms-Excel&quot;
-      9 &quot;application/vnd.openxmlformats-officedocument.wordprocessingml.document&quot;
-      6 &quot;image/tiff&quot;
-      4 &quot;application/zip&quot;
-      3 &quot;text/calendar&quot;
-      2 &quot;application/vnd.openxmlformats-officedocument.spreadsheetml.template&quot;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;We can see that most of the files are in the PDF format, with “officedocument.spreadsheetml.sheet” (Excel 2007+ spreadsheets) in second place.
-From manually looking at some of the PDF files, I saw that they’re hard to read.&lt;br /&gt;
-Examples:&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.odata.org.il/dataset/5cf1f784-5b6c-4506-8a5a-a63c453a4486/resource/911a7c7c-7e92-45f3-803a-bebcc98ad6e2/download/-2015-1-30.pdf&quot;&gt;this&lt;/a&gt; is a printed and scanned document, which is completly unintelligible for a machine without a lot of guesswork.
-&lt;img src=&quot;/assets/2023-02-01-foia-calendars-pt1/pdf-scanned.png&quot; alt=&quot;&quot; /&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.odata.org.il/dataset/fa354f46-9630-4446-9e7c-5ed2a2a80aeb/resource/2c6dff24-62f2-4090-a9d6-fcff6d40d77a/download/-2019.pdf&quot;&gt;this&lt;/a&gt;, while made of text, is nontrivial for a computer to understand.
-&lt;img src=&quot;/assets/2023-02-01-foia-calendars-pt1/pdf-calendar.png&quot; alt=&quot;&quot; /&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;Because the PDFs seemed to be problematic, I decided to start looking at Excel files as a first step.&lt;/p&gt;
-
-&lt;p&gt;Now that we know that we want the Excel files, we should download them locally so we can experiment on them.&lt;br /&gt;
-For this, we’re going to get all of the files, filter out only the Excel ones, and download them all to a specific directory.&lt;br /&gt;
-Let’s do this:&lt;/p&gt;
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ curl 'https://www.odata.org.il/api/3/action/resource_search?query=name:יומן' -s | jq '.result.results[] | select(.mimetype == &quot;application/vnd.openxmlformats-officedocument.spreadsheetml.sheet&quot;) | &quot;mkdir -p output/reapings/\(.id) &amp;amp;&amp;amp; curl -s \(.url) -o \&quot;output/reapings/\(.id)/\(.name)\&quot;&quot;' -r | parallel
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;The result in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;output/reapings&lt;/code&gt; is a bunch of directories, each one named after a file ID. inside, there are files:&lt;/p&gt;
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ ls output/reapings/ | head
-00181757-0c0d-4f82-b389-b3624bdeec87
-00caa5ea-f127-4da4-882b-0dd32e350a1d
-012d05b8-6378-47f0-a0c2-ec0804a2b53e
-018f36ba-5052-46be-8bd2-b5e29d2f83db
-026b6b8e-43da-4c0b-8fcb-f75ae4f1acc0
-05a626d9-8830-4d50-b514-f64fade06ab8
-05d0a3fe-1f1b-4c7b-8977-65ad34a13939
-0616d2bf-f8e3-4a09-ab77-ed13071ac9e9
-06e244f5-4b9c-4f83-9166-75815d73dafa
-07048613-e656-4229-935e-9f8522e49194
-
-$ ls output/reapings/00181757-0c0d-4f82-b389-b3624bdeec87
-'יומן מנכל העירייה 1.1.22-30.6.22.xlsx'
-
-$ ls output/reapings/0616d2bf-f8e3-4a09-ab77-ed13071ac9e9
-'יומן מרב מיכאלי.xlsx'
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Let’s do a quick check of how many files we have:&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ find -type f | wc -l
-2013
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Let’s also ask how much space this directory takes:&lt;/p&gt;
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ du -hs output/reapings/
-34M	output/reapings/
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;So we now have 2013 Excel files, weighing 34 MegaBytes. Neat.&lt;/p&gt;
-
-&lt;h2 id=&quot;next-episode&quot;&gt;Next episode&lt;/h2&gt;
-&lt;p&gt;Chewing, or how to take these Excel files and extract specific calendar events.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="Python" /><category term="Israel" /><summary type="html">Preface</summary></entry></feed>
+&lt;p&gt;Where “main” is the name of the branch, and “default” is the path (aka origin in git-talk)&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="Linux" /><category term="Sapling" /><category term="Git" /><summary type="html">Sapling (the Facebook-released SCM) is great, but the docs are not-great. I thought I’d list some commands it took me a while to undertand, for me and for others</summary></entry></feed>

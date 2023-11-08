@@ -1036,4 +1036,10 @@ var store = [{
         "tags": ["Java","Python"],
         "url": "/jar-patch.html",
         "teaser": null
+      },{
+        "title": "We don't do DST at this company",
+        "excerpt":"Once, a long time ago, I used to have a consulting gig in some big enterprise-y company. It had a lot of unique challenges, being disconnected from the internet (for security reasons, I was told) and therefore having practically everything in-house. I spent my time with not only the proto-devops-people...","categories": [],
+        "tags": ["Microsoft","Windows","DST"],
+        "url": "/no-dst.html",
+        "teaser": null
       },]

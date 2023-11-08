@@ -1,0 +1,696 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>We don’t do DST at this company - BackSlasher</title>
+<meta name="description" content="Once, a long time ago, I used to have a consulting gig in some big enterprise-y company. It had a lot of unique challenges, being disconnected from the internet (for security reasons, I was told) and therefore having practically everything in-house. I spent my time with not only the proto-devops-people (this was before devops was cool), but also with the hardcore sysadmins. They were in charge of the un-sexy infrastructure that kept the organization ticking. I’m talking about E-Mail, Active Directory, DNS, workstation provisioning etc. We used to joke that they were the IT equivalent of sanitation - when everything worked, no one knew you were there, toiling. When things broke, they suddenly remembered who’s responsible for this thing and where to find them. Summer was coming, and I inquired with the person in charge of WSUS (Windows Server Update Services, the Microsoft-blessed way to distribute Windows updates in offline environments) whether they’ve deployed the latest DST-related patches (the DST schedule was modified that year). They replied that no, and in fact they’d like some help in ensuring DST transitioning is disabled on all workstations/servers, as this is how things work here.">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="We don’t do DST at this company">
+<meta property="og:url" content="https://blog.backslasher.net/no-dst.html">
+
+
+  <meta property="og:description" content="Once, a long time ago, I used to have a consulting gig in some big enterprise-y company. It had a lot of unique challenges, being disconnected from the internet (for security reasons, I was told) and therefore having practically everything in-house. I spent my time with not only the proto-devops-people (this was before devops was cool), but also with the hardcore sysadmins. They were in charge of the un-sexy infrastructure that kept the organization ticking. I’m talking about E-Mail, Active Directory, DNS, workstation provisioning etc. We used to joke that they were the IT equivalent of sanitation - when everything worked, no one knew you were there, toiling. When things broke, they suddenly remembered who’s responsible for this thing and where to find them. Summer was coming, and I inquired with the person in charge of WSUS (Windows Server Update Services, the Microsoft-blessed way to distribute Windows updates in offline environments) whether they’ve deployed the latest DST-related patches (the DST schedule was modified that year). They replied that no, and in fact they’d like some help in ensuring DST transitioning is disabled on all workstations/servers, as this is how things work here.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2023-11-08T00:00:00+02:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/no-dst.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="We don’t do DST at this company">
+    <meta itemprop="description" content="Once, a long time ago, I used to have a consulting gig in some big enterprise-y company. It had a lot of unique challenges, being disconnected from the internet (for security reasons, I was told) and therefore having practically everything in-house.I spent my time with not only the proto-devops-people (this was before devops was cool), but also with the hardcore sysadmins.They were in charge of the un-sexy infrastructure that kept the organization ticking. I’m talking about E-Mail, Active Directory, DNS, workstation provisioning etc. We used to joke that they were the IT equivalent of sanitation - when everything worked, no one knew you were there, toiling. When things broke, they suddenly remembered who’s responsible for this thing and where to find them.Summer was coming, and I inquired with the person in charge of WSUS (Windows Server Update Services, the Microsoft-blessed way to distribute Windows updates in offline environments) whether they’ve deployed the latest DST-related patches (the DST schedule was modified that year). They replied that no, and in fact they’d like some help in ensuring DST transitioning is disabled on all workstations/servers, as this is how things work here.">
+    <meta itemprop="datePublished" content="2023-11-08T00:00:00+02:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">We don’t do DST at this company
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          6 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>Once, a long time ago, I used to have a consulting gig in some big enterprise-y company. It had a lot of unique challenges, being disconnected from the internet (for security reasons, I was told) and therefore having practically everything in-house.<br />
+I spent my time with not only the proto-devops-people (this was before devops was cool), but also with the hardcore sysadmins.<br />
+They were in charge of the un-sexy infrastructure that kept the organization ticking. I’m talking about E-Mail, Active Directory, DNS, workstation provisioning etc. We used to joke that they were the IT equivalent of sanitation - when everything worked, no one knew you were there, toiling. When things broke, they suddenly remembered who’s responsible for this thing and where to find them.<br />
+Summer was coming, and I inquired with the person in charge of WSUS (Windows Server Update Services, the Microsoft-blessed way to distribute Windows updates in offline environments) whether they’ve deployed the latest DST-related patches (the DST schedule was modified that year). They replied that no, and in fact they’d like some help in ensuring DST transitioning is disabled on all workstations/servers, as this is how things work here.</p>
+
+<h2 id="short-break---how-is-dst-implemented">Short break - how is DST implemented</h2>
+<p>Unlike your microwave or your alarm clock radio, when you enter <a href="https://en.wikipedia.org/wiki/Daylight_saving_time">Daylight Saving Time</a>, your computer’s internal clock doesn’t actually go forward or back one hour. Instead, your timezone (GMT+X or UTC+X) is changed, so the time you see as a user is different.<br />
+This technique has several advantages over moving the actual clock, mainly that when talking with other computers (that may be in different geographical regions), they still agree on what time it is right now.<br />
+This also means that software running on a computer while it’s changing its timezone doesn’t experience a time skip or a repeat, as long as it’s working internally in UTC time.</p>
+
+<h2 id="back-to-the-story">Back to the story</h2>
+<p>After being internally in shock for a bit, I said that sure, no problem. We did some research on the relevant registry settings for disabling DST transition, and made a plan on what to actually do come summer time (more on that later).<br />
+I casually asked why we’re not using DST, and was answered that it was the devops’ requirement.
+Following up with the devops team (and digging a bit myself) helped me understand the situation better. Buckle up.</p>
+
+<p>The in-house development team built a .NET-based software that was in charge of handling, amongst other things, delivery times of equipment into the company’s warehouses. Each delivery window / event had a start/end datetime that had to be shared with the truck drivers, warehouse operators, security etc.</p>
+
+<p>Come summer, the support crew for this software would encounter a persistent weird problem - <strong>all shipping events advanced exactly one hour after saving them.</strong><br />
+You create an event for tomorrow 08:00, save it, and upon viewing it it’s now at 09:00. You edit it, save it again without touching anything, and it’s now at 10:00.<br />
+Obviously this is insufferable, but luckily someone found out that when disabling DST on every machine involved, things went back to normal.<br />
+We have an expression that loosely translates as “there’s nothing more permanent than a temporary fix”, and so it was. DST was forbidden ever since in that company’s environment, otherwise chaos would ensue in the shipping schedule.</p>
+
+<h2 id="the-problem-revealed">The problem revealed</h2>
+<p>I had some time to spare and was dying to know what’s going on, so I did some research. Said research involved a bit of code-reading, but mostly talking to the dinosaurs in both devops and coding to understand what the system is doing.
+My results are as follows:</p>
+
+<ol>
+  <li>The shipping software persisted its data in a database, which is perfectly reasonable.</li>
+  <li>The data was kept in-DB as giant XML strings. While this sounds ridiculous now, keep in mind that this was before NoSQL, and the organization’s developers had no table structure modification access. This was their way of getting a flexible record structure they can modify on their own.</li>
+  <li>The XML was de-serialized back into .NET objects by a standard .NET library. However, due to some additional permission checks and validation, the serialization (converting classes into XML strings) was built in-house.</li>
+</ol>
+
+<p>Since this was long ago, I didn’t have good read access to .NET’s serialization logic. What I did have, though, is the ability to write a stupid “Console Application” and see how the library behaves.<br />
+I noticed that the .NET library was treating all datetime strings as UTC+0, so when loading such an object into a timezone-naive datetime object, it would use Windows’ timezone logic to convert it into a local one.<br />
+The in-house-written logic that was written to emulate the .NET library, however, did no such thing. Instead, it subtracted 2 hours (Israel’s regular UTC offset) from the datetime object, and stuck the result in the XML. Easy.
+During non-DST times, this would work great.<br />
+Any event at 08:00 would be persisted in the DB as 06:00, and when deserialized would be converted back into 08:00.<br />
+However, <em>when DST was in effect</em>, 08:00 would be serialized as 06:00 (-2 hours), but then deserialized back as 09:00 (as the DST timezone of Israel is UTC+3), which caused the mysterious offset people complained about.</p>
+
+<h2 id="how-does-an-org-run-without-dst">How does an org run without DST</h2>
+<p>In short - not great.
+Although the sysadmins couldn’t use the DST mechanism in Windows, people still wanted the computers’ clocks to match their wall clocks, so we had to actually move the machine’s internal clock.<br />
+Worse, the company was 24/7 operational, so we had to do the transition quickly, and at nighttime (the clocks shift from 01:00 to 02:00, or from 02:00 to 01:00).<br />
+The plan we worked out together was as follows:</p>
+<ol>
+  <li><em>A week before</em> - prepare emergency local credentials for all important servers, in case network authentication fails due to time differences.</li>
+  <li><em>A day before</em> - Increase the tolerance of all systems that limit ticket validity (back then it was Kerberos, a modern example might be JWT) to at least 1 hour.<br />
+This allowed two machines to communicate, even if the first clock was moved already and the second clock was not.</li>
+  <li><em>1 hour before</em> - Stop every task scheduler we cared about, fearing it’d double-execute tasks (or skip executing them).</li>
+  <li><em>At the time of the switch</em> - manually shift the clock of the NTP source of truth</li>
+  <li>Execute a script that iterates over all of our important servers (Active Directory Domain Controllers, SQL servers, application servers) and has them immediately sync their clock from the NTP master.</li>
+  <li>Execute the same script over all servers and workstations in the company, skipping ones that are turned off.</li>
+  <li>Return any disabled services from before, after verifying their servers have the new time</li>
+  <li>Manually handle stragglers that for some reason didn’t get the new time set. Not only servers, but also workstations of VIP personnel that had the sysadmin’s manager’s mobile and were not afraid to use it</li>
+  <li><em>The morning after</em> - Disable local credentials, return time tolerances of security mechanisms to sane borders.</li>
+</ol>
+
+<p>Overall a very exhausting process, and I’m happy I didn’t get to witness it too many times.</p>
+
+<h2 id="the-end">The end</h2>
+<p>When I left my gig at this company, DST was still being disabled.<br />
+The reasoning that I got is that management preferred paying (whether in overtime or lost productivity) for the sysadmins to do the above ritual twice a year, rather than risk breaking the delicate equilibrium of the application’s DB persistence.<br />
+At the time, I heard a bit of resentment from the sysadmins. They felt like it’s easier for the company to compromise their workflow and system stability rather than the software developers’. I did my best to explain that it’s not that the devs were enjoying the situation, or even unwilling to remedy it. It’s the organization that chose to not invest the time in ironing the process out, and instead preferred to have the devs’ time spent in developing new features, or solving bugs that didn’t have such a well-established workaround.</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#dst" class="page__taxonomy-item" rel="tag">DST</a><span class="sep">, </span>
+    
+      <a href="/tags/#microsoft" class="page__taxonomy-item" rel="tag">Microsoft</a><span class="sep">, </span>
+    
+      <a href="/tags/#windows" class="page__taxonomy-item" rel="tag">Windows</a>
+    
+    </span>
+  </p>
+
+
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2023-11-08T00:00:00+02:00">November 8, 2023</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/jar-patch.html" class="pagination--pager" title="Patching a Java JAR
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/jar-patch.html" rel="permalink">Patching a Java JAR
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I’m working with a company that uses smart IoT devices produced far away.
+The main troubleshooting tool is a Java utility provided by the manufacturer.
+This ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/javax-mail-1.4.7.html" rel="permalink"><code class="language-plaintext highlighter-rouge">javax.mail:mail</code> 1.4.7 is broken, and how to workaround
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">javax.mail and I
+One of the current tasks on my agenda involves the modernization of a project that is currently built on Java 8.
+Given that this project is ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/wsl-security-analysts.html" rel="permalink">WSL for non-programming security analysts
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I have a friend who isn’t a developer and believes that coding is beyond their grasp. They work as a security analyst and prefer using Windows as their opera...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/pdf-keep-or-delete.html" rel="permalink">Bash “Keep or Delete” script for PDFs
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I recently discovered that I had over 100 PDFs in my “Downloads” directory and needed to determine which ones I wanted to keep.
+Instead of spending 10 minute...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S2WYJL3VQ7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-S2WYJL3VQ7', { 'anonymize_ip': true});
+</script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>
