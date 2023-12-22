@@ -507,6 +507,45 @@ Have fun forwarding!
     
     <h2 class="archive__item-title no_toc" itemprop="headline">
       
+        <a href="/invalid-number-nov.html" rel="permalink">Invalid number: Nov
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          5 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">One of my current projects is migrating a big Java project from Java 8 to a supported version. Since we’re doing small, stable steps, we started with Java 11...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
         <a href="/no-dst.html" rel="permalink">We don’t do DST at this company
 </a>
       
@@ -615,45 +654,6 @@ This ...</p>
     <p class="archive__item-excerpt" itemprop="description">javax.mail and I
 One of the current tasks on my agenda involves the modernization of a project that is currently built on Java 8.
 Given that this project is ...</p>
-  </article>
-</div>
-
-        
-          
-
-
-
-<div class="grid__item">
-  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
-    
-    <h2 class="archive__item-title no_toc" itemprop="headline">
-      
-        <a href="/wsl-security-analysts.html" rel="permalink">WSL for non-programming security analysts
-</a>
-      
-    </h2>
-    
-
-  <p class="page__meta">
-    
-
-    
-
-    
-      
-      
-
-      <span class="page__meta-readtime">
-        <i class="far fa-clock" aria-hidden="true"></i>
-        
-          2 minute read
-        
-      </span>
-    
-  </p>
-
-
-    <p class="archive__item-excerpt" itemprop="description">I have a friend who isn’t a developer and believes that coding is beyond their grasp. They work as a security analyst and prefer using Windows as their opera...</p>
   </article>
 </div>
 

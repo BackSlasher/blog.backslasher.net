@@ -1,4 +1,109 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2023-11-15T00:23:54+02:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">We don’t do DST at this company</title><link href="https://blog.backslasher.net/no-dst.html" rel="alternate" type="text/html" title="We don’t do DST at this company" /><published>2023-11-08T00:00:00+02:00</published><updated>2023-11-08T00:00:00+02:00</updated><id>https://blog.backslasher.net/no-dst</id><content type="html" xml:base="https://blog.backslasher.net/no-dst.html">&lt;p&gt;Once, a long time ago, I used to have a consulting gig in some big enterprise-y company. It had a lot of unique challenges, being disconnected from the internet (for security reasons, I was told) and therefore having practically everything in-house.&lt;br /&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2023-12-22T16:58:51+02:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">Invalid number: Nov</title><link href="https://blog.backslasher.net/invalid-number-nov.html" rel="alternate" type="text/html" title="Invalid number: Nov" /><published>2023-12-12T00:00:00+02:00</published><updated>2023-12-12T00:00:00+02:00</updated><id>https://blog.backslasher.net/invalid-number-nov</id><content type="html" xml:base="https://blog.backslasher.net/invalid-number-nov.html">&lt;p&gt;One of my current projects is migrating a big Java project from Java 8 to a supported version. Since we’re doing small, stable steps, we started with Java 11.
+After getting the server to start on Java 11 with the usual mix of upgrading libraries and tweaking config files, I let it run for a while on our testing environment to see what interesting errors pop up.&lt;/p&gt;
+
+&lt;p&gt;One error that caught my eye was &lt;strong&gt;“Invalid number: Nov”&lt;/strong&gt;.
+Many times when I see error messages, I have an internal voice doubting the computer’s version of events.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;“How could this object be null?”&lt;/li&gt;
+  &lt;li&gt;“In what world does this array have less than 10 items?”&lt;/li&gt;
+  &lt;li&gt;“Is there really an email address that has non-ASCII characters?”&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;However, at this moment, the machine and I had no argument. I wholeheartedly agreed that “Nov” is an invalid number, and that it was wrong of me to ask the code to treat it as a number. Now to find my shame and correct it.&lt;/p&gt;
+
+&lt;p&gt;A bit of stacktrace-following later, I reached some code that tries to deserialize a string containing JSON from the database into a Java object using the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;GSON&lt;/code&gt; library. A bit smelly maybe, but not a crime. The specific failure was on a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Date&lt;/code&gt; field that was stored as a string. It looked a bit like &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Nov 16, 2023, 10:32:43 AM&lt;/code&gt;. Weird format, sure, but still makes sense. The “Nov” part makes perfect sense there, and more imporantly - this string was created by, and can be perfectly read by, the same code under Java 8. What caused the breakage?&lt;/p&gt;
+
+&lt;p&gt;Using the “Java disassembler” integral to IntelliJ IDEA, I did some reading in the GSON library. Inside, I found logic that roughly translates to the following:&lt;/p&gt;
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+&lt;span class=&quot;nc&quot;&gt;Date&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;deserializeDate&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;defaultFormat&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;parse&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;ParseException&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;){&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ISO8601Utils&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;parse&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;nc&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;serializeDate&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Date&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;defaultFormat&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;toString&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Can you guess the reason already?&lt;br /&gt;
+Turns out that when &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;defaultFormat.parse&lt;/code&gt; fails with a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ParseException&lt;/code&gt;, the date (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Nov 16, 2023, 10:32:43 AM&lt;/code&gt;) is then parsed with ISO 8601 (e.g. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;2022-09-27 18:00:00.000&lt;/code&gt;), which tries to see &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Nov&lt;/code&gt; as the year number and fails, as indeed &lt;strong&gt;Nov is an invalid number&lt;/strong&gt;.&lt;br /&gt;
+Why does &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;defaultFormat.parse&lt;/code&gt; fail though?&lt;/p&gt;
+
+&lt;p&gt;I had my suspicions at this point, and after a bit of searching, &lt;a href=&quot;https://stackoverflow.com/q/58010818&quot;&gt;my suspicions were confirmed&lt;/a&gt;.&lt;br /&gt;
+That “default” format changed between Java 8 and Java 9, causing dates that were written from Java 8 to not-parse on Java 11, and the other way around.&lt;br /&gt;
+The change, in my case, was from &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MMM d, yyyy, h:mm:ss a&lt;/code&gt; to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MMM d, yyyy h:mm:ss a&lt;/code&gt;. A comma was removed after the year signifier. &lt;br /&gt;
+Something had to be done.&lt;/p&gt;
+
+&lt;h2 id=&quot;past-wisdom&quot;&gt;Past wisdom&lt;/h2&gt;
+
+&lt;p&gt;If I could go back to when the project was just written and the DB was empty, I’d enforce a single explicit date format throughout the codebase.&lt;br /&gt;
+Granted, not using the default format is a bit of a chore. I don’t really care about how the date looks, as long as it’s human-readable and machine-readble. However, one of the habits I have is:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;DateTime handling has a lot of sharp edges. Therefore, be as boring as possible when handling them&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;This is by no means an original thought. I’m certain many people reached the same conclusion, and in the same way - cutting themselves on something that could have been easily avoided.
+For the less-scarred, here are some examples for things that can wrong with dates, but you might not see them coming:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Storing “naive” datetimes (no timezone) and having them passed between machines in different timezones, causing them to be treated as points in time&lt;/li&gt;
+  &lt;li&gt;DST and the reoccuring hour it brings at fall, making 01:30 happen twice&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.php.net/manual/en/datetime.format.php&quot;&gt;In PHP&lt;/a&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;yyyy&lt;/code&gt; representing “2020” correctly, but one year later showing “2121”, as &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;yy&lt;/code&gt; is a two-digit representation of the current year (are you looking for &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;YYYY&lt;/code&gt;?)&lt;/li&gt;
+  &lt;li&gt;American and non-American date parsing (How would you read “03/07/22”? Which one is the month and which is the day?)&lt;/li&gt;
+  &lt;li&gt;Old timezone databases not having up-to-date DST times, causing an offset when doing date arithmatic on legacy machines&lt;/li&gt;
+  &lt;li&gt;The slight difference between nanoseconds and microseconds (1 micro = 1000 nano)&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;There are surely many more, complete with horror stories about discovering them at 3 am.&lt;/p&gt;
+
+&lt;p&gt;I might write more about what I’m doing to make DateTime handling more boring and therefore safer, but for this instance, settling on an explicit date format, any one, would have saved me some trouble.&lt;/p&gt;
+
+&lt;h2 id=&quot;back-to-the-story&quot;&gt;Back to the story&lt;/h2&gt;
+
+&lt;p&gt;However, I currently had a different kind of problem - I already had a DB full of Java8-default-serialized dates.&lt;/p&gt;
+
+&lt;p&gt;Iterating over all of them and converting them to the “correct” format while the server is down is inviting a lot of pain, so no go. &lt;br /&gt;
+The next reasonable path would be to centeralize all of our GSON callsites and set them explicitly to the Java8 datetime string for de/serializing, so I tried that.
+Much to my chagrin, I found that this broke other callsites, that were appreantly running on slightly different servers where the default was yet again different. This means that there was no single format string that covered all of our usecases. What do?&lt;/p&gt;
+
+&lt;p&gt;My final approach was replacing all of the GSON de/seralizers in our codebase to a bespoke one I built, that had a custom de/serializer for dates.
+It went approximately like this:&lt;/p&gt;
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nc&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;DateFormatter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;readDateFormats&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Arrays&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;asList&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;DateFormatter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;MMM d, yyyy, h:mm:ss a&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// The &quot;main&quot; formatstring I found from Java8&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;DateFormatter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;MMM d, yyyy h:mm:ss a&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// Same for Java11&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;DateFormatter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;yyyy-MM-dd'T'HH:mm:ss.SSSZ&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// Some format I like&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// All of the other formatstrings I found in our logfiles&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+
+&lt;span class=&quot;nc&quot;&gt;DateFormatter&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;writeDateFormat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;DateFormatter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;MMM d, yyyy, h:mm:ss a&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+
+&lt;span class=&quot;nc&quot;&gt;Date&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;deserializeDate&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;readDateFormats&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;df&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;df&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;parse&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;ParseException&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;filter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;first&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;nc&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;serializeDate&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Date&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;writeDateFormat&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;toString&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This solution has the following niceties:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;I can move the code to running under Java 8 or 11, and it won’t change its behavior.&lt;/li&gt;
+  &lt;li&gt;There is an explicit list of DateTime formats we support. If in the future we switch from GSON to another JSON de/serializer, we’ll know what we need to support and test against&lt;/li&gt;
+  &lt;li&gt;If I dicsover another DateTime format I need to support, I have a single place to add it in&lt;/li&gt;
+  &lt;li&gt;Changing the DateTime format we write is done in a single place and easily revertable (dates written in the new format can be easily supported even if we decide to not use it after a week)&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;We’re now happy campers (as far as JSON date parsing is concerned), future-proof and past-proof date-wise, and no one tries treating &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Nov&lt;/code&gt; as a number.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="Java" /><category term="Date" /><category term="Ramblings" /><summary type="html">One of my current projects is migrating a big Java project from Java 8 to a supported version. Since we’re doing small, stable steps, we started with Java 11. After getting the server to start on Java 11 with the usual mix of upgrading libraries and tweaking config files, I let it run for a while on our testing environment to see what interesting errors pop up.</summary></entry><entry><title type="html">We don’t do DST at this company</title><link href="https://blog.backslasher.net/no-dst.html" rel="alternate" type="text/html" title="We don’t do DST at this company" /><published>2023-11-08T00:00:00+02:00</published><updated>2023-11-08T00:00:00+02:00</updated><id>https://blog.backslasher.net/no-dst</id><content type="html" xml:base="https://blog.backslasher.net/no-dst.html">&lt;p&gt;Once, a long time ago, I used to have a consulting gig in some big enterprise-y company. It had a lot of unique challenges, being disconnected from the internet (for security reasons, I was told) and therefore having practically everything in-house.&lt;br /&gt;
 I spent my time with not only the proto-devops-people (this was before devops was cool), but also with the hardcore sysadmins.&lt;br /&gt;
 They were in charge of the un-sexy infrastructure that kept the organization ticking. I’m talking about E-Mail, Active Directory, DNS, workstation provisioning etc. We used to joke that they were the IT equivalent of sanitation - when everything worked, no one knew you were there, toiling. When things broke, they suddenly remembered who’s responsible for this thing and where to find them.&lt;br /&gt;
 Summer was coming, and I inquired with the person in charge of WSUS (Windows Server Update Services, the Microsoft-blessed way to distribute Windows updates in offline environments) whether they’ve deployed the latest DST-related patches (the DST schedule was modified that year). They replied that no, and in fact they’d like some help in ensuring DST transitioning is disabled on all workstations/servers, as this is how things work here.&lt;/p&gt;
@@ -823,16 +928,4 @@ By decreasing the e2e runtime, we were able to reduce the worker time that our b
 &lt;h2 id=&quot;epilogue-big-plans-are-crashing&quot;&gt;Epilogue: big plans are crashing&lt;/h2&gt;
 &lt;p&gt;Upon informing my colleagues of the improvement in e2e testing, I received feedback from the e2e specialist. They expressed dissatisfaction because their six-month plan to optimize the process would be more challenging to justify since the expected gains were now less significant. They had anticipated achieving a 7-minute e2e suite run time, which is a considerable improvement from 20 minutes, but less impressive compared to the new 11 minutes. After discussing the situation, we concluded that if the overhaul was less attractive now, it would be best to focus on other areas that could yield more significant gains. For instance, there may be other areas of the codebase with inefficient feature-flag checks that consume unnecessary CPU time, and optimizing these areas could save us a considerable amount of money.&lt;/p&gt;
 
-&lt;p&gt;I ended up moving to another team shortly after, but I will forever remember how my 3-line change saved our company a whole worker a month.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="Ramblings" /><summary type="html">Act 1, where I write Java In the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus was on the networking and container environment, a hackathon presented an opportunity to dive deeper into the app’s functionality. I discovered that the server was utilizing an excessive amount of CPU time, approximately 0.5% of the total, to check a particular feature flag. Recognizing the potential for cost savings, I implemented a caching mechanism to store the flag for five-second intervals, thus saving the company a tidy sum.</summary></entry><entry><title type="html">Sapling Commands</title><link href="https://blog.backslasher.net/sapling-commands.html" rel="alternate" type="text/html" title="Sapling Commands" /><published>2023-03-12T00:00:00+02:00</published><updated>2023-03-12T00:00:00+02:00</updated><id>https://blog.backslasher.net/sapling-commands</id><content type="html" xml:base="https://blog.backslasher.net/sapling-commands.html">&lt;p&gt;&lt;a href=&quot;https://sapling-scm.com/&quot;&gt;Sapling&lt;/a&gt; (the Facebook-released SCM) is great, but the docs are not-great.&lt;br /&gt;
-I thought I’d list some commands it took me a while to undertand, for me and for others&lt;/p&gt;
-
-&lt;h2 id=&quot;create-remote-tag&quot;&gt;Create remote tag&lt;/h2&gt;
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sl push --to tags/v0.0.5
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Where &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;v0.0.5&lt;/code&gt; is the tag name.&lt;br /&gt;
-The “remote” is because there are no local tags in Sapling&lt;/p&gt;
-
-&lt;h2 id=&quot;delete-remote-branch&quot;&gt;Delete remote branch&lt;/h2&gt;
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sl push --delete main default
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Where “main” is the name of the branch, and “default” is the path (aka origin in git-talk)&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="Linux" /><category term="Sapling" /><category term="Git" /><summary type="html">Sapling (the Facebook-released SCM) is great, but the docs are not-great. I thought I’d list some commands it took me a while to undertand, for me and for others</summary></entry></feed>
+&lt;p&gt;I ended up moving to another team shortly after, but I will forever remember how my 3-line change saved our company a whole worker a month.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="Ramblings" /><summary type="html">Act 1, where I write Java In the past, I had the opportunity to assist a team in developing an Android application and a Java server. While my primary focus was on the networking and container environment, a hackathon presented an opportunity to dive deeper into the app’s functionality. I discovered that the server was utilizing an excessive amount of CPU time, approximately 0.5% of the total, to check a particular feature flag. Recognizing the potential for cost savings, I implemented a caching mechanism to store the flag for five-second intervals, thus saving the company a tidy sum.</summary></entry></feed>

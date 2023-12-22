@@ -1042,4 +1042,10 @@ var store = [{
         "tags": ["Microsoft","Windows","DST"],
         "url": "/no-dst.html",
         "teaser": null
+      },{
+        "title": "Invalid number: Nov",
+        "excerpt":"One of my current projects is migrating a big Java project from Java 8 to a supported version. Since we’re doing small, stable steps, we started with Java 11. After getting the server to start on Java 11 with the usual mix of upgrading libraries and tweaking config files, I...","categories": [],
+        "tags": ["Java","Date","Ramblings"],
+        "url": "/invalid-number-nov.html",
+        "teaser": null
       },]

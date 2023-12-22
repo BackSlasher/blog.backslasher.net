@@ -1,0 +1,764 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Invalid number: Nov - BackSlasher</title>
+<meta name="description" content="One of my current projects is migrating a big Java project from Java 8 to a supported version. Since we’re doing small, stable steps, we started with Java 11. After getting the server to start on Java 11 with the usual mix of upgrading libraries and tweaking config files, I let it run for a while on our testing environment to see what interesting errors pop up.">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Invalid number: Nov">
+<meta property="og:url" content="https://blog.backslasher.net/invalid-number-nov.html">
+
+
+  <meta property="og:description" content="One of my current projects is migrating a big Java project from Java 8 to a supported version. Since we’re doing small, stable steps, we started with Java 11. After getting the server to start on Java 11 with the usual mix of upgrading libraries and tweaking config files, I let it run for a while on our testing environment to see what interesting errors pop up.">
+
+
+
+  <meta property="og:image" content="https://blog.backslasher.net/assets/2023-12-12-invalid-number-nov/header.png">
+
+
+
+
+
+  <meta property="article:published_time" content="2023-12-12T00:00:00+02:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/invalid-number-nov.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/hireme/">Hire Me</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+  
+
+
+
+
+
+
+
+<div class="page__hero--overlay"
+  style=" background-image: url('/assets/2023-12-12-invalid-number-nov/header.png');"
+>
+  
+    <div class="wrapper">
+      <h1 id="page-title" class="page__title" itemprop="headline">
+        
+          Invalid number: Nov
+
+        
+      </h1>
+      
+      
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          5 minute read
+        
+      </span>
+    
+  </p>
+
+
+      
+      
+    </div>
+  
+  
+</div>
+
+
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Invalid number: Nov">
+    <meta itemprop="description" content="One of my current projects is migrating a big Java project from Java 8 to a supported version. Since we’re doing small, stable steps, we started with Java 11.After getting the server to start on Java 11 with the usual mix of upgrading libraries and tweaking config files, I let it run for a while on our testing environment to see what interesting errors pop up.">
+    <meta itemprop="datePublished" content="2023-12-12T00:00:00+02:00">
+    
+
+    <div class="page__inner-wrap">
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>One of my current projects is migrating a big Java project from Java 8 to a supported version. Since we’re doing small, stable steps, we started with Java 11.
+After getting the server to start on Java 11 with the usual mix of upgrading libraries and tweaking config files, I let it run for a while on our testing environment to see what interesting errors pop up.</p>
+
+<p>One error that caught my eye was <strong>“Invalid number: Nov”</strong>.
+Many times when I see error messages, I have an internal voice doubting the computer’s version of events.</p>
+<ul>
+  <li>“How could this object be null?”</li>
+  <li>“In what world does this array have less than 10 items?”</li>
+  <li>“Is there really an email address that has non-ASCII characters?”</li>
+</ul>
+
+<p>However, at this moment, the machine and I had no argument. I wholeheartedly agreed that “Nov” is an invalid number, and that it was wrong of me to ask the code to treat it as a number. Now to find my shame and correct it.</p>
+
+<p>A bit of stacktrace-following later, I reached some code that tries to deserialize a string containing JSON from the database into a Java object using the <code class="language-plaintext highlighter-rouge">GSON</code> library. A bit smelly maybe, but not a crime. The specific failure was on a <code class="language-plaintext highlighter-rouge">Date</code> field that was stored as a string. It looked a bit like <code class="language-plaintext highlighter-rouge">Nov 16, 2023, 10:32:43 AM</code>. Weird format, sure, but still makes sense. The “Nov” part makes perfect sense there, and more imporantly - this string was created by, and can be perfectly read by, the same code under Java 8. What caused the breakage?</p>
+
+<p>Using the “Java disassembler” integral to IntelliJ IDEA, I did some reading in the GSON library. Inside, I found logic that roughly translates to the following:</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="nc">Date</span> <span class="nf">deserializeDate</span><span class="o">(</span><span class="nc">String</span> <span class="n">string</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">try</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">defaultFormat</span><span class="o">.</span><span class="na">parse</span><span class="o">(</span><span class="n">string</span><span class="o">);</span>
+    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">ParseException</span> <span class="n">e</span><span class="o">){</span>
+        <span class="k">return</span> <span class="nc">ISO8601Utils</span><span class="o">.</span><span class="na">parse</span><span class="o">(</span><span class="n">string</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="nc">String</span> <span class="nf">serializeDate</span><span class="o">(</span><span class="nc">Date</span> <span class="n">date</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">defaultFormat</span><span class="o">.</span><span class="na">toString</span><span class="o">(</span><span class="n">date</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<p>Can you guess the reason already?<br />
+Turns out that when <code class="language-plaintext highlighter-rouge">defaultFormat.parse</code> fails with a <code class="language-plaintext highlighter-rouge">ParseException</code>, the date (<code class="language-plaintext highlighter-rouge">Nov 16, 2023, 10:32:43 AM</code>) is then parsed with ISO 8601 (e.g. <code class="language-plaintext highlighter-rouge">2022-09-27 18:00:00.000</code>), which tries to see <code class="language-plaintext highlighter-rouge">Nov</code> as the year number and fails, as indeed <strong>Nov is an invalid number</strong>.<br />
+Why does <code class="language-plaintext highlighter-rouge">defaultFormat.parse</code> fail though?</p>
+
+<p>I had my suspicions at this point, and after a bit of searching, <a href="https://stackoverflow.com/q/58010818">my suspicions were confirmed</a>.<br />
+That “default” format changed between Java 8 and Java 9, causing dates that were written from Java 8 to not-parse on Java 11, and the other way around.<br />
+The change, in my case, was from <code class="language-plaintext highlighter-rouge">MMM d, yyyy, h:mm:ss a</code> to <code class="language-plaintext highlighter-rouge">MMM d, yyyy h:mm:ss a</code>. A comma was removed after the year signifier. <br />
+Something had to be done.</p>
+
+<h2 id="past-wisdom">Past wisdom</h2>
+
+<p>If I could go back to when the project was just written and the DB was empty, I’d enforce a single explicit date format throughout the codebase.<br />
+Granted, not using the default format is a bit of a chore. I don’t really care about how the date looks, as long as it’s human-readable and machine-readble. However, one of the habits I have is:</p>
+
+<blockquote>
+  <p>DateTime handling has a lot of sharp edges. Therefore, be as boring as possible when handling them</p>
+</blockquote>
+
+<p>This is by no means an original thought. I’m certain many people reached the same conclusion, and in the same way - cutting themselves on something that could have been easily avoided.
+For the less-scarred, here are some examples for things that can wrong with dates, but you might not see them coming:</p>
+<ol>
+  <li>Storing “naive” datetimes (no timezone) and having them passed between machines in different timezones, causing them to be treated as points in time</li>
+  <li>DST and the reoccuring hour it brings at fall, making 01:30 happen twice</li>
+  <li><a href="https://www.php.net/manual/en/datetime.format.php">In PHP</a>, <code class="language-plaintext highlighter-rouge">yyyy</code> representing “2020” correctly, but one year later showing “2121”, as <code class="language-plaintext highlighter-rouge">yy</code> is a two-digit representation of the current year (are you looking for <code class="language-plaintext highlighter-rouge">YYYY</code>?)</li>
+  <li>American and non-American date parsing (How would you read “03/07/22”? Which one is the month and which is the day?)</li>
+  <li>Old timezone databases not having up-to-date DST times, causing an offset when doing date arithmatic on legacy machines</li>
+  <li>The slight difference between nanoseconds and microseconds (1 micro = 1000 nano)</li>
+</ol>
+
+<p>There are surely many more, complete with horror stories about discovering them at 3 am.</p>
+
+<p>I might write more about what I’m doing to make DateTime handling more boring and therefore safer, but for this instance, settling on an explicit date format, any one, would have saved me some trouble.</p>
+
+<h2 id="back-to-the-story">Back to the story</h2>
+
+<p>However, I currently had a different kind of problem - I already had a DB full of Java8-default-serialized dates.</p>
+
+<p>Iterating over all of them and converting them to the “correct” format while the server is down is inviting a lot of pain, so no go. <br />
+The next reasonable path would be to centeralize all of our GSON callsites and set them explicitly to the Java8 datetime string for de/serializing, so I tried that.
+Much to my chagrin, I found that this broke other callsites, that were appreantly running on slightly different servers where the default was yet again different. This means that there was no single format string that covered all of our usecases. What do?</p>
+
+<p>My final approach was replacing all of the GSON de/seralizers in our codebase to a bespoke one I built, that had a custom de/serializer for dates.
+It went approximately like this:</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">DateFormatter</span><span class="o">&gt;</span> <span class="n">readDateFormats</span> <span class="o">=</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span>
+    <span class="k">new</span> <span class="nf">DateFormatter</span><span class="o">(</span><span class="s">"MMM d, yyyy, h:mm:ss a"</span><span class="o">),</span> <span class="c1">// The "main" formatstring I found from Java8</span>
+    <span class="k">new</span> <span class="nf">DateFormatter</span><span class="o">(</span><span class="s">"MMM d, yyyy h:mm:ss a"</span><span class="o">),</span> <span class="c1">// Same for Java11</span>
+    <span class="k">new</span> <span class="nf">DateFormatter</span><span class="o">(</span><span class="s">"yyyy-MM-dd'T'HH:mm:ss.SSSZ"</span><span class="o">),</span> <span class="c1">// Some format I like</span>
+    <span class="o">...</span> <span class="c1">// All of the other formatstrings I found in our logfiles</span>
+<span class="o">);</span>
+
+<span class="nc">DateFormatter</span> <span class="n">writeDateFormat</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">DateFormatter</span><span class="o">(</span><span class="s">"MMM d, yyyy, h:mm:ss a"</span><span class="o">);</span>
+
+<span class="nc">Date</span> <span class="nf">deserializeDate</span><span class="o">(</span><span class="nc">String</span> <span class="n">string</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">readDateFormats</span><span class="o">.</span><span class="na">stream</span><span class="o">().</span><span class="na">map</span><span class="o">(</span><span class="n">df</span> <span class="o">-&gt;</span> <span class="o">{</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="na">parse</span><span class="o">(</span><span class="n">string</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">ParseException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}).</span><span class="na">filter</span><span class="o">(</span><span class="n">d</span> <span class="o">-&gt;</span> <span class="n">d</span><span class="o">!=</span><span class="kc">null</span><span class="o">).</span><span class="na">first</span><span class="o">();</span>
+<span class="o">}</span>
+
+<span class="nc">String</span> <span class="nf">serializeDate</span><span class="o">(</span><span class="nc">Date</span> <span class="n">date</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">writeDateFormat</span><span class="o">.</span><span class="na">toString</span><span class="o">(</span><span class="n">date</span><span class="o">);</span>
+<span class="o">}</span>
+
+</code></pre></div></div>
+
+<p>This solution has the following niceties:</p>
+<ol>
+  <li>I can move the code to running under Java 8 or 11, and it won’t change its behavior.</li>
+  <li>There is an explicit list of DateTime formats we support. If in the future we switch from GSON to another JSON de/serializer, we’ll know what we need to support and test against</li>
+  <li>If I dicsover another DateTime format I need to support, I have a single place to add it in</li>
+  <li>Changing the DateTime format we write is done in a single place and easily revertable (dates written in the new format can be easily supported even if we decide to not use it after a week)</li>
+</ol>
+
+<p>We’re now happy campers (as far as JSON date parsing is concerned), future-proof and past-proof date-wise, and no one tries treating <code class="language-plaintext highlighter-rouge">Nov</code> as a number.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#date" class="page__taxonomy-item" rel="tag">Date</a><span class="sep">, </span>
+    
+      <a href="/tags/#java" class="page__taxonomy-item" rel="tag">Java</a><span class="sep">, </span>
+    
+      <a href="/tags/#ramblings" class="page__taxonomy-item" rel="tag">Ramblings</a>
+    
+    </span>
+  </p>
+
+
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2023-12-12T00:00:00+02:00">December 12, 2023</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/no-dst.html" class="pagination--pager" title="We don’t do DST at this company
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/no-dst.html" rel="permalink">We don’t do DST at this company
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          6 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Once, a long time ago, I used to have a consulting gig in some big enterprise-y company. It had a lot of unique challenges, being disconnected from the inter...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/jar-patch.html" rel="permalink">Patching a Java JAR
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I’m working with a company that uses smart IoT devices produced far away.
+The main troubleshooting tool is a Java utility provided by the manufacturer.
+This ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/javax-mail-1.4.7.html" rel="permalink"><code class="language-plaintext highlighter-rouge">javax.mail:mail</code> 1.4.7 is broken, and how to workaround
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">javax.mail and I
+One of the current tasks on my agenda involves the modernization of a project that is currently built on Java 8.
+Given that this project is ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/wsl-security-analysts.html" rel="permalink">WSL for non-programming security analysts
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I have a friend who isn’t a developer and believes that coding is beyond their grasp. They work as a security analyst and prefer using Windows as their opera...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S2WYJL3VQ7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-S2WYJL3VQ7', { 'anonymize_ip': true});
+</script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>
