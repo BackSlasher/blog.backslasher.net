@@ -1048,4 +1048,10 @@ var store = [{
         "tags": ["Java","Date","Ramblings"],
         "url": "/invalid-number-nov.html",
         "teaser": null
+      },{
+        "title": "Bridging Switcher's UDP over OpenWRT",
+        "excerpt":"Seems like I’m doing this setup once every 3 years, then forget about it until the next time it breaks. I hope this is the last time I’m rediscovering this. This only works because of the awesome udp-broadcast-relay-redux binary. The players A router running OpenWRT, with two networks: lan that...","categories": [],
+        "tags": ["OpenWRT","Network","UDP"],
+        "url": "/openwrt-switcher.html",
+        "teaser": null
       },]
