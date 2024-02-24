@@ -1054,4 +1054,10 @@ var store = [{
         "tags": ["OpenWRT","Network","UDP"],
         "url": "/openwrt-switcher.html",
         "teaser": null
+      },{
+        "title": "Adding shortcuts to your search engine",
+        "excerpt":"I really like DuckDuckGo’s bangs, which basically directs your query elsewhere if you prefix it with !something. You could search the London zoo in gmaps by querying for !gmaps London zoo, or open the wiki article on Mass Effect with !wiki mass effect. There’s a whole bunch of them and...","categories": [],
+        "tags": ["PHP","Search"],
+        "url": "/php-search-shortcuts.html",
+        "teaser": null
       },]

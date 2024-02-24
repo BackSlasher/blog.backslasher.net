@@ -1,0 +1,801 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Adding shortcuts to your search engine - BackSlasher</title>
+<meta name="description" content="I really like DuckDuckGo’s bangs, which basically directs your query elsewhere if you prefix it with !something. You could search the London zoo in gmaps by querying for !gmaps London zoo, or open the wiki article on Mass Effect with !wiki mass effect. There’s a whole bunch of them and they just keep adding more. I like them because they require zero configuration on my browser, and they work identically on all of them.">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Adding shortcuts to your search engine">
+<meta property="og:url" content="https://blog.backslasher.net/php-search-shortcuts.html">
+
+
+  <meta property="og:description" content="I really like DuckDuckGo’s bangs, which basically directs your query elsewhere if you prefix it with !something. You could search the London zoo in gmaps by querying for !gmaps London zoo, or open the wiki article on Mass Effect with !wiki mass effect. There’s a whole bunch of them and they just keep adding more. I like them because they require zero configuration on my browser, and they work identically on all of them.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2024-02-10T00:00:00+02:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/php-search-shortcuts.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/hireme/">Hire Me</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Adding shortcuts to your search engine">
+    <meta itemprop="description" content="I really like DuckDuckGo’s bangs, which basically directs your query elsewhere if you prefix it with !something. You could search the London zoo in gmaps by querying for !gmaps London zoo, or open the wiki article on Mass Effect with !wiki mass effect. There’s a whole bunch of them and they just keep adding more.I like them because they require zero configuration on my browser, and they work identically on all of them.">
+    <meta itemprop="datePublished" content="2024-02-10T00:00:00+02:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Adding shortcuts to your search engine
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>I really like DuckDuckGo’s <a href="https://duckduckgo.com/bangs">bangs</a>, which basically directs your query elsewhere if you prefix it with <code class="language-plaintext highlighter-rouge">!something</code>. You could search the London zoo in gmaps by querying for <code class="language-plaintext highlighter-rouge">!gmaps London zoo</code>, or open the wiki article on Mass Effect with <code class="language-plaintext highlighter-rouge">!wiki mass effect</code>. There’s a whole bunch of them and they just keep adding more.<br />
+I like them because they require zero configuration on my browser, and they work identically on all of them.</p>
+
+<p>I wanted to add some of my own, but my custom bangs would be of no relevance to anyone else. They’d point to my custom finance tracker, my company’s CRM, my private network’s logger. I don’t want to share those with DDG, and they wouldn’t want any of them. Instead, I created my own search engine. Sort of.</p>
+
+<h2 id="design">Design</h2>
+<p>I want to write a “search engine”, where if the query matches soemthing like <code class="language-plaintext highlighter-rouge">!server best_function</code>, it’ll redirect the request to a search for <code class="language-plaintext highlighter-rouge">best_function</code> on my “server” repo. If the query doesn’t match any of my bangs, it’ll redirect the request to my usual search engine.<br />
+It’s simple (regex and redirects) and stateless. My main requirement is for it to be reasonably fast, so I went with PHP.<br />
+To make it fancy, I decided to support search suggestions, which is a bit more complicated than a straight-up search engine. As a handicap, I wanted to keep it all in the same file.</p>
+
+<h2 id="main-logic">Main logic</h2>
+<p>A better person would use a proper class for storing the bangs’ configs, but I just used a good-ole array of dicts:</p>
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="nv">$engines</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">[</span>
+    <span class="s1">'bangs'</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">'server'</span><span class="p">,</span> <span class="s1">'ser'</span><span class="p">],</span>
+    <span class="s1">'search_url'</span> <span class="o">=&gt;</span> <span class="s1">'https://git.private-repo.com/search?q={{{s}}}'</span><span class="p">,</span>
+  <span class="p">],</span>
+<span class="p">];</span>
+
+<span class="nv">$default_bang</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="s1">'search_url'</span> <span class="o">=&gt;</span> <span class="s2">"https://duckduckgo.com/?q=</span><span class="si">{</span><span class="nv">{{s}}</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+  <span class="s1">'suggestion_url'</span> <span class="o">=&gt;</span> <span class="s2">"https://duckduckgo.com/ac/?q=</span><span class="si">{</span><span class="nv">{{s}}</span><span class="si">}</span><span class="s2">&amp;type=list"</span><span class="p">,</span>
+<span class="p">];</span>
+
+</code></pre></div></div>
+
+<p>Finding the right dict for a specific bang is rather primitive:</p>
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">function</span> <span class="n">find_bang</span><span class="p">(</span><span class="nv">$bang</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">global</span> <span class="nv">$engines</span><span class="p">;</span>
+
+  <span class="k">foreach</span> <span class="p">(</span><span class="nv">$engines</span> <span class="k">as</span> <span class="nv">$engine</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">foreach</span> <span class="p">(</span><span class="nv">$engine</span><span class="p">[</span><span class="s1">'bangs'</span><span class="p">]</span> <span class="k">as</span> <span class="nv">$candidate_bang</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nv">$candidate_bang</span> <span class="o">==</span> <span class="nv">$bang</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$engine</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<p>Extracting the bang from the querystring is done with basic regex:</p>
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">function</span> <span class="n">extract_bang</span><span class="p">(</span><span class="nv">$q</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span><span class="p">(</span><span class="nb">preg_match</span><span class="p">(</span><span class="s1">'/^!(?&lt;bang&gt;[\S]+)(\s+(?&lt;rest&gt;.*))?/'</span><span class="p">,</span> <span class="nv">$q</span><span class="p">,</span> <span class="nv">$matches</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nv">$bang</span> <span class="o">=</span> <span class="nv">$matches</span><span class="p">[</span><span class="s1">'bang'</span><span class="p">];</span>
+    <span class="nv">$rest</span> <span class="o">=</span> <span class="nv">$matches</span><span class="p">[</span><span class="s1">'rest'</span><span class="p">];</span>
+    <span class="k">return</span> <span class="p">[</span><span class="s1">'bang'</span><span class="o">=&gt;</span><span class="nv">$bang</span><span class="p">,</span> <span class="s1">'rest'</span><span class="o">=&gt;</span><span class="nv">$rest</span><span class="p">];</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="p">[</span><span class="s1">'bang'</span><span class="o">=&gt;</span><span class="kc">null</span><span class="p">,</span> <span class="s1">'rest'</span><span class="o">=&gt;</span><span class="nv">$q</span><span class="p">];</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<p>Redirection is simple:</p>
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">function</span> <span class="n">redirect</span><span class="p">(</span><span class="nv">$base_url</span><span class="p">,</span> <span class="nv">$q</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nv">$url</span> <span class="o">=</span> <span class="nb">str_replace</span><span class="p">(</span><span class="s1">'{{{s}}}'</span><span class="p">,</span> <span class="nb">urlencode</span><span class="p">(</span><span class="nv">$q</span><span class="p">),</span> <span class="nv">$base_url</span><span class="p">);</span>
+  <span class="nb">header</span><span class="p">(</span><span class="s1">'Location: '</span><span class="mf">.</span><span class="nv">$url</span><span class="p">);</span>
+  <span class="k">exit</span><span class="p">;</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<p>And putting it all together:</p>
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">function</span> <span class="n">full_monty</span><span class="p">(</span><span class="nv">$q</span><span class="p">,</span> <span class="nv">$field_name</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">global</span> <span class="nv">$default_bang</span><span class="p">;</span>
+
+  <span class="nv">$query_data</span> <span class="o">=</span> <span class="nf">extract_bang</span><span class="p">(</span><span class="nv">$q</span><span class="p">);</span>
+  <span class="nv">$bang</span> <span class="o">=</span> <span class="nv">$query_data</span><span class="p">[</span><span class="s1">'bang'</span><span class="p">];</span>
+  <span class="nv">$rest</span> <span class="o">=</span> <span class="nv">$query_data</span><span class="p">[</span><span class="s1">'rest'</span><span class="p">];</span>
+
+  <span class="nv">$bang_data</span> <span class="o">=</span> <span class="nf">find_bang</span><span class="p">(</span><span class="nv">$bang</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nv">$bang_data</span> <span class="o">==</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$bang_data</span> <span class="o">=</span> <span class="nv">$default_bang</span><span class="p">;</span>
+    <span class="nv">$rest</span> <span class="o">=</span> <span class="nv">$q</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="nv">$url_template</span> <span class="o">=</span> <span class="nv">$bang_data</span><span class="p">[</span><span class="nv">$field_name</span><span class="p">];</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nv">$url_template</span> <span class="o">==</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">exit</span><span class="p">();</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="nf">redirect</span><span class="p">(</span><span class="nv">$url_template</span><span class="p">,</span> <span class="nv">$rest</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<h2 id="opensearch-stuff">OpenSearch stuff</h2>
+<p>To present the search engine to a user, you need to present an HTML page with a <code class="language-plaintext highlighter-rouge">&lt;link&gt;</code> element in the <code class="language-plaintext highlighter-rouge">&lt;head&gt;</code>.</p>
+
+<p>Determining the address of the actual page is a bit annoying:</p>
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">function</span> <span class="n">full_link</span><span class="p">(){</span>
+  <span class="nv">$partial_uri</span> <span class="o">=</span> <span class="nb">parse_url</span><span class="p">(</span><span class="nv">$_SERVER</span><span class="p">[</span><span class="s1">'REQUEST_URI'</span><span class="p">],</span> <span class="kc">PHP_URL_PATH</span><span class="p">);</span>
+  <span class="k">return</span> <span class="p">(</span><span class="nb">empty</span><span class="p">(</span><span class="nv">$_SERVER</span><span class="p">[</span><span class="s1">'HTTPS'</span><span class="p">])</span> <span class="o">?</span> <span class="s1">'http'</span> <span class="o">:</span> <span class="s1">'https'</span><span class="p">)</span> <span class="mf">.</span> <span class="s2">"://</span><span class="nv">$_SERVER[HTTP_HOST]$partial_uri</span><span class="s2">"</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nv">$actual_link</span> <span class="o">=</span> <span class="nf">full_link</span><span class="p">();</span>
+
+</code></pre></div></div>
+
+<p>But I need it to build the <code class="language-plaintext highlighter-rouge">link</code> element. I also threw in a tiny form for testing the search.</p>
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="nt">&lt;html&gt;</span>
+  <span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;link</span>
+  <span class="na">rel=</span><span class="s">"search"</span>
+  <span class="na">type=</span><span class="s">"application/opensearchdescription+xml"</span>
+  <span class="na">title=</span><span class="s">"Better Search"</span>
+  <span class="na">href=</span><span class="s">"</span><span class="cp">&lt;?php</span> <span class="k">echo</span><span class="p">(</span><span class="s2">"</span><span class="nv">$actual_link</span><span class="s2">?xml=xml"</span><span class="p">);</span><span class="cp">?&gt;</span><span class="s">"</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;/head&gt;</span>
+  <span class="nt">&lt;body&gt;</span>
+    <span class="nt">&lt;form&gt;</span>
+      <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"text"</span> <span class="na">name=</span><span class="s">"q"</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/form&gt;</span>
+  <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+
+</code></pre></div></div>
+
+<p>The XML is pretty boring:</p>
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">function</span> <span class="n">xml</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">global</span> <span class="nv">$actual_link</span><span class="p">;</span>
+
+  <span class="nb">header</span><span class="p">(</span><span class="s1">'Content-Type: application/opensearchdescription+xml'</span><span class="p">);</span>
+  <span class="k">echo</span><span class="p">(</span><span class="s1">'&lt;?xml version="1.0" encoding="UTF-8"?&gt;'</span><span class="mf">.</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">);</span>
+  <span class="k">echo</span><span class="p">(</span><span class="s1">'&lt;OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/"&gt;'</span><span class="mf">.</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">);</span>
+  <span class="k">echo</span><span class="p">(</span><span class="s1">'  &lt;ShortName&gt;Better Search&lt;/ShortName&gt;'</span><span class="mf">.</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">);</span>
+  <span class="k">echo</span><span class="p">(</span><span class="s1">'  &lt;Description&gt;Yet another search engine&lt;/Description&gt;'</span><span class="mf">.</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">);</span>
+  <span class="k">echo</span><span class="p">(</span><span class="s1">'  &lt;InputEncoding&gt;UTF-8&lt;/InputEncoding&gt;'</span><span class="mf">.</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">);</span>
+  <span class="k">echo</span><span class="p">(</span><span class="s1">'  &lt;Url type="text/html" template="'</span><span class="mf">.</span><span class="nv">$actual_link</span><span class="mf">.</span><span class="s1">'?q={searchTerms}"/&gt;'</span><span class="mf">.</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">);</span>
+  <span class="k">echo</span><span class="p">(</span><span class="s1">'  &lt;Url type="application/x-suggestions+json" template="'</span><span class="mf">.</span><span class="nv">$actual_link</span><span class="mf">.</span><span class="s1">'?s=1&amp;amp;q={searchTerms}"/&gt;'</span><span class="mf">.</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">);</span>
+  <span class="k">echo</span><span class="p">(</span><span class="s1">'  &lt;Url type="application/opensearchdescription+xml" rel="self" template="'</span><span class="mf">.</span><span class="nv">$actual_link</span><span class="mf">.</span><span class="s1">'?xml=xml" /&gt;'</span><span class="mf">.</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">);</span>
+  <span class="k">echo</span><span class="p">(</span><span class="s1">'&lt;/OpenSearchDescription&gt;'</span><span class="mf">.</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">);</span>
+  <span class="k">exit</span><span class="p">();</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<h2 id="tying-it-all-together">Tying it all together</h2>
+
+<p>And lastly, whether to do the search, present the XML, or just show the HTML page:</p>
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">function</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nb">parse_str</span><span class="p">(</span><span class="nv">$_SERVER</span><span class="p">[</span><span class="s1">'QUERY_STRING'</span><span class="p">],</span> <span class="nv">$_GET</span><span class="p">);</span>
+  <span class="nv">$q</span> <span class="o">=</span> <span class="nv">$_GET</span><span class="p">[</span><span class="s1">'q'</span><span class="p">];</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="nv">$q</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$field_name</span> <span class="o">=</span> <span class="nv">$_GET</span><span class="p">[</span><span class="s1">'s'</span><span class="p">]</span> <span class="o">?</span> <span class="s1">'suggestion_url'</span> <span class="o">:</span> <span class="s1">'search_url'</span><span class="p">;</span>
+    <span class="nf">full_monty</span><span class="p">(</span><span class="nv">$q</span><span class="p">,</span> <span class="nv">$field_name</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">'xml'</span><span class="p">])</span> <span class="p">{</span>
+    <span class="nf">xml</span><span class="p">();</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nb">main</span><span class="p">();</span>
+<span class="cp">?&gt;</span>
+<span class="c">&lt;!--html goes here--&gt;</span>
+
+</code></pre></div></div>
+
+<p>Works nicely and responds quickly enough to be useful. I’m happy.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#php" class="page__taxonomy-item" rel="tag">PHP</a><span class="sep">, </span>
+    
+      <a href="/tags/#search" class="page__taxonomy-item" rel="tag">Search</a>
+    
+    </span>
+  </p>
+
+
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2024-02-10T00:00:00+02:00">February 10, 2024</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/openwrt-switcher.html" class="pagination--pager" title="Bridging Switcher’s UDP over OpenWRT
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/openwrt-switcher.html" rel="permalink">Bridging Switcher’s UDP over OpenWRT
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Seems like I’m doing this setup once every 3 years, then forget about it until the next time it breaks.
+I hope this is the last time I’m rediscovering this.
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/invalid-number-nov.html" rel="permalink">Invalid number: Nov
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          5 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">One of my current projects is migrating a big Java project from Java 8 to a supported version. Since we’re doing small, stable steps, we started with Java 11...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/no-dst.html" rel="permalink">We don’t do DST at this company
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          6 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Once, a long time ago, I used to have a consulting gig in some big enterprise-y company. It had a lot of unique challenges, being disconnected from the inter...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/jar-patch.html" rel="permalink">Patching a Java JAR
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I’m working with a company that uses smart IoT devices produced far away.
+The main troubleshooting tool is a Java utility provided by the manufacturer.
+This ...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2024 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S2WYJL3VQ7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-S2WYJL3VQ7', { 'anonymize_ip': true});
+</script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>
