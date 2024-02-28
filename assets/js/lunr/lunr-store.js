@@ -1060,4 +1060,10 @@ var store = [{
         "tags": ["PHP","Search"],
         "url": "/php-search-shortcuts.html",
         "teaser": null
+      },{
+        "title": "Java SMPP helper",
+        "excerpt":"One of my projects involves communicating over SMS with cellular-connected IoT devices. The company already has a working infastructure for sending and recieving SMS with Twilio, which worked well for most of the time. The API was convenient (HTTP to send, HTTP webhooks to recieve), pricing was reasonable, and reliability...","categories": [],
+        "tags": ["Java","SMPP"],
+        "url": "/smpp-helper.html",
+        "teaser": null
       },]

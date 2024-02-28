@@ -1,0 +1,848 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Java SMPP helper - BackSlasher</title>
+<meta name="description" content="One of my projects involves communicating over SMS with cellular-connected IoT devices. The company already has a working infastructure for sending and recieving SMS with Twilio, which worked well for most of the time. The API was convenient (HTTP to send, HTTP webhooks to recieve), pricing was reasonable, and reliability was OK. However, there was a small problem.">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Java SMPP helper">
+<meta property="og:url" content="https://blog.backslasher.net/smpp-helper.html">
+
+
+  <meta property="og:description" content="One of my projects involves communicating over SMS with cellular-connected IoT devices. The company already has a working infastructure for sending and recieving SMS with Twilio, which worked well for most of the time. The API was convenient (HTTP to send, HTTP webhooks to recieve), pricing was reasonable, and reliability was OK. However, there was a small problem.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2024-02-28T00:00:00+02:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/smpp-helper.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/hireme/">Hire Me</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Java SMPP helper">
+    <meta itemprop="description" content="One of my projects involves communicating over SMS with cellular-connected IoT devices. The company already has a working infastructure for sending and recieving SMS with Twilio, which worked well for most of the time. The API was convenient (HTTP to send, HTTP webhooks to recieve), pricing was reasonable, and reliability was OK. However, there was a small problem.">
+    <meta itemprop="datePublished" content="2024-02-28T00:00:00+02:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Java SMPP helper
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          6 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>One of my projects involves communicating over SMS with cellular-connected IoT devices. The company already has a working infastructure for sending and recieving SMS with Twilio, which worked well for most of the time. The API was convenient (HTTP to send, HTTP webhooks to recieve), pricing was reasonable, and reliability was OK. However, there was a small problem.</p>
+
+<p>All SMS messages to T-Mobile numbers in the US would fail with <code class="language-plaintext highlighter-rouge">30005 The destination number you are trying to reach is unknown and may no longer exist</code>.<br />
+SMS messages from our presonal phones to those numbers would work just fine. Even weirder, messages from Twilio to random T-Mobile numbers that are not part of our plan also worked.<br />
+When looking for a solution, I found this excerpt on <a href="https://help.twilio.com/articles/360008704674">Twilio’s support page</a>:</p>
+<blockquote>
+  <p>T-Mobile has a feature that allows recipients on their network to enable a setting which blocks ANY SMS sent to their mobile number from business-type sender number.
+SMS sent to T-Mobile recipients with this feature enabled often returns error <strong>30005</strong> in the SMS logs, indicating the block. This can only be removed by having the recipient contact T-Mobile Support directly to request that setting be turned off.</p>
+</blockquote>
+
+<p>I reached out to the comapny providing us with those phone lines, and they replied with this quote from T-Mobile:</p>
+<blockquote>
+  <p>As a courtesy, T-Mobile is notifying our IoT/M2M customers about potential issues related to using SMS aggregators. For SMS aggregators to send messages to T-Mobile IoT customers, the SMS aggregator must register their lines and associated use cases with T-Mobile as an IoT/M2M service. If they do not complete this registration, then messages will fail. If you are encountering any issues with receiving messages from your SMS aggregator, please reach out to your SMS aggregator to complete the required IoT service registration.</p>
+</blockquote>
+
+<p>So it seems that T-Mobile wants us to pre-register our outgoing numbers as IoT specific (and not marketing-related, I guess) which is something Twilio would need to do, and Twilio tells us to go ask T-Mobile to unblock us, which seems like a deadlock.<br />
+After telling our line provider that this makes us sad, they suggested connecting us to their SMPP relay, and having us send messages through that instead of Twilio.<br />
+All good and well, except that the team has no idea bout SMPP. My goal was not only making the SMPP connection work, but also to leave the team with an understandable interface they can modify without my help later.</p>
+
+<h2 id="prototyping">Prototyping</h2>
+<p>I couldn’t easily find a Java-based SMPP CLI. I did find <a href="https://www.npmjs.com/package/smpp-cli">smpp-cli</a>, which works really nicely:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npx smpp-cli send MySender +34000000000 <span class="s2">"Hello World!"</span> <span class="nt">-h</span> smpp.example.com <span class="nt">-p</span> 2675 <span class="nt">-L</span> loginUser <span class="nt">-P</span> myPassword
+</code></pre></div></div>
+<p>Since SMPP is not encrypted, we implemented a TLS wrapper around it (nginx on the server side, I believe). This CLI doesn’t support TLS though, so I did something like this:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>socat tcp-listen:2675,fork,reuseaddr openssl:smpp.example.com:3675
+</code></pre></div></div>
+<p>This setup had sane-enough defaults to work out of the box, and allow me to wireshark-inspect the traffic to fine-tune my Java counterpart.</p>
+
+<h2 id="now-in-java">Now in Java</h2>
+<p><a href="https://jsmpp.org/">jSMPP</a> is great and works. It’s a bit unintuitive to get started with, and has a little bit of Factory-Pattern-Interface-Factory. While I managed to scrounge a working MVP, using the library directly in our business logic would prove unmaintainable later on.<br />
+I created the following collection of Java wrappers:</p>
+
+<p>Small helper class for all of the “connection secrets” - user, password, and number the messages are sent from (imagine a <code class="language-plaintext highlighter-rouge">FROM</code> header in SMTP):</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CredSet</span> <span class="o">{</span>
+
+	<span class="kd">public</span> <span class="kd">final</span> <span class="nc">String</span> <span class="n">user</span><span class="o">;</span>
+	<span class="kd">public</span> <span class="kd">final</span> <span class="nc">String</span> <span class="n">password</span><span class="o">;</span>
+	<span class="kd">public</span> <span class="kd">final</span> <span class="nc">String</span> <span class="n">originatingNumber</span><span class="o">;</span>
+
+	<span class="kd">public</span> <span class="nf">CredSet</span><span class="o">(</span><span class="nc">String</span> <span class="n">user</span><span class="o">,</span> <span class="nc">String</span> <span class="n">password</span><span class="o">,</span> <span class="nc">String</span> <span class="n">originatingNumber</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">this</span><span class="o">.</span><span class="na">user</span> <span class="o">=</span> <span class="n">user</span><span class="o">;</span>
+		<span class="k">this</span><span class="o">.</span><span class="na">password</span> <span class="o">=</span> <span class="n">password</span><span class="o">;</span>
+		<span class="k">this</span><span class="o">.</span><span class="na">originatingNumber</span> <span class="o">=</span> <span class="n">originatingNumber</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>Another one for holding server connection details - host, port, and whether to use SSL (no / yes but don’t check the server’s certificate / yes):</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">HostPort</span> <span class="o">{</span>
+	<span class="kd">public</span> <span class="kd">final</span> <span class="nc">String</span> <span class="n">host</span><span class="o">;</span>
+	<span class="kd">public</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">port</span><span class="o">;</span>
+	<span class="kd">public</span> <span class="kd">final</span> <span class="no">SSL_MODE</span> <span class="n">sslMode</span><span class="o">;</span>
+
+	<span class="kd">public</span> <span class="kd">enum</span> <span class="no">SSL_MODE</span> <span class="o">{</span>
+		<span class="no">NONE</span><span class="o">,</span>
+		<span class="no">USE</span><span class="o">,</span>
+		<span class="no">USE_IGNORE_CERTIFICATE</span><span class="o">;</span>
+	<span class="o">}</span>
+
+	<span class="kd">public</span> <span class="nf">HostPort</span><span class="o">(</span><span class="nc">String</span> <span class="n">host</span><span class="o">,</span> <span class="kt">int</span> <span class="n">port</span><span class="o">,</span> <span class="no">SSL_MODE</span> <span class="n">sslMode</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">this</span><span class="o">.</span><span class="na">host</span> <span class="o">=</span> <span class="n">host</span><span class="o">;</span>
+		<span class="k">this</span><span class="o">.</span><span class="na">port</span> <span class="o">=</span> <span class="n">port</span><span class="o">;</span>
+		<span class="k">this</span><span class="o">.</span><span class="na">sslMode</span> <span class="o">=</span> <span class="n">sslMode</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>A message struct:</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Message</span> <span class="o">{</span>
+	<span class="kd">public</span> <span class="kd">final</span> <span class="nc">String</span> <span class="n">number</span><span class="o">;</span>
+	<span class="kd">public</span> <span class="kd">final</span> <span class="nc">String</span> <span class="n">body</span><span class="o">;</span>
+
+	<span class="kd">public</span> <span class="nf">Message</span><span class="o">(</span><span class="nc">String</span> <span class="n">number</span><span class="o">,</span> <span class="nc">String</span> <span class="n">body</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">this</span><span class="o">.</span><span class="na">number</span> <span class="o">=</span> <span class="n">number</span><span class="o">;</span>
+		<span class="k">this</span><span class="o">.</span><span class="na">body</span> <span class="o">=</span> <span class="n">body</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>And now getting a bit SMPP-ish, a class that abstract jSMPP’s incoming message event handling:</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">IncomingMessageHandler</span> <span class="kd">implements</span> <span class="nc">MessageReceiverListener</span> <span class="o">{</span>
+
+	<span class="kd">private</span> <span class="kd">final</span> <span class="nc">Consumer</span><span class="o">&lt;</span><span class="nc">Message</span><span class="o">&gt;</span> <span class="n">processor</span><span class="o">;</span>
+	<span class="kd">public</span> <span class="nf">IncomingMessageHandler</span><span class="o">(</span><span class="nc">Consumer</span><span class="o">&lt;</span><span class="nc">Message</span><span class="o">&gt;</span> <span class="n">processor</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">this</span><span class="o">.</span><span class="na">processor</span> <span class="o">=</span> <span class="n">processor</span><span class="o">;</span>
+	<span class="o">}</span>
+
+	<span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">onAcceptDeliverSm</span><span class="o">(</span><span class="nc">DeliverSm</span> <span class="n">deliverSm</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">if</span> <span class="o">(!</span><span class="nc">MessageType</span><span class="o">.</span><span class="na">SMSC_DEL_RECEIPT</span><span class="o">.</span><span class="na">containedIn</span><span class="o">(</span><span class="n">deliverSm</span><span class="o">.</span><span class="na">getEsmClass</span><span class="o">()))</span> <span class="o">{</span>
+			<span class="n">processor</span><span class="o">.</span><span class="na">accept</span><span class="o">(</span><span class="k">new</span> <span class="nc">Message</span><span class="o">(</span><span class="n">deliverSm</span><span class="o">.</span><span class="na">getSourceAddr</span><span class="o">(),</span> <span class="k">new</span> <span class="nc">String</span><span class="o">(</span><span class="n">deliverSm</span><span class="o">.</span><span class="na">getShortMessage</span><span class="o">())));</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+
+	<span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">onAcceptAlertNotification</span><span class="o">(</span><span class="nc">AlertNotification</span> <span class="n">alertNotification</span><span class="o">)</span> <span class="o">{</span>
+
+	<span class="o">}</span>
+
+	<span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="nc">DataSmResult</span> <span class="nf">onAcceptDataSm</span><span class="o">(</span><span class="nc">DataSm</span> <span class="n">dataSm</span><span class="o">,</span> <span class="nc">Session</span> <span class="n">source</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<p>Note that we’re accepting a Lambda-friendly <code class="language-plaintext highlighter-rouge">Consumer&lt;Mesasge&gt;</code> (a function that gets a message and returns nothing) as a parameter, which will be called if this is a truly incoming message (and not a delivery report or something). We’re also implementing the other mandatory methods for the interface, even though we don’t need them.</p>
+
+<p>Now for the big class:</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">SmppHandler</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">String</span> <span class="n">originatingNumber</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">SMPPSession</span> <span class="n">session</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">SmppHandler</span><span class="o">(</span><span class="nc">CredSet</span> <span class="n">credSet</span><span class="o">,</span> <span class="nc">HostPort</span> <span class="n">hostPort</span><span class="o">,</span> <span class="nc">Consumer</span><span class="o">&lt;</span><span class="nc">Message</span><span class="o">&gt;</span> <span class="n">incomingMessage</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">originatingNumber</span> <span class="o">=</span> <span class="n">credSet</span><span class="o">.</span><span class="na">originatingNumber</span><span class="o">;</span>
+
+        <span class="k">switch</span> <span class="o">(</span><span class="n">hostPort</span><span class="o">.</span><span class="na">sslMode</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">case</span> <span class="nl">NONE:</span>
+                <span class="n">session</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">SMPPSession</span><span class="o">();</span>
+                <span class="k">break</span><span class="o">;</span>
+            <span class="k">case</span> <span class="nl">USE:</span>
+                <span class="n">session</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">SMPPSession</span><span class="o">(</span><span class="k">new</span> <span class="nc">TrustStoreSSLSocketConnectionFactory</span><span class="o">(</span><span class="kc">false</span><span class="o">));</span>
+                <span class="k">break</span><span class="o">;</span>
+            <span class="k">case</span> <span class="nl">USE_IGNORE_CERTIFICATE:</span>
+                <span class="n">session</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">SMPPSession</span><span class="o">(</span><span class="k">new</span> <span class="nc">TrustStoreSSLSocketConnectionFactory</span><span class="o">(</span><span class="kc">true</span><span class="o">));</span>
+                <span class="k">break</span><span class="o">;</span>
+            <span class="k">default</span><span class="o">:</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nf">RuntimeException</span><span class="o">(</span><span class="nc">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"Unhandled enum value %s"</span><span class="o">,</span> <span class="n">hostPort</span><span class="o">.</span><span class="na">sslMode</span><span class="o">));</span>
+        <span class="o">}</span>
+
+        <span class="kt">boolean</span> <span class="n">bindIncoming</span> <span class="o">=</span> <span class="n">incomingMessage</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">;</span>
+        
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="n">session</span><span class="o">.</span><span class="na">connectAndBind</span><span class="o">(</span><span class="n">hostPort</span><span class="o">.</span><span class="na">host</span><span class="o">,</span>
+                    <span class="n">hostPort</span><span class="o">.</span><span class="na">port</span><span class="o">,</span>
+                    <span class="k">new</span> <span class="nf">BindParameter</span><span class="o">(</span>
+                            <span class="n">bindIncoming</span> <span class="o">?</span> <span class="nc">BindType</span><span class="o">.</span><span class="na">BIND_TRX</span> <span class="o">:</span> <span class="nc">BindType</span><span class="o">.</span><span class="na">BIND_TX</span><span class="o">,</span>
+                            <span class="n">credSet</span><span class="o">.</span><span class="na">user</span><span class="o">,</span>
+                            <span class="n">credSet</span><span class="o">.</span><span class="na">password</span><span class="o">,</span>
+                            <span class="s">"cp"</span><span class="o">,</span>
+                            <span class="nc">TypeOfNumber</span><span class="o">.</span><span class="na">UNKNOWN</span><span class="o">,</span>
+                            <span class="nc">NumberingPlanIndicator</span><span class="o">.</span><span class="na">UNKNOWN</span><span class="o">,</span>
+                            <span class="kc">null</span><span class="o">));</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">IOException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">RuntimeException</span><span class="o">(</span><span class="n">e</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="n">bindIncoming</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">session</span><span class="o">.</span><span class="na">setMessageReceiverListener</span><span class="o">(</span><span class="k">new</span> <span class="nc">IncomingMessageHandler</span><span class="o">(</span><span class="n">incomingMessage</span><span class="o">));</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">sendMessage</span><span class="o">(</span><span class="nc">Message</span> <span class="n">message</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="n">session</span><span class="o">.</span><span class="na">submitShortMessage</span><span class="o">(</span><span class="s">"CMT"</span><span class="o">,</span>
+                    <span class="nc">TypeOfNumber</span><span class="o">.</span><span class="na">UNKNOWN</span><span class="o">,</span>
+                    <span class="nc">NumberingPlanIndicator</span><span class="o">.</span><span class="na">UNKNOWN</span><span class="o">,</span>
+                    <span class="n">originatingNumber</span><span class="o">,</span>
+                    <span class="nc">TypeOfNumber</span><span class="o">.</span><span class="na">UNKNOWN</span><span class="o">,</span>
+                    <span class="nc">NumberingPlanIndicator</span><span class="o">.</span><span class="na">UNKNOWN</span><span class="o">,</span>
+                    <span class="n">message</span><span class="o">.</span><span class="na">number</span><span class="o">,</span>
+                    <span class="k">new</span> <span class="nf">ESMClass</span><span class="o">(</span><span class="mi">0</span><span class="o">),</span>
+                    <span class="o">(</span><span class="kt">byte</span><span class="o">)</span> <span class="mi">0</span><span class="o">,</span>
+                    <span class="o">(</span><span class="kt">byte</span><span class="o">)</span> <span class="mi">0</span><span class="o">,</span>
+                    <span class="kc">null</span><span class="o">,</span>
+                    <span class="kc">null</span><span class="o">,</span>
+                    <span class="k">new</span> <span class="nf">RegisteredDelivery</span><span class="o">(</span><span class="nc">SMSCDeliveryReceipt</span><span class="o">.</span><span class="na">DEFAULT</span><span class="o">),</span>
+                    <span class="o">(</span><span class="kt">byte</span><span class="o">)</span> <span class="mi">0</span><span class="o">,</span>
+                    <span class="k">new</span> <span class="nf">GeneralDataCoding</span><span class="o">(</span><span class="nc">Alphabet</span><span class="o">.</span><span class="na">ALPHA_IA5</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="kc">false</span><span class="o">),</span>
+                    <span class="o">(</span><span class="kt">byte</span><span class="o">)</span> <span class="mi">0</span><span class="o">,</span>
+                    <span class="n">message</span><span class="o">.</span><span class="na">body</span><span class="o">.</span><span class="na">getBytes</span><span class="o">());</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">PDUException</span> <span class="o">|</span> <span class="nc">InvalidResponseException</span> <span class="o">|</span> <span class="nc">NegativeResponseException</span> <span class="o">|</span> <span class="nc">IOException</span> <span class="o">|</span>
+                 <span class="nc">ResponseTimeoutException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">RuntimeException</span><span class="o">(</span><span class="n">e</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<p>We can see some mysterious parameters in <code class="language-plaintext highlighter-rouge">sendMessage</code>, but I copied them off <code class="language-plaintext highlighter-rouge">smpp-cli</code> and it works, so I’m happy.</p>
+
+<h2 id="things-i-like-about-my-design">Things I like about my design</h2>
+<p>All of the outside interaction with this class has no SMPP-ish artifacts - you send and recieve <code class="language-plaintext highlighter-rouge">Message</code> objects, no need to consider “EMS classees” or “NPI”, or sessions or events.<br />
+We might need to when we modify our SMPP connections, but for pure business logic, you can put all of the SMPP stuff out of your mind.<br />
+Another nice trickery is that we’re only binding for sending <strong>and receiving</strong> messages when provided with an <code class="language-plaintext highlighter-rouge">incomingMessage</code> handler. This allows us to add clients that send messages, without having them “steal” the incoming messages and do nothing with them.</p>
+
+<h2 id="ssl-in-java-remains-annoying">SSL in Java remains annoying</h2>
+
+<p>Although there was some documentation in the jSMPP repo on how to connect via TLS, one part was unclear to me - how do I load the trust store, where all of the Internet’s PKI certificates are configured?<br />
+In more user-friendly languages, like Python or NodeJS or even Perl, as long as you use a proper, boring Linux distro, this trust store is autoconfigured for you. You can just do:</p>
+<div class="language-perl highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">use</span> <span class="nv">strict</span><span class="p">;</span>
+<span class="k">use</span> <span class="nv">warnings</span><span class="p">;</span>
+<span class="k">use</span> <span class="nn">LWP::</span><span class="nv">UserAgent</span><span class="p">;</span>
+
+<span class="k">my</span> <span class="nv">$B</span> <span class="o">=</span> <span class="k">new</span> <span class="nn">LWP::</span><span class="nv">UserAgent</span> <span class="p">(</span><span class="s">agent</span> <span class="o">=&gt;</span> <span class="p">'</span><span class="s1">Mozilla/5.0</span><span class="p">',</span> <span class="s">cookie_jar</span> <span class="o">=&gt;</span><span class="p">{});</span>
+
+<span class="k">my</span> <span class="nv">$GET</span> <span class="o">=</span> <span class="nv">$B</span><span class="o">-&gt;</span><span class="nv">get</span><span class="p">('</span><span class="s1">https://moz.com</span><span class="p">')</span><span class="o">-&gt;</span><span class="nv">content</span><span class="p">;</span>
+<span class="k">print</span> <span class="nv">$GET</span><span class="p">;</span>
+</code></pre></div></div>
+<p>or</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">urllib.request</span>
+<span class="n">page</span> <span class="o">=</span> <span class="n">urllib</span><span class="p">.</span><span class="n">request</span><span class="p">.</span><span class="n">urlopen</span><span class="p">(</span><span class="s">'http://what-is-this.com'</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">page</span><span class="p">.</span><span class="n">read</span><span class="p">())</span>
+</code></pre></div></div>
+
+<p>But not Java. Java has its own format of certificate store, and even if it’s installed by your distro, you still need to tell Java where it is, as it won’t try looking for the file itself. After not finding an elegant solution, I settled on this:</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">private</span> <span class="nc">File</span> <span class="nf">getCertificateStorePath</span><span class="o">()</span> <span class="o">{</span>
+    <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">candidates</span> <span class="o">=</span> <span class="nc">List</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="s">"/etc/ssl/certs/java/cacerts"</span><span class="o">,</span> <span class="s">"/etc/pki/java/cacerts"</span><span class="o">);</span>
+    <span class="k">return</span> <span class="n">candidates</span><span class="o">.</span><span class="na">stream</span><span class="o">()</span>
+            <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">File:</span><span class="o">:</span><span class="k">new</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="nl">File:</span><span class="o">:</span><span class="n">exists</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">findFirst</span><span class="o">()</span>
+            <span class="o">.</span><span class="na">orElseThrow</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="nc">RuntimeException</span><span class="o">(</span><span class="s">"No certificate store found"</span><span class="o">));</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<p>Then using it like this:</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">KeyStore</span> <span class="n">keyStore</span> <span class="o">=</span> <span class="nc">KeyStore</span><span class="o">.</span><span class="na">getInstance</span><span class="o">(</span><span class="nc">KeyStore</span><span class="o">.</span><span class="na">getDefaultType</span><span class="o">());</span>
+<span class="n">keyStore</span><span class="o">.</span><span class="na">load</span><span class="o">(</span><span class="k">new</span> <span class="nc">FileInputStream</span><span class="o">(</span><span class="n">getCertificateStorePath</span><span class="o">()),</span> <span class="kc">null</span><span class="o">);</span>
+</code></pre></div></div>
+<p>Not my finest work - I just noted every place those certs can be located on our servers, and going through them in order.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#java" class="page__taxonomy-item" rel="tag">Java</a><span class="sep">, </span>
+    
+      <a href="/tags/#smpp" class="page__taxonomy-item" rel="tag">SMPP</a>
+    
+    </span>
+  </p>
+
+
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2024-02-28T00:00:00+02:00">February 28, 2024</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/php-search-shortcuts.html" class="pagination--pager" title="Adding shortcuts to your search engine
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/php-search-shortcuts.html" rel="permalink">Adding shortcuts to your search engine
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I really like DuckDuckGo’s bangs, which basically directs your query elsewhere if you prefix it with !something. You could search the London zoo in gmaps by ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/openwrt-switcher.html" rel="permalink">Bridging Switcher’s UDP over OpenWRT
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Seems like I’m doing this setup once every 3 years, then forget about it until the next time it breaks.
+I hope this is the last time I’m rediscovering this.
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/invalid-number-nov.html" rel="permalink">Invalid number: Nov
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          5 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">One of my current projects is migrating a big Java project from Java 8 to a supported version. Since we’re doing small, stable steps, we started with Java 11...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/no-dst.html" rel="permalink">We don’t do DST at this company
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          6 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Once, a long time ago, I used to have a consulting gig in some big enterprise-y company. It had a lot of unique challenges, being disconnected from the inter...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2024 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S2WYJL3VQ7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-S2WYJL3VQ7', { 'anonymize_ip': true});
+</script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>
