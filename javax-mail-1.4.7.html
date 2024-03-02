@@ -308,11 +308,11 @@ Instead, I’ve devised a more pragmatic plan:</p>
 <p>When attempting to build our code using Java 11, I promptly identified the absence of certain classes. These omissions were attributed to components of Java categorized as “Enterprise,” which were present in Java 8, deprecated in Java 9, and entirely eliminated in Java 11.</p>
 
 <p>To ensure the availability of these classes, I made the following addition to our <code class="language-plaintext highlighter-rouge">pom.xml</code>:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;dependency&gt;
-    &lt;groupId&gt;javax.mail&lt;/groupId&gt;
-    &lt;artifactId&gt;mail&lt;/artifactId&gt;
-    &lt;version&gt;1.4.7&lt;/version&gt;
-&lt;/dependency&gt;
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>javax.mail<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>mail<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>1.4.7<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
 </code></pre></div></div>
 <p>Where version 1.4.7 represented the latest stable release <a href="https://mvnrepository.com/artifact/javax.mail/mail">mvnrepository</a>) of that library.
 This adjustment allowed my code to compile successfully, as it encompassed all the classes and methods essential for its operation.</p>
@@ -368,11 +368,11 @@ If we draw a parallel to C code compilation, we would typically have a final “
 However, after 15 minutes of trying this I saw that there’s too much of our code we’d need to change as a resutlt.
 Instead, I went for the minimal effective change, and tried different version of <code class="language-plaintext highlighter-rouge">java.mail:mail</code> until I found one that didn’t have this internal contradiction - <code class="language-plaintext highlighter-rouge">1.4.4</code>.
 I changed our <code class="language-plaintext highlighter-rouge">pom.xml</code> to look like:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;dependency&gt;
-    &lt;groupId&gt;javax.mail&lt;/groupId&gt;
-    &lt;artifactId&gt;mail&lt;/artifactId&gt;
-    &lt;version&gt;1.4.4&lt;/version&gt;
-&lt;/dependency&gt;
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>javax.mail<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>mail<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>1.4.4<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
 </code></pre></div></div>
 <p>And things went back to normal</p>
 

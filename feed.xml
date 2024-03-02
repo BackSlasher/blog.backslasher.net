@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2024-02-28T12:33:59+02:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">Java SMPP helper</title><link href="https://blog.backslasher.net/smpp-helper.html" rel="alternate" type="text/html" title="Java SMPP helper" /><published>2024-02-28T00:00:00+02:00</published><updated>2024-02-28T00:00:00+02:00</updated><id>https://blog.backslasher.net/smpp-helper</id><content type="html" xml:base="https://blog.backslasher.net/smpp-helper.html">&lt;p&gt;One of my projects involves communicating over SMS with cellular-connected IoT devices. The company already has a working infastructure for sending and recieving SMS with Twilio, which worked well for most of the time. The API was convenient (HTTP to send, HTTP webhooks to recieve), pricing was reasonable, and reliability was OK. However, there was a small problem.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2024-03-02T13:30:34+02:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">Java SMPP helper</title><link href="https://blog.backslasher.net/smpp-helper.html" rel="alternate" type="text/html" title="Java SMPP helper" /><published>2024-02-28T00:00:00+02:00</published><updated>2024-02-28T00:00:00+02:00</updated><id>https://blog.backslasher.net/smpp-helper</id><content type="html" xml:base="https://blog.backslasher.net/smpp-helper.html">&lt;p&gt;One of my projects involves communicating over SMS with cellular-connected IoT devices. The company already has a working infastructure for sending and recieving SMS with Twilio, which worked well for most of the time. The API was convenient (HTTP to send, HTTP webhooks to recieve), pricing was reasonable, and reliability was OK. However, there was a small problem.&lt;/p&gt;
 
 &lt;p&gt;All SMS messages to T-Mobile numbers in the US would fail with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;30005 The destination number you are trying to reach is unknown and may no longer exist&lt;/code&gt;.&lt;br /&gt;
 SMS messages from our presonal phones to those numbers would work just fine. Even weirder, messages from Twilio to random T-Mobile numbers that are not part of our plan also worked.&lt;br /&gt;
@@ -793,11 +793,11 @@ Instead, I’ve devised a more pragmatic plan:&lt;/p&gt;
 &lt;p&gt;When attempting to build our code using Java 11, I promptly identified the absence of certain classes. These omissions were attributed to components of Java categorized as “Enterprise,” which were present in Java 8, deprecated in Java 9, and entirely eliminated in Java 11.&lt;/p&gt;
 
 &lt;p&gt;To ensure the availability of these classes, I made the following addition to our &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pom.xml&lt;/code&gt;:&lt;/p&gt;
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;lt;dependency&amp;gt;
-    &amp;lt;groupId&amp;gt;javax.mail&amp;lt;/groupId&amp;gt;
-    &amp;lt;artifactId&amp;gt;mail&amp;lt;/artifactId&amp;gt;
-    &amp;lt;version&amp;gt;1.4.7&amp;lt;/version&amp;gt;
-&amp;lt;/dependency&amp;gt;
+&lt;div class=&quot;language-xml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;dependency&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;groupId&amp;gt;&lt;/span&gt;javax.mail&lt;span class=&quot;nt&quot;&gt;&amp;lt;/groupId&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;artifactId&amp;gt;&lt;/span&gt;mail&lt;span class=&quot;nt&quot;&gt;&amp;lt;/artifactId&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;version&amp;gt;&lt;/span&gt;1.4.7&lt;span class=&quot;nt&quot;&gt;&amp;lt;/version&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/dependency&amp;gt;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 &lt;p&gt;Where version 1.4.7 represented the latest stable release &lt;a href=&quot;https://mvnrepository.com/artifact/javax.mail/mail&quot;&gt;mvnrepository&lt;/a&gt;) of that library.
 This adjustment allowed my code to compile successfully, as it encompassed all the classes and methods essential for its operation.&lt;/p&gt;
@@ -853,11 +853,11 @@ If we draw a parallel to C code compilation, we would typically have a final “
 However, after 15 minutes of trying this I saw that there’s too much of our code we’d need to change as a resutlt.
 Instead, I went for the minimal effective change, and tried different version of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;java.mail:mail&lt;/code&gt; until I found one that didn’t have this internal contradiction - &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;1.4.4&lt;/code&gt;.
 I changed our &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pom.xml&lt;/code&gt; to look like:&lt;/p&gt;
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;lt;dependency&amp;gt;
-    &amp;lt;groupId&amp;gt;javax.mail&amp;lt;/groupId&amp;gt;
-    &amp;lt;artifactId&amp;gt;mail&amp;lt;/artifactId&amp;gt;
-    &amp;lt;version&amp;gt;1.4.4&amp;lt;/version&amp;gt;
-&amp;lt;/dependency&amp;gt;
+&lt;div class=&quot;language-xml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;dependency&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;groupId&amp;gt;&lt;/span&gt;javax.mail&lt;span class=&quot;nt&quot;&gt;&amp;lt;/groupId&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;artifactId&amp;gt;&lt;/span&gt;mail&lt;span class=&quot;nt&quot;&gt;&amp;lt;/artifactId&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;version&amp;gt;&lt;/span&gt;1.4.4&lt;span class=&quot;nt&quot;&gt;&amp;lt;/version&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/dependency&amp;gt;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 &lt;p&gt;And things went back to normal&lt;/p&gt;
 
