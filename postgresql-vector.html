@@ -1,0 +1,804 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Semantic caching with PSQL, Python, OpenAI - BackSlasher</title>
+<meta name="description" content="You’re an app developer now Let’s say you’re working on an app. The app helps you search for e-mail messages that relate to a certain topic. This works well enough. As a nifty extra, you added a small pixelated image that is generated on-demand of the search topic. For instance, when searching for a dog, you’d get a dog image.">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Semantic caching with PSQL, Python, OpenAI">
+<meta property="og:url" content="https://blog.backslasher.net/postgresql-vector.html">
+
+
+  <meta property="og:description" content="You’re an app developer now Let’s say you’re working on an app. The app helps you search for e-mail messages that relate to a certain topic. This works well enough. As a nifty extra, you added a small pixelated image that is generated on-demand of the search topic. For instance, when searching for a dog, you’d get a dog image.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2024-05-03T00:00:00+03:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/postgresql-vector.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/hireme/">Hire Me</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Semantic caching with PSQL, Python, OpenAI">
+    <meta itemprop="description" content="You’re an app developer nowLet’s say you’re working on an app. The app helps you search for e-mail messages that relate to a certain topic. This works well enough.As a nifty extra, you added a small pixelated image that is generated on-demand of the search topic.For instance, when searching for a dog, you’d get a dog image.">
+    <meta itemprop="datePublished" content="2024-05-03T00:00:00+03:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Semantic caching with PSQL, Python, OpenAI
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          5 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <h2 id="youre-an-app-developer-now">You’re an app developer now</h2>
+<p>Let’s say you’re working on an app. The app helps you search for e-mail messages that relate to a certain topic. This works well enough.<br />
+As a nifty extra, you added a small pixelated image that is generated on-demand of the search topic.<br />
+For instance, when searching for a dog, you’d get a dog image.</p>
+
+<p><img src="/assets/2024-05-03-postgresql-vector/dog.jpg" alt="" style="height:5em;" /></p>
+
+<p>Your users like this extra so much (people love AI now) that it’s now a core feature.
+A new problem arises - generating these images is the most expensive part of your service (<a href="https://openai.com/api/pricing">Dall-E takes 4 cents an image</a>, which is a lot when your app is freemium).</p>
+
+<h2 id="caching">Caching</h2>
+<p>An obvious solution is caching - if Alice asked for an image of a dog, and Bob asked for one later as well, we could serve Bob the same image we generated for Alice. Storage is very cheap these days (storing and serving the same photo in S3 would be approximately 100,000 times cheaper).<br />
+Matching on text equality is easy. We could store the images in a pattern like <code class="language-plaintext highlighter-rouge">s3://CACHE_BUCKET/dog.jpg</code>, then look for this jpg the next time someone asks for a dog.</p>
+
+<h2 id="better-caching">Better caching</h2>
+<p>We might be able to save even more on image generation if we’re ok with caching <em>similar</em> results.<br />
+For instance, if Alice searches for “house” and Bob asks for “Villa”, the resulting images might be so similar that it’d be a shame to waste our 4 cents on creating a new one:</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>house</td>
+      <td><img src="/assets/2024-05-03-postgresql-vector/house.jpg" alt="" style="height:5em;" /></td>
+    </tr>
+    <tr>
+      <td>villa</td>
+      <td><img src="/assets/2024-05-03-postgresql-vector/villa.jpg" alt="" style="height:5em;" /></td>
+    </tr>
+    <tr>
+      <td>spaceship<br />(probably not as similar)</td>
+      <td><img src="/assets/2024-05-03-postgresql-vector/spaceship.jpg" alt="" style="height:5em;" /></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The non-trivial part in this solution is understanding that “house” and “villa” are pretty similar (unlike “house” and “spaceship”). Luckily, this is something that Machine Learning can help us with.</p>
+
+<h2 id="embedding">Embedding</h2>
+<p>Part of LLM (Large Language Models) is assigning a numerical meaning to phrases, which is called “embedding”. These embedding comes in each phrase being a assigned a vector (array) of fractionals between -1 and 1, each number representing some property that might not make sense to humans, but does to the LLM’s brain.<br />
+The more similar the vectors of phrase A and B, the more similar those phrases are, in the LLM’s opinion, where similarity is usually measured by <a href="https://en.wikipedia.org/wiki/Cosine_similarity">cosine distance</a>, which produces a number between 0 and 1, where 0 is “the same phrase” and 1 is “couldn’t be further apart”.<br />
+The size of the vector, and the specific meaning of each cell in it, are specific to the LLM model being used. Using <a href="https://platform.openai.com/docs/guides/embeddings">OpenAI’s embeddings</a> (my goto for PoCs, not sure for prod use) will result in 1536 or 3072 cells (depending on which LLM model you use).</p>
+
+<p>The basic idea of the solution now looks like:</p>
+<ol>
+  <li>For a given phrase, extract the embedding vector</li>
+  <li>Check whether we already have a cached object with a “close enough” vector</li>
+  <li>If so, serve the closest cached object we have</li>
+  <li>Otherwise, fetch the object from upstream (goodbye 4 cents), and store the result and its vector in the cache for next time</li>
+</ol>
+
+<p>We still have to define what “close enough” is, but that’s more of a product question, and can also be adjusted based on our whims in real time.</p>
+
+<h2 id="postgresql">PostgreSQL</h2>
+<p>The idea of using our storage’s API of hit-miss doesn’t translate into this vector search, because instead of asking for a specific filename, we have to enumerate all keys and do some math over them, which is not what blob storages excel at. Instead, we need some sort of a database.</p>
+
+<p>Since my app already uses PostgreSQL, I found <a href="https://github.com/pgvector/pgvector">pgvector</a> to be a great solution.<br />
+Availability-wise, it’s an addon to PostgreSQL that’s supported by big cloud SQL providers like <a href="https://aws.amazon.com/about-aws/whats-new/2023/05/amazon-rds-postgresql-pgvector-ml-model-integration/">AWS RDS</a> and <a href="https://cloud.google.com/blog/products/databases/using-pgvector-llms-and-langchain-with-google-cloud-databases">Google Cloud SQL</a>, and also available as a <a href="https://hub.docker.com/r/pgvector/pgvector">Docker image</a>.<br />
+Functionality-wise, it creates a new data type (vector) and adds some operators (<code class="language-plaintext highlighter-rouge">&lt;=&gt;</code> for our distance function), which makes our query look pretty readable.</p>
+
+<p>Our cache table can be as simple as a single <code class="language-plaintext highlighter-rouge">vector</code> column, but I’d add another one:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>name</th>
+      <th>type</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>embedding</td>
+      <td>vector</td>
+    </tr>
+    <tr>
+      <td>key</td>
+      <td>varchar</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The actual image can continue to be stored in the original format, <code class="language-plaintext highlighter-rouge">s3://CACHE_BUCKET/key.jpg</code>, where the key will be retrieved from the query.
+The key can also be used for humans to understand what the vector originally meant.</p>
+
+<h2 id="and-now-in-python">And now in Python</h2>
+<p><a href="https://github.com/pgvector/pgvector-python">pgvector-python</a> is a convenient bridge from Python’s <code class="language-plaintext highlighter-rouge">psycopg2</code> (or <code class="language-plaintext highlighter-rouge">psycopg3</code> if you’re brave) to <code class="language-plaintext highlighter-rouge">pgvector</code>.<br />
+Our usage of OpenAI’s embedding API is so basic that we can stick with basic HTTP calls with <code class="language-plaintext highlighter-rouge">requests</code>.
+A basic api looks like this:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">psycopg2</span>
+<span class="kn">from</span> <span class="nn">pgvector.psycopg2</span> <span class="kn">import</span> <span class="n">register_vector</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span> <span class="c1"># vectors are np.array in python-pgvector
+</span>
+<span class="k">def</span> <span class="nf">_set_blob</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">blob</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+  <span class="c1"># Implementation specific
+</span>  <span class="p">...</span>
+
+<span class="k">def</span> <span class="nf">_get_blob</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+  <span class="c1"># Implementation specific
+</span>  <span class="p">...</span>
+
+<span class="k">def</span> <span class="nf">_generate_content_expensive</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+  <span class="c1"># Implementation specific
+</span>  <span class="p">...</span>
+
+<span class="k">def</span> <span class="nf">_sql_cursor</span><span class="p">():</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="n">psycopg2</span><span class="p">.</span><span class="n">connect</span><span class="p">(...)</span>
+    <span class="n">register_vector</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
+    <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="p">.</span><span class="n">cursor</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">cursor</span>
+
+
+<span class="k">def</span> <span class="nf">_get_embedding</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="p">.</span><span class="n">array</span><span class="p">:</span>
+    <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">post</span><span class="p">(</span>
+        <span class="s">"https://api.openai.com/v1/embeddings"</span><span class="p">,</span>
+        <span class="n">headers</span><span class="o">=</span><span class="p">{</span>
+            <span class="s">"Authorization"</span><span class="p">:</span> <span class="s">"Bearer $OPENAI_API_KEY"</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="n">json</span><span class="o">=</span><span class="p">{</span>
+            <span class="s">"input"</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span>
+            <span class="s">"model"</span><span class="p">:</span> <span class="s">"text-embedding-3-large"</span><span class="p">,</span> <span class="c1"># can be "small" too
+</span>        <span class="p">}</span>
+    <span class="p">)</span>
+    <span class="n">resp</span><span class="p">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+    <span class="n">j</span> <span class="o">=</span> <span class="n">resp</span><span class="p">.</span><span class="n">json</span><span class="p">()</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="n">j</span><span class="p">[</span><span class="s">'data'</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s">'embedding'</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">np</span><span class="p">.</span><span class="n">array</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_cache_set</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">embedding</span><span class="p">:</span> <span class="n">np</span><span class="p">.</span><span class="n">array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="n">cursor</span> <span class="o">=</span> <span class="n">_sql_cursor</span><span class="p">()</span>
+    <span class="n">cursor</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="s">'INSERT INTO items (key, embedding) VALUES (%s, %s)'</span><span class="p">,</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">embedding</span><span class="p">))</span>
+    <span class="n">cursor</span><span class="p">.</span><span class="n">connection</span><span class="p">.</span><span class="n">commit</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">_cache_get</span><span class="p">(</span><span class="n">embedding</span><span class="p">:</span> <span class="n">np</span><span class="p">.</span><span class="n">array</span><span class="p">,</span> <span class="n">distance</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="o">|</span><span class="bp">None</span><span class="p">:</span>
+    <span class="n">cursor</span> <span class="o">=</span> <span class="n">_sql_cursor</span><span class="p">()</span>
+    <span class="n">cursor</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span>
+      <span class="s">'SELECT key FROM items WHERE embedding &lt;=&gt; %(embedding)s &lt;= %(distance)s ORDER BY embedding &lt;=&gt; %(embedding)s LIMIT 1'</span><span class="p">,</span>
+        <span class="p">{</span>
+          <span class="s">'embedding'</span><span class="p">:</span> <span class="n">embedding</span><span class="p">,</span>
+          <span class="s">'distance'</span><span class="p">:</span> <span class="n">distance</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+    <span class="n">row</span> <span class="o">=</span> <span class="n">cursor</span><span class="p">.</span><span class="n">fetchone</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">row</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+      <span class="k">return</span> <span class="bp">None</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">distance</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span>
+  <span class="n">embedding</span> <span class="o">=</span> <span class="n">_get_embedding</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+  <span class="n">cache_entry</span> <span class="o">=</span> <span class="n">_cache_get</span><span class="p">(</span><span class="n">embedding</span><span class="p">,</span> <span class="n">distance</span><span class="p">)</span>
+
+  <span class="k">if</span> <span class="n">cache_entry</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">_get_blob</span><span class="p">(</span><span class="n">cache_entry</span><span class="p">)</span>
+
+  <span class="n">blob</span> <span class="o">=</span> <span class="n">_generate_content_expensive</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+  <span class="n">_set_blob</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">blob</span><span class="p">)</span>
+  <span class="n">_cache_set</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">embedding</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">blob</span>
+</code></pre></div></div>
+
+<p>Calling the <code class="language-plaintext highlighter-rouge">get</code> method implements the algorithm we described above, and works as a nice PoC.</p>
+
+<h2 id="things-that-can-be-improved">Things that can be improved</h2>
+<ol>
+  <li><strong>Scaling and indexing:</strong> I believe that the current solution requires a linear scan of the cache table, which won’t scale very well. I know the index story is a bit complex for vectors, and it’s going to be a fun adventure exploring it.</li>
+  <li><strong>Adding a “perfect match” race:</strong> We could probably try hitting the blob cache directly for the exact key, in case it’s there. If Bob asked for “dog” and Alice already seeded the cache with “dog”, trying to vector-search “dog” is a waste when we can just check whether “dog” exists in the cache.</li>
+  <li><strong>Caching the embeddings as well:</strong> If we already translated “villa” to an embedding in the past, no need to embed it again. We can search our cache table by key to see whether we already have it there</li>
+</ol>
+
+<h2 id="images-from">Images from</h2>
+<p><a href="https://huggingface.co/kohbanye/pixel-art-style">HuggingFace kohbanye/pixel-art-style</a></p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#postgresql" class="page__taxonomy-item" rel="tag">PostgreSQL</a><span class="sep">, </span>
+    
+      <a href="/tags/#python" class="page__taxonomy-item" rel="tag">Python</a><span class="sep">, </span>
+    
+      <a href="/tags/#sql" class="page__taxonomy-item" rel="tag">SQL</a>
+    
+    </span>
+  </p>
+
+
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2024-05-03T00:00:00+03:00">May 3, 2024</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/smpp-helper.html" class="pagination--pager" title="Java SMPP helper
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/smpp-helper.html" rel="permalink">Java SMPP helper
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          6 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">One of my projects involves communicating over SMS with cellular-connected IoT devices. The company already has a working infastructure for sending and recie...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/php-search-shortcuts.html" rel="permalink">Adding shortcuts to your search engine
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I really like DuckDuckGo’s bangs, which basically directs your query elsewhere if you prefix it with !something. You could search the London zoo in gmaps by ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/openwrt-switcher.html" rel="permalink">Bridging Switcher’s UDP over OpenWRT
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Seems like I’m doing this setup once every 3 years, then forget about it until the next time it breaks.
+I hope this is the last time I’m rediscovering this.
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/invalid-number-nov.html" rel="permalink">Invalid number: Nov
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          5 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">One of my current projects is migrating a big Java project from Java 8 to a supported version. Since we’re doing small, stable steps, we started with Java 11...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2024 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S2WYJL3VQ7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-S2WYJL3VQ7', { 'anonymize_ip': true});
+</script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>

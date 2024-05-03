@@ -1,4 +1,175 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2024-03-02T13:30:34+02:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">Java SMPP helper</title><link href="https://blog.backslasher.net/smpp-helper.html" rel="alternate" type="text/html" title="Java SMPP helper" /><published>2024-02-28T00:00:00+02:00</published><updated>2024-02-28T00:00:00+02:00</updated><id>https://blog.backslasher.net/smpp-helper</id><content type="html" xml:base="https://blog.backslasher.net/smpp-helper.html">&lt;p&gt;One of my projects involves communicating over SMS with cellular-connected IoT devices. The company already has a working infastructure for sending and recieving SMS with Twilio, which worked well for most of the time. The API was convenient (HTTP to send, HTTP webhooks to recieve), pricing was reasonable, and reliability was OK. However, there was a small problem.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2024-05-03T13:57:12+03:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">Semantic caching with PSQL, Python, OpenAI</title><link href="https://blog.backslasher.net/postgresql-vector.html" rel="alternate" type="text/html" title="Semantic caching with PSQL, Python, OpenAI" /><published>2024-05-03T00:00:00+03:00</published><updated>2024-05-03T00:00:00+03:00</updated><id>https://blog.backslasher.net/postgresql-vector</id><content type="html" xml:base="https://blog.backslasher.net/postgresql-vector.html">&lt;h2 id=&quot;youre-an-app-developer-now&quot;&gt;You’re an app developer now&lt;/h2&gt;
+&lt;p&gt;Let’s say you’re working on an app. The app helps you search for e-mail messages that relate to a certain topic. This works well enough.&lt;br /&gt;
+As a nifty extra, you added a small pixelated image that is generated on-demand of the search topic.&lt;br /&gt;
+For instance, when searching for a dog, you’d get a dog image.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/2024-05-03-postgresql-vector/dog.jpg&quot; alt=&quot;&quot; style=&quot;height:5em;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Your users like this extra so much (people love AI now) that it’s now a core feature.
+A new problem arises - generating these images is the most expensive part of your service (&lt;a href=&quot;https://openai.com/api/pricing&quot;&gt;Dall-E takes 4 cents an image&lt;/a&gt;, which is a lot when your app is freemium).&lt;/p&gt;
+
+&lt;h2 id=&quot;caching&quot;&gt;Caching&lt;/h2&gt;
+&lt;p&gt;An obvious solution is caching - if Alice asked for an image of a dog, and Bob asked for one later as well, we could serve Bob the same image we generated for Alice. Storage is very cheap these days (storing and serving the same photo in S3 would be approximately 100,000 times cheaper).&lt;br /&gt;
+Matching on text equality is easy. We could store the images in a pattern like &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;s3://CACHE_BUCKET/dog.jpg&lt;/code&gt;, then look for this jpg the next time someone asks for a dog.&lt;/p&gt;
+
+&lt;h2 id=&quot;better-caching&quot;&gt;Better caching&lt;/h2&gt;
+&lt;p&gt;We might be able to save even more on image generation if we’re ok with caching &lt;em&gt;similar&lt;/em&gt; results.&lt;br /&gt;
+For instance, if Alice searches for “house” and Bob asks for “Villa”, the resulting images might be so similar that it’d be a shame to waste our 4 cents on creating a new one:&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;house&lt;/td&gt;
+      &lt;td&gt;&lt;img src=&quot;/assets/2024-05-03-postgresql-vector/house.jpg&quot; alt=&quot;&quot; style=&quot;height:5em;&quot; /&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;villa&lt;/td&gt;
+      &lt;td&gt;&lt;img src=&quot;/assets/2024-05-03-postgresql-vector/villa.jpg&quot; alt=&quot;&quot; style=&quot;height:5em;&quot; /&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;spaceship&lt;br /&gt;(probably not as similar)&lt;/td&gt;
+      &lt;td&gt;&lt;img src=&quot;/assets/2024-05-03-postgresql-vector/spaceship.jpg&quot; alt=&quot;&quot; style=&quot;height:5em;&quot; /&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;The non-trivial part in this solution is understanding that “house” and “villa” are pretty similar (unlike “house” and “spaceship”). Luckily, this is something that Machine Learning can help us with.&lt;/p&gt;
+
+&lt;h2 id=&quot;embedding&quot;&gt;Embedding&lt;/h2&gt;
+&lt;p&gt;Part of LLM (Large Language Models) is assigning a numerical meaning to phrases, which is called “embedding”. These embedding comes in each phrase being a assigned a vector (array) of fractionals between -1 and 1, each number representing some property that might not make sense to humans, but does to the LLM’s brain.&lt;br /&gt;
+The more similar the vectors of phrase A and B, the more similar those phrases are, in the LLM’s opinion, where similarity is usually measured by &lt;a href=&quot;https://en.wikipedia.org/wiki/Cosine_similarity&quot;&gt;cosine distance&lt;/a&gt;, which produces a number between 0 and 1, where 0 is “the same phrase” and 1 is “couldn’t be further apart”.&lt;br /&gt;
+The size of the vector, and the specific meaning of each cell in it, are specific to the LLM model being used. Using &lt;a href=&quot;https://platform.openai.com/docs/guides/embeddings&quot;&gt;OpenAI’s embeddings&lt;/a&gt; (my goto for PoCs, not sure for prod use) will result in 1536 or 3072 cells (depending on which LLM model you use).&lt;/p&gt;
+
+&lt;p&gt;The basic idea of the solution now looks like:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;For a given phrase, extract the embedding vector&lt;/li&gt;
+  &lt;li&gt;Check whether we already have a cached object with a “close enough” vector&lt;/li&gt;
+  &lt;li&gt;If so, serve the closest cached object we have&lt;/li&gt;
+  &lt;li&gt;Otherwise, fetch the object from upstream (goodbye 4 cents), and store the result and its vector in the cache for next time&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;We still have to define what “close enough” is, but that’s more of a product question, and can also be adjusted based on our whims in real time.&lt;/p&gt;
+
+&lt;h2 id=&quot;postgresql&quot;&gt;PostgreSQL&lt;/h2&gt;
+&lt;p&gt;The idea of using our storage’s API of hit-miss doesn’t translate into this vector search, because instead of asking for a specific filename, we have to enumerate all keys and do some math over them, which is not what blob storages excel at. Instead, we need some sort of a database.&lt;/p&gt;
+
+&lt;p&gt;Since my app already uses PostgreSQL, I found &lt;a href=&quot;https://github.com/pgvector/pgvector&quot;&gt;pgvector&lt;/a&gt; to be a great solution.&lt;br /&gt;
+Availability-wise, it’s an addon to PostgreSQL that’s supported by big cloud SQL providers like &lt;a href=&quot;https://aws.amazon.com/about-aws/whats-new/2023/05/amazon-rds-postgresql-pgvector-ml-model-integration/&quot;&gt;AWS RDS&lt;/a&gt; and &lt;a href=&quot;https://cloud.google.com/blog/products/databases/using-pgvector-llms-and-langchain-with-google-cloud-databases&quot;&gt;Google Cloud SQL&lt;/a&gt;, and also available as a &lt;a href=&quot;https://hub.docker.com/r/pgvector/pgvector&quot;&gt;Docker image&lt;/a&gt;.&lt;br /&gt;
+Functionality-wise, it creates a new data type (vector) and adds some operators (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;lt;=&amp;gt;&lt;/code&gt; for our distance function), which makes our query look pretty readable.&lt;/p&gt;
+
+&lt;p&gt;Our cache table can be as simple as a single &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vector&lt;/code&gt; column, but I’d add another one:&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;name&lt;/th&gt;
+      &lt;th&gt;type&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;embedding&lt;/td&gt;
+      &lt;td&gt;vector&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;key&lt;/td&gt;
+      &lt;td&gt;varchar&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;The actual image can continue to be stored in the original format, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;s3://CACHE_BUCKET/key.jpg&lt;/code&gt;, where the key will be retrieved from the query.
+The key can also be used for humans to understand what the vector originally meant.&lt;/p&gt;
+
+&lt;h2 id=&quot;and-now-in-python&quot;&gt;And now in Python&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/pgvector/pgvector-python&quot;&gt;pgvector-python&lt;/a&gt; is a convenient bridge from Python’s &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;psycopg2&lt;/code&gt; (or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;psycopg3&lt;/code&gt; if you’re brave) to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pgvector&lt;/code&gt;.&lt;br /&gt;
+Our usage of OpenAI’s embedding API is so basic that we can stick with basic HTTP calls with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;requests&lt;/code&gt;.
+A basic api looks like this:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;requests&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;psycopg2&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;pgvector.psycopg2&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;register_vector&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;numpy&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# vectors are np.array in python-pgvector
+&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;_set_blob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;blob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;bytes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;# Implementation specific
+&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;_get_blob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;bytes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;# Implementation specific
+&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;_generate_content_expensive&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;bytes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;# Implementation specific
+&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;_sql_cursor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;conn&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;psycopg2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;connect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(...)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;register_vector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;conn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;cursor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;conn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cursor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cursor&lt;/span&gt;
+
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;_get_embedding&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;resp&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;requests&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;post&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;&quot;https://api.openai.com/v1/embeddings&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;headers&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;s&quot;&gt;&quot;Authorization&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Bearer $OPENAI_API_KEY&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;json&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;s&quot;&gt;&quot;input&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;s&quot;&gt;&quot;model&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;text-embedding-3-large&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# can be &quot;small&quot; too
+&lt;/span&gt;        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;resp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;raise_for_status&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;resp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;json&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;ret&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'data'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'embedding'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ret&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;_cache_set&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;embedding&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;cursor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_sql_cursor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;cursor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;execute&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'INSERT INTO items (key, embedding) VALUES (%s, %s)'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;embedding&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;cursor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;connection&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;commit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;_cache_get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;embedding&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;distance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;cursor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_sql_cursor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;cursor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;execute&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+      &lt;span class=&quot;s&quot;&gt;'SELECT key FROM items WHERE embedding &amp;lt;=&amp;gt; %(embedding)s &amp;lt;= %(distance)s ORDER BY embedding &amp;lt;=&amp;gt; %(embedding)s LIMIT 1'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+          &lt;span class=&quot;s&quot;&gt;'embedding'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;embedding&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+          &lt;span class=&quot;s&quot;&gt;'distance'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;distance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;row&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cursor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fetchone&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;row&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;is&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;row&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;distance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;bytes&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;embedding&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_get_embedding&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;cache_entry&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_cache_get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;embedding&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;distance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cache_entry&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_get_blob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cache_entry&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+  &lt;span class=&quot;n&quot;&gt;blob&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_generate_content_expensive&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;_set_blob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;blob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;_cache_set&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;embedding&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;blob&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Calling the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;get&lt;/code&gt; method implements the algorithm we described above, and works as a nice PoC.&lt;/p&gt;
+
+&lt;h2 id=&quot;things-that-can-be-improved&quot;&gt;Things that can be improved&lt;/h2&gt;
+&lt;ol&gt;
+  &lt;li&gt;&lt;strong&gt;Scaling and indexing:&lt;/strong&gt; I believe that the current solution requires a linear scan of the cache table, which won’t scale very well. I know the index story is a bit complex for vectors, and it’s going to be a fun adventure exploring it.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Adding a “perfect match” race:&lt;/strong&gt; We could probably try hitting the blob cache directly for the exact key, in case it’s there. If Bob asked for “dog” and Alice already seeded the cache with “dog”, trying to vector-search “dog” is a waste when we can just check whether “dog” exists in the cache.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Caching the embeddings as well:&lt;/strong&gt; If we already translated “villa” to an embedding in the past, no need to embed it again. We can search our cache table by key to see whether we already have it there&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;images-from&quot;&gt;Images from&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&quot;https://huggingface.co/kohbanye/pixel-art-style&quot;&gt;HuggingFace kohbanye/pixel-art-style&lt;/a&gt;&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="SQL" /><category term="PostgreSQL" /><category term="Python" /><summary type="html">You’re an app developer now Let’s say you’re working on an app. The app helps you search for e-mail messages that relate to a certain topic. This works well enough. As a nifty extra, you added a small pixelated image that is generated on-demand of the search topic. For instance, when searching for a dog, you’d get a dog image.</summary></entry><entry><title type="html">Java SMPP helper</title><link href="https://blog.backslasher.net/smpp-helper.html" rel="alternate" type="text/html" title="Java SMPP helper" /><published>2024-02-28T00:00:00+02:00</published><updated>2024-02-28T00:00:00+02:00</updated><id>https://blog.backslasher.net/smpp-helper</id><content type="html" xml:base="https://blog.backslasher.net/smpp-helper.html">&lt;p&gt;One of my projects involves communicating over SMS with cellular-connected IoT devices. The company already has a working infastructure for sending and recieving SMS with Twilio, which worked well for most of the time. The API was convenient (HTTP to send, HTTP webhooks to recieve), pricing was reasonable, and reliability was OK. However, there was a small problem.&lt;/p&gt;
 
 &lt;p&gt;All SMS messages to T-Mobile numbers in the US would fail with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;30005 The destination number you are trying to reach is unknown and may no longer exist&lt;/code&gt;.&lt;br /&gt;
 SMS messages from our presonal phones to those numbers would work just fine. Even weirder, messages from Twilio to random T-Mobile numbers that are not part of our plan also worked.&lt;br /&gt;
@@ -1040,96 +1211,4 @@ I opted for using &lt;code class=&quot;language-plaintext highlighter-rouge&quot
     trash &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$INPUT&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
   &lt;span class=&quot;k&quot;&gt;fi
 done&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Nitzan</name></author><category term="Linux" /><category term="PDF" /><category term="Bash" /><summary type="html">I recently discovered that I had over 100 PDFs in my “Downloads” directory and needed to determine which ones I wanted to keep. Instead of spending 10 minutes manually sorting them, I invested 20 minutes in writing a script to assist me.</summary></entry><entry><title type="html">Is this really an emergency?</title><link href="https://blog.backslasher.net/is-this-an-emergency.html" rel="alternate" type="text/html" title="Is this really an emergency?" /><published>2023-04-24T00:00:00+03:00</published><updated>2023-04-24T00:00:00+03:00</updated><id>https://blog.backslasher.net/is-this-an-emergency</id><content type="html" xml:base="https://blog.backslasher.net/is-this-an-emergency.html">&lt;p&gt;One of the teams I worked with would do an “engineering pain-point” survey twice a year.
-During one of those surveys, the main complaint was that on-calls had a hard time getting help from other teams or even engineers from their own team. I shadowed an on-call rotation for a couple of weeks and noticed this pattern:&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;The on-call receives a notification of a problem, either through an alert, a graph indicating an issue, or a report from a colleague.&lt;/li&gt;
-  &lt;li&gt;The on-call needs to perform a remedial action. Usually:
-    &lt;ol&gt;
-      &lt;li&gt;Reverting a code change by someone else&lt;/li&gt;
-      &lt;li&gt;Disabling a feature flag owned by a different team&lt;/li&gt;
-      &lt;li&gt;Approaching someone from another team to get their opinion or ask them to revert something. Sometimes, this meant waking up that person.&lt;/li&gt;
-    &lt;/ol&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;In each of these cases, because the on-call was interrupting someone else, a discussion often followed (civil or otherwise) about whether the problem was ‘a real’ emergency.
-I have personally experienced a situation where I had to wake up the network on-call engineer at the company because all of the servers in a region were running an healthy, but were inaccessible to users.
-The response I received (understandable given that it was 3 AM on a weekend) was:&lt;/p&gt;
-&lt;blockquote&gt;
-  &lt;p&gt;“&lt;strong&gt;Is this really an emergency?&lt;/strong&gt; You have other regions.”
-I insisted, and eventually the network on-call found a load balancer that was accepting connections but blackholing the traffic.
-I could imagine that a less experienced version of myself stuggling to stand my ground, delaying the resolution of the problem by at least a day.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;At this point, we had no consensus, either inside or outside the team, on what consistutes an emergency.
-Edge cases were obvious - the whole service being down is bad, and an image being off by one pixel can wait for working hours.
-Intermediaries, such as “we can’t release to prod because our end-to-end testing is broken” or “We have increased latency because a CDN wasn’t retaining our assets”, were not obvious, and on every incident necessitated a lengthy “how bad is it” discussion.&lt;/p&gt;
-
-&lt;p&gt;This is exhausting, especially when this happens at 3 am and you’re not very proficient at handling crises.&lt;/p&gt;
-
-&lt;p&gt;I started working on this guideline for “what is an emergency?” and getting everyone onboard.&lt;/p&gt;
-
-&lt;h2 id=&quot;solution-process&quot;&gt;Solution process&lt;/h2&gt;
-&lt;p&gt;To establish a consensus on “what kind of problems can we have, and how bad are they?” I used a mostly-growing concentric circle approach:&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;I started with myself, drawing on my past memories and reviewing historical documentation of emergencies we had faced.&lt;/li&gt;
-  &lt;li&gt;My SRE comrades formed the second tier. We likely had at least one of us involved in any emergency and had more context and passion about the prioritization problem.&lt;/li&gt;
-  &lt;li&gt;All of our team’s engineers came third. Involving them had multiple advantages:
-    &lt;ol&gt;
-      &lt;li&gt;It reflected the work being done and demonstrated that we care about the problem.&lt;/li&gt;
-      &lt;li&gt;It provided insight into emergencies that we might be missing, as we were sometimes blind to emergencies that we were not currently monitoring for.&lt;/li&gt;
-      &lt;li&gt;It identified interested parties who might be willing to work on this consensus or promote it within the team.&lt;/li&gt;
-    &lt;/ol&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Non-tech stakeholders were then consulted. They were able to ratify what we consider to be emergencies, and what are the threshold (e.g. what amount user disconnects should be considered an emergency).&lt;/li&gt;
-  &lt;li&gt;The external teams that we depended on (networking, hardware) were next. Having them in the loop meant that once we agreed on what constituted an emergency, pushback on our requests for help could be ended by referring to the document.&lt;/li&gt;
-  &lt;li&gt;The external teams that depended on us (e.g. video, which owned their user experience end-to-end) formed the final tier. This worked like the networking team but in reverse. We were less likely to be asked to stop our release pipeline or be woken up at night for something that we did not agree was an emergency.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;I maintained a comprehensive record of the entire process in a Google document and ensured its accessibility to anyone interested in it. Additionally, I regularly revisited the document to ensure that:&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;We accurately defined thresholds, such as “How many users can we lose before we need to wake up?”&lt;/li&gt;
-  &lt;li&gt;We kept the definitions simple and easy to understand, avoiding complex graphs, decision trees, or jargon. This made it possible for external teams or non-engineers to comprehend our criteria and confirm its validity.&lt;/li&gt;
-  &lt;li&gt;We established a real-time metric that notified us within a minute of detecting an issue, and if necessary, created one.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;After the document was approved by everybody, I worked on mirroring it in our monitoring infrastructure, making sure that we are woken up iff (if and only if) there is a matching emergency criteria in the document.&lt;/p&gt;
-
-&lt;h2 id=&quot;how-the-solution-looked&quot;&gt;How the solution looked&lt;/h2&gt;
-
-&lt;p&gt;The actual numbers and metrics aren’t that interesting as much as the overall structure, so this is what I’ll share&lt;/p&gt;
-
-&lt;h3 id=&quot;types-of-emergency&quot;&gt;Types of emergency&lt;/h3&gt;
-&lt;ol&gt;
-  &lt;li&gt;“Things are on fire”: This type of emergency requires immediate attention, and it’s acceptable to wake people up or reach out to them on weekends.&lt;/li&gt;
-  &lt;li&gt;“Problem”: This type of emergency is a high priority but should only be addressed during work hours. There’s no need to wake people up, but other work should be deprioritized to resolve the problem.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&quot;metrics&quot;&gt;Metrics&lt;/h3&gt;
-
-&lt;p&gt;We ensured that every metric was clearly defined and accompanied by a brief explanation of why it was important to measure. Our metric selection process involved three types of metrics:&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;&lt;strong&gt;User experience proxies:&lt;/strong&gt; Metrics such as average response time, session crash rate, and number of engagements per second were easily measurable and indicative of a bad user experience. We reached a quick consensus on these metrics as they aligned with our team’s top priority of ensuring a positive user experience.&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;Pure infra:&lt;/strong&gt; Metrics such as CPU/memory utilization, ingress/egress rate, and process restarts were hotly debated as to whether they should trigger an alert. However, our experience showed that these metrics were often the leading indicators of an impending user experience issue. Thus, we agreed to wake up on extreme values of these metrics, even if user engagement was not immediately affected.&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;Delayed user experience metrics:&lt;/strong&gt; Metrics such as time spent, monthly active users, and bug reports were important to non-technical stakeholders but were not easily measurable in real time. Although it was possible to approximate these metrics with some automation, we ultimately decided to manually check them and keep them as slow metrics. We left the door open to revisiting this decision later.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&quot;conditions&quot;&gt;Conditions&lt;/h3&gt;
-&lt;p&gt;These conditions are straightforward and easy to understand, even during the middle of the night. They look like this:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;If the average response time goes over 1.5 seconds for 20 minutes, it’s an emergency class 2 (problem).&lt;/li&gt;
-  &lt;li&gt;If the average response time goes over 3 seconds for 10 minutes, it’s an emergency class 1 (things are on fire).&lt;/li&gt;
-  &lt;li&gt;If the memory utilization goes over 90% for 10 minutes, it’s an emergency class 2.&lt;/li&gt;
-  &lt;li&gt;If the time spent today drops 20% compared to the same day last week, it’s an emergency class 2.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;epilogue&quot;&gt;Epilogue&lt;/h2&gt;
-
-&lt;p&gt;The project’s didn’t end by publishing the document. We continuously refined the document and the corresponding monitoring infrastructure by adjusting thresholds and metrics.&lt;br /&gt;
-Additionally, I monitored the on-call team’s efforts to request assistance and was pleased to observe a significant reduction in issues. The document’s acceptance by the teams provided a shared point of reference that helped to minimize any potential friction.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="Ramblings" /><category term="ops" /><summary type="html">One of the teams I worked with would do an “engineering pain-point” survey twice a year. During one of those surveys, the main complaint was that on-calls had a hard time getting help from other teams or even engineers from their own team. I shadowed an on-call rotation for a couple of weeks and noticed this pattern:</summary></entry></feed>
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Nitzan</name></author><category term="Linux" /><category term="PDF" /><category term="Bash" /><summary type="html">I recently discovered that I had over 100 PDFs in my “Downloads” directory and needed to determine which ones I wanted to keep. Instead of spending 10 minutes manually sorting them, I invested 20 minutes in writing a script to assist me.</summary></entry></feed>

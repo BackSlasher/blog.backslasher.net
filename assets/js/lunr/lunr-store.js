@@ -1066,4 +1066,10 @@ var store = [{
         "tags": ["Java","SMPP"],
         "url": "/smpp-helper.html",
         "teaser": null
+      },{
+        "title": "Semantic caching with PSQL, Python, OpenAI",
+        "excerpt":"You’re an app developer now Let’s say you’re working on an app. The app helps you search for e-mail messages that relate to a certain topic. This works well enough. As a nifty extra, you added a small pixelated image that is generated on-demand of the search topic. For instance,...","categories": [],
+        "tags": ["SQL","PostgreSQL","Python"],
+        "url": "/postgresql-vector.html",
+        "teaser": null
       },]
