@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2024-05-03T13:57:12+03:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">Semantic caching with PSQL, Python, OpenAI</title><link href="https://blog.backslasher.net/postgresql-vector.html" rel="alternate" type="text/html" title="Semantic caching with PSQL, Python, OpenAI" /><published>2024-05-03T00:00:00+03:00</published><updated>2024-05-03T00:00:00+03:00</updated><id>https://blog.backslasher.net/postgresql-vector</id><content type="html" xml:base="https://blog.backslasher.net/postgresql-vector.html">&lt;h2 id=&quot;youre-an-app-developer-now&quot;&gt;You’re an app developer now&lt;/h2&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2024-05-03T14:23:23+03:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">Semantic caching with PSQL, Python, OpenAI</title><link href="https://blog.backslasher.net/postgresql-vector.html" rel="alternate" type="text/html" title="Semantic caching with PSQL, Python, OpenAI" /><published>2024-05-03T00:00:00+03:00</published><updated>2024-05-03T00:00:00+03:00</updated><id>https://blog.backslasher.net/postgresql-vector</id><content type="html" xml:base="https://blog.backslasher.net/postgresql-vector.html">&lt;h2 id=&quot;youre-an-app-developer-now&quot;&gt;You’re an app developer now&lt;/h2&gt;
 &lt;p&gt;Let’s say you’re working on an app. The app helps you search for e-mail messages that relate to a certain topic. This works well enough.&lt;br /&gt;
-As a nifty extra, you added a small pixelated image that is generated on-demand of the search topic.&lt;br /&gt;
+As a nifty extra, you added a small pixelated image of the search topic, that is generated on-demand using some ML model.&lt;br /&gt;
 For instance, when searching for a dog, you’d get a dog image.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/assets/2024-05-03-postgresql-vector/dog.jpg&quot; alt=&quot;&quot; style=&quot;height:5em;&quot; /&gt;&lt;/p&gt;
@@ -9,12 +9,36 @@ For instance, when searching for a dog, you’d get a dog image.&lt;/p&gt;
 A new problem arises - generating these images is the most expensive part of your service (&lt;a href=&quot;https://openai.com/api/pricing&quot;&gt;Dall-E takes 4 cents an image&lt;/a&gt;, which is a lot when your app is freemium).&lt;/p&gt;
 
 &lt;h2 id=&quot;caching&quot;&gt;Caching&lt;/h2&gt;
-&lt;p&gt;An obvious solution is caching - if Alice asked for an image of a dog, and Bob asked for one later as well, we could serve Bob the same image we generated for Alice. Storage is very cheap these days (storing and serving the same photo in S3 would be approximately 100,000 times cheaper).&lt;br /&gt;
+&lt;p&gt;An obvious solution is caching - if Alice asked for an image of a dog, and Bob asked for one later as well, we could serve Bob the same image we generated for Alice. Storage is very cheap these days (storing and serving the same photo in S3 would be approximately 100,000 times cheaper than generating it).&lt;br /&gt;
 Matching on text equality is easy. We could store the images in a pattern like &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;s3://CACHE_BUCKET/dog.jpg&lt;/code&gt;, then look for this jpg the next time someone asks for a dog.&lt;/p&gt;
 
+&lt;p&gt;Example code could look like this:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;_set_blob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;blob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;bytes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;# Implementation specific
+&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;_get_blob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;bytes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;# Implementation specific
+&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;_generate_content_expensive&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;bytes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;# Implementation specific
+&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;distance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;bytes&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;blob&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_get_blob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;blob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;blob&lt;/span&gt;
+
+  &lt;span class=&quot;n&quot;&gt;blob&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_generate_content_expensive&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;_set_blob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;blob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;blob&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
 &lt;h2 id=&quot;better-caching&quot;&gt;Better caching&lt;/h2&gt;
-&lt;p&gt;We might be able to save even more on image generation if we’re ok with caching &lt;em&gt;similar&lt;/em&gt; results.&lt;br /&gt;
-For instance, if Alice searches for “house” and Bob asks for “Villa”, the resulting images might be so similar that it’d be a shame to waste our 4 cents on creating a new one:&lt;/p&gt;
+&lt;p&gt;We might be able to save even more on image generation if we’re ok with serving &lt;em&gt;similar&lt;/em&gt; results.&lt;br /&gt;
+For instance, if Alice searches for “house” and Bob asks for “villa”, the resulting images might be so similar that it’d be a shame to waste 4 cents on creating a new one:&lt;/p&gt;
 
 &lt;table&gt;
   &lt;tbody&gt;
@@ -33,14 +57,15 @@ For instance, if Alice searches for “house” and Bob asks for “Villa”, th
   &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;p&gt;The non-trivial part in this solution is understanding that “house” and “villa” are pretty similar (unlike “house” and “spaceship”). Luckily, this is something that Machine Learning can help us with.&lt;/p&gt;
+&lt;p&gt;The non-trivial part in this solution is understanding that “house” and “villa” are pretty similar (and that “house” and “spaceship” are not). Luckily, this is another task that Machine Learning can help us with.&lt;/p&gt;
 
 &lt;h2 id=&quot;embedding&quot;&gt;Embedding&lt;/h2&gt;
-&lt;p&gt;Part of LLM (Large Language Models) is assigning a numerical meaning to phrases, which is called “embedding”. These embedding comes in each phrase being a assigned a vector (array) of fractionals between -1 and 1, each number representing some property that might not make sense to humans, but does to the LLM’s brain.&lt;br /&gt;
-The more similar the vectors of phrase A and B, the more similar those phrases are, in the LLM’s opinion, where similarity is usually measured by &lt;a href=&quot;https://en.wikipedia.org/wiki/Cosine_similarity&quot;&gt;cosine distance&lt;/a&gt;, which produces a number between 0 and 1, where 0 is “the same phrase” and 1 is “couldn’t be further apart”.&lt;br /&gt;
-The size of the vector, and the specific meaning of each cell in it, are specific to the LLM model being used. Using &lt;a href=&quot;https://platform.openai.com/docs/guides/embeddings&quot;&gt;OpenAI’s embeddings&lt;/a&gt; (my goto for PoCs, not sure for prod use) will result in 1536 or 3072 cells (depending on which LLM model you use).&lt;/p&gt;
+&lt;p&gt;Part of LLM (Large Language Models) is assigning a numerical meaning to phrases, which is called “embedding”. This means each phrase can be translated into a vector (array) of fractionals between -1 and 1, each number representing some property of the phrase that might not make sense to humans, but does make sense to the LLM’s brain.&lt;br /&gt;
+The more “similar” the vectors of phrase A and B, the more similar those phrases are, in the LLM’s opinion.&lt;br /&gt;
+Similarity for these vectors is usually measured by &lt;a href=&quot;https://en.wikipedia.org/wiki/Cosine_similarity&quot;&gt;cosine distance&lt;/a&gt;, which is a function that takes two vectors and produces a number between 0 and 1, where 0 is “the same vector” and 1 is “couldn’t be further apart”.&lt;br /&gt;
+The size of the vector and the specific meaning of each cell in it are specific to the LLM model being used. Using &lt;a href=&quot;https://platform.openai.com/docs/guides/embeddings&quot;&gt;OpenAI’s embeddings&lt;/a&gt; (my goto for PoCs) will result in 1536 or 3072 cells (depending on which LLM model you use).&lt;/p&gt;
 
-&lt;p&gt;The basic idea of the solution now looks like:&lt;/p&gt;
+&lt;p&gt;The basic algorithm of our semantic cache now looks like:&lt;/p&gt;
 &lt;ol&gt;
   &lt;li&gt;For a given phrase, extract the embedding vector&lt;/li&gt;
   &lt;li&gt;Check whether we already have a cached object with a “close enough” vector&lt;/li&gt;
@@ -51,7 +76,7 @@ The size of the vector, and the specific meaning of each cell in it, are specifi
 &lt;p&gt;We still have to define what “close enough” is, but that’s more of a product question, and can also be adjusted based on our whims in real time.&lt;/p&gt;
 
 &lt;h2 id=&quot;postgresql&quot;&gt;PostgreSQL&lt;/h2&gt;
-&lt;p&gt;The idea of using our storage’s API of hit-miss doesn’t translate into this vector search, because instead of asking for a specific filename, we have to enumerate all keys and do some math over them, which is not what blob storages excel at. Instead, we need some sort of a database.&lt;/p&gt;
+&lt;p&gt;The idea of using only our storage’s API doesn’t work with vector search, because instead of asking for a specific filename, we have to enumerate all keys and do some math over them, which is not a quick operation with blob storage solutions. Instead, we need some sort of a database.&lt;/p&gt;
 
 &lt;p&gt;Since my app already uses PostgreSQL, I found &lt;a href=&quot;https://github.com/pgvector/pgvector&quot;&gt;pgvector&lt;/a&gt; to be a great solution.&lt;br /&gt;
 Availability-wise, it’s an addon to PostgreSQL that’s supported by big cloud SQL providers like &lt;a href=&quot;https://aws.amazon.com/about-aws/whats-new/2023/05/amazon-rds-postgresql-pgvector-ml-model-integration/&quot;&gt;AWS RDS&lt;/a&gt; and &lt;a href=&quot;https://cloud.google.com/blog/products/databases/using-pgvector-llms-and-langchain-with-google-cloud-databases&quot;&gt;Google Cloud SQL&lt;/a&gt;, and also available as a &lt;a href=&quot;https://hub.docker.com/r/pgvector/pgvector&quot;&gt;Docker image&lt;/a&gt;.&lt;br /&gt;
@@ -73,13 +98,13 @@ Functionality-wise, it creates a new data type (vector) and adds some operators 
     &lt;/tr&gt;
     &lt;tr&gt;
       &lt;td&gt;key&lt;/td&gt;
-      &lt;td&gt;varchar&lt;/td&gt;
+      &lt;td&gt;short text&lt;/td&gt;
     &lt;/tr&gt;
   &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;p&gt;The actual image can continue to be stored in the original format, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;s3://CACHE_BUCKET/key.jpg&lt;/code&gt;, where the key will be retrieved from the query.
-The key can also be used for humans to understand what the vector originally meant.&lt;/p&gt;
+&lt;p&gt;The actual image can still be kept in the original format &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;s3://CACHE_BUCKET/key.jpg&lt;/code&gt;, where the key will be retrieved from the DB.
+The key can also be used by the developers for debugging (“what is the phrase matching this vector?”).&lt;/p&gt;
 
 &lt;h2 id=&quot;and-now-in-python&quot;&gt;And now in Python&lt;/h2&gt;
 &lt;p&gt;&lt;a href=&quot;https://github.com/pgvector/pgvector-python&quot;&gt;pgvector-python&lt;/a&gt; is a convenient bridge from Python’s &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;psycopg2&lt;/code&gt; (or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;psycopg3&lt;/code&gt; if you’re brave) to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pgvector&lt;/code&gt;.&lt;br /&gt;
@@ -149,7 +174,6 @@ A basic api looks like this:&lt;/p&gt;
 &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;distance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;bytes&lt;/span&gt;
   &lt;span class=&quot;n&quot;&gt;embedding&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_get_embedding&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
   &lt;span class=&quot;n&quot;&gt;cache_entry&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_cache_get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;embedding&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;distance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
   &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cache_entry&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_get_blob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cache_entry&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
@@ -169,7 +193,7 @@ A basic api looks like this:&lt;/p&gt;
 &lt;/ol&gt;
 
 &lt;h2 id=&quot;images-from&quot;&gt;Images from&lt;/h2&gt;
-&lt;p&gt;&lt;a href=&quot;https://huggingface.co/kohbanye/pixel-art-style&quot;&gt;HuggingFace kohbanye/pixel-art-style&lt;/a&gt;&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="SQL" /><category term="PostgreSQL" /><category term="Python" /><summary type="html">You’re an app developer now Let’s say you’re working on an app. The app helps you search for e-mail messages that relate to a certain topic. This works well enough. As a nifty extra, you added a small pixelated image that is generated on-demand of the search topic. For instance, when searching for a dog, you’d get a dog image.</summary></entry><entry><title type="html">Java SMPP helper</title><link href="https://blog.backslasher.net/smpp-helper.html" rel="alternate" type="text/html" title="Java SMPP helper" /><published>2024-02-28T00:00:00+02:00</published><updated>2024-02-28T00:00:00+02:00</updated><id>https://blog.backslasher.net/smpp-helper</id><content type="html" xml:base="https://blog.backslasher.net/smpp-helper.html">&lt;p&gt;One of my projects involves communicating over SMS with cellular-connected IoT devices. The company already has a working infastructure for sending and recieving SMS with Twilio, which worked well for most of the time. The API was convenient (HTTP to send, HTTP webhooks to recieve), pricing was reasonable, and reliability was OK. However, there was a small problem.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://huggingface.co/kohbanye/pixel-art-style&quot;&gt;HuggingFace kohbanye/pixel-art-style&lt;/a&gt;&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="SQL" /><category term="PostgreSQL" /><category term="Python" /><summary type="html">You’re an app developer now Let’s say you’re working on an app. The app helps you search for e-mail messages that relate to a certain topic. This works well enough. As a nifty extra, you added a small pixelated image of the search topic, that is generated on-demand using some ML model. For instance, when searching for a dog, you’d get a dog image.</summary></entry><entry><title type="html">Java SMPP helper</title><link href="https://blog.backslasher.net/smpp-helper.html" rel="alternate" type="text/html" title="Java SMPP helper" /><published>2024-02-28T00:00:00+02:00</published><updated>2024-02-28T00:00:00+02:00</updated><id>https://blog.backslasher.net/smpp-helper</id><content type="html" xml:base="https://blog.backslasher.net/smpp-helper.html">&lt;p&gt;One of my projects involves communicating over SMS with cellular-connected IoT devices. The company already has a working infastructure for sending and recieving SMS with Twilio, which worked well for most of the time. The API was convenient (HTTP to send, HTTP webhooks to recieve), pricing was reasonable, and reliability was OK. However, there was a small problem.&lt;/p&gt;
 
 &lt;p&gt;All SMS messages to T-Mobile numbers in the US would fail with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;30005 The destination number you are trying to reach is unknown and may no longer exist&lt;/code&gt;.&lt;br /&gt;
 SMS messages from our presonal phones to those numbers would work just fine. Even weirder, messages from Twilio to random T-Mobile numbers that are not part of our plan also worked.&lt;br /&gt;

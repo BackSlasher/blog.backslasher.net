@@ -10,7 +10,7 @@
     <meta charset="utf-8">
 
 <!-- begin _includes/seo.html --><title>Semantic caching with PSQL, Python, OpenAI - BackSlasher</title>
-<meta name="description" content="You’re an app developer now Let’s say you’re working on an app. The app helps you search for e-mail messages that relate to a certain topic. This works well enough. As a nifty extra, you added a small pixelated image that is generated on-demand of the search topic. For instance, when searching for a dog, you’d get a dog image.">
+<meta name="description" content="You’re an app developer now Let’s say you’re working on an app. The app helps you search for e-mail messages that relate to a certain topic. This works well enough. As a nifty extra, you added a small pixelated image of the search topic, that is generated on-demand using some ML model. For instance, when searching for a dog, you’d get a dog image.">
 
 
   <meta name="author" content="Nitzan">
@@ -26,7 +26,7 @@
 <meta property="og:url" content="https://blog.backslasher.net/postgresql-vector.html">
 
 
-  <meta property="og:description" content="You’re an app developer now Let’s say you’re working on an app. The app helps you search for e-mail messages that relate to a certain topic. This works well enough. As a nifty extra, you added a small pixelated image that is generated on-demand of the search topic. For instance, when searching for a dog, you’d get a dog image.">
+  <meta property="og:description" content="You’re an app developer now Let’s say you’re working on an app. The app helps you search for e-mail messages that relate to a certain topic. This works well enough. As a nifty extra, you added a small pixelated image of the search topic, that is generated on-demand using some ML model. For instance, when searching for a dog, you’d get a dog image.">
 
 
 
@@ -254,7 +254,7 @@
 
   <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
     <meta itemprop="headline" content="Semantic caching with PSQL, Python, OpenAI">
-    <meta itemprop="description" content="You’re an app developer nowLet’s say you’re working on an app. The app helps you search for e-mail messages that relate to a certain topic. This works well enough.As a nifty extra, you added a small pixelated image that is generated on-demand of the search topic.For instance, when searching for a dog, you’d get a dog image.">
+    <meta itemprop="description" content="You’re an app developer nowLet’s say you’re working on an app. The app helps you search for e-mail messages that relate to a certain topic. This works well enough.As a nifty extra, you added a small pixelated image of the search topic, that is generated on-demand using some ML model.For instance, when searching for a dog, you’d get a dog image.">
     <meta itemprop="datePublished" content="2024-05-03T00:00:00+03:00">
     
 
@@ -291,7 +291,7 @@
         
         <h2 id="youre-an-app-developer-now">You’re an app developer now</h2>
 <p>Let’s say you’re working on an app. The app helps you search for e-mail messages that relate to a certain topic. This works well enough.<br />
-As a nifty extra, you added a small pixelated image that is generated on-demand of the search topic.<br />
+As a nifty extra, you added a small pixelated image of the search topic, that is generated on-demand using some ML model.<br />
 For instance, when searching for a dog, you’d get a dog image.</p>
 
 <p><img src="/assets/2024-05-03-postgresql-vector/dog.jpg" alt="" style="height:5em;" /></p>
@@ -300,12 +300,36 @@ For instance, when searching for a dog, you’d get a dog image.</p>
 A new problem arises - generating these images is the most expensive part of your service (<a href="https://openai.com/api/pricing">Dall-E takes 4 cents an image</a>, which is a lot when your app is freemium).</p>
 
 <h2 id="caching">Caching</h2>
-<p>An obvious solution is caching - if Alice asked for an image of a dog, and Bob asked for one later as well, we could serve Bob the same image we generated for Alice. Storage is very cheap these days (storing and serving the same photo in S3 would be approximately 100,000 times cheaper).<br />
+<p>An obvious solution is caching - if Alice asked for an image of a dog, and Bob asked for one later as well, we could serve Bob the same image we generated for Alice. Storage is very cheap these days (storing and serving the same photo in S3 would be approximately 100,000 times cheaper than generating it).<br />
 Matching on text equality is easy. We could store the images in a pattern like <code class="language-plaintext highlighter-rouge">s3://CACHE_BUCKET/dog.jpg</code>, then look for this jpg the next time someone asks for a dog.</p>
 
+<p>Example code could look like this:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">_set_blob</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">blob</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+  <span class="c1"># Implementation specific
+</span>  <span class="p">...</span>
+
+<span class="k">def</span> <span class="nf">_get_blob</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+  <span class="c1"># Implementation specific
+</span>  <span class="p">...</span>
+
+<span class="k">def</span> <span class="nf">_generate_content_expensive</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+  <span class="c1"># Implementation specific
+</span>  <span class="p">...</span>
+
+<span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">distance</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span>
+  <span class="n">blob</span> <span class="o">=</span> <span class="n">_get_blob</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">blob</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">blob</span>
+
+  <span class="n">blob</span> <span class="o">=</span> <span class="n">_generate_content_expensive</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+  <span class="n">_set_blob</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">blob</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">blob</span>
+</code></pre></div></div>
+
 <h2 id="better-caching">Better caching</h2>
-<p>We might be able to save even more on image generation if we’re ok with caching <em>similar</em> results.<br />
-For instance, if Alice searches for “house” and Bob asks for “Villa”, the resulting images might be so similar that it’d be a shame to waste our 4 cents on creating a new one:</p>
+<p>We might be able to save even more on image generation if we’re ok with serving <em>similar</em> results.<br />
+For instance, if Alice searches for “house” and Bob asks for “villa”, the resulting images might be so similar that it’d be a shame to waste 4 cents on creating a new one:</p>
 
 <table>
   <tbody>
@@ -324,14 +348,15 @@ For instance, if Alice searches for “house” and Bob asks for “Villa”, th
   </tbody>
 </table>
 
-<p>The non-trivial part in this solution is understanding that “house” and “villa” are pretty similar (unlike “house” and “spaceship”). Luckily, this is something that Machine Learning can help us with.</p>
+<p>The non-trivial part in this solution is understanding that “house” and “villa” are pretty similar (and that “house” and “spaceship” are not). Luckily, this is another task that Machine Learning can help us with.</p>
 
 <h2 id="embedding">Embedding</h2>
-<p>Part of LLM (Large Language Models) is assigning a numerical meaning to phrases, which is called “embedding”. These embedding comes in each phrase being a assigned a vector (array) of fractionals between -1 and 1, each number representing some property that might not make sense to humans, but does to the LLM’s brain.<br />
-The more similar the vectors of phrase A and B, the more similar those phrases are, in the LLM’s opinion, where similarity is usually measured by <a href="https://en.wikipedia.org/wiki/Cosine_similarity">cosine distance</a>, which produces a number between 0 and 1, where 0 is “the same phrase” and 1 is “couldn’t be further apart”.<br />
-The size of the vector, and the specific meaning of each cell in it, are specific to the LLM model being used. Using <a href="https://platform.openai.com/docs/guides/embeddings">OpenAI’s embeddings</a> (my goto for PoCs, not sure for prod use) will result in 1536 or 3072 cells (depending on which LLM model you use).</p>
+<p>Part of LLM (Large Language Models) is assigning a numerical meaning to phrases, which is called “embedding”. This means each phrase can be translated into a vector (array) of fractionals between -1 and 1, each number representing some property of the phrase that might not make sense to humans, but does make sense to the LLM’s brain.<br />
+The more “similar” the vectors of phrase A and B, the more similar those phrases are, in the LLM’s opinion.<br />
+Similarity for these vectors is usually measured by <a href="https://en.wikipedia.org/wiki/Cosine_similarity">cosine distance</a>, which is a function that takes two vectors and produces a number between 0 and 1, where 0 is “the same vector” and 1 is “couldn’t be further apart”.<br />
+The size of the vector and the specific meaning of each cell in it are specific to the LLM model being used. Using <a href="https://platform.openai.com/docs/guides/embeddings">OpenAI’s embeddings</a> (my goto for PoCs) will result in 1536 or 3072 cells (depending on which LLM model you use).</p>
 
-<p>The basic idea of the solution now looks like:</p>
+<p>The basic algorithm of our semantic cache now looks like:</p>
 <ol>
   <li>For a given phrase, extract the embedding vector</li>
   <li>Check whether we already have a cached object with a “close enough” vector</li>
@@ -342,7 +367,7 @@ The size of the vector, and the specific meaning of each cell in it, are specifi
 <p>We still have to define what “close enough” is, but that’s more of a product question, and can also be adjusted based on our whims in real time.</p>
 
 <h2 id="postgresql">PostgreSQL</h2>
-<p>The idea of using our storage’s API of hit-miss doesn’t translate into this vector search, because instead of asking for a specific filename, we have to enumerate all keys and do some math over them, which is not what blob storages excel at. Instead, we need some sort of a database.</p>
+<p>The idea of using only our storage’s API doesn’t work with vector search, because instead of asking for a specific filename, we have to enumerate all keys and do some math over them, which is not a quick operation with blob storage solutions. Instead, we need some sort of a database.</p>
 
 <p>Since my app already uses PostgreSQL, I found <a href="https://github.com/pgvector/pgvector">pgvector</a> to be a great solution.<br />
 Availability-wise, it’s an addon to PostgreSQL that’s supported by big cloud SQL providers like <a href="https://aws.amazon.com/about-aws/whats-new/2023/05/amazon-rds-postgresql-pgvector-ml-model-integration/">AWS RDS</a> and <a href="https://cloud.google.com/blog/products/databases/using-pgvector-llms-and-langchain-with-google-cloud-databases">Google Cloud SQL</a>, and also available as a <a href="https://hub.docker.com/r/pgvector/pgvector">Docker image</a>.<br />
@@ -364,13 +389,13 @@ Functionality-wise, it creates a new data type (vector) and adds some operators 
     </tr>
     <tr>
       <td>key</td>
-      <td>varchar</td>
+      <td>short text</td>
     </tr>
   </tbody>
 </table>
 
-<p>The actual image can continue to be stored in the original format, <code class="language-plaintext highlighter-rouge">s3://CACHE_BUCKET/key.jpg</code>, where the key will be retrieved from the query.
-The key can also be used for humans to understand what the vector originally meant.</p>
+<p>The actual image can still be kept in the original format <code class="language-plaintext highlighter-rouge">s3://CACHE_BUCKET/key.jpg</code>, where the key will be retrieved from the DB.
+The key can also be used by the developers for debugging (“what is the phrase matching this vector?”).</p>
 
 <h2 id="and-now-in-python">And now in Python</h2>
 <p><a href="https://github.com/pgvector/pgvector-python">pgvector-python</a> is a convenient bridge from Python’s <code class="language-plaintext highlighter-rouge">psycopg2</code> (or <code class="language-plaintext highlighter-rouge">psycopg3</code> if you’re brave) to <code class="language-plaintext highlighter-rouge">pgvector</code>.<br />
@@ -440,7 +465,6 @@ A basic api looks like this:</p>
 <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">distance</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span>
   <span class="n">embedding</span> <span class="o">=</span> <span class="n">_get_embedding</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
   <span class="n">cache_entry</span> <span class="o">=</span> <span class="n">_cache_get</span><span class="p">(</span><span class="n">embedding</span><span class="p">,</span> <span class="n">distance</span><span class="p">)</span>
-
   <span class="k">if</span> <span class="n">cache_entry</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">_get_blob</span><span class="p">(</span><span class="n">cache_entry</span><span class="p">)</span>
 
