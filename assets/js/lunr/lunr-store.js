@@ -1072,4 +1072,10 @@ var store = [{
         "tags": ["SQL","PostgreSQL","Python"],
         "url": "/postgresql-vector.html",
         "teaser": null
+      },{
+        "title": "Getting your toppings fast",
+        "excerpt":"I recently ran into a friend that wanted some help with an app. Because the app is in super secret stealth mode, let’s pretend instead it’s “Pizza Advisor” - an app that uses top of the line Machine Learning to help you plan a great pizza. Gotta go fast Said...","categories": [],
+        "tags": ["Monitoring","Rambling"],
+        "url": "/fast-toppings.html",
+        "teaser": null
       },]

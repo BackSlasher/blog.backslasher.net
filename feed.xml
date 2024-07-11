@@ -1,4 +1,79 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2024-05-04T10:44:35+03:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">Semantic caching with PSQL, Python, OpenAI</title><link href="https://blog.backslasher.net/postgresql-vector.html" rel="alternate" type="text/html" title="Semantic caching with PSQL, Python, OpenAI" /><published>2024-05-03T00:00:00+03:00</published><updated>2024-05-03T00:00:00+03:00</updated><id>https://blog.backslasher.net/postgresql-vector</id><content type="html" xml:base="https://blog.backslasher.net/postgresql-vector.html">&lt;h2 id=&quot;youre-an-app-developer-now&quot;&gt;You’re an app developer now&lt;/h2&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2024-07-11T15:36:51+03:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">Getting your toppings fast</title><link href="https://blog.backslasher.net/fast-toppings.html" rel="alternate" type="text/html" title="Getting your toppings fast" /><published>2024-07-11T00:00:00+03:00</published><updated>2024-07-11T00:00:00+03:00</updated><id>https://blog.backslasher.net/fast-toppings</id><content type="html" xml:base="https://blog.backslasher.net/fast-toppings.html">&lt;p&gt;I recently ran into a friend that wanted some help with an app. Because the app is in super secret stealth mode, let’s pretend instead it’s “Pizza Advisor” - an app that uses top of the line Machine Learning to help you plan a great pizza.&lt;/p&gt;
+
+&lt;h2 id=&quot;gotta-go-fast&quot;&gt;Gotta go fast&lt;/h2&gt;
+&lt;p&gt;Said friend is in charge of performance, and they said they want the app “to be fast”. I said that it’s good goal to aspire to, and recommended they start a single core user interaction to monitor and optimize.
+They already had one - getting a list of recommended topics, and a metric - “under 1 second”.
+I asked them how that’s working out, and to my surprise they showed me something like this:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1.5 seconds
+2.5 seconds
+1.3 seconds
+4.0 seconds
+...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;The list was ~50 lines long.&lt;/p&gt;
+
+&lt;p&gt;When I inquired, I was told that they had several employees manually running the app and noting down the duration of said interaction.
+After asking “why”, they said that since they have no users, they had to measure the app somehow.&lt;br /&gt;
+I knew we had to automate.&lt;/p&gt;
+
+&lt;h2 id=&quot;enter-pizza-boy&quot;&gt;Enter Pizza Boy&lt;/h2&gt;
+&lt;p&gt;We quickly created “Pizza Boy”: a lightweight, system-agnostic, highly flexible scheduled synthetic transaction generator. Here it is:&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;while &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sleep &lt;/span&gt;1m&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do
+  &lt;/span&gt;curl &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; /dev/null &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;-w&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'Connection: %{time_connect}s\nTTFB: %{time_starttransfer}s\nTotal: %{time_total}s\n'&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;s1&quot;&gt;'https://pizza-advisor.com/v1/toppings?crust=thin&amp;amp;cheese=yes'&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;done&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;We started running it on my laptop and got a list of these:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;...
+Connection: 0.029364s
+TTFB: 2.518121s
+Total: 2.531129s
+...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Something interesting we noted is that almost all of the time was spent on the server side. This meant that we can drop the differention between the performance metrics on the client side, and assume that total duration == server processing time.&lt;/p&gt;
+
+&lt;h2 id=&quot;grown-into-pizza-person&quot;&gt;Grown into Pizza Person&lt;/h2&gt;
+&lt;p&gt;Now that we freed those employees from running the app over and over, we had time to improve Pizza Boy into more than a simple Bash script. We rewrote it in Python, gave it its own server to run in, and started reporting the results to Prometheus, like this:&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;prometheus_client&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;make_wsgi_app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Histogram&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;impnveort&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;REQUEST_TIME&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Histogram&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;'request_time'&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;'time for entire request'&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;measure&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;start_time&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;get_toppings&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;end_time&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;REQUEST_TIME&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;observe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;end_time&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;start_time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Using Grafana, we built a nice graph out of the data reported to Prometheus so pepole can track it
+&lt;img src=&quot;/assets/2024-07-11-fast-toppings/latency.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;why-so-slow&quot;&gt;Why so slow?&lt;/h2&gt;
+&lt;p&gt;Once we had a good handle on how long this interaction takes, we got into whiteboxing the server side and understanding where the time was spent.&lt;br /&gt;
+I won’t go deep into the server optimization, as it’s highly specific and not very interesting. The graph looked sort of like this:
+&lt;img src=&quot;/assets/2024-07-11-fast-toppings/monitoring.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;We iterated on improving the server’s bottlenecks until Grafana confirmed we reached satisfactory response times.&lt;/p&gt;
+
+&lt;h2 id=&quot;real-users--fake-users&quot;&gt;Real users &amp;gt; Fake users&lt;/h2&gt;
+&lt;p&gt;During the rollout of “Pizza Advisor” to real users, we did two things:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Fed the graph with response times from humans using the actual app&lt;/li&gt;
+  &lt;li&gt;Decommisioned Pizza Person&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;While it’s obvious that collecting data from humans is better, I got a bit of pushback on decomissioning Pizza Person. It’s working well, why kill it?&lt;br /&gt;
+My reasoning was that synthetic transactions are ineherntly inferior to real ones. Right now Pizza Person’s behavior might be similar enough to the real app, but the app might get updated (different parameters, compression, HTTP keepalives), making Pizza Person more and more out of sync and turning its data into harmful noise. Once we have enough data from real users, there’s no point in taking that risk.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="Monitoring" /><category term="Rambling" /><summary type="html">I recently ran into a friend that wanted some help with an app. Because the app is in super secret stealth mode, let’s pretend instead it’s “Pizza Advisor” - an app that uses top of the line Machine Learning to help you plan a great pizza.</summary></entry><entry><title type="html">Semantic caching with PSQL, Python, OpenAI</title><link href="https://blog.backslasher.net/postgresql-vector.html" rel="alternate" type="text/html" title="Semantic caching with PSQL, Python, OpenAI" /><published>2024-05-03T00:00:00+03:00</published><updated>2024-05-03T00:00:00+03:00</updated><id>https://blog.backslasher.net/postgresql-vector</id><content type="html" xml:base="https://blog.backslasher.net/postgresql-vector.html">&lt;h2 id=&quot;youre-an-app-developer-now&quot;&gt;You’re an app developer now&lt;/h2&gt;
 &lt;p&gt;Let’s say you’re working on an app. The app helps you search for e-mail messages that relate to a certain topic. This works well enough.&lt;br /&gt;
 As a nifty extra, you added a small pixelated image of the search topic, that is generated on-demand using some ML model.&lt;br /&gt;
 For instance, when searching for a dog, you’d get a dog image.&lt;/p&gt;
@@ -1182,57 +1257,4 @@ gmail.com.		234	IN	A	172.217.18.5
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;h2 id=&quot;there-is-more&quot;&gt;There is more&lt;/h2&gt;
-&lt;p&gt;This list is not exhaustive. Linux, which relies heavily on command-line interfaces, offers a multitude of powerful tools that are readily installable with ample documentation available. You can tap into the knowledge of Linux-savvy friends or conduct online searches to discover numerous options that can significantly simplify your life.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="Linux" /><category term="Windows" /><category term="WSL" /><category term="Bash" /><summary type="html">I have a friend who isn’t a developer and believes that coding is beyond their grasp. They work as a security analyst and prefer using Windows as their operating system. I discovered that introducing them to the Windows Subsystem for Linux significantly enhanced their daily tasks. It allowed them to replace inefficient online tools or labor-intensive manual processes with simple command-line solutions. I’d like to share these tricks with a wider audience.</summary></entry><entry><title type="html">Bash “Keep or Delete” script for PDFs</title><link href="https://blog.backslasher.net/pdf-keep-or-delete.html" rel="alternate" type="text/html" title="Bash “Keep or Delete” script for PDFs" /><published>2023-05-22T00:00:00+03:00</published><updated>2023-05-22T00:00:00+03:00</updated><id>https://blog.backslasher.net/pdf-keep-or-delete</id><content type="html" xml:base="https://blog.backslasher.net/pdf-keep-or-delete.html">&lt;p&gt;I recently discovered that I had over 100 PDFs in my “Downloads” directory and needed to determine which ones I wanted to keep.
-Instead of spending 10 minutes manually sorting them, I invested 20 minutes in writing a script to assist me.&lt;/p&gt;
-
-&lt;p&gt;The script iterates through all the provided arguments and performs the following steps for each file:&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;It opens the file in preview mode using Evince (this can be easily customized).&lt;/li&gt;
-  &lt;li&gt;A prompt appears asking whether to keep the file.&lt;/li&gt;
-  &lt;li&gt;The viewer is then closed.&lt;br /&gt;
-This step posed a challenge since GDK apps tend to fork, making it insufficient to grab the child PID using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$!&lt;/code&gt;.
-To overcome this, I utilized &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;lsof&lt;/code&gt; to identify all processes that had the file open and terminated them.&lt;/li&gt;
-  &lt;li&gt;If the response is “N,” the file is sent to the trash.&lt;br /&gt;
-I opted for using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gio trash&lt;/code&gt; since that’s the trash utility I have installed.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;This script transformed a tedious chore into an enjoyable task.&lt;/p&gt;
-
-&lt;h2 id=&quot;the-script&quot;&gt;The Script&lt;/h2&gt;
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/bash&lt;/span&gt;
-&lt;span class=&quot;nb&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-euo&lt;/span&gt; pipefail
-
-&lt;span class=&quot;k&quot;&gt;function &lt;/span&gt;yes_or_no &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;while &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do
-        &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;read&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$*&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; [y/n]: &quot;&lt;/span&gt; yn
-        &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$yn&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt;
-            &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;Yy]&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;return &lt;/span&gt;0  &lt;span class=&quot;p&quot;&gt;;;&lt;/span&gt;
-            &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;Nn]&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Aborted&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;return  &lt;/span&gt;1 &lt;span class=&quot;p&quot;&gt;;;&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;esac&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;done&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;k&quot;&gt;function &lt;/span&gt;open &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-  evince &lt;span class=&quot;nt&quot;&gt;-w&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$1&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; 2&amp;gt;/dev/null
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;k&quot;&gt;function &lt;/span&gt;killviewer &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-  lsof &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$1&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; 2&amp;gt;/dev/null | &lt;span class=&quot;nb&quot;&gt;awk&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'NR==2 {print $2}'&lt;/span&gt; | xargs &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;kill&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;k&quot;&gt;function &lt;/span&gt;trash &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    gio trash &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$1&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;INPUT &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$@&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do
-  &lt;/span&gt;open &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$INPUT&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &amp;amp;
-  &lt;span class=&quot;nv&quot;&gt;KEEP&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;yes_or_no &lt;span class=&quot;s2&quot;&gt;&quot;Keep &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$INPUT&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;?&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$?&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-  killviewer &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$INPUT&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;[[&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$KEEP&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; 0 &lt;span class=&quot;o&quot;&gt;]]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;then
-    &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;keeping&quot;&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;else
-    &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;deleting&quot;&lt;/span&gt;
-    trash &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$INPUT&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;fi
-done&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Nitzan</name></author><category term="Linux" /><category term="PDF" /><category term="Bash" /><summary type="html">I recently discovered that I had over 100 PDFs in my “Downloads” directory and needed to determine which ones I wanted to keep. Instead of spending 10 minutes manually sorting them, I invested 20 minutes in writing a script to assist me.</summary></entry></feed>
+&lt;p&gt;This list is not exhaustive. Linux, which relies heavily on command-line interfaces, offers a multitude of powerful tools that are readily installable with ample documentation available. You can tap into the knowledge of Linux-savvy friends or conduct online searches to discover numerous options that can significantly simplify your life.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="Linux" /><category term="Windows" /><category term="WSL" /><category term="Bash" /><summary type="html">I have a friend who isn’t a developer and believes that coding is beyond their grasp. They work as a security analyst and prefer using Windows as their operating system. I discovered that introducing them to the Windows Subsystem for Linux significantly enhanced their daily tasks. It allowed them to replace inefficient online tools or labor-intensive manual processes with simple command-line solutions. I’d like to share these tricks with a wider audience.</summary></entry></feed>
