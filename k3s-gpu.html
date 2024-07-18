@@ -9,8 +9,8 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Getting your toppings fast - BackSlasher</title>
-<meta name="description" content="I recently ran into a friend that wanted some help with an app. Because the app is in super secret stealth mode, let’s pretend instead it’s “Pizza Advisor” - an app that uses top of the line Machine Learning to help you plan a great pizza.">
+<!-- begin _includes/seo.html --><title>Running GPU workloads on K3S - BackSlasher</title>
+<meta name="description" content="A team I work with is very happy with the k8s / ArgoCD setup we set up, and now wants to manage their experimental ML workloads in k8s as well. These workloads run in Lambda Labs, who we use to quickly set up a few GPU-enabled Ubuntu machines in varying sizes. Those servers are not part of a managed k8s cluster, but instead you’re given SSH and Jupyter access and expected to deploy your workload yourself.">
 
 
   <meta name="author" content="Nitzan">
@@ -22,28 +22,26 @@
 <meta property="og:type" content="article">
 <meta property="og:locale" content="en_US">
 <meta property="og:site_name" content="BackSlasher">
-<meta property="og:title" content="Getting your toppings fast">
-<meta property="og:url" content="https://blog.backslasher.net/fast-toppings.html">
+<meta property="og:title" content="Running GPU workloads on K3S">
+<meta property="og:url" content="https://blog.backslasher.net/k3s-gpu.html">
 
 
-  <meta property="og:description" content="I recently ran into a friend that wanted some help with an app. Because the app is in super secret stealth mode, let’s pretend instead it’s “Pizza Advisor” - an app that uses top of the line Machine Learning to help you plan a great pizza.">
-
-
-
-  <meta property="og:image" content="https://blog.backslasher.net/assets/2024-07-11-fast-toppings/header.webp">
-
-
-
-
-
-  <meta property="article:published_time" content="2024-07-11T00:00:00+03:00">
+  <meta property="og:description" content="A team I work with is very happy with the k8s / ArgoCD setup we set up, and now wants to manage their experimental ML workloads in k8s as well. These workloads run in Lambda Labs, who we use to quickly set up a few GPU-enabled Ubuntu machines in varying sizes. Those servers are not part of a managed k8s cluster, but instead you’re given SSH and Jupyter access and expected to deploy your workload yourself.">
 
 
 
 
 
 
-<link rel="canonical" href="https://blog.backslasher.net/fast-toppings.html">
+
+  <meta property="article:published_time" content="2024-07-18T00:00:00+03:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/k3s-gpu.html">
 
 
 
@@ -142,55 +140,6 @@
 
     <div class="initial-content">
       
-  
-
-
-
-
-
-
-
-<div class="page__hero--overlay"
-  style=" background-image: url('/assets/2024-07-11-fast-toppings/header.webp');"
->
-  
-    <div class="wrapper">
-      <h1 id="page-title" class="page__title" itemprop="headline">
-        
-          Getting your toppings fast
-
-        
-      </h1>
-      
-      
-
-  <p class="page__meta">
-    
-
-    
-
-    
-      
-      
-
-      <span class="page__meta-readtime">
-        <i class="far fa-clock" aria-hidden="true"></i>
-        
-          2 minute read
-        
-      </span>
-    
-  </p>
-
-
-      
-      
-    </div>
-  
-  
-</div>
-
-
 
 
 
@@ -304,92 +253,134 @@
 
 
   <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
-    <meta itemprop="headline" content="Getting your toppings fast">
-    <meta itemprop="description" content="I recently ran into a friend that wanted some help with an app. Because the app is in super secret stealth mode, let’s pretend instead it’s “Pizza Advisor” - an app that uses top of the line Machine Learning to help you plan a great pizza.">
-    <meta itemprop="datePublished" content="2024-07-11T00:00:00+03:00">
+    <meta itemprop="headline" content="Running GPU workloads on K3S">
+    <meta itemprop="description" content="A team I work with is very happy with the k8s / ArgoCD setup we set up, and now wants to manage their experimental ML workloads in k8s as well.These workloads run in Lambda Labs, who we use to quickly set up a few GPU-enabled Ubuntu machines in varying sizes. Those servers are not part of a managed k8s cluster, but instead you’re given SSH and Jupyter access and expected to deploy your workload yourself.">
+    <meta itemprop="datePublished" content="2024-07-18T00:00:00+03:00">
     
 
     <div class="page__inner-wrap">
       
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Running GPU workloads on K3S
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
 
       <section class="page__content" itemprop="text">
         
-        <p>I recently ran into a friend that wanted some help with an app. Because the app is in super secret stealth mode, let’s pretend instead it’s “Pizza Advisor” - an app that uses top of the line Machine Learning to help you plan a great pizza.</p>
+        <p>A team I work with is very happy with the k8s / ArgoCD setup we set up, and now wants to manage their experimental ML workloads in k8s as well.
+These workloads run in <a href="https://lambdalabs.com/">Lambda Labs</a>, who we use to quickly set up a few GPU-enabled Ubuntu machines in varying sizes. Those servers are not part of a managed k8s cluster, but instead you’re given SSH and Jupyter access and expected to deploy your workload yourself.</p>
 
-<h2 id="gotta-go-fast">Gotta go fast</h2>
-<p>Said friend is in charge of performance, and they said they want the app “to be fast”. I said that it’s good goal to aspire to, and recommended they start a single core user interaction to monitor and optimize.
-They already had one - getting a list of recommended topics, and a metric - “under 1 second”.
-I asked them how that’s working out, and to my surprise they showed me something like this:</p>
+<p>Onboarding them to k8s seemed like a good use for k3s, a batteries-included curl-to-bash-installation of k8s. Getting a k8s node running and a cpu-based pod on it was pretty trivial. However, I couldn’t find a consistent source on how to run GPU loads. After cobbling it together from several places and getting it to work, I’m happy to share my particular rain-dance for Nvidia GPUs on k3s:</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1.5 seconds
-2.5 seconds
-1.3 seconds
-4.0 seconds
-...
-</code></pre></div></div>
-<p>The list was ~50 lines long.</p>
-
-<p>When I inquired, I was told that they had several employees manually running the app and noting down the duration of said interaction.
-After asking “why”, they said that since they have no users, they had to measure the app somehow.<br />
-I knew we had to automate.</p>
-
-<h2 id="enter-pizza-boy">Enter Pizza Boy</h2>
-<p>We quickly created “Pizza Boy”: a lightweight, system-agnostic, highly flexible scheduled synthetic transaction generator. Here it is:</p>
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">while </span><span class="nb">sleep </span>1m<span class="p">;</span> <span class="k">do
-  </span>curl <span class="nt">-o</span> /dev/null <span class="nt">-s</span> <span class="se">\</span>
-  <span class="nt">-w</span> <span class="s1">'Connection: %{time_connect}s\nTTFB: %{time_starttransfer}s\nTotal: %{time_total}s\n'</span> <span class="se">\</span>
-  <span class="s1">'https://pizza-advisor.com/v1/toppings?crust=thin&amp;cheese=yes'</span>
-<span class="k">done</span>
+<h2 id="1-install-k3s">1. Install k3s</h2>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">-sfL</span> https://get.k3s.io | sh -
 </code></pre></div></div>
 
-<p>We started running it on my laptop and got a list of these:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>...
-Connection: 0.029364s
-TTFB: 2.518121s
-Total: 2.531129s
-...
+<p>Obviously modify with additional parameters if needed. My actual config is:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">MY_IP</span><span class="o">=</span><span class="si">$(</span>curl ifconfig.me<span class="si">)</span>
+curl <span class="nt">-sfL</span> https://get.k3s.io | <span class="nv">INSTALL_K3S_EXEC</span><span class="o">=</span><span class="s2">"--node-external-ip=</span><span class="nv">$MY_IP</span><span class="s2"> --flannel-backend=wireguard-native --flannel-external-ip --tls-san </span><span class="nv">$MY_IP</span><span class="s2">"</span> sh -
 </code></pre></div></div>
 
-<p>Something interesting we noted is that almost all of the time was spent on the server side. This meant that we can drop the differention between the performance metrics on the client side, and assume that total duration == server processing time.</p>
-
-<h2 id="grown-into-pizza-person">Grown into Pizza Person</h2>
-<p>Now that we freed those employees from running the app over and over, we had time to improve Pizza Boy into more than a simple Bash script. We rewrote it in Python, gave it its own server to run in, and started reporting the results to Prometheus, like this:</p>
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">prometheus_client</span> <span class="kn">import</span> <span class="n">make_wsgi_app</span><span class="p">,</span> <span class="n">Histogram</span>
-<span class="n">impnveort</span> <span class="n">time</span>
-<span class="p">...</span>
-<span class="n">REQUEST_TIME</span> <span class="o">=</span> <span class="n">Histogram</span><span class="p">(</span>
-    <span class="s">'request_time'</span>
-    <span class="s">'time for entire request'</span>
-<span class="p">)</span>
-<span class="p">...</span>
-<span class="k">def</span> <span class="nf">measure</span><span class="p">():</span>
-  <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">.</span><span class="n">time</span><span class="p">()</span>
-  <span class="n">get_toppings</span><span class="p">()</span>
-  <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">.</span><span class="n">time</span><span class="p">()</span>
-  <span class="n">REQUEST_TIME</span><span class="p">.</span><span class="n">observe</span><span class="p">(</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span>
-
-<span class="p">...</span>
+<h2 id="2-install-nvidias-gpu-operator">2. Install Nvidia’s GPU operator</h2>
+<p>This will handle detecting GPUs on the node, installing relevant drivers and runtimes, and reporting the GPUs their metadata back to the cluster for scheduling.
+Done by using the <code class="language-plaintext highlighter-rouge">HelmChart</code> CRD included with k3s</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> <span class="o">&lt;&lt;</span><span class="no">EOF</span><span class="sh"> | sudo kubectl apply -f -
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: gpu-operator
+---
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: nvidiagpu
+  namespace: gpu-operator
+spec:
+  chart: gpu-operator
+  repo: https://helm.ngc.nvidia.com/nvidia
+</span><span class="no">EOF
+</span></code></pre></div></div>
+<p>Give it a minute, and then verify:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>kubectl get node <span class="nt">-o</span> json | jq <span class="s1">'.items[0].status.capacity'</span>
 </code></pre></div></div>
-<p>Using Grafana, we built a nice graph out of the data reported to Prometheus so pepole can track it
-<img src="/assets/2024-07-11-fast-toppings/latency.png" alt="" /></p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+</span><span class="nl">"cpu"</span><span class="p">:</span><span class="w"> </span><span class="s2">"30"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"ephemeral-storage"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1422559648Ki"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"hugepages-1Gi"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"hugepages-2Mi"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"memory"</span><span class="p">:</span><span class="w"> </span><span class="s2">"232949228Ki"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"nvidia.com/gpu"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"pods"</span><span class="p">:</span><span class="w"> </span><span class="s2">"110"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<p>The important part is that the node has <code class="language-plaintext highlighter-rouge">nvidia.com/gpu</code> resources detected.</p>
 
-<h2 id="why-so-slow">Why so slow?</h2>
-<p>Once we had a good handle on how long this interaction takes, we got into whiteboxing the server side and understanding where the time was spent.<br />
-I won’t go deep into the server optimization, as it’s highly specific and not very interesting. The graph looked sort of like this:
-<img src="/assets/2024-07-11-fast-toppings/monitoring.png" alt="" /></p>
+<h2 id="3-test-pod">3. Test pod</h2>
+<p>Create a test pod that requires a GPU</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> <span class="o">&lt;&lt;</span><span class="no">EOF</span><span class="sh"> | sudo kubectl create -f -
+apiVersion: v1
+kind: Pod
+metadata:
+  name: gpu
+spec:
+  runtimeClassName: nvidia
+  restartPolicy: Never
+  nodeSelector:
+    nvidia.com/gpu.product: "NVIDIA-A100-SXM4-80GB"
+  containers:
+    - name: gpu
+      image: "ubuntu"
+      command: [ "/bin/bash", "-c", "--" ]
+      args: [ "while true; do sleep 30; done;" ]
+      resources:
+        limits:
+          nvidia.com/gpu: 2
+</span><span class="no">EOF
+</span></code></pre></div></div>
+<p>Things to note/configure in the above template:</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">runtimeClassName</code>: Required to expose Nvidia stuff to the pod</li>
+  <li><code class="language-plaintext highlighter-rouge">nodeSelector &gt; nvidia.com/gpu.product</code>: Asking for a specific GPU (in case you have a hetrogenous environment).
+ Collect the model’s string from <code class="language-plaintext highlighter-rouge">kubectl describe node</code>.
+ Delete if uneeded</li>
+  <li><code class="language-plaintext highlighter-rouge">containers &gt; resources &gt; limits &gt; nvidia.com/gpu</code>: How many GPUs the pod needs (affects scheduling and actual access)</li>
+</ul>
 
-<p>We iterated on improving the server’s bottlenecks until Grafana confirmed we reached satisfactory response times.</p>
+<p>After the pod is submitted and running (<code class="language-plaintext highlighter-rouge">kubectl get pod</code>), you can run some CLI tools on it and ensure the result looks nice, e.g.:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl <span class="nb">exec</span> <span class="nt">-it</span> gpu <span class="nt">--</span> nvidia-smi
+</code></pre></div></div>
 
-<h2 id="real-users--fake-users">Real users &gt; Fake users</h2>
-<p>During the rollout of “Pizza Advisor” to real users, we did two things:</p>
+<h2 id="4-further-configuration">4. Further configuration</h2>
+<p>Once that’s done, you can remove the test pod (<code class="language-plaintext highlighter-rouge">kubectl delete pod gpu</code>) and continue configuring your cluster - connecting to ArgoCD, deploying actual workloads, etc</p>
 
-<ol>
-  <li>Fed the graph with response times from humans using the actual app</li>
-  <li>Decommisioned Pizza Person</li>
-</ol>
-
-<p>While it’s obvious that collecting data from humans is better, I got a bit of pushback on decomissioning Pizza Person. It’s working well, why kill it?<br />
-My reasoning was that synthetic transactions are ineherntly inferior to real ones. Right now Pizza Person’s behavior might be similar enough to the real app, but the app might get updated (different parameters, compression, HTTP keepalives), making Pizza Person more and more out of sync and turning its data into harmful noise. Once we have enough data from real users, there’s no point in taking that risk.</p>
+<h2 id="5-further-reading">5. Further reading</h2>
+<ul>
+  <li><a href="https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/getting-started.html#operator-install-guide">https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/getting-started.html#operator-install-guide</a></li>
+  <li><a href="https://docs.k3s.io/advanced#nvidia-container-runtime-support">https://docs.k3s.io/advanced#nvidia-container-runtime-support</a></li>
+  <li><a href="https://gist.github.com/bgulla/5ea0e7fd310b5db4f9b66036d1cdb3d3">https://gist.github.com/bgulla/5ea0e7fd310b5db4f9b66036d1cdb3d3</a></li>
+</ul>
 
         
       </section>
@@ -406,9 +397,13 @@ My reasoning was that synthetic transactions are ineherntly inferior to real one
     <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
     <span itemprop="keywords">
     
-      <a href="/tags/#monitoring" class="page__taxonomy-item" rel="tag">Monitoring</a><span class="sep">, </span>
+      <a href="/tags/#gpu" class="page__taxonomy-item" rel="tag">gpu</a><span class="sep">, </span>
     
-      <a href="/tags/#rambling" class="page__taxonomy-item" rel="tag">Rambling</a>
+      <a href="/tags/#k3s" class="page__taxonomy-item" rel="tag">k3s</a><span class="sep">, </span>
+    
+      <a href="/tags/#kubernetes" class="page__taxonomy-item" rel="tag">kubernetes</a><span class="sep">, </span>
+    
+      <a href="/tags/#linux" class="page__taxonomy-item" rel="tag">linux</a>
     
     </span>
   </p>
@@ -418,7 +413,7 @@ My reasoning was that synthetic transactions are ineherntly inferior to real one
 
         
 
-  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2024-07-11T00:00:00+03:00">July 11, 2024</time></p>
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2024-07-18T00:00:00+03:00">July 18, 2024</time></p>
 
 
       </footer>
@@ -428,12 +423,11 @@ My reasoning was that synthetic transactions are ineherntly inferior to real one
       
   <nav class="pagination">
     
-      <a href="/postgresql-vector.html" class="pagination--pager" title="Semantic caching with PSQL, Python, OpenAI
+      <a href="/fast-toppings.html" class="pagination--pager" title="Getting your toppings fast
 ">Previous</a>
     
     
-      <a href="/k3s-gpu.html" class="pagination--pager" title="Running GPU workloads on K3S
-">Next</a>
+      <a href="#" class="pagination--pager disabled">Next</a>
     
   </nav>
 
@@ -498,7 +492,7 @@ My reasoning was that synthetic transactions are ineherntly inferior to real one
     
     <h2 class="archive__item-title no_toc" itemprop="headline">
       
-        <a href="/k3s-gpu.html" rel="permalink">Running GPU workloads on K3S
+        <a href="/fast-toppings.html" rel="permalink">Getting your toppings fast
 </a>
       
     </h2>
@@ -516,15 +510,14 @@ My reasoning was that synthetic transactions are ineherntly inferior to real one
       <span class="page__meta-readtime">
         <i class="far fa-clock" aria-hidden="true"></i>
         
-          1 minute read
+          2 minute read
         
       </span>
     
   </p>
 
 
-    <p class="archive__item-excerpt" itemprop="description">A team I work with is very happy with the k8s / ArgoCD setup we set up, and now wants to manage their experimental ML workloads in k8s as well.
-These workloa...</p>
+    <p class="archive__item-excerpt" itemprop="description">I recently ran into a friend that wanted some help with an app. Because the app is in super secret stealth mode, let’s pretend instead it’s “Pizza Advisor” -...</p>
   </article>
 </div>
 

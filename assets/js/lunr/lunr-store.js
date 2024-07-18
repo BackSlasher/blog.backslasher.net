@@ -1078,4 +1078,10 @@ var store = [{
         "tags": ["Monitoring","Rambling"],
         "url": "/fast-toppings.html",
         "teaser": null
+      },{
+        "title": "Running GPU workloads on K3S",
+        "excerpt":"A team I work with is very happy with the k8s / ArgoCD setup we set up, and now wants to manage their experimental ML workloads in k8s as well. These workloads run in Lambda Labs, who we use to quickly set up a few GPU-enabled Ubuntu machines in varying...","categories": [],
+        "tags": ["kubernetes","linux","gpu","k3s"],
+        "url": "/k3s-gpu.html",
+        "teaser": null
       },]
