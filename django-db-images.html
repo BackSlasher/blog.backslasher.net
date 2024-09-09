@@ -1,0 +1,757 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Serving Images from the DB in Django - BackSlasher</title>
+<meta name="description" content="I recently got to work on prototyping a small Django-based website that was somewhat like a message board. One of the features requested was allowing users to upload a profile picture, which necessitated storing said pictures somewhere. Django is very opinionated about storing such files in a filesystem, but I prefer storing them in a DB. Here are my reasons:">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Serving Images from the DB in Django">
+<meta property="og:url" content="https://blog.backslasher.net/django-db-images.html">
+
+
+  <meta property="og:description" content="I recently got to work on prototyping a small Django-based website that was somewhat like a message board. One of the features requested was allowing users to upload a profile picture, which necessitated storing said pictures somewhere. Django is very opinionated about storing such files in a filesystem, but I prefer storing them in a DB. Here are my reasons:">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2024-09-07T00:00:00+03:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/django-db-images.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/hireme/">Hire Me</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Serving Images from the DB in Django">
+    <meta itemprop="description" content="I recently got to work on prototyping a small Django-based website that was somewhat like a message board.One of the features requested was allowing users to upload a profile picture, which necessitated storing said pictures somewhere.Django is very opinionated about storing such files in a filesystem, but I prefer storing them in a DB. Here are my reasons:">
+    <meta itemprop="datePublished" content="2024-09-07T00:00:00+03:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Serving Images from the DB in Django
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          5 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>I recently got to work on prototyping a small Django-based website that was somewhat like a message board.
+One of the features requested was allowing users to upload a profile picture, which necessitated storing said pictures somewhere.
+Django is very opinionated about storing such files in a filesystem, but I prefer storing them in a DB. Here are my reasons:</p>
+
+<ol>
+  <li>These files aren’t very big, and modern DBs are perfectly capable of handling blob-type fields</li>
+  <li>I already have a DB set up. Setting another storage directory that is shared between the servers necessiates some more work that involves creating more objects, permissions, monitoring…</li>
+  <li>My DB alreday has a backup plan set up, and I like having a single file representing a consistent state of my site</li>
+  <li>SQL’s cascading deletes allow me to ensure I have no orphaned files</li>
+</ol>
+
+<p>Because the framework assumes files are stored on the filesystem, I had to engineer some things on my own, and here they are:</p>
+
+<h2 id="the-model">The model</h2>
+<p>I prefer storing files in a their own table. Although the current relation is 1 picture per user (1:1 relation), keeping things in a separate table lets me keep things flexible for later (profile collection? versioning? different sizes?).
+In addition to the actual data, the file table contains some metadata that’ll be useful for later:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+
+<span class="k">class</span> <span class="nc">ProfilePicture</span><span class="p">(</span><span class="n">models</span><span class="p">.</span><span class="n">Model</span><span class="p">):</span>
+  <span class="n">user</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">OneToOneField</span><span class="p">(</span><span class="n">User</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="p">.</span><span class="n">CASCADE</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s">"profile_picture"</span><span class="p">,</span> <span class="n">db_index</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+  <span class="n">last_updated</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+  <span class="n">mime_type</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+  <span class="n">data</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">BinaryField</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>Things to note:</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">data</code> is the obvious field - it contains the picture itself in binary form</li>
+  <li><code class="language-plaintext highlighter-rouge">mime_type</code> is saved separately. Some image serialization schemes (e.g. base64 urls in JavaScript) keep the mimetype as a sort of header, but in the spirit of keeping things simple, I’m just splurging on another column</li>
+  <li><code class="language-plaintext highlighter-rouge">last_updated</code> is both useful as generic server metadata (in fact, it’s considered best practice to add this field to your objects), but for image serving it’s extra useful since it allows work with the browser’s cache (see later)
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">auto_now</code> sets it to <code class="language-plaintext highlighter-rouge">NOW()</code> on every update, which is just the behavior we want</li>
+    </ul>
+  </li>
+  <li>the key is saved on this table to keep the <code class="language-plaintext highlighter-rouge">ON DELETE CASCADE</code> in the right direction - we want to delete pictures when a user is deleted, but we don’t want to delete a user when a picture is deleted.
+    <ul>
+      <li>Defining the <code class="language-plaintext highlighter-rouge">related_name</code> directly saves on guesswork later</li>
+      <li>We want to enable <code class="language-plaintext highlighter-rouge">db_index</code>, since 99% of the <code class="language-plaintext highlighter-rouge">SELECT</code>s for this table will look for a picture for a specific user</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="setting">Setting</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">mime_type</span> <span class="o">=</span> <span class="n">uploaded_file</span><span class="p">.</span><span class="n">content_type</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">uploaded_file</span><span class="p">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">user</span> <span class="o">=</span> <span class="p">...</span>
+
+<span class="n">ProfilePicture</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">,</span> <span class="n">mime_type</span><span class="o">=</span><span class="n">mime_type</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">).</span><span class="n">save</span><span class="p">()</span>
+</code></pre></div></div>
+<p>Note we’re not validating the image the way <a href="https://docs.djangoproject.com/en/5.1/ref/models/fields/#django.db.models.ImageField">ImageField</a> does, but we can add it manually if needed. It’s done with <code class="language-plaintext highlighter-rouge">PIL</code>.</p>
+
+<h2 id="displaying">Displaying</h2>
+
+<p>Here we have two interesting gotchas:</p>
+
+<ol>
+  <li>We want to default to a ready placeholder if the user has no profile picture for some reason, rather than 404-ing (or something worse).</li>
+  <li>We want to utilize the browser’s cache, and avoid sending the picture if the browser has a recent copy of it.</li>
+</ol>
+
+<p>While I usually like Django’s class-based views, I ended up rewriting it as a function since it reads easier.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">redirect</span>
+<span class="kn">from</span> <span class="nn">django.templatetags.static</span> <span class="kn">import</span> <span class="n">static</span>
+
+<span class="k">def</span> <span class="nf">profile_picture</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">pk</span><span class="p">):</span>
+  <span class="n">query</span> <span class="o">=</span> <span class="n">ProfilePicture</span><span class="p">.</span><span class="n">objects</span><span class="p">.</span><span class="nb">filter</span><span class="p">(</span><span class="n">uesr__pk</span><span class="o">=</span><span class="n">pk</span><span class="p">).</span><span class="n">defer</span><span class="p">(</span><span class="s">'data'</span><span class="p">)</span>
+  <span class="k">try</span><span class="p">:</span>
+    <span class="n">picture</span> <span class="o">=</span> <span class="n">query</span><span class="p">.</span><span class="n">get</span><span class="p">()</span>
+  <span class="k">except</span> <span class="n">ProfilePicture</span><span class="p">.</span><span class="n">DoesNotExist</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">static</span><span class="p">(</span><span class="s">'missing.png'</span><span class="p">))</span>
+
+  <span class="k">def</span> <span class="nf">last_modified</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">picture</span><span class="p">,</span><span class="n">last_updated</span>
+
+  <span class="o">@</span><span class="n">condition</span><span class="p">(</span><span class="n">last_modified_func</span><span class="o">=</span><span class="n">last_modified</span><span class="p">)</span>
+  <span class="k">def</span> <span class="nf">_get</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="n">content_type</span><span class="o">=</span><span class="n">picture</span><span class="p">.</span><span class="n">mime_type</span><span class="p">)</span>
+    <span class="n">response</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">picture</span><span class="p">.</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">response</span>
+
+  <span class="k">return</span> <span class="n">_get</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Things to note here:</p>
+<ul>
+  <li>In a classic “it’s better to ask forgiveness than permission”, we’re hitting the query’s <code class="language-plaintext highlighter-rouge">get()</code> and handling the error, rather than checking with <code class="language-plaintext highlighter-rouge">exists</code> first. If we get a “no such object” error, we redirect to the static url of the placeholder and leave it. We can now assume we have a picture going forward</li>
+  <li>The <a href="https://docs.djangoproject.com/en/5.1/topics/conditional-view-processing/#the-condition-decorator">condition</a> decorator requires a function that calculates the request’s “last modified” property. It uses the result in two ways:
+    <ul>
+      <li>Determine a request’s cache freshness (comparing to the <code class="language-plaintext highlighter-rouge">If-Modified-Since</code> header on the request)</li>
+      <li>Set the cache’s date header for next time, if the cache is determined stale (setting the <code class="language-plaintext highlighter-rouge">Last-Modified</code> header on the response)</li>
+    </ul>
+  </li>
+  <li>In the sake of minimizing DB queries, I’m reading the object from the DB at the start of the request. Since <code class="language-plaintext highlighter-rouge">@condition</code> is asking for a function for <code class="language-plaintext highlighter-rouge">last_modified</code>, I’m creating a dummy one that just returns the field from the object</li>
+  <li>To utilize <code class="language-plaintext highlighter-rouge">@condition</code> which is designed as a decorator, I’m creating a tiny function for it to decorate, then calling that</li>
+  <li>Since <code class="language-plaintext highlighter-rouge">data</code> is a big field and is needed only when the request is determined not to be stale, I’m using <a href="https://docs.djangoproject.com/en/5.1/ref/models/querysets/#django.db.models.query.QuerySet.defer">defer</a> to make it lazily load</li>
+</ul>
+
+<p>The above script works. It bails out early when there’s no relevant picture, handles the browser’s cache (returning <code class="language-plaintext highlighter-rouge">304 not modified</code> when possible) and otherwise writes the binary data from the DB to the browser.</p>
+
+<h2 id="linking">Linking</h2>
+<p>To get to the view, <code class="language-plaintext highlighter-rouge">urls.py</code> looks like this:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">...</span>
+  <span class="n">path</span><span class="p">(</span><span class="s">'profile/&lt;pk&gt;'</span><span class="p">,</span> <span class="n">views</span><span class="p">.</span><span class="n">profile_picture</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">'profile_picture'</span><span class="p">)</span>
+<span class="p">...</span>
+</code></pre></div></div>
+
+<p>And inside a template, you can use it like that:</p>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;img</span> <span class="na">src=</span><span class="s">"{% url 'profile_picture' pk=user.pk %}"</span> <span class="nt">/&gt;</span>
+</code></pre></div></div>
+
+<h2 id="future-thoughts">Future thoughts</h2>
+<p>I’m not implementing the <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/ETag">ETag</a>, as I think that <code class="language-plaintext highlighter-rouge">Last-Modified</code> is enough. If you’d like to implement it, you’ll need to add a hash field to the model, calculate it (maybe using <code class="language-plaintext highlighter-rouge">GeneratedField</code>), and then create a small function in the view to expose it.</p>
+
+<p>As your site sacles, you might notice that the write path is not completely optimized:</p>
+<ol>
+  <li>Django model fields don’t support streams, so the entire picture is loaded to userland memory, and then written to kernel memory (as part of <code class="language-plaintext highlighter-rouge">response.write</code>)</li>
+  <li>Browsers like parallelizing requests, and while web servers can scale out seamlessly, DBs are less easy and might choke on the many different requests</li>
+  <li>While having full control on every request (e.g. requiring authentication) is nice, we might allow some laxity in image requests (e.g. if the url for the image is random enough, we can reuse them without being worried about enumeration)</li>
+</ol>
+
+<p>If you run into this kind of performance issues, it might be time to invest in a fancier solution like an S3 bucket with presigned URLs.<br />
+On the other hand, you could just slap a bandaid on it in the shape of a CDN.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#django" class="page__taxonomy-item" rel="tag">Django</a><span class="sep">, </span>
+    
+      <a href="/tags/#python" class="page__taxonomy-item" rel="tag">Python</a><span class="sep">, </span>
+    
+      <a href="/tags/#sql" class="page__taxonomy-item" rel="tag">SQL</a><span class="sep">, </span>
+    
+      <a href="/tags/#web" class="page__taxonomy-item" rel="tag">Web</a>
+    
+    </span>
+  </p>
+
+
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2024-09-07T00:00:00+03:00">September 7, 2024</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/k3s-gpu.html" class="pagination--pager" title="Running GPU workloads on K3S
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/k3s-gpu.html" rel="permalink">Running GPU workloads on K3S
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">A team I work with is very happy with the k8s / ArgoCD setup we set up, and now wants to manage their experimental ML workloads in k8s as well.
+These workloa...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/fast-toppings.html" rel="permalink">Getting your toppings fast
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I recently ran into a friend that wanted some help with an app. Because the app is in super secret stealth mode, let’s pretend instead it’s “Pizza Advisor” -...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/postgresql-vector.html" rel="permalink">Semantic caching with PSQL, Python, OpenAI
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          5 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">You’re an app developer now
+Let’s say you’re working on an app. The app helps you search for e-mail messages that relate to a certain topic. This works well ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/smpp-helper.html" rel="permalink">Java SMPP helper
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          6 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">One of my projects involves communicating over SMS with cellular-connected IoT devices. The company already has a working infastructure for sending and recie...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2024 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S2WYJL3VQ7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-S2WYJL3VQ7', { 'anonymize_ip': true});
+</script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>

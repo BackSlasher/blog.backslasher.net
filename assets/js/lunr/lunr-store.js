@@ -1084,4 +1084,10 @@ var store = [{
         "tags": ["kubernetes","linux","gpu","k3s"],
         "url": "/k3s-gpu.html",
         "teaser": null
+      },{
+        "title": "Serving Images from the DB in Django",
+        "excerpt":"I recently got to work on prototyping a small Django-based website that was somewhat like a message board. One of the features requested was allowing users to upload a profile picture, which necessitated storing said pictures somewhere. Django is very opinionated about storing such files in a filesystem, but I...","categories": [],
+        "tags": ["Django","Python","SQL","Web"],
+        "url": "/django-db-images.html",
+        "teaser": null
       },]

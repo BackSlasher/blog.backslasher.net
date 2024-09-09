@@ -1,4 +1,127 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2024-07-18T12:36:25+03:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">Running GPU workloads on K3S</title><link href="https://blog.backslasher.net/k3s-gpu.html" rel="alternate" type="text/html" title="Running GPU workloads on K3S" /><published>2024-07-18T00:00:00+03:00</published><updated>2024-07-18T00:00:00+03:00</updated><id>https://blog.backslasher.net/k3s-gpu</id><content type="html" xml:base="https://blog.backslasher.net/k3s-gpu.html">&lt;p&gt;A team I work with is very happy with the k8s / ArgoCD setup we set up, and now wants to manage their experimental ML workloads in k8s as well.
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2024-09-09T20:54:42+03:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">Serving Images from the DB in Django</title><link href="https://blog.backslasher.net/django-db-images.html" rel="alternate" type="text/html" title="Serving Images from the DB in Django" /><published>2024-09-07T00:00:00+03:00</published><updated>2024-09-07T00:00:00+03:00</updated><id>https://blog.backslasher.net/django-db-images</id><content type="html" xml:base="https://blog.backslasher.net/django-db-images.html">&lt;p&gt;I recently got to work on prototyping a small Django-based website that was somewhat like a message board.
+One of the features requested was allowing users to upload a profile picture, which necessitated storing said pictures somewhere.
+Django is very opinionated about storing such files in a filesystem, but I prefer storing them in a DB. Here are my reasons:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;These files aren’t very big, and modern DBs are perfectly capable of handling blob-type fields&lt;/li&gt;
+  &lt;li&gt;I already have a DB set up. Setting another storage directory that is shared between the servers necessiates some more work that involves creating more objects, permissions, monitoring…&lt;/li&gt;
+  &lt;li&gt;My DB alreday has a backup plan set up, and I like having a single file representing a consistent state of my site&lt;/li&gt;
+  &lt;li&gt;SQL’s cascading deletes allow me to ensure I have no orphaned files&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Because the framework assumes files are stored on the filesystem, I had to engineer some things on my own, and here they are:&lt;/p&gt;
+
+&lt;h2 id=&quot;the-model&quot;&gt;The model&lt;/h2&gt;
+&lt;p&gt;I prefer storing files in a their own table. Although the current relation is 1 picture per user (1:1 relation), keeping things in a separate table lets me keep things flexible for later (profile collection? versioning? different sizes?).
+In addition to the actual data, the file table contains some metadata that’ll be useful for later:&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;django.db&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;models&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ProfilePicture&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;models&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;user&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;models&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;OneToOneField&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;User&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;on_delete&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;models&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CASCADE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;related_name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;profile_picture&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;db_index&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;last_updated&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;models&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DateTimeField&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;auto_now&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;mime_type&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;models&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CharField&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;max_length&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;50&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;models&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;BinaryField&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Things to note:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;data&lt;/code&gt; is the obvious field - it contains the picture itself in binary form&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mime_type&lt;/code&gt; is saved separately. Some image serialization schemes (e.g. base64 urls in JavaScript) keep the mimetype as a sort of header, but in the spirit of keeping things simple, I’m just splurging on another column&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;last_updated&lt;/code&gt; is both useful as generic server metadata (in fact, it’s considered best practice to add this field to your objects), but for image serving it’s extra useful since it allows work with the browser’s cache (see later)
+    &lt;ul&gt;
+      &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;auto_now&lt;/code&gt; sets it to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;NOW()&lt;/code&gt; on every update, which is just the behavior we want&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;the key is saved on this table to keep the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ON DELETE CASCADE&lt;/code&gt; in the right direction - we want to delete pictures when a user is deleted, but we don’t want to delete a user when a picture is deleted.
+    &lt;ul&gt;
+      &lt;li&gt;Defining the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;related_name&lt;/code&gt; directly saves on guesswork later&lt;/li&gt;
+      &lt;li&gt;We want to enable &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;db_index&lt;/code&gt;, since 99% of the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SELECT&lt;/code&gt;s for this table will look for a picture for a specific user&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;setting&quot;&gt;Setting&lt;/h2&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;mime_type&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;uploaded_file&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;content_type&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;uploaded_file&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;read&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;user&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;ProfilePicture&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;user&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;user&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mime_type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mime_type&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;save&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Note we’re not validating the image the way &lt;a href=&quot;https://docs.djangoproject.com/en/5.1/ref/models/fields/#django.db.models.ImageField&quot;&gt;ImageField&lt;/a&gt; does, but we can add it manually if needed. It’s done with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;PIL&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;displaying&quot;&gt;Displaying&lt;/h2&gt;
+
+&lt;p&gt;Here we have two interesting gotchas:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;We want to default to a ready placeholder if the user has no profile picture for some reason, rather than 404-ing (or something worse).&lt;/li&gt;
+  &lt;li&gt;We want to utilize the browser’s cache, and avoid sending the picture if the browser has a recent copy of it.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;While I usually like Django’s class-based views, I ended up rewriting it as a function since it reads easier.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;django.shortcuts&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;redirect&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;django.templatetags.static&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;static&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;profile_picture&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;request&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pk&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;query&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ProfilePicture&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;objects&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;filter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;uesr__pk&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pk&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;defer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'data'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;picture&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;query&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;except&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ProfilePicture&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DoesNotExist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;redirect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;static&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'missing.png'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;last_modified&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;request&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;**&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;kwargs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;picture&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;last_updated&lt;/span&gt;
+
+  &lt;span class=&quot;o&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;condition&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;last_modified_func&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;last_modified&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;_get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;request&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;response&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;HttpResponse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;content_type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;picture&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mime_type&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;response&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;write&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;picture&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;response&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;request&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Things to note here:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;In a classic “it’s better to ask forgiveness than permission”, we’re hitting the query’s &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;get()&lt;/code&gt; and handling the error, rather than checking with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;exists&lt;/code&gt; first. If we get a “no such object” error, we redirect to the static url of the placeholder and leave it. We can now assume we have a picture going forward&lt;/li&gt;
+  &lt;li&gt;The &lt;a href=&quot;https://docs.djangoproject.com/en/5.1/topics/conditional-view-processing/#the-condition-decorator&quot;&gt;condition&lt;/a&gt; decorator requires a function that calculates the request’s “last modified” property. It uses the result in two ways:
+    &lt;ul&gt;
+      &lt;li&gt;Determine a request’s cache freshness (comparing to the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;If-Modified-Since&lt;/code&gt; header on the request)&lt;/li&gt;
+      &lt;li&gt;Set the cache’s date header for next time, if the cache is determined stale (setting the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Last-Modified&lt;/code&gt; header on the response)&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;In the sake of minimizing DB queries, I’m reading the object from the DB at the start of the request. Since &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;@condition&lt;/code&gt; is asking for a function for &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;last_modified&lt;/code&gt;, I’m creating a dummy one that just returns the field from the object&lt;/li&gt;
+  &lt;li&gt;To utilize &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;@condition&lt;/code&gt; which is designed as a decorator, I’m creating a tiny function for it to decorate, then calling that&lt;/li&gt;
+  &lt;li&gt;Since &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;data&lt;/code&gt; is a big field and is needed only when the request is determined not to be stale, I’m using &lt;a href=&quot;https://docs.djangoproject.com/en/5.1/ref/models/querysets/#django.db.models.query.QuerySet.defer&quot;&gt;defer&lt;/a&gt; to make it lazily load&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The above script works. It bails out early when there’s no relevant picture, handles the browser’s cache (returning &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;304 not modified&lt;/code&gt; when possible) and otherwise writes the binary data from the DB to the browser.&lt;/p&gt;
+
+&lt;h2 id=&quot;linking&quot;&gt;Linking&lt;/h2&gt;
+&lt;p&gt;To get to the view, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;urls.py&lt;/code&gt; looks like this:&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'profile/&amp;lt;pk&amp;gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;views&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;profile_picture&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'profile_picture'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And inside a template, you can use it like that:&lt;/p&gt;
+&lt;div class=&quot;language-html highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;img&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;src=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;{% url 'profile_picture' pk=user.pk %}&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;/&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;future-thoughts&quot;&gt;Future thoughts&lt;/h2&gt;
+&lt;p&gt;I’m not implementing the &lt;a href=&quot;https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/ETag&quot;&gt;ETag&lt;/a&gt;, as I think that &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Last-Modified&lt;/code&gt; is enough. If you’d like to implement it, you’ll need to add a hash field to the model, calculate it (maybe using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;GeneratedField&lt;/code&gt;), and then create a small function in the view to expose it.&lt;/p&gt;
+
+&lt;p&gt;As your site sacles, you might notice that the write path is not completely optimized:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Django model fields don’t support streams, so the entire picture is loaded to userland memory, and then written to kernel memory (as part of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;response.write&lt;/code&gt;)&lt;/li&gt;
+  &lt;li&gt;Browsers like parallelizing requests, and while web servers can scale out seamlessly, DBs are less easy and might choke on the many different requests&lt;/li&gt;
+  &lt;li&gt;While having full control on every request (e.g. requiring authentication) is nice, we might allow some laxity in image requests (e.g. if the url for the image is random enough, we can reuse them without being worried about enumeration)&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;If you run into this kind of performance issues, it might be time to invest in a fancier solution like an S3 bucket with presigned URLs.&lt;br /&gt;
+On the other hand, you could just slap a bandaid on it in the shape of a CDN.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="Django" /><category term="Python" /><category term="SQL" /><category term="Web" /><summary type="html">I recently got to work on prototyping a small Django-based website that was somewhat like a message board. One of the features requested was allowing users to upload a profile picture, which necessitated storing said pictures somewhere. Django is very opinionated about storing such files in a filesystem, but I prefer storing them in a DB. Here are my reasons:</summary></entry><entry><title type="html">Running GPU workloads on K3S</title><link href="https://blog.backslasher.net/k3s-gpu.html" rel="alternate" type="text/html" title="Running GPU workloads on K3S" /><published>2024-07-18T00:00:00+03:00</published><updated>2024-07-18T00:00:00+03:00</updated><id>https://blog.backslasher.net/k3s-gpu</id><content type="html" xml:base="https://blog.backslasher.net/k3s-gpu.html">&lt;p&gt;A team I work with is very happy with the k8s / ArgoCD setup we set up, and now wants to manage their experimental ML workloads in k8s as well.
 These workloads run in &lt;a href=&quot;https://lambdalabs.com/&quot;&gt;Lambda Labs&lt;/a&gt;, who we use to quickly set up a few GPU-enabled Ubuntu machines in varying sizes. Those servers are not part of a managed k8s cluster, but instead you’re given SSH and Jupyter access and expected to deploy your workload yourself.&lt;/p&gt;
 
 &lt;p&gt;Onboarding them to k8s seemed like a good use for k3s, a batteries-included curl-to-bash-installation of k8s. Getting a k8s node running and a cpu-based pod on it was pretty trivial. However, I couldn’t find a consistent source on how to run GPU loads. After cobbling it together from several places and getting it to work, I’m happy to share my particular rain-dance for Nvidia GPUs on k3s:&lt;/p&gt;
@@ -1135,92 +1258,4 @@ There isn’t. Just re-zipping the same directory structure works.&lt;/li&gt;
 
 
 &lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Nitzan</name></author><category term="Java" /><category term="Python" /><summary type="html">I’m working with a company that uses smart IoT devices produced far away. The main troubleshooting tool is a Java utility provided by the manufacturer. This utility is provided as a ZIP file containing a JAR with the main logic, and some additional libraries. Executing this JAR works well on Windows/MacOS, but it seems the manufacturer didn’t account for Linux, where the utilty crashes. I was asked to help make this utility run on the Linux-using engineers’ laptops.</summary></entry><entry><title type="html">`javax.mail:mail` 1.4.7 is broken, and how to workaround</title><link href="https://blog.backslasher.net/javax-mail-1.4.7.html" rel="alternate" type="text/html" title="`javax.mail:mail` 1.4.7 is broken, and how to workaround" /><published>2023-09-15T00:00:00+03:00</published><updated>2023-09-15T00:00:00+03:00</updated><id>https://blog.backslasher.net/javax-mail-1.4.7</id><content type="html" xml:base="https://blog.backslasher.net/javax-mail-1.4.7.html">&lt;h1 id=&quot;javaxmail-and-i&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;javax.mail&lt;/code&gt; and I&lt;/h1&gt;
-&lt;p&gt;One of the current tasks on my agenda involves the modernization of a project that is currently built on Java 8.
-Given that this project is actively in use and under continuous development, a complete freeze of the codebase for a one-time migration isn’t a feasible option.
-The reason being, such an approach would necessitate extensive library upgrades and rewrites to the code using them.
-Instead, I’ve devised a more pragmatic plan:&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;Start with building and running on Java 8.&lt;/li&gt;
-  &lt;li&gt;Modify code and imports to still build and run on Java 8, but also be able to build and run on Java 11.&lt;/li&gt;
-  &lt;li&gt;Switch the run and build environment to Java 11.&lt;/li&gt;
-  &lt;li&gt;Modify code and imports to build and run on both Java 11 and Java 17.&lt;/li&gt;
-  &lt;li&gt;Switch the run and build environment to Java 17.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;I’ve decided to insert an intermediate step involving Java 11. This choice stems from the substantial gap between Java 8 and 17, making it unlikely for me to locate compatible versions of imports (e.g., Spring) that cater to both Java versions.&lt;/p&gt;
-
-&lt;p&gt;When attempting to build our code using Java 11, I promptly identified the absence of certain classes. These omissions were attributed to components of Java categorized as “Enterprise,” which were present in Java 8, deprecated in Java 9, and entirely eliminated in Java 11.&lt;/p&gt;
-
-&lt;p&gt;To ensure the availability of these classes, I made the following addition to our &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pom.xml&lt;/code&gt;:&lt;/p&gt;
-&lt;div class=&quot;language-xml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;dependency&amp;gt;&lt;/span&gt;
-    &lt;span class=&quot;nt&quot;&gt;&amp;lt;groupId&amp;gt;&lt;/span&gt;javax.mail&lt;span class=&quot;nt&quot;&gt;&amp;lt;/groupId&amp;gt;&lt;/span&gt;
-    &lt;span class=&quot;nt&quot;&gt;&amp;lt;artifactId&amp;gt;&lt;/span&gt;mail&lt;span class=&quot;nt&quot;&gt;&amp;lt;/artifactId&amp;gt;&lt;/span&gt;
-    &lt;span class=&quot;nt&quot;&gt;&amp;lt;version&amp;gt;&lt;/span&gt;1.4.7&lt;span class=&quot;nt&quot;&gt;&amp;lt;/version&amp;gt;&lt;/span&gt;
-&lt;span class=&quot;nt&quot;&gt;&amp;lt;/dependency&amp;gt;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Where version 1.4.7 represented the latest stable release &lt;a href=&quot;https://mvnrepository.com/artifact/javax.mail/mail&quot;&gt;mvnrepository&lt;/a&gt;) of that library.
-This adjustment allowed my code to compile successfully, as it encompassed all the classes and methods essential for its operation.&lt;/p&gt;
-
-&lt;h1 id=&quot;the-runtime-problem&quot;&gt;The runtime problem&lt;/h1&gt;
-&lt;p&gt;The code compiled successfully; however, I encountered a peculiar error while testing our email sending functionality:&lt;/p&gt;
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;java.lang.NoSuchMethodError: com.sun.mail.util.LineOutputStream.&amp;lt;init&amp;gt;(Ljava/io/OutputStream;Z)V
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;I searched through our codebase and found no references to ‘LineOutputStream,’ so it doesn’t appear to be a misuse of any external library on my part. It was time to delve into the stack trace:&lt;/p&gt;
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;...
-Caused by: java.lang.NoSuchMethodError: com.sun.mail.util.LineOutputStream.&amp;lt;init&amp;gt;(Ljava/io/OutputStream;Z)V
-	at javax.mail.internet.MimeBodyPart.writeTo(MimeBodyPart.java:1631)
-	at javax.mail.internet.MimeMessage.writeTo(MimeMessage.java:1889)
-	at javax.mail.internet.MimeMessage.writeTo(MimeMessage.java:1863)
-    at net.backslasher.EmailSender.send(EmailSender.java:69)
-...
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;So somehow the library code is calling a nonexistent constructor. Weird!
-Digging through the decompiled code with IDEA, I found the following call:&lt;/p&gt;
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// MimeBodyPart.class&lt;/span&gt;
-&lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;writeTo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;MimePart&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;part&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;OutputStream&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;os&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ignoreList&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;throws&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;IOException&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;MessagingException&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;nc&quot;&gt;LineOutputStream&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;los&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;os&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;instanceof&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;LineOutputStream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;los&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;LineOutputStream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;os&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;los&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;LineOutputStream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;os&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;allowutf8&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;While the actual constructor looks like this:&lt;/p&gt;
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// LineOutputStream.class&lt;/span&gt;
-&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;LineOutputStream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;OutputStream&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;super&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;By reading the &lt;a href=&quot;https://docs.oracle.com/javase/1.5.0/docs/guide/jni/spec/types.html#wp276&quot;&gt;Java type signature list&lt;/a&gt;, we can see that this is what the exception is complaining about - it’s looking for a constructor with 2 arguments - OutputStream and a boolean (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;lt;init&amp;gt;(Ljava/io/OutputStream;Z)V&lt;/code&gt;), but finds no such thing.&lt;/p&gt;
-
-&lt;p&gt;I had some questions.&lt;/p&gt;
-
-&lt;h2 id=&quot;how-did-this-happen&quot;&gt;How did this happen?&lt;/h2&gt;
-&lt;p&gt;From inspecting the code of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;javax.mail:mail:1.4.7&lt;/code&gt; thoroughly, I can only conclude that the package itself has an internal contradiction.
-It provides a class with a specific constructor, but calls a different one.
-I was baffled as to how this library was able to be produced.
-This served as a reminder that it is possible to manually package Class files from different compilation runs in the same JAR, and their incompatibility only becomes apparent when attempting to use them together – which is precisely what I encountered.&lt;/p&gt;
-
-&lt;h2 id=&quot;how-did-i-manage-to-compile&quot;&gt;How did I manage to compile?&lt;/h2&gt;
-&lt;p&gt;Since I downloaded precompiled code (as in a collection of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Class&lt;/code&gt; files and not &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;java&lt;/code&gt; files), my compiler didn’t run on that code and missed the incompatibility.
-If we draw a parallel to C code compilation, we would typically have a final “linkage” step that scans all cross-file references and fails if any of them are incompatible. However, in this context, such a linkage step does not apply.&lt;/p&gt;
-
-&lt;h2 id=&quot;what-should-i-do-now&quot;&gt;what should I do now?&lt;/h2&gt;
-&lt;p&gt;One might say the “right” thing would be upgrading to the library that replaces &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;javax.mail:mail&lt;/code&gt; (which is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;javax.mail:javax.mail-api&lt;/code&gt;, which was itself replaced by &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jakarta.mail:jakarta.mail-api&lt;/code&gt;), as it brings us the most up-to-date (and hopefully problem free) code.
-However, after 15 minutes of trying this I saw that there’s too much of our code we’d need to change as a resutlt.
-Instead, I went for the minimal effective change, and tried different version of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;java.mail:mail&lt;/code&gt; until I found one that didn’t have this internal contradiction - &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;1.4.4&lt;/code&gt;.
-I changed our &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pom.xml&lt;/code&gt; to look like:&lt;/p&gt;
-&lt;div class=&quot;language-xml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;dependency&amp;gt;&lt;/span&gt;
-    &lt;span class=&quot;nt&quot;&gt;&amp;lt;groupId&amp;gt;&lt;/span&gt;javax.mail&lt;span class=&quot;nt&quot;&gt;&amp;lt;/groupId&amp;gt;&lt;/span&gt;
-    &lt;span class=&quot;nt&quot;&gt;&amp;lt;artifactId&amp;gt;&lt;/span&gt;mail&lt;span class=&quot;nt&quot;&gt;&amp;lt;/artifactId&amp;gt;&lt;/span&gt;
-    &lt;span class=&quot;nt&quot;&gt;&amp;lt;version&amp;gt;&lt;/span&gt;1.4.4&lt;span class=&quot;nt&quot;&gt;&amp;lt;/version&amp;gt;&lt;/span&gt;
-&lt;span class=&quot;nt&quot;&gt;&amp;lt;/dependency&amp;gt;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;And things went back to normal&lt;/p&gt;
-
-&lt;h1 id=&quot;next-steps&quot;&gt;Next steps&lt;/h1&gt;
-&lt;p&gt;Once we stabilize on Java 11, I’m planning to replace this package with the “correct” one (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jakarta.mail:jakarta.mail-api&lt;/code&gt;) Until we get there, this quick fix will do.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="Java" /><summary type="html">javax.mail and I One of the current tasks on my agenda involves the modernization of a project that is currently built on Java 8. Given that this project is actively in use and under continuous development, a complete freeze of the codebase for a one-time migration isn’t a feasible option. The reason being, such an approach would necessitate extensive library upgrades and rewrites to the code using them. Instead, I’ve devised a more pragmatic plan:</summary></entry></feed>
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Nitzan</name></author><category term="Java" /><category term="Python" /><summary type="html">I’m working with a company that uses smart IoT devices produced far away. The main troubleshooting tool is a Java utility provided by the manufacturer. This utility is provided as a ZIP file containing a JAR with the main logic, and some additional libraries. Executing this JAR works well on Windows/MacOS, but it seems the manufacturer didn’t account for Linux, where the utilty crashes. I was asked to help make this utility run on the Linux-using engineers’ laptops.</summary></entry></feed>
