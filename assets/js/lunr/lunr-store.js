@@ -1090,4 +1090,10 @@ var store = [{
         "tags": ["Django","Python","SQL","Web"],
         "url": "/django-db-images.html",
         "teaser": null
+      },{
+        "title": "Google Storage using cURL",
+        "excerpt":"I got around to troubleshooting a Python process running in Docker that had some permission problems accessing Google Storage Reproing inside Python with google-cloud-storage was a bit bothersome, and installing the gcloud cli on an Ubuntu-based Docker image takes too much effort on an ephemeral container (if I change stuff,...","categories": [],
+        "tags": ["curl","cloud","google"],
+        "url": "/google-storage-curl.html",
+        "teaser": null
       },]

@@ -9,8 +9,8 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Avoiding Text Overflow with Prettify on Blogger - BackSlasher</title>
-<meta name="description" content="I’m currently testing Prettify to replace SyntaxHighlighter as the syntax-highlighting solution in my blog. By the way, it’s nothing critical, but Blogger’s preview mode breaks because of SH’s inclusion (the reference URLs are being converted to https and break down) and the project’s homepage seems quite stale (latest version release was long ago). After some initial testing, I found that scripts that are too long are overflowing, which looks bad:">
+<!-- begin _includes/seo.html --><title>Google Storage using cURL - BackSlasher</title>
+<meta name="description" content="I got around to troubleshooting a Python process running in Docker that had some permission problems accessing Google Storage Reproing inside Python with google-cloud-storage was a bit bothersome, and installing the gcloud cli on an Ubuntu-based Docker image takes too much effort on an ephemeral container (if I change stuff, I need to create a new container and I’ll have to reinstall it all over again). I was looking for something that is both easy to run, and doesn’t require me to modify the base container image (the build pipeline was annoying to mess with).">
 
 
   <meta name="author" content="Nitzan">
@@ -22,26 +22,26 @@
 <meta property="og:type" content="article">
 <meta property="og:locale" content="en_US">
 <meta property="og:site_name" content="BackSlasher">
-<meta property="og:title" content="Avoiding Text Overflow with Prettify on Blogger">
-<meta property="og:url" content="https://blog.backslasher.net/avoiding-text-overflow-with-prettify-on-blogger.html">
+<meta property="og:title" content="Google Storage using cURL">
+<meta property="og:url" content="https://blog.backslasher.net/google-storage-curl.html">
 
 
-  <meta property="og:description" content="I’m currently testing Prettify to replace SyntaxHighlighter as the syntax-highlighting solution in my blog. By the way, it’s nothing critical, but Blogger’s preview mode breaks because of SH’s inclusion (the reference URLs are being converted to https and break down) and the project’s homepage seems quite stale (latest version release was long ago). After some initial testing, I found that scripts that are too long are overflowing, which looks bad:">
-
-
-
-
-
-
-
-  <meta property="article:published_time" content="2014-01-09T00:00:00+02:00">
+  <meta property="og:description" content="I got around to troubleshooting a Python process running in Docker that had some permission problems accessing Google Storage Reproing inside Python with google-cloud-storage was a bit bothersome, and installing the gcloud cli on an Ubuntu-based Docker image takes too much effort on an ephemeral container (if I change stuff, I need to create a new container and I’ll have to reinstall it all over again). I was looking for something that is both easy to run, and doesn’t require me to modify the base container image (the build pipeline was annoying to mess with).">
 
 
 
 
 
 
-<link rel="canonical" href="https://blog.backslasher.net/avoiding-text-overflow-with-prettify-on-blogger.html">
+
+  <meta property="article:published_time" content="2024-10-11T00:00:00+03:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/google-storage-curl.html">
 
 
 
@@ -253,15 +253,15 @@
 
 
   <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
-    <meta itemprop="headline" content="Avoiding Text Overflow with Prettify on Blogger">
-    <meta itemprop="description" content="I’m currently testing Prettify to replace SyntaxHighlighter as thesyntax-highlighting solution in my blog.By the way, it’s nothing critical, but Blogger’s preview mode breaks because of SH’s inclusion (the reference URLs are being converted to https and break down) and the project’s homepage seems quite stale (latest version release was long ago).After some initial testing, I found that scripts that are too long are overflowing, which looks bad:">
-    <meta itemprop="datePublished" content="2014-01-09T00:00:00+02:00">
+    <meta itemprop="headline" content="Google Storage using cURL">
+    <meta itemprop="description" content="I got around to troubleshooting a Python process running in Docker that had some permission problems accessing Google StorageReproing inside Python with google-cloud-storage was a bit bothersome, and installing the gcloud cli on an Ubuntu-based Docker image takes too much effort on an ephemeral container (if I change stuff, I need to create a new container and I’ll have to reinstall it all over again). I was looking for something that is both easy to run, and doesn’t require me to modify the base container image (the build pipeline was annoying to mess with).">
+    <meta itemprop="datePublished" content="2024-10-11T00:00:00+03:00">
     
 
     <div class="page__inner-wrap">
       
         <header>
-          <h1 id="page-title" class="page__title" itemprop="headline">Avoiding Text Overflow with Prettify on Blogger
+          <h1 id="page-title" class="page__title" itemprop="headline">Google Storage using cURL
 </h1>
           
 
@@ -277,7 +277,7 @@
       <span class="page__meta-readtime">
         <i class="far fa-clock" aria-hidden="true"></i>
         
-          less than 1 minute read
+          1 minute read
         
       </span>
     
@@ -289,25 +289,35 @@
 
       <section class="page__content" itemprop="text">
         
-        <p>I’m currently testing <a href="http://code.google.com/p/google-code-prettify/">Prettify</a> to replace <a href="http://alexgorbatchev.com/SyntaxHighlighter/">SyntaxHighlighter</a> as the
-syntax-highlighting solution in my blog.<br />
-By the way, it’s nothing critical, but Blogger’s preview mode breaks because of SH’s inclusion (the reference URLs are being converted to https and break down) and the project’s homepage seems quite stale (latest version release was long ago).<br />
-After some initial testing, I found that scripts that are too long are overflowing, which looks bad:</p>
+        <p>I got around to troubleshooting a Python process running in Docker that had some permission problems accessing Google Storage
+Reproing inside Python with <code class="language-plaintext highlighter-rouge">google-cloud-storage</code> was a bit bothersome, and installing the gcloud cli on an Ubuntu-based Docker image takes too much effort on an ephemeral container (if I change stuff, I need to create a new container and I’ll have to reinstall it all over again). I was looking for something that is both easy to run, and doesn’t require me to modify the base container image (the build pipeline was annoying to mess with).</p>
 
-<p><img src="/assets/avoiding-text-overflow-with-prettify-on-blogger/PrettifyWithOverflow.png" alt="" /></p>
+<p>cURL to the rescue!</p>
 
-<p>I slightly modified a solution I found in <a href="http://stackoverflow.com/a/10787539">StackOverflow</a>.<br />
-I created a Style segment in my template, but targeted all “prettyprint” <code class="language-plaintext highlighter-rouge">&lt;pre&gt;</code>s (to avoid having to add “codescroll” to every <code class="language-plaintext highlighter-rouge">&lt;pre&gt;</code>) and only left the CSS directive “overflow-x: auto;”.<br />
-The code looks like this:</p>
+<h3 id="getting-an-access-token">Getting an access token</h3>
+<p>This fetches a token from GKE’s metadata endpoint.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">TOKEN</span><span class="o">=</span><span class="s2">"</span><span class="si">$(</span>curl <span class="nt">-H</span> <span class="s2">"Metadata-Flavor: Google"</span> <span class="s1">'http://metadata/computeMetadata/v1/instance/service-accounts/default/token'</span> <span class="nt">-s</span> | jq .access_token <span class="nt">-r</span><span class="si">)</span><span class="s2">"</span>
+</code></pre></div></div>
 
-<pre><code class="language-{.prettyprint}">&lt;style type="text/css"&gt;pre.prettyprint {overflow-x: auto}&lt;/style&gt;
-</code></pre>
+<h3 id="listing-files-in-a-bucket">Listing files in a bucket</h3>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">-X</span> GET <span class="nt">-H</span> <span class="s2">"Authorization: Bearer </span><span class="nv">$TOKEN</span><span class="s2">"</span> <span class="s2">"https://storage.googleapis.com/storage/v1/b/</span><span class="nv">$BUCKET_NAME</span><span class="s2">/o/"</span>
+</code></pre></div></div>
 
-<p>And the result, like this:</p>
+<h3 id="getting-a-file">Getting a file</h3>
+<p>Note that <code class="language-plaintext highlighter-rouge">FILENAME</code> needs to be url-encoded, even the slashes that are used for “directories”.<br />
+Without <code class="language-plaintext highlighter-rouge">?alt=media</code>, you’ll get metadata for the file</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">-X</span> GET <span class="nt">-H</span> <span class="s2">"Authorization: Bearer </span><span class="nv">$TOKEN</span><span class="s2">"</span> <span class="s2">"https://storage.googleapis.com/storage/v1/b/</span><span class="nv">$BUCKET_NAME</span><span class="s2">/o/</span><span class="nv">$FILENAME</span><span class="s2">?alt=media"</span>
+</code></pre></div></div>
 
-<p><img src="/assets/avoiding-text-overflow-with-prettify-on-blogger/PrettifyNoOverflow.png" alt="" /></p>
+<h3 id="putting-a-file">Putting a file</h3>
+<p>Again, <code class="language-plaintext highlighter-rouge">FILENAME</code> needs to be properly encoded</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">-X</span> POST <span class="nt">--data-binary</span> @ACTUAL_FILE_PATH <span class="se">\</span>
+    <span class="nt">-H</span> <span class="s2">"Authorization: Bearer </span><span class="nv">$TOKEN</span><span class="s2">"</span> <span class="se">\</span>
+    <span class="s2">"https://storage.googleapis.com/upload/storage/v1/b/</span><span class="nv">$BUCKET_NAME</span><span class="s2">/o?uploadType=media&amp;name=</span><span class="nv">$FILENAME</span><span class="s2">"</span>
+</code></pre></div></div>
 
-<p>Much better!</p>
+<h3 id="further-reading">Further reading</h3>
+<p>Copied most of these from <a href="https://cloud.google.com/storage/docs/downloading-objects">https://cloud.google.com/storage/docs/downloading-objects</a> et al</p>
 
         
       </section>
@@ -324,38 +334,21 @@ The code looks like this:</p>
     <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
     <span itemprop="keywords">
     
-      <a href="/tags/#blog" class="page__taxonomy-item" rel="tag">Blog</a><span class="sep">, </span>
+      <a href="/tags/#cloud" class="page__taxonomy-item" rel="tag">cloud</a><span class="sep">, </span>
     
-      <a href="/tags/#css" class="page__taxonomy-item" rel="tag">CSS</a><span class="sep">, </span>
+      <a href="/tags/#curl" class="page__taxonomy-item" rel="tag">curl</a><span class="sep">, </span>
     
-      <a href="/tags/#html" class="page__taxonomy-item" rel="tag">HTML</a><span class="sep">, </span>
-    
-      <a href="/tags/#prettify" class="page__taxonomy-item" rel="tag">Prettify</a>
+      <a href="/tags/#google" class="page__taxonomy-item" rel="tag">google</a>
     
     </span>
   </p>
 
 
-
-
-  
-
-
-  
-
-  <p class="page__taxonomy">
-    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
-    <span itemprop="keywords">
-    
-      <a href="/categories/#foss" class="page__taxonomy-item" rel="tag">FOSS</a>
-    
-    </span>
-  </p>
 
 
         
 
-  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2014-01-09T00:00:00+02:00">January 9, 2014</time></p>
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2024-10-11T00:00:00+03:00">October 11, 2024</time></p>
 
 
       </footer>
@@ -365,12 +358,11 @@ The code looks like this:</p>
       
   <nav class="pagination">
     
-      <a href="/setspn-duplicates-and-case-sensitivity.html" class="pagination--pager" title="setspn Duplicates and Case Sensitivity
+      <a href="/django-db-images.html" class="pagination--pager" title="Serving Images from the DB in Django
 ">Previous</a>
     
     
-      <a href="/list-all-group-policy-extensions-registered.html" class="pagination--pager" title="List all Group Policy Extensions Registered
-">Next</a>
+      <a href="#" class="pagination--pager disabled">Next</a>
     
   </nav>
 
@@ -425,46 +417,6 @@ The code looks like this:</p>
       </div>
       <h2 class="page__related-title">You May Also Enjoy</h2>
       <div class="grid__wrapper">
-        
-          
-
-
-
-<div class="grid__item">
-  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
-    
-    <h2 class="archive__item-title no_toc" itemprop="headline">
-      
-        <a href="/google-storage-curl.html" rel="permalink">Google Storage using cURL
-</a>
-      
-    </h2>
-    
-
-  <p class="page__meta">
-    
-
-    
-
-    
-      
-      
-
-      <span class="page__meta-readtime">
-        <i class="far fa-clock" aria-hidden="true"></i>
-        
-          1 minute read
-        
-      </span>
-    
-  </p>
-
-
-    <p class="archive__item-excerpt" itemprop="description">I got around to troubleshooting a Python process running in Docker that had some permission problems accessing Google Storage
-Reproing inside Python with goo...</p>
-  </article>
-</div>
-
         
           
 
@@ -533,7 +485,7 @@ One of the features requested was allowing users t...</p>
       <span class="page__meta-readtime">
         <i class="far fa-clock" aria-hidden="true"></i>
         
-          1 minute read
+          2 minute read
         
       </span>
     
@@ -581,6 +533,46 @@ These workloa...</p>
 
 
     <p class="archive__item-excerpt" itemprop="description">I recently ran into a friend that wanted some help with an app. Because the app is in super secret stealth mode, let’s pretend instead it’s “Pizza Advisor” -...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/postgresql-vector.html" rel="permalink">Semantic caching with PSQL, Python, OpenAI
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          5 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">You’re an app developer now
+Let’s say you’re working on an app. The app helps you search for e-mail messages that relate to a certain topic. This works well ...</p>
   </article>
 </div>
 
