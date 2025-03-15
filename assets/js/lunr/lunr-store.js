@@ -1096,4 +1096,10 @@ var store = [{
         "tags": ["curl","cloud","google"],
         "url": "/google-storage-curl.html",
         "teaser": null
+      },{
+        "title": "Streaming SQL results from SQLALchemy via a FastAPI endpoint",
+        "excerpt":"I was asked to create an endpoint that gets an SQL query and replies with a JSON list of the results. The prototype was ready in 10 minutes: @app.post(\"/sql\") async def sql( query: str = Form(), user: OpenID = Depends(get_logged_user), ): async with session_maker() as session: async with session.begin(): try:...","categories": [],
+        "tags": ["python","sql","fastapi","sqlalchemy"],
+        "url": "/fastapi-sqlalchemy-stream.html",
+        "teaser": null
       },]
