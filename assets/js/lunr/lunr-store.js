@@ -1102,4 +1102,10 @@ var store = [{
         "tags": ["python","sql","fastapi","sqlalchemy"],
         "url": "/fastapi-sqlalchemy-stream.html",
         "teaser": null
+      },{
+        "title": "A Laptop can be a Big Raspberry Pi",
+        "excerpt":"I used to be one of those people running a rpi home server. I have a long history with running rpi, and I learned some things along the way: The disasterous effects of undervoltage on attached harddrives (goodbye data integrity, hello fsck on boot) The difficulty of running an OS...","categories": [],
+        "tags": ["rpi","linux"],
+        "url": "/laptop-big-rpi.html",
+        "teaser": null
       },]

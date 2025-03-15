@@ -1,4 +1,34 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2025-03-15T20:04:27+02:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">Streaming SQL results from SQLALchemy via a FastAPI endpoint</title><link href="https://blog.backslasher.net/fastapi-sqlalchemy-stream.html" rel="alternate" type="text/html" title="Streaming SQL results from SQLALchemy via a FastAPI endpoint" /><published>2025-03-11T00:00:00+02:00</published><updated>2025-03-11T00:00:00+02:00</updated><id>https://blog.backslasher.net/fastapi-sqlalchemy-stream</id><content type="html" xml:base="https://blog.backslasher.net/fastapi-sqlalchemy-stream.html">&lt;p&gt;I was asked to create an endpoint that gets an SQL query and replies with a JSON list of the results.
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2025-03-15T20:34:45+02:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">A Laptop can be a Big Raspberry Pi</title><link href="https://blog.backslasher.net/laptop-big-rpi.html" rel="alternate" type="text/html" title="A Laptop can be a Big Raspberry Pi" /><published>2025-03-15T00:00:00+02:00</published><updated>2025-03-15T00:00:00+02:00</updated><id>https://blog.backslasher.net/laptop-big-rpi</id><content type="html" xml:base="https://blog.backslasher.net/laptop-big-rpi.html">&lt;p&gt;I &lt;em&gt;used to be&lt;/em&gt; one of those people running a rpi home server. I have a long history with running rpi, and I learned some things along the way:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;The disasterous effects of undervoltage on attached harddrives (goodbye data integrity, hello fsck on boot)&lt;/li&gt;
+  &lt;li&gt;The difficulty of running an OS from an SDcard (system upgrades take as long to write to disk as they do to download the packages)&lt;/li&gt;
+  &lt;li&gt;The oddities of not having a proper system clock when starting up (tls certs are “not yet valid” because we’re now 5 years into the past)&lt;/li&gt;
+  &lt;li&gt;The permanent contest between GPU and CPU memory allocation when you want to run something GPU intensive&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;After talking with a friend about my next rpi-related purchase, they commented that I should just get a laptop. I obviously said that this is not the same, and they said “yeah, it’s better”. Their point was that for approximately the same amount of money I invest in my rpi setup, I can get a refurbished T470 off the internet and run whatever I want on it. I agreed to try.&lt;br /&gt;
+It’s been almost 2 years since that conversation, and I admit I was wrong, and a decent refurbished laptop is a great platform for a home server.&lt;br /&gt;
+Here are some reasons why I now think laptops are superior to rpis:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Trivially-stacking form factor&lt;/li&gt;
+  &lt;li&gt;Standard power requirements - they might not run on phone chargers, but they’re at very little risk of underdelivering current to their internal components / peripherals&lt;/li&gt;
+  &lt;li&gt;Real clock and battery to surive outages and restarts&lt;/li&gt;
+  &lt;li&gt;x86 cpu means that you’re not running into some edge cases where packages are not compiled properly / not available for ARM&lt;/li&gt;
+  &lt;li&gt;Multiple peripheral ports&lt;/li&gt;
+  &lt;li&gt;(relatively) beefy Bluetooth and Wifi stacks&lt;/li&gt;
+  &lt;li&gt;Embedded KVM if needed, hidden neatly away if not&lt;/li&gt;
+  &lt;li&gt;Proper internal hdd / ssd&lt;/li&gt;
+  &lt;li&gt;Active ventilation. At the very least, you’ll hear when it’s overheating&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;There are some drawbacks, obviously:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Bigger, although for a single server this is not a biggie, there’s room for it&lt;/li&gt;
+  &lt;li&gt;Requires a PSU brick, although it usually comes with one&lt;/li&gt;
+  &lt;li&gt;Much less cool and DIY-ish, although at some point you’re having enough of custom-writing udev rules and just want things to work&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Nowdays, whenever I’m asked to “stick a rpi behind a tv” to create a “smart tv” anywhere, be it at friends’ homes or companies’ expos, I’m asking for an old (but still decent) laptop and using that instead of a tiny ARM munchkin.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="rpi" /><category term="linux" /><summary type="html">I used to be one of those people running a rpi home server. I have a long history with running rpi, and I learned some things along the way: The disasterous effects of undervoltage on attached harddrives (goodbye data integrity, hello fsck on boot) The difficulty of running an OS from an SDcard (system upgrades take as long to write to disk as they do to download the packages) The oddities of not having a proper system clock when starting up (tls certs are “not yet valid” because we’re now 5 years into the past) The permanent contest between GPU and CPU memory allocation when you want to run something GPU intensive</summary></entry><entry><title type="html">Streaming SQL results from SQLALchemy via a FastAPI endpoint</title><link href="https://blog.backslasher.net/fastapi-sqlalchemy-stream.html" rel="alternate" type="text/html" title="Streaming SQL results from SQLALchemy via a FastAPI endpoint" /><published>2025-03-11T00:00:00+02:00</published><updated>2025-03-11T00:00:00+02:00</updated><id>https://blog.backslasher.net/fastapi-sqlalchemy-stream</id><content type="html" xml:base="https://blog.backslasher.net/fastapi-sqlalchemy-stream.html">&lt;p&gt;I was asked to create an endpoint that gets an SQL query and replies with a JSON list of the results.
 The prototype was ready in 10 minutes:&lt;/p&gt;
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;post&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;/sql&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
@@ -1048,109 +1078,4 @@ Remove the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-d
 The way I test is to ensure that physical clicks on the Switcher register in the HomeAssistant, and that clicks in the HomeAssistant’s switch reflect on the physical device.&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;Hopefully I find this post next time my router loses its config or something&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="OpenWRT" /><category term="Network" /><category term="UDP" /><summary type="html">Seems like I’m doing this setup once every 3 years, then forget about it until the next time it breaks. I hope this is the last time I’m rediscovering this.</summary></entry><entry><title type="html">Invalid number: Nov</title><link href="https://blog.backslasher.net/invalid-number-nov.html" rel="alternate" type="text/html" title="Invalid number: Nov" /><published>2023-12-22T00:00:00+02:00</published><updated>2023-12-22T00:00:00+02:00</updated><id>https://blog.backslasher.net/invalid-number-nov</id><content type="html" xml:base="https://blog.backslasher.net/invalid-number-nov.html">&lt;p&gt;One of my current projects is migrating a big Java project from Java 8 to a supported version. Since we’re doing small, stable steps, we started with Java 11.
-After getting the server to start on Java 11 with the usual mix of upgrading libraries and tweaking config files, I let it run for a while on our testing environment to see what interesting errors pop up.&lt;/p&gt;
-
-&lt;p&gt;One error that caught my eye was &lt;strong&gt;“Invalid number: Nov”&lt;/strong&gt;.
-Many times when I see error messages, I have an internal voice doubting the computer’s version of events.&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;“How could this object be null?”&lt;/li&gt;
-  &lt;li&gt;“In what world does this array have less than 10 items?”&lt;/li&gt;
-  &lt;li&gt;“Is there really an email address that has non-ASCII characters?”&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;However, at this moment, the machine and I had no argument. I wholeheartedly agreed that “Nov” is an invalid number, and that it was wrong of me to ask the code to treat it as a number. Now to find my shame and correct it.&lt;/p&gt;
-
-&lt;p&gt;A bit of stacktrace-following later, I reached some code that tries to deserialize a string containing JSON from the database into a Java object using the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;GSON&lt;/code&gt; library. A bit smelly maybe, but not a crime. The specific failure was on a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Date&lt;/code&gt; field that was stored as a string. It looked a bit like &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Nov 16, 2023, 10:32:43 AM&lt;/code&gt;. Weird format, sure, but still parsable. The “Nov” part makes perfect sense there, and more imporantly - this string was created by, and can be perfectly read by, the same code under Java 8. What caused the breakage?&lt;/p&gt;
-
-&lt;p&gt;Using the “Java disassembler” integral to IntelliJ IDEA, I did some reading in the GSON library. Inside, I found logic that roughly translates to the following:&lt;/p&gt;
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
-&lt;span class=&quot;nc&quot;&gt;Date&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;deserializeDate&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;defaultFormat&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;parse&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;ParseException&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;){&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ISO8601Utils&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;parse&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;nc&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;serializeDate&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Date&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;defaultFormat&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;toString&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Can you guess the reason already?&lt;br /&gt;
-Turns out that when &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;defaultFormat.parse&lt;/code&gt; fails with a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ParseException&lt;/code&gt;, the date (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Nov 16, 2023, 10:32:43 AM&lt;/code&gt;) is then parsed with ISO 8601 (e.g. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;2022-09-27 18:00:00.000&lt;/code&gt;), which tries to see &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Nov&lt;/code&gt; as the year number and fails, as indeed &lt;strong&gt;Nov is an invalid number&lt;/strong&gt;.&lt;br /&gt;
-Why does &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;defaultFormat.parse&lt;/code&gt; fail though?&lt;/p&gt;
-
-&lt;p&gt;I had my suspicions at this point, and after a bit of searching, &lt;a href=&quot;https://stackoverflow.com/q/58010818&quot;&gt;they were confirmed&lt;/a&gt;.&lt;br /&gt;
-That “default” format changed between Java 8 and Java 9, causing dates that were written from Java 8 to not-parse on Java 11, and the other way around.&lt;br /&gt;
-The change, in my case, was from &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MMM d, yyyy, h:mm:ss a&lt;/code&gt; to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MMM d, yyyy h:mm:ss a&lt;/code&gt;. A comma was removed after the year signifier. &lt;br /&gt;
-Something had to be done.&lt;/p&gt;
-
-&lt;h2 id=&quot;past-wisdom&quot;&gt;Past wisdom&lt;/h2&gt;
-
-&lt;p&gt;If I could go back to when the project was just written and the DB was empty, I’d enforce a single explicit date format throughout the codebase.&lt;br /&gt;
-Granted, not using the default format is a bit of a chore. I don’t really care about how the date looks, as long as it’s human-readable and machine-readble. However, one of the habits I have is:&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;DateTime handling has a lot of sharp edges. Therefore, be as boring as possible when handling them&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;This is by no means an original thought. I’m certain many people reached the same conclusion, and in the same way - cutting themselves on something that could have been easily avoided.
-For the less-scarred, here are some examples for things that can wrong with dates, but you might not see them coming:&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;Storing “naive” datetimes (no timezone) and having them passed between machines in different timezones, causing them to be treated as points in time&lt;/li&gt;
-  &lt;li&gt;DST and the reoccuring hour it brings at fall, making 01:30 happen twice&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.php.net/manual/en/datetime.format.php&quot;&gt;In PHP&lt;/a&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;yyyy&lt;/code&gt; representing “2020” correctly, but one year later showing “2121”, as &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;yy&lt;/code&gt; is a two-digit representation of the current year (are you looking for &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;YYYY&lt;/code&gt;?)&lt;/li&gt;
-  &lt;li&gt;American and non-American date parsing (How would you read “03/07/22”? Which one is the month and which is the day?)&lt;/li&gt;
-  &lt;li&gt;Old timezone databases not having up-to-date DST times, causing an offset when doing date arithmatic on legacy machines&lt;/li&gt;
-  &lt;li&gt;The slight difference between nanoseconds and microseconds (1 micro = 1000 nano)&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;There are surely many more, complete with horror stories about discovering them at 3 am.&lt;/p&gt;
-
-&lt;p&gt;I might write more about what I’m doing to make DateTime handling more boring and therefore safer, but for this instance, settling on an explicit date format (no matter which one) would have saved me some trouble.&lt;/p&gt;
-
-&lt;h2 id=&quot;back-to-the-story&quot;&gt;Back to the story&lt;/h2&gt;
-
-&lt;p&gt;I currently had a different kind of problem - I already had a DB full of Java8-default-serialized dates.&lt;/p&gt;
-
-&lt;p&gt;Iterating over all of them and converting them to the “correct” format while the server is down is inviting a lot of pain, so no go. &lt;br /&gt;
-The next reasonable path would be to centeralize all of our GSON callsites and set them explicitly to the Java8 datetime string for de/serializing, so I tried that.
-Much to my chagrin, I found that this broke other callsites, that were appreantly running on slightly different servers where the default was yet again different. This means that there was no single format string that covered all of our usecases. What do?&lt;/p&gt;
-
-&lt;p&gt;My final approach was replacing all of the GSON de/seralizers in our codebase to a bespoke one I built, that had a custom de/serializer for dates.
-It went approximately like this:&lt;/p&gt;
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nc&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;DateFormatter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;readDateFormats&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Arrays&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;asList&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;DateFormatter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;MMM d, yyyy, h:mm:ss a&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// The &quot;main&quot; formatstring I found from Java8&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;DateFormatter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;MMM d, yyyy h:mm:ss a&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// Same for Java11&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;DateFormatter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;yyyy-MM-dd'T'HH:mm:ss.SSSZ&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// Some format I like&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// All of the other formatstrings I found in our logfiles&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-
-&lt;span class=&quot;nc&quot;&gt;DateFormatter&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;writeDateFormat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;DateFormatter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;MMM d, yyyy, h:mm:ss a&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-
-&lt;span class=&quot;nc&quot;&gt;Date&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;deserializeDate&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;readDateFormats&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;df&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;df&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;parse&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;ParseException&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;filter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;first&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;nc&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;serializeDate&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Date&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;writeDateFormat&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;toString&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;This solution has the following niceties:&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;I can move the code to running under Java 8 or 11, and it won’t change its behavior.&lt;/li&gt;
-  &lt;li&gt;There is an explicit list of DateTime formats we support. If in the future we switch from GSON to another JSON de/serializer, we’ll know what we need to support and test against&lt;/li&gt;
-  &lt;li&gt;If I dicsover another DateTime format I need to support, I have a single place to add it in&lt;/li&gt;
-  &lt;li&gt;Changing the DateTime format we write is done in a single place and easily revertable (dates written in the new format can be easily supported even if we decide to not use it after a week)&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;We’re now happy campers (as far as JSON date parsing is concerned), future-proof and past-proof date-wise, and no one tries treating &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Nov&lt;/code&gt; as a number.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="Java" /><category term="Date" /><category term="Ramblings" /><summary type="html">One of my current projects is migrating a big Java project from Java 8 to a supported version. Since we’re doing small, stable steps, we started with Java 11. After getting the server to start on Java 11 with the usual mix of upgrading libraries and tweaking config files, I let it run for a while on our testing environment to see what interesting errors pop up.</summary></entry></feed>
+&lt;p&gt;Hopefully I find this post next time my router loses its config or something&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="OpenWRT" /><category term="Network" /><category term="UDP" /><summary type="html">Seems like I’m doing this setup once every 3 years, then forget about it until the next time it breaks. I hope this is the last time I’m rediscovering this.</summary></entry></feed>

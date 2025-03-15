@@ -9,8 +9,8 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Batch fitting pictures in ImageMagick - BackSlasher</title>
-<meta name="description" content="I recently bought a digital frame for some of my more elderly relatives. The frame’s firmware was quite retarded, and I had 2 issues with it:">
+<!-- begin _includes/seo.html --><title>A Laptop can be a Big Raspberry Pi - BackSlasher</title>
+<meta name="description" content="I used to be one of those people running a rpi home server. I have a long history with running rpi, and I learned some things along the way:    The disasterous effects of undervoltage on attached harddrives (goodbye data integrity, hello fsck on boot)   The difficulty of running an OS from an SDcard (system upgrades take as long to write to disk as they do to download the packages)   The oddities of not having a proper system clock when starting up (tls certs are “not yet valid” because we’re now 5 years into the past)   The permanent contest between GPU and CPU memory allocation when you want to run something GPU intensive">
 
 
   <meta name="author" content="Nitzan">
@@ -22,26 +22,28 @@
 <meta property="og:type" content="article">
 <meta property="og:locale" content="en_US">
 <meta property="og:site_name" content="BackSlasher">
-<meta property="og:title" content="Batch fitting pictures in ImageMagick">
-<meta property="og:url" content="https://blog.backslasher.net/batch-fitting-imagemagick.html">
+<meta property="og:title" content="A Laptop can be a Big Raspberry Pi">
+<meta property="og:url" content="https://blog.backslasher.net/laptop-big-rpi.html">
 
 
-  <meta property="og:description" content="I recently bought a digital frame for some of my more elderly relatives. The frame’s firmware was quite retarded, and I had 2 issues with it:">
-
-
-
+  <meta property="og:description" content="I used to be one of those people running a rpi home server. I have a long history with running rpi, and I learned some things along the way:    The disasterous effects of undervoltage on attached harddrives (goodbye data integrity, hello fsck on boot)   The difficulty of running an OS from an SDcard (system upgrades take as long to write to disk as they do to download the packages)   The oddities of not having a proper system clock when starting up (tls certs are “not yet valid” because we’re now 5 years into the past)   The permanent contest between GPU and CPU memory allocation when you want to run something GPU intensive">
 
 
 
-
-  <meta property="article:published_time" content="2015-04-09T00:00:00+03:00">
+  <meta property="og:image" content="https://blog.backslasher.net/assets/2025-03-15-laptop-big-rpi/header.png">
 
 
 
 
 
+  <meta property="article:published_time" content="2025-03-15T00:00:00+02:00">
 
-<link rel="canonical" href="https://blog.backslasher.net/batch-fitting-imagemagick.html">
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/laptop-big-rpi.html">
 
 
 
@@ -140,6 +142,55 @@
 
     <div class="initial-content">
       
+  
+
+
+
+
+
+
+
+<div class="page__hero--overlay"
+  style=" background-image: url('/assets/2025-03-15-laptop-big-rpi/header.png');"
+>
+  
+    <div class="wrapper">
+      <h1 id="page-title" class="page__title" itemprop="headline">
+        
+          A Laptop can be a Big Raspberry Pi
+
+        
+      </h1>
+      
+      
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 minute read
+        
+      </span>
+    
+  </p>
+
+
+      
+      
+    </div>
+  
+  
+</div>
+
+
 
 
 
@@ -253,85 +304,47 @@
 
 
   <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
-    <meta itemprop="headline" content="Batch fitting pictures in ImageMagick">
-    <meta itemprop="description" content="I recently bought a digital frame for some of my more elderly relatives.The frame’s firmware was quite retarded, and I had 2 issues with it:">
-    <meta itemprop="datePublished" content="2015-04-09T00:00:00+03:00">
+    <meta itemprop="headline" content="A Laptop can be a Big Raspberry Pi">
+    <meta itemprop="description" content="I used to be one of those people running a rpi home server. I have a long history with running rpi, and I learned some things along the way:  The disasterous effects of undervoltage on attached harddrives (goodbye data integrity, hello fsck on boot)  The difficulty of running an OS from an SDcard (system upgrades take as long to write to disk as they do to download the packages)  The oddities of not having a proper system clock when starting up (tls certs are “not yet valid” because we’re now 5 years into the past)  The permanent contest between GPU and CPU memory allocation when you want to run something GPU intensive">
+    <meta itemprop="datePublished" content="2025-03-15T00:00:00+02:00">
     
 
     <div class="page__inner-wrap">
       
-        <header>
-          <h1 id="page-title" class="page__title" itemprop="headline">Batch fitting pictures in ImageMagick
-</h1>
-          
-
-  <p class="page__meta">
-    
-
-    
-
-    
-      
-      
-
-      <span class="page__meta-readtime">
-        <i class="far fa-clock" aria-hidden="true"></i>
-        
-          1 minute read
-        
-      </span>
-    
-  </p>
-
-
-        </header>
-      
 
       <section class="page__content" itemprop="text">
         
-        <p>I recently bought a digital frame for some of my more elderly relatives.<br />
-The frame’s firmware was quite retarded, and I had 2 issues with it:</p>
+        <p>I <em>used to be</em> one of those people running a rpi home server. I have a long history with running rpi, and I learned some things along the way:</p>
+<ol>
+  <li>The disasterous effects of undervoltage on attached harddrives (goodbye data integrity, hello fsck on boot)</li>
+  <li>The difficulty of running an OS from an SDcard (system upgrades take as long to write to disk as they do to download the packages)</li>
+  <li>The oddities of not having a proper system clock when starting up (tls certs are “not yet valid” because we’re now 5 years into the past)</li>
+  <li>The permanent contest between GPU and CPU memory allocation when you want to run something GPU intensive</li>
+</ol>
 
-<h3 id="1-pictures-were-always-displayed-in-order">1. Pictures were always displayed in order</h3>
-<p>This might be a “not a bug but a feature” type of situation, but still.<br />
-I solved this using bash’s <code class="language-plaintext highlighter-rouge">$RANDOM</code>, which evaluates to a different random number every time:</p>
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rename <span class="s1">'s/\.jpg$/.jpg/i'</span> <span class="k">*</span>.<span class="k">*</span> <span class="c"># Just makes it look nice</span>
-<span class="k">for </span>F <span class="k">in</span> <span class="k">*</span>.jpg<span class="p">;</span> <span class="k">do </span><span class="nb">mv</span> <span class="s2">"</span><span class="nv">$F</span><span class="s2">"</span> <span class="k">${</span><span class="nv">RANDOM</span><span class="k">}</span>.jpg<span class="p">;</span> <span class="k">done</span>
-</code></pre></div></div>
-<p>I couldn’t use <code class="language-plaintext highlighter-rouge">xargs</code> rather than the for loop, because I needed to evaluate the variable for every file</p>
-<h3 id="2-pictures-were-stretched-to-the-frames-proportions">2. Pictures were stretched to the frame’s proportions</h3>
-<p>Assuming I treated my relatives with the following apple pictures:<br />
-<img src="/assets/batch-fitting-imagemagick/old1.jpg" alt="" />
-<img src="/assets/batch-fitting-imagemagick/old2.jpg" alt="" />
-<img src="/assets/batch-fitting-imagemagick/old3.jpg" alt="" /><br />
-The frame would show them like this:<br />
-<img src="/assets/batch-fitting-imagemagick/smear1.jpg" alt="" />
-<img src="/assets/batch-fitting-imagemagick/smear2.jpg" alt="" />
-<img src="/assets/batch-fitting-imagemagick/smear3.jpg" alt="" /></p>
+<p>After talking with a friend about my next rpi-related purchase, they commented that I should just get a laptop. I obviously said that this is not the same, and they said “yeah, it’s better”. Their point was that for approximately the same amount of money I invest in my rpi setup, I can get a refurbished T470 off the internet and run whatever I want on it. I agreed to try.<br />
+It’s been almost 2 years since that conversation, and I admit I was wrong, and a decent refurbished laptop is a great platform for a home server.<br />
+Here are some reasons why I now think laptops are superior to rpis:</p>
+<ol>
+  <li>Trivially-stacking form factor</li>
+  <li>Standard power requirements - they might not run on phone chargers, but they’re at very little risk of underdelivering current to their internal components / peripherals</li>
+  <li>Real clock and battery to surive outages and restarts</li>
+  <li>x86 cpu means that you’re not running into some edge cases where packages are not compiled properly / not available for ARM</li>
+  <li>Multiple peripheral ports</li>
+  <li>(relatively) beefy Bluetooth and Wifi stacks</li>
+  <li>Embedded KVM if needed, hidden neatly away if not</li>
+  <li>Proper internal hdd / ssd</li>
+  <li>Active ventilation. At the very least, you’ll hear when it’s overheating</li>
+</ol>
 
-<p>Obviously, there was no setting in the software to stop doing that, so I had to modify the pictures themselves.
-I settled for resizing the pictures (without modifying the aspect ratio) to a certain resolution (the frame’s screen’s resolution), and padding it if it’s not the right size (for instance, the picture is too short / too wide).<br />
-I modified the pictures to look like this:<br />
-<img src="/assets/batch-fitting-imagemagick/pan1.jpg" alt="" />
-<img src="/assets/batch-fitting-imagemagick/pan2.jpg" alt="" />
-<img src="/assets/batch-fitting-imagemagick/pan3.jpg" alt="" /></p>
+<p>There are some drawbacks, obviously:</p>
+<ol>
+  <li>Bigger, although for a single server this is not a biggie, there’s room for it</li>
+  <li>Requires a PSU brick, although it usually comes with one</li>
+  <li>Much less cool and DIY-ish, although at some point you’re having enough of custom-writing udev rules and just want things to work</li>
+</ol>
 
-<p><strong>The script</strong> uses ImageMagick, which is apparently built for these things (I initially considered using gimp).</p>
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">RES</span><span class="o">=</span>2048x1536
-<span class="nv">BG</span><span class="o">=</span>black
-<span class="nb">ls</span> <span class="k">*</span>.jpg | xargs <span class="nt">-n1</span> mogrify <span class="nt">-gravity</span> center <span class="nt">-background</span> <span class="nv">$BG</span> <span class="nt">-resize</span> <span class="nv">$RES</span> <span class="nt">-extent</span> <span class="nv">$RES</span>
-</code></pre></div></div>
-<p>Note I’m using <code class="language-plaintext highlighter-rouge">mogrify</code>, which performes in-place updates of the file. To create a different modified file, use <code class="language-plaintext highlighter-rouge">convert</code> and specify a new filename at the end.<br />
-Note<sup>2</sup> <code class="language-plaintext highlighter-rouge">resize</code> does the actual image resizing (while keeping aspect ratio, unless <a href="http://www.imagemagick.org/Usage/resize/#resize">specified otherwise</a>), and <code class="language-plaintext highlighter-rouge">extent</code> fills in the missing sides with the background.</p>
-
-<h3 id="attribution">attribution</h3>
-<p>Delicious apples taken from:</p>
-
-<ul>
-  <li><a href="http://blic-domain-images-pictures/apple-pictures/ripe-apple-on-branch.jpg.html">http://blic-domain-images-pictures/apple-pictures/ripe-apple-on-branch.jpg.html</a></li>
-  <li><a href="http://pixabay.com/en/apples-fresh-green-red-health-455396/">http://pixabay.com/en/apples-fresh-green-red-health-455396/</a></li>
-  <li><a href="http://apple--art.deviantart.com/">http://apple–art.deviantart.com/</a></li>
-</ul>
+<p>Nowdays, whenever I’m asked to “stick a rpi behind a tv” to create a “smart tv” anywhere, be it at friends’ homes or companies’ expos, I’m asking for an old (but still decent) laptop and using that instead of a tiny ARM munchkin.</p>
 
         
       </section>
@@ -348,38 +361,19 @@ Note<sup>2</sup> <code class="language-plaintext highlighter-rouge">resize</code
     <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
     <span itemprop="keywords">
     
-      <a href="/tags/#bash" class="page__taxonomy-item" rel="tag">bash</a><span class="sep">, </span>
+      <a href="/tags/#linux" class="page__taxonomy-item" rel="tag">linux</a><span class="sep">, </span>
     
-      <a href="/tags/#imagemagick" class="page__taxonomy-item" rel="tag">ImageMagick</a><span class="sep">, </span>
-    
-      <a href="/tags/#images" class="page__taxonomy-item" rel="tag">images</a><span class="sep">, </span>
-    
-      <a href="/tags/#scripts" class="page__taxonomy-item" rel="tag">scripts</a>
+      <a href="/tags/#rpi" class="page__taxonomy-item" rel="tag">rpi</a>
     
     </span>
   </p>
 
 
-
-
-  
-
-
-  
-
-  <p class="page__taxonomy">
-    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
-    <span itemprop="keywords">
-    
-      <a href="/categories/#foss" class="page__taxonomy-item" rel="tag">FOSS</a>
-    
-    </span>
-  </p>
 
 
         
 
-  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2015-04-09T00:00:00+03:00">April 9, 2015</time></p>
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2025-03-15T00:00:00+02:00">March 15, 2025</time></p>
 
 
       </footer>
@@ -389,12 +383,11 @@ Note<sup>2</sup> <code class="language-plaintext highlighter-rouge">resize</code
       
   <nav class="pagination">
     
-      <a href="/chef-users-with-chef.html" class="pagination--pager" title="Managing chef users with Chef
+      <a href="/fastapi-sqlalchemy-stream.html" class="pagination--pager" title="Streaming SQL results from SQLALchemy via a FastAPI endpoint
 ">Previous</a>
     
     
-      <a href="/yum-python-provides.html" class="pagination--pager" title="Scripting YUM provides search using Python
-">Next</a>
+      <a href="#" class="pagination--pager disabled">Next</a>
     
   </nav>
 
@@ -449,47 +442,6 @@ Note<sup>2</sup> <code class="language-plaintext highlighter-rouge">resize</code
       </div>
       <h2 class="page__related-title">You May Also Enjoy</h2>
       <div class="grid__wrapper">
-        
-          
-
-
-
-<div class="grid__item">
-  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
-    
-    <h2 class="archive__item-title no_toc" itemprop="headline">
-      
-        <a href="/laptop-big-rpi.html" rel="permalink">A Laptop can be a Big Raspberry Pi
-</a>
-      
-    </h2>
-    
-
-  <p class="page__meta">
-    
-
-    
-
-    
-      
-      
-
-      <span class="page__meta-readtime">
-        <i class="far fa-clock" aria-hidden="true"></i>
-        
-          2 minute read
-        
-      </span>
-    
-  </p>
-
-
-    <p class="archive__item-excerpt" itemprop="description">I used to be one of those people running a rpi home server. I have a long history with running rpi, and I learned some things along the way:
-
-  The disastero...</p>
-  </article>
-</div>
-
         
           
 
@@ -609,6 +561,46 @@ Reproing inside Python with goo...</p>
 
     <p class="archive__item-excerpt" itemprop="description">I recently got to work on prototyping a small Django-based website that was somewhat like a message board.
 One of the features requested was allowing users t...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/k3s-gpu.html" rel="permalink">Running GPU workloads on K3S
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">A team I work with is very happy with the k8s / ArgoCD setup we set up, and now wants to manage their experimental ML workloads in k8s as well.
+These workloa...</p>
   </article>
 </div>
 
