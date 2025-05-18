@@ -1108,4 +1108,10 @@ var store = [{
         "tags": ["rpi","linux"],
         "url": "/laptop-big-rpi.html",
         "teaser": null
+      },{
+        "title": "A quick and simple VPN",
+        "excerpt":"I’m currently on vacation abroad and need access to one of the government-run websites to coordinate a time-sensitive matter. As a very cheap security measure, said government website doesn’t work if accessed from a foreign VPN. A courteous explanation would be that the attack/usage ratio from abroad is much higher....","categories": [],
+        "tags": ["linux","internet"],
+        "url": "/quick-vpn.html",
+        "teaser": null
       },]

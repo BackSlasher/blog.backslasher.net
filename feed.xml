@@ -1,4 +1,19 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2025-05-15T13:32:06+03:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">A Laptop can be a Big Raspberry Pi</title><link href="https://blog.backslasher.net/laptop-big-rpi.html" rel="alternate" type="text/html" title="A Laptop can be a Big Raspberry Pi" /><published>2025-03-15T00:00:00+02:00</published><updated>2025-03-15T00:00:00+02:00</updated><id>https://blog.backslasher.net/laptop-big-rpi</id><content type="html" xml:base="https://blog.backslasher.net/laptop-big-rpi.html">&lt;p&gt;I &lt;em&gt;used to be&lt;/em&gt; one of those people running a rpi home server. I have a long history with running rpi, and I learned some things along the way:&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2025-05-18T05:47:38+03:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">A quick and simple VPN</title><link href="https://blog.backslasher.net/quick-vpn.html" rel="alternate" type="text/html" title="A quick and simple VPN" /><published>2025-05-18T00:00:00+03:00</published><updated>2025-05-18T00:00:00+03:00</updated><id>https://blog.backslasher.net/quick-vpn</id><content type="html" xml:base="https://blog.backslasher.net/quick-vpn.html">&lt;p&gt;I’m currently on vacation abroad and need access to one of the government-run websites to coordinate a time-sensitive matter. As a very cheap security measure, said government website doesn’t work if accessed from a foreign VPN. A courteous explanation would be that the attack/usage ratio from abroad is much higher. A less favorable one would be that they’re just lazy.&lt;/p&gt;
+
+&lt;p&gt;I used my AWS account to access the website really quickly:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Create a tiny server in a physical region that would be accepted by the website.
+Allow SSH from 0.0.0.0 and external IP, as per the defaults.&lt;/li&gt;
+  &lt;li&gt;Run this to create a local SOCKS proxy over SSH that routes traffic via that server:
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ssh -i ~/.ssh/aws.pem ubuntu@EXTERNALIP -D 1234&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Run Chromium on a guest profile connecting to said SOCKS proxy:
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;chromium --proxy-server=&quot;socks5://localhost:1234&quot; --guest&lt;/code&gt;.
+I think one could use this Firefox equivalent (untested):
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;firefox --proxy-server=&quot;socks5://localhost:1234&quot; --private-window&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Surf away. Don’t forget to terminate the server once you’re done, or else you’ll incur (checks notes…) $3.5 a month.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="linux" /><category term="internet" /><summary type="html">I’m currently on vacation abroad and need access to one of the government-run websites to coordinate a time-sensitive matter. As a very cheap security measure, said government website doesn’t work if accessed from a foreign VPN. A courteous explanation would be that the attack/usage ratio from abroad is much higher. A less favorable one would be that they’re just lazy.</summary></entry><entry><title type="html">A Laptop can be a Big Raspberry Pi</title><link href="https://blog.backslasher.net/laptop-big-rpi.html" rel="alternate" type="text/html" title="A Laptop can be a Big Raspberry Pi" /><published>2025-03-15T00:00:00+02:00</published><updated>2025-03-15T00:00:00+02:00</updated><id>https://blog.backslasher.net/laptop-big-rpi</id><content type="html" xml:base="https://blog.backslasher.net/laptop-big-rpi.html">&lt;p&gt;I &lt;em&gt;used to be&lt;/em&gt; one of those people running a rpi home server. I have a long history with running rpi, and I learned some things along the way:&lt;/p&gt;
 &lt;ol&gt;
   &lt;li&gt;The disasterous effects of undervoltage on attached harddrives (goodbye data integrity, hello fsck on boot)&lt;/li&gt;
   &lt;li&gt;The difficulty of running an OS from an SDcard (system upgrades take as long to write to disk as they do to download the packages)&lt;/li&gt;
@@ -1040,43 +1055,4 @@ To make it fancy, I decided to support search suggestions, which is a bit more c
 
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;Works nicely and responds quickly enough to be useful. I’m happy.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="PHP" /><category term="Search" /><summary type="html">I really like DuckDuckGo’s bangs, which basically directs your query elsewhere if you prefix it with !something. You could search the London zoo in gmaps by querying for !gmaps London zoo, or open the wiki article on Mass Effect with !wiki mass effect. There’s a whole bunch of them and they just keep adding more. I like them because they require zero configuration on my browser, and they work identically on all of them.</summary></entry><entry><title type="html">Bridging Switcher’s UDP over OpenWRT</title><link href="https://blog.backslasher.net/openwrt-switcher.html" rel="alternate" type="text/html" title="Bridging Switcher’s UDP over OpenWRT" /><published>2023-12-29T00:00:00+02:00</published><updated>2023-12-29T00:00:00+02:00</updated><id>https://blog.backslasher.net/openwrt-switcher</id><content type="html" xml:base="https://blog.backslasher.net/openwrt-switcher.html">&lt;p&gt;Seems like I’m doing this setup once every 3 years, then forget about it until the next time it breaks.&lt;br /&gt;
-I hope this is the last time I’m rediscovering this.&lt;/p&gt;
-
-&lt;p&gt;This only works because of the awesome &lt;a href=&quot;https://github.com/udp-redux/udp-broadcast-relay-redux&quot;&gt;udp-broadcast-relay-redux&lt;/a&gt; binary.&lt;/p&gt;
-
-&lt;h2 id=&quot;the-players&quot;&gt;The players&lt;/h2&gt;
-&lt;ol&gt;
-  &lt;li&gt;A router running &lt;a href=&quot;https://openwrt.org/&quot;&gt;OpenWRT&lt;/a&gt;, with two networks:
-    &lt;ol&gt;
-      &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;lan&lt;/code&gt; that houses the trusted devices&lt;/li&gt;
-      &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;lan-jail&lt;/code&gt; that houses untrusted home automation gizmos&lt;/li&gt;
-    &lt;/ol&gt;
-  &lt;/li&gt;
-  &lt;li&gt;A &lt;a href=&quot;https://switcher.co.il/&quot;&gt;Switcher&lt;/a&gt; boiler controller, connected to the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;lan-jail&lt;/code&gt; network&lt;/li&gt;
-  &lt;li&gt;A &lt;a href=&quot;https://www.home-assistant.io/&quot;&gt;HomeAssistant&lt;/a&gt; instance, connected to the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;lan&lt;/code&gt; network&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;In order for the &lt;a href=&quot;https://www.home-assistant.io/integrations/switcher_kis/&quot;&gt;HomeAssistant Switcher integration&lt;/a&gt;, there are some UDP ports involved (20002/10002/20003/10003, depending on version).&lt;br /&gt;
-Turns out that the switcher broadcasts status changes (and discovery info) in UDP broadcasts over these ports. For successful operation, those broadcasts need to be passed over from the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;lan-jail&lt;/code&gt; network to the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;lan&lt;/code&gt; network.&lt;/p&gt;
-
-&lt;h2 id=&quot;solution&quot;&gt;Solution&lt;/h2&gt;
-&lt;ol&gt;
-  &lt;li&gt;Install &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;udp-broadcast-relay-redux&lt;/code&gt; on the OpenWRT router, either via the UI or via CLI:
-    &lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;opkg update
-opkg &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;udp-broadcast-relay-redux
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Manually start the following no OpenWRT for testing purposes:
-    &lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;udp-broadcast-relay-redux &lt;span class=&quot;nt&quot;&gt;--id&lt;/span&gt; 1 &lt;span class=&quot;nt&quot;&gt;--port&lt;/span&gt; 20002 &lt;span class=&quot;nt&quot;&gt;--dev&lt;/span&gt; br-lan-jail &lt;span class=&quot;nt&quot;&gt;--dev&lt;/span&gt; br-lan &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-    &lt;p&gt;Your port might vary&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Run the stages detailed in the HomeAssistant Switcher integration. Play with the port configuration in the previous step until this works&lt;/li&gt;
-  &lt;li&gt;After the installation succeeds, copy the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;udp-broadcast-relay-redux&lt;/code&gt; command over to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;System &amp;gt; Startup &amp;gt; Local Startup&lt;/code&gt;, which sets it as part of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/rc.local&lt;/code&gt;.&lt;br /&gt;
-Remove the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-d&lt;/code&gt; (debug prints) and add &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-f&lt;/code&gt; (fork)&lt;/li&gt;
-  &lt;li&gt;Save, restart the router, ensure integration still works.&lt;br /&gt;
-The way I test is to ensure that physical clicks on the Switcher register in the HomeAssistant, and that clicks in the HomeAssistant’s switch reflect on the physical device.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;Hopefully I find this post next time my router loses its config or something&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="OpenWRT" /><category term="Network" /><category term="UDP" /><summary type="html">Seems like I’m doing this setup once every 3 years, then forget about it until the next time it breaks. I hope this is the last time I’m rediscovering this.</summary></entry></feed>
+&lt;p&gt;Works nicely and responds quickly enough to be useful. I’m happy.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="PHP" /><category term="Search" /><summary type="html">I really like DuckDuckGo’s bangs, which basically directs your query elsewhere if you prefix it with !something. You could search the London zoo in gmaps by querying for !gmaps London zoo, or open the wiki article on Mass Effect with !wiki mass effect. There’s a whole bunch of them and they just keep adding more. I like them because they require zero configuration on my browser, and they work identically on all of them.</summary></entry></feed>
