@@ -1114,4 +1114,10 @@ var store = [{
         "tags": ["linux","internet"],
         "url": "/quick-vpn.html",
         "teaser": null
+      },{
+        "title": "Introducing ESLint to your codebase smoothly",
+        "excerpt":"When adding a linter to an existing codbase, my methodology is as follows: Create lint config files and approve them with the team (people have strong opinions about tab widths), add them to the repo Run the linter a single time over the entire codebase, autofixing what it can, and...","categories": [],
+        "tags": ["nodejs","javascript","lint"],
+        "url": "/eslint-codebase.html",
+        "teaser": null
       },]

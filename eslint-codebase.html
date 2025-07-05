@@ -1,0 +1,800 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Introducing ESLint to your codebase smoothly - BackSlasher</title>
+<meta name="description" content="When adding a linter to an existing codbase, my methodology is as follows:    Create lint config files and approve them with the team (people have strong opinions about tab widths), add them to the repo   Run the linter a single time over the entire codebase, autofixing what it can, and adding comments to ignore what it can’t.   Add some pre-commit / pre-merge rule to run the linter and preventing new violations being added   Grepping the ignore comments we added in #2, fixing their violations carefully">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Introducing ESLint to your codebase smoothly">
+<meta property="og:url" content="https://blog.backslasher.net/eslint-codebase.html">
+
+
+  <meta property="og:description" content="When adding a linter to an existing codbase, my methodology is as follows:    Create lint config files and approve them with the team (people have strong opinions about tab widths), add them to the repo   Run the linter a single time over the entire codebase, autofixing what it can, and adding comments to ignore what it can’t.   Add some pre-commit / pre-merge rule to run the linter and preventing new violations being added   Grepping the ignore comments we added in #2, fixing their violations carefully">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2025-07-03T00:00:00+03:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/eslint-codebase.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Introducing ESLint to your codebase smoothly">
+    <meta itemprop="description" content="When adding a linter to an existing codbase, my methodology is as follows:  Create lint config files and approve them with the team (people have strong opinions about tab widths), add them to the repo  Run the linter a single time over the entire codebase, autofixing what it can, and adding comments to ignore what it can’t.  Add some pre-commit / pre-merge rule to run the linter and preventing new violations being added  Grepping the ignore comments we added in #2, fixing their violations carefully">
+    <meta itemprop="datePublished" content="2025-07-03T00:00:00+03:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Introducing ESLint to your codebase smoothly
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>When adding a linter to an existing codbase, my methodology is as follows:</p>
+<ol>
+  <li>Create lint config files and approve them with the team (people have strong opinions about tab widths), add them to the repo</li>
+  <li>Run the linter a single time over the entire codebase, autofixing what it can, and adding comments to ignore what it can’t.</li>
+  <li>Add some pre-commit / pre-merge rule to run the linter and preventing new violations being added</li>
+  <li>Grepping the ignore comments we added in #2, fixing their violations carefully</li>
+</ol>
+
+<p>While it might seem a bit complex, I like it because</p>
+<ol>
+  <li>Each commit is easy to review - either small or non-risky (adding comments)</li>
+  <li>There are no “no one commit, I’m doing a thing” moments that sometimes occur when refactoring</li>
+  <li>We’re not blocked on “fixing all violations” before introducing linting</li>
+</ol>
+
+<p>Ruff is great for this as it has <code class="language-plaintext highlighter-rouge">--add-noqa</code>, which adds “ignore” comments over every violation it finds.
+I recently had to do the same with ESLint, which <a href="https://github.com/eslint/eslint/discussions/18401">doesn’t have that feature</a>.</p>
+
+<p>I had to improvise.</p>
+
+<h2 id="solution">Solution</h2>
+
+<p>With some LLMing, I composed a script that iterates over ESLint’s errors, and adds an “ignore on next line” comment before it</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// add_comments.js</span>
+<span class="kd">const</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">fs</span><span class="dl">'</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">path</span><span class="dl">'</span><span class="p">);</span>
+
+<span class="kd">const</span> <span class="nx">errorsFilePath</span> <span class="o">=</span> <span class="nx">process</span><span class="p">.</span><span class="nx">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">errorsFilePath</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="dl">'</span><span class="s1">Please provide the path to the eslint errors JSON file</span><span class="dl">'</span><span class="p">);</span>
+    <span class="nx">process</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kd">const</span> <span class="nx">errors</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">fs</span><span class="p">.</span><span class="nx">readFileSync</span><span class="p">(</span><span class="nx">errorsFilePath</span><span class="p">,</span> <span class="dl">'</span><span class="s1">utf-8</span><span class="dl">'</span><span class="p">));</span>
+<span class="nx">errors</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">file</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">filePath</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">file</span><span class="p">.</span><span class="nx">filePath</span><span class="p">);</span>
+    <span class="kd">let</span> <span class="nx">content</span> <span class="o">=</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">readFileSync</span><span class="p">(</span><span class="nx">filePath</span><span class="p">,</span> <span class="dl">'</span><span class="s1">utf-8</span><span class="dl">'</span><span class="p">);</span>
+    <span class="kd">const</span> <span class="nx">lines</span> <span class="o">=</span> <span class="nx">content</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="dl">'</span><span class="se">\n</span><span class="dl">'</span><span class="p">);</span>
+
+    <span class="kd">const</span> <span class="nx">rulesMap</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Map</span><span class="p">();</span>
+    <span class="c1">// Multiple rules per line</span>
+    <span class="nx">file</span><span class="p">.</span><span class="nx">messages</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">message</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="kd">const</span> <span class="nx">line</span> <span class="o">=</span> <span class="nx">message</span><span class="p">.</span><span class="nx">line</span><span class="p">;</span>
+        <span class="kd">const</span> <span class="nx">ruleId</span> <span class="o">=</span> <span class="nx">message</span><span class="p">.</span><span class="nx">ruleId</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">rulesMap</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">line</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">rulesMap</span><span class="p">.</span><span class="kd">set</span><span class="p">(</span><span class="nx">line</span><span class="p">,</span> <span class="p">[]);</span>
+        <span class="p">}</span>
+        <span class="nx">rulesMap</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">line</span><span class="p">).</span><span class="nx">push</span><span class="p">(</span><span class="nx">ruleId</span><span class="p">);</span>
+    <span class="p">});</span>
+
+    <span class="c1">// Reverse order to avoid spoiling next lines</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">line</span> <span class="k">of</span> <span class="nb">Array</span><span class="p">.</span><span class="k">from</span><span class="p">(</span><span class="nx">rulesMap</span><span class="p">.</span><span class="nx">keys</span><span class="p">()).</span><span class="nx">sort</span><span class="p">((</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">b</span> <span class="o">-</span> <span class="nx">a</span><span class="p">))</span> <span class="p">{</span>
+        <span class="kd">const</span> <span class="nx">ruleIds</span> <span class="o">=</span> <span class="nx">rulesMap</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">line</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="dl">'</span><span class="s1">, </span><span class="dl">'</span><span class="p">);</span> <span class="c1">// Join rule IDs for the comment</span>
+        <span class="kd">const</span> <span class="nx">comment</span> <span class="o">=</span> <span class="s2">`// eslint-disable-next-line </span><span class="p">${</span><span class="nx">ruleIds</span><span class="p">}</span><span class="s2">`</span><span class="p">;</span>
+        <span class="nx">lines</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">line</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">comment</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="nx">content</span> <span class="o">=</span> <span class="nx">lines</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="dl">'</span><span class="se">\n</span><span class="dl">'</span><span class="p">);</span>
+    <span class="nx">fs</span><span class="p">.</span><span class="nx">writeFileSync</span><span class="p">(</span><span class="nx">filePath</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="dl">'</span><span class="s1">utf-8</span><span class="dl">'</span><span class="p">);</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<p>It’s then used like this:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git checkout :/ <span class="o">&amp;&amp;</span> npx eslint <span class="nt">--format</span> json <span class="o">&gt;</span> complaints.json <span class="p">;</span> node /tmp/add_comments.js complaints.json <span class="o">&amp;&amp;</span> npx eslint
+</code></pre></div></div>
+
+<p>Notable items about the script:</p>
+<ol>
+  <li>Crude way to select an input file. I miss <code class="language-plaintext highlighter-rouge">argparse</code></li>
+  <li>Grouping the errors by line, as one line might have multiple errors</li>
+  <li>Applying the fixes in reverse, as adding new lines will skew the line numbers of the following lines</li>
+  <li>Not caring about indentation - this can be handled by e.g. <code class="language-plaintext highlighter-rouge">prettier</code></li>
+</ol>
+
+<h2 id="solution-2-jsx">Solution #2: jsx</h2>
+
+<p>Running the same procedure on files containing JSX didn’t work as well, as it produced JS comments in the middle of JSX templates.
+Consider this:</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">best</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">(</span>
+    <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="nx">ul</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="nx">li</span> <span class="nx">key</span><span class="o">=</span><span class="dl">"</span><span class="s2">item</span><span class="dl">"</span><span class="o">&gt;</span><span class="nx">Item</span> <span class="mi">1</span><span class="o">&lt;</span><span class="sr">/li</span><span class="err">&gt;
+</span>        <span class="o">&lt;</span><span class="nx">li</span> <span class="nx">key</span><span class="o">=</span><span class="dl">"</span><span class="s2">item</span><span class="dl">"</span><span class="o">&gt;</span><span class="nx">Item</span> <span class="mi">2</span><span class="o">&lt;</span><span class="sr">/li</span><span class="err">&gt;
+</span>      <span class="o">&lt;</span><span class="sr">/ul</span><span class="err">&gt;
+</span>    <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>  <span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>Naively, it would get processed into</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">best</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">(</span>
+    <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
+      <span class="nx">The</span> <span class="nx">result</span> <span class="k">of</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span> <span class="nx">is</span><span class="p">:</span> <span class="p">{</span><span class="nx">result</span><span class="p">}</span>
+      <span class="o">&lt;</span><span class="nx">ul</span><span class="o">&gt;</span>
+<span class="c1">// eslint-disable-next-line react/jsx-key</span>
+        <span class="o">&lt;</span><span class="nx">li</span> <span class="nx">key</span><span class="o">=</span><span class="dl">"</span><span class="s2">item</span><span class="dl">"</span><span class="o">&gt;</span><span class="nx">Item</span> <span class="mi">1</span><span class="o">&lt;</span><span class="sr">/li</span><span class="err">&gt;
+</span>        <span class="o">&lt;</span><span class="nx">li</span> <span class="nx">key</span><span class="o">=</span><span class="dl">"</span><span class="s2">item</span><span class="dl">"</span><span class="o">&gt;</span><span class="nx">Item</span> <span class="mi">2</span><span class="o">&lt;</span><span class="sr">/li</span><span class="err">&gt;
+</span>      <span class="o">&lt;</span><span class="sr">/ul</span><span class="err">&gt;
+</span>    <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>  <span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>Where the new comment obviously breaks the JSX tempalte.
+It’d need to be converted into this:</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">best</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">(</span>
+    <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="nx">ul</span><span class="o">&gt;</span>
+        <span class="p">{</span><span class="cm">/* eslint-disable-next-line react/jsx-key */</span><span class="p">}</span>
+        <span class="o">&lt;</span><span class="nx">li</span> <span class="nx">key</span><span class="o">=</span><span class="dl">"</span><span class="s2">item</span><span class="dl">"</span><span class="o">&gt;</span><span class="nx">Item</span> <span class="mi">1</span><span class="o">&lt;</span><span class="sr">/li</span><span class="err">&gt;
+</span>        <span class="o">&lt;</span><span class="nx">li</span> <span class="nx">key</span><span class="o">=</span><span class="dl">"</span><span class="s2">item</span><span class="dl">"</span><span class="o">&gt;</span><span class="nx">Item</span> <span class="mi">2</span><span class="o">&lt;</span><span class="sr">/li</span><span class="err">&gt;
+</span>      <span class="o">&lt;</span><span class="sr">/ul</span><span class="err">&gt;
+</span>    <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>  <span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>I considered improving the original script to detect whether we’re inside a JSX tag or not, but it was too complicated.
+Instead, I decided on running ESLint again, picking up its complaints on “you can’t have a comment here” and rewriting the lines referenced.</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// jsx_comments.js</span>
+<span class="kd">const</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">fs</span><span class="dl">'</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">path</span><span class="dl">'</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nx">assert</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">assert</span><span class="dl">'</span><span class="p">);</span>
+
+<span class="kd">const</span> <span class="nx">errorsFilePath</span> <span class="o">=</span> <span class="nx">process</span><span class="p">.</span><span class="nx">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">errorsFilePath</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="dl">'</span><span class="s1">Please provide the path to the eslint errors JSON file as an argument.</span><span class="dl">'</span><span class="p">);</span>
+    <span class="nx">process</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kd">const</span> <span class="nx">errors</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">fs</span><span class="p">.</span><span class="nx">readFileSync</span><span class="p">(</span><span class="nx">errorsFilePath</span><span class="p">,</span> <span class="dl">'</span><span class="s1">utf-8</span><span class="dl">'</span><span class="p">));</span>
+<span class="nx">errors</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">file</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">filePath</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">file</span><span class="p">.</span><span class="nx">filePath</span><span class="p">);</span>
+    <span class="kd">let</span> <span class="nx">content</span> <span class="o">=</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">readFileSync</span><span class="p">(</span><span class="nx">filePath</span><span class="p">,</span> <span class="dl">'</span><span class="s1">utf-8</span><span class="dl">'</span><span class="p">);</span>
+    <span class="kd">const</span> <span class="nx">lines</span> <span class="o">=</span> <span class="nx">content</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="dl">'</span><span class="se">\n</span><span class="dl">'</span><span class="p">);</span>
+    <span class="kd">const</span> <span class="nx">messages</span> <span class="o">=</span> <span class="nx">file</span><span class="p">.</span><span class="nx">messages</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">m</span> <span class="o">=&gt;</span> <span class="nx">m</span><span class="p">.</span><span class="nx">ruleId</span> <span class="o">==</span> <span class="dl">"</span><span class="s2">react/jsx-no-comment-textnodes</span><span class="dl">"</span><span class="p">);</span>
+    <span class="nx">messages</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">m</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="kd">let</span> <span class="nx">lineIndex</span> <span class="o">=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">line</span><span class="p">;</span>
+      <span class="c1">// Eat some newlines</span>
+      <span class="k">while</span> <span class="p">(</span><span class="sr">/^</span><span class="se">\s</span><span class="sr">*$/</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">lines</span><span class="p">[</span><span class="nx">lineIndex</span><span class="p">]))</span> <span class="p">{</span>
+        <span class="nx">lineIndex</span><span class="o">++</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="kd">const</span> <span class="nx">line</span> <span class="o">=</span> <span class="nx">lines</span><span class="p">[</span><span class="nx">lineIndex</span><span class="p">];</span>
+      <span class="nx">assert</span><span class="p">(</span><span class="sr">/^</span><span class="se">\s</span><span class="sr">*</span><span class="se">\/\/</span><span class="sr"> eslint-disable-next-line/</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">line</span><span class="p">),</span> <span class="s2">`line needs to match: </span><span class="p">${</span><span class="nx">line</span><span class="p">}</span><span class="s2">`</span><span class="p">);</span>
+      <span class="kd">const</span> <span class="nx">newLine</span> <span class="o">=</span> <span class="nx">line</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/^</span><span class="se">\/\/</span><span class="sr"> eslint-disable-next-line </span><span class="se">(</span><span class="sr">.+</span><span class="se">)</span><span class="sr">$/</span><span class="p">,</span> <span class="dl">'</span><span class="s1">{/* eslint-disable-next-line $1 */}</span><span class="dl">'</span><span class="p">);</span>
+      <span class="nx">lines</span><span class="p">[</span><span class="nx">lineIndex</span><span class="p">]</span> <span class="o">=</span> <span class="nx">newLine</span><span class="p">;</span>
+    <span class="p">});</span>
+
+    <span class="nx">content</span> <span class="o">=</span> <span class="nx">lines</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="dl">'</span><span class="se">\n</span><span class="dl">'</span><span class="p">);</span>
+    <span class="nx">fs</span><span class="p">.</span><span class="nx">writeFileSync</span><span class="p">(</span><span class="nx">filePath</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="dl">'</span><span class="s1">utf-8</span><span class="dl">'</span><span class="p">);</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<p>Then</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git checkout :/ <span class="o">&amp;&amp;</span> npx eslint <span class="nt">--format</span> json <span class="o">&gt;</span> jsx_complaints.json <span class="p">;</span> node /tmp/jsx_comments.js jsx_complaints.json <span class="o">&amp;&amp;</span> npx eslint 
+</code></pre></div></div>
+
+<p>Or all at once:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git checkout :/ <span class="se">\</span>
+<span class="o">&amp;&amp;</span> npx eslint <span class="nt">--format</span> json <span class="o">&gt;</span> complaints.json <span class="p">;</span> node /tmp/add_comments.js complaints.json <span class="se">\</span>
+<span class="o">&amp;&amp;</span> npx eslint <span class="nt">--format</span> json <span class="o">&gt;</span> jsx_complaints.json <span class="p">;</span> node /tmp/jsx_comments.js jsx_complaints.json <span class="se">\</span>
+<span class="o">&amp;&amp;</span> npx eslint 
+</code></pre></div></div>
+
+<p>Worked great.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#javascript" class="page__taxonomy-item" rel="tag">javascript</a><span class="sep">, </span>
+    
+      <a href="/tags/#lint" class="page__taxonomy-item" rel="tag">lint</a><span class="sep">, </span>
+    
+      <a href="/tags/#nodejs" class="page__taxonomy-item" rel="tag">nodejs</a>
+    
+    </span>
+  </p>
+
+
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2025-07-03T00:00:00+03:00">July 3, 2025</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/quick-vpn.html" class="pagination--pager" title="A quick and simple VPN
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/quick-vpn.html" rel="permalink">A quick and simple VPN
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I’m currently on vacation abroad and need access to one of the government-run websites to coordinate a time-sensitive matter. As a very cheap security measur...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/laptop-big-rpi.html" rel="permalink">A Laptop can be a Big Raspberry Pi
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I used to be one of those people running a rpi home server. I have a long history with running rpi, and I learned some things along the way:
+
+  The disastero...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/fastapi-sqlalchemy-stream.html" rel="permalink">Streaming SQL results from SQLALchemy via a FastAPI endpoint
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I was asked to create an endpoint that gets an SQL query and replies with a JSON list of the results.
+The prototype was ready in 10 minutes:
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/google-storage-curl.html" rel="permalink">Google Storage using cURL
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I got around to troubleshooting a Python process running in Docker that had some permission problems accessing Google Storage
+Reproing inside Python with goo...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2025 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S2WYJL3VQ7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-S2WYJL3VQ7', { 'anonymize_ip': true});
+</script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>
