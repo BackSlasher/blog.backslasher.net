@@ -1120,4 +1120,10 @@ var store = [{
         "tags": ["nodejs","javascript","lint"],
         "url": "/eslint-codebase.html",
         "teaser": null
+      },{
+        "title": "Tapestry - Intro",
+        "excerpt":"I’ve been working on this project on and off for 6 years and it’s finally taking shape, so I thought I’d do a writeup. This will be part 1 in a multipart writeup: Intro Node PCB-display case Controller Hanging and power supply What is Tapestry Your browser does not support...","categories": [],
+        "tags": ["tapestry","weekendproject"],
+        "url": "/tapestry-intro.html",
+        "teaser": null
       },]
