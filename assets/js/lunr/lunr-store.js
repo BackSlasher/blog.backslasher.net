@@ -1073,12 +1073,6 @@ var store = [{
         "url": "/postgresql-vector.html",
         "teaser": null
       },{
-        "title": "Getting your toppings fast",
-        "excerpt":"I recently ran into a friend that wanted some help with an app. Because the app is in super secret stealth mode, let’s pretend instead it’s “Pizza Advisor” - an app that uses top of the line Machine Learning to help you plan a great pizza. Gotta go fast Said...","categories": [],
-        "tags": ["Monitoring","Rambling"],
-        "url": "/fast-toppings.html",
-        "teaser": null
-      },{
         "title": "Running GPU workloads on K3S",
         "excerpt":"A team I work with is very happy with the k8s / ArgoCD setup we set up, and now wants to manage their experimental ML workloads in k8s as well. These workloads run in Lambda Labs, who we use to quickly set up a few GPU-enabled Ubuntu machines in varying...","categories": [],
         "tags": ["kubernetes","linux","gpu","k3s"],
