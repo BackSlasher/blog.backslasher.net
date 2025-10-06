@@ -1120,4 +1120,10 @@ var store = [{
         "tags": ["tapestry","weekendproject"],
         "url": "/tapestry-intro.html",
         "teaser": null
+      },{
+        "title": "Tapestry - Nodes",
+        "excerpt":"What is Tapestry? All Tapestry posts The images in Tapestry are displayed on multiple e-paper displays, each driven by a single PCB which I call a “node”. Those nodes are EPDiy devices, running a custom server Hardware I found the hardware docs for EPDiy V7 (here), and ordered 5 PCBs...","categories": [],
+        "tags": ["tapestry","weekendproject"],
+        "url": "/tapestry-node.html",
+        "teaser": null
       },]
