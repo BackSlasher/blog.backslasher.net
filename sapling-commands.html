@@ -303,6 +303,15 @@ The “remote” is because there are no local tags in Sapling</p>
 </code></pre></div></div>
 <p>Where “main” is the name of the branch, and “default” is the path (aka origin in git-talk)</p>
 
+<h2 id="clone-from-a-bundle">Clone from a bundle</h2>
+<p>Either its own bundles or git ones</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sl clone --git $(realpath BUNDLEFILE) DESTNAME
+</code></pre></div></div>
+<p>The currrent build resolves the bundle path relatively to the dest directory, and there are some other shenanigans.<br />
+Additionally, without specifying <code class="language-plaintext highlighter-rouge">--git</code> the bundle is assumed to be a Mercurial-flavored one, which is not what’s produced from <code class="language-plaintext highlighter-rouge">sl bundle</code>.</p>
+
+<p>This also applies to cloning a git repo</p>
+
         
       </section>
 
