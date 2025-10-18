@@ -1115,15 +1115,9 @@ var store = [{
         "url": "/eslint-codebase.html",
         "teaser": null
       },{
-        "title": "Tapestry - Intro",
-        "excerpt":"I’ve been working on this project on and off for 6 years and it’s finally taking shape, so I thought I’d do a writeup. This will be part 1 in a multipart writeup: Intro Node PCB-display case Controller Hanging and power supply What is Tapestry Your browser does not support...","categories": [],
-        "tags": ["tapestry","weekendproject"],
-        "url": "/tapestry-intro.html",
-        "teaser": null
-      },{
-        "title": "Tapestry - Nodes",
-        "excerpt":"What is Tapestry? All Tapestry posts The images in Tapestry are displayed on multiple e-paper displays, each driven by a single PCB which I call a “node”. Those nodes are EPDiy devices, running a custom server Hardware I found the hardware docs for EPDiy V7 (here), and ordered 5 PCBs...","categories": [],
-        "tags": ["tapestry","weekendproject"],
-        "url": "/tapestry-node.html",
+        "title": "Tapestry",
+        "excerpt":"This is a big writeup of a project I’ve been ideating for a couple of years, and working heavily on in the last couple of months. It involves Python, hardware, 3D printing, a bit of computer vision, and a surprising amount of vibe coding. What and why TL;DR - a...","categories": [],
+        "tags": ["python","tapestry","weekendproject"],
+        "url": "/tapestry.html",
         "teaser": null
       },]
