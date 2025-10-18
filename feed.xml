@@ -1,7 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2025-10-18T15:05:20+03:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">Tapestry</title><link href="https://blog.backslasher.net/tapestry.html" rel="alternate" type="text/html" title="Tapestry" /><published>2025-10-18T00:00:00+03:00</published><updated>2025-10-18T00:00:00+03:00</updated><id>https://blog.backslasher.net/tapestry</id><content type="html" xml:base="https://blog.backslasher.net/tapestry.html">&lt;p&gt;&lt;img src=&quot;assets/tapestry/close.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2025-10-18T15:18:51+03:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">Tapestry</title><link href="https://blog.backslasher.net/tapestry.html" rel="alternate" type="text/html" title="Tapestry" /><published>2025-10-18T00:00:00+03:00</published><updated>2025-10-18T00:00:00+03:00</updated><id>https://blog.backslasher.net/tapestry</id><content type="html" xml:base="https://blog.backslasher.net/tapestry.html">&lt;p&gt;&lt;img src=&quot;assets/tapestry/close.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;This is a big writeup of a project I’ve been ideating for a couple of years, and working heavily on in the last couple of months.&lt;br /&gt;
 It involves Python, hardware, 3D printing, a bit of computer vision, and a surprising amount of &lt;em&gt;vibe coding&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;All code and 3d models are available in:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/BackSlasher/tapestry-node&quot;&gt;BackSlasher/tapestry-node&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/BackSlasher/tapestry-controller&quot;&gt;BackSlasher/tapestry-controller&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/BackSlasher/tapestry-case&quot;&gt;BackSlasher/tapestry-case&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;h2 id=&quot;what-and-why&quot;&gt;What and why&lt;/h2&gt;
 &lt;p&gt;&lt;strong&gt;TL;DR&lt;/strong&gt; - a big display, composed of multiple smaller &lt;a href=&quot;https://en.wikipedia.org/wiki/Electronic_paper&quot;&gt;electronic paper&lt;/a&gt; displays.&lt;/p&gt;

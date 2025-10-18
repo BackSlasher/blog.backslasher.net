@@ -1116,7 +1116,7 @@ var store = [{
         "teaser": null
       },{
         "title": "Tapestry",
-        "excerpt":"This is a big writeup of a project I’ve been ideating for a couple of years, and working heavily on in the last couple of months. It involves Python, hardware, 3D printing, a bit of computer vision, and a surprising amount of vibe coding. What and why TL;DR - a...","categories": [],
+        "excerpt":"This is a big writeup of a project I’ve been ideating for a couple of years, and working heavily on in the last couple of months. It involves Python, hardware, 3D printing, a bit of computer vision, and a surprising amount of vibe coding. All code and 3d models are...","categories": [],
         "tags": ["python","tapestry","weekendproject"],
         "url": "/tapestry.html",
         "teaser": null
