@@ -9,8 +9,8 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Enabling Remote Desktop Remotely - BackSlasher</title>
-<meta name="description" content="According to this Technet article, to enable remote desktop remotely by using the registry you need to set the key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server:fDenyTSConnections=0  and then reboot the server. Rebooting is actually unnecessary - you can just restart the service TermService If you’d like to script it all: param([string]$computerName=&#39;.&#39;) # Set registry $base=[Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey(&#39;LocalMachine&#39;,$computerName) $key=$base.OpenSubKey(&#39;SYSTEM\CurrentControlSet\Control\Terminal Server&#39;,1) $key.SetValue(&#39;fDenyTSConnections&#39;,0) $key.close() $base.close() # Restart service Get-Service TermService -comp $computerName | Restart-Service -force">
+<!-- begin _includes/seo.html --><title>Flashing ESPHome with Docker - BackSlasher</title>
+<meta name="description" content="ESPHome’s WebSerial connection didn’t work for me, and the computer running ESPHome was a bit far. Instead, I decided to run a local copy of ESPHome to flash the firmware over USB, and figured it’s an incantation worth keeping">
 
 
   <meta name="author" content="Nitzan">
@@ -22,26 +22,26 @@
 <meta property="og:type" content="article">
 <meta property="og:locale" content="en_US">
 <meta property="og:site_name" content="BackSlasher">
-<meta property="og:title" content="Enabling Remote Desktop Remotely">
-<meta property="og:url" content="https://blog.backslasher.net/enabling-remote-desktop-remotely.html">
+<meta property="og:title" content="Flashing ESPHome with Docker">
+<meta property="og:url" content="https://blog.backslasher.net/esphome-flash.html">
 
 
-  <meta property="og:description" content="According to this Technet article, to enable remote desktop remotely by using the registry you need to set the key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server:fDenyTSConnections=0  and then reboot the server. Rebooting is actually unnecessary - you can just restart the service TermService If you’d like to script it all: param([string]$computerName=&#39;.&#39;) # Set registry $base=[Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey(&#39;LocalMachine&#39;,$computerName) $key=$base.OpenSubKey(&#39;SYSTEM\CurrentControlSet\Control\Terminal Server&#39;,1) $key.SetValue(&#39;fDenyTSConnections&#39;,0) $key.close() $base.close() # Restart service Get-Service TermService -comp $computerName | Restart-Service -force">
-
-
-
-
-
-
-
-  <meta property="article:published_time" content="2011-01-13T00:00:00+02:00">
+  <meta property="og:description" content="ESPHome’s WebSerial connection didn’t work for me, and the computer running ESPHome was a bit far. Instead, I decided to run a local copy of ESPHome to flash the firmware over USB, and figured it’s an incantation worth keeping">
 
 
 
 
 
 
-<link rel="canonical" href="https://blog.backslasher.net/enabling-remote-desktop-remotely.html">
+
+  <meta property="article:published_time" content="2025-10-20T00:00:00+03:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/esphome-flash.html">
 
 
 
@@ -253,15 +253,15 @@
 
 
   <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
-    <meta itemprop="headline" content="Enabling Remote Desktop Remotely">
-    <meta itemprop="description" content="According to this Technet article, to enable remote desktop remotely by using the registry you need to set the keyHKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server:fDenyTSConnections=0and then reboot the server.Rebooting is actually unnecessary - you can just restart the service TermServiceIf you’d like to script it all:param([string]$computerName=&#39;.&#39;)# Set registry$base=[Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey(&#39;LocalMachine&#39;,$computerName)$key=$base.OpenSubKey(&#39;SYSTEM\CurrentControlSet\Control\Terminal Server&#39;,1)$key.SetValue(&#39;fDenyTSConnections&#39;,0)$key.close()$base.close()# Restart serviceGet-Service TermService -comp $computerName | Restart-Service -force">
-    <meta itemprop="datePublished" content="2011-01-13T00:00:00+02:00">
+    <meta itemprop="headline" content="Flashing ESPHome with Docker">
+    <meta itemprop="description" content="ESPHome’s WebSerial connection didn’t work for me, and the computer running ESPHome was a bit far.Instead, I decided to run a local copy of ESPHome to flash the firmware over USB, and figured it’s an incantation worth keeping">
+    <meta itemprop="datePublished" content="2025-10-20T00:00:00+03:00">
     
 
     <div class="page__inner-wrap">
       
         <header>
-          <h1 id="page-title" class="page__title" itemprop="headline">Enabling Remote Desktop Remotely
+          <h1 id="page-title" class="page__title" itemprop="headline">Flashing ESPHome with Docker
 </h1>
           
 
@@ -289,23 +289,25 @@
 
       <section class="page__content" itemprop="text">
         
-        <p>According to <a href="http://technet.microsoft.com/en-us/library/cc782195%28v=ws.10%29.aspx">this Technet article</a>, to enable remote desktop remotely by using the registry you need to set the key</p>
-<pre><code class="language-registry">HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server:fDenyTSConnections=0
-</code></pre>
-<p>and then reboot the server.<br />
-Rebooting is actually unnecessary - you can just restart the service <code class="language-plaintext highlighter-rouge">TermService</code><br />
-If you’d like to script it all:</p>
-<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">param</span><span class="p">([</span><span class="n">string</span><span class="p">]</span><span class="nv">$computerName</span><span class="o">=</span><span class="s1">'.'</span><span class="p">)</span><span class="w">
-</span><span class="c"># Set registry</span><span class="w">
-</span><span class="nv">$base</span><span class="o">=</span><span class="p">[</span><span class="n">Microsoft.Win32.RegistryKey</span><span class="p">]::</span><span class="n">OpenRemoteBaseKey</span><span class="p">(</span><span class="s1">'LocalMachine'</span><span class="p">,</span><span class="nv">$computerName</span><span class="p">)</span><span class="w">
-</span><span class="nv">$key</span><span class="o">=</span><span class="nv">$base</span><span class="o">.</span><span class="nf">OpenSubKey</span><span class="p">(</span><span class="s1">'SYSTEM\CurrentControlSet\Control\Terminal Server'</span><span class="p">,</span><span class="nx">1</span><span class="p">)</span><span class="w">
-</span><span class="nv">$key</span><span class="o">.</span><span class="nf">SetValue</span><span class="p">(</span><span class="s1">'fDenyTSConnections'</span><span class="p">,</span><span class="nx">0</span><span class="p">)</span><span class="w">
-</span><span class="nv">$key</span><span class="o">.</span><span class="nf">close</span><span class="p">()</span><span class="w">
-</span><span class="nv">$base</span><span class="o">.</span><span class="nf">close</span><span class="p">()</span><span class="w">
-</span><span class="c"># Restart service</span><span class="w">
-</span><span class="n">Get-Service</span><span class="w"> </span><span class="nx">TermService</span><span class="w"> </span><span class="nt">-comp</span><span class="w"> </span><span class="nv">$computerName</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Restart-Service</span><span class="w"> </span><span class="nt">-force</span><span class="w">
-</span></code></pre></div></div>
+        <p>ESPHome’s WebSerial connection didn’t work for me, and the computer running ESPHome was a bit far.<br />
+Instead, I decided to run a local copy of ESPHome to flash the firmware over USB, and figured it’s an incantation worth keeping</p>
 
+<p>First, save your target yaml locally, e.g. <code class="language-plaintext highlighter-rouge">device.yaml</code>.<br />
+Then:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">--rm</span> <span class="nt">-it</span> <span class="nt">--device</span> /dev/ttyUSB0 <span class="nt">-v</span> .:/app:ro ghcr.io/esphome/esphome run /app/device.yaml <span class="nt">--device</span> /dev/ttyUSB0
+</code></pre></div></div>
+
+<p>Some breakdowns:</p>
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">docker run --rm -it</code> is the usual. Remove image when done, use tty</li>
+  <li><code class="language-plaintext highlighter-rouge">--device /dev/ttyUSB0</code>: Mount ttyUSB0 (your esp device) to the docker container</li>
+  <li><code class="language-plaintext highlighter-rouge">-v .:/app:ro</code> make the local directory available as readonly to the container as <code class="language-plaintext highlighter-rouge">/app</code></li>
+  <li>image name</li>
+  <li><code class="language-plaintext highlighter-rouge">run /app/device.yaml</code> flash said file, which we mounted</li>
+  <li><code class="language-plaintext highlighter-rouge">--device /dev/ttyUSB0</code> flash to this device</li>
+</ol>
+
+<p>Keep this running until you see the device log reporting successfully connecting to wifi</p>
 
         
       </section>
@@ -322,44 +324,21 @@ If you’d like to script it all:</p>
     <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
     <span itemprop="keywords">
     
-      <a href="/tags/#one-liner" class="page__taxonomy-item" rel="tag">One-Liner</a><span class="sep">, </span>
+      <a href="/tags/#esp32" class="page__taxonomy-item" rel="tag">esp32</a><span class="sep">, </span>
     
-      <a href="/tags/#powershell" class="page__taxonomy-item" rel="tag">PowerShell</a><span class="sep">, </span>
+      <a href="/tags/#homeassistant" class="page__taxonomy-item" rel="tag">homeassistant</a><span class="sep">, </span>
     
-      <a href="/tags/#registry" class="page__taxonomy-item" rel="tag">Registry</a><span class="sep">, </span>
-    
-      <a href="/tags/#scripts" class="page__taxonomy-item" rel="tag">Scripts</a><span class="sep">, </span>
-    
-      <a href="/tags/#security" class="page__taxonomy-item" rel="tag">Security</a><span class="sep">, </span>
-    
-      <a href="/tags/#terminal-server" class="page__taxonomy-item" rel="tag">Terminal Server</a><span class="sep">, </span>
-    
-      <a href="/tags/#windows" class="page__taxonomy-item" rel="tag">Windows</a>
+      <a href="/tags/#weekendproject" class="page__taxonomy-item" rel="tag">weekendproject</a>
     
     </span>
   </p>
 
 
-
-
-  
-
-
-  
-
-  <p class="page__taxonomy">
-    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
-    <span itemprop="keywords">
-    
-      <a href="/categories/#microsoft" class="page__taxonomy-item" rel="tag">Microsoft</a>
-    
-    </span>
-  </p>
 
 
         
 
-  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2011-01-13T00:00:00+02:00">January 13, 2011</time></p>
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2025-10-20T00:00:00+03:00">October 20, 2025</time></p>
 
 
       </footer>
@@ -369,12 +348,11 @@ If you’d like to script it all:</p>
       
   <nav class="pagination">
     
-      <a href="/speed-boosting-disconnected-environments.html" class="pagination--pager" title="Speed boosting disconnected environments
+      <a href="/tapestry.html" class="pagination--pager" title="Tapestry
 ">Previous</a>
     
     
-      <a href="/event-log-permissions-with-scripts.html" class="pagination--pager" title="Event Log Permissions, With Scripts!
-">Next</a>
+      <a href="#" class="pagination--pager disabled">Next</a>
     
   </nav>
 
@@ -429,46 +407,6 @@ If you’d like to script it all:</p>
       </div>
       <h2 class="page__related-title">You May Also Enjoy</h2>
       <div class="grid__wrapper">
-        
-          
-
-
-
-<div class="grid__item">
-  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
-    
-    <h2 class="archive__item-title no_toc" itemprop="headline">
-      
-        <a href="/esphome-flash.html" rel="permalink">Flashing ESPHome with Docker
-</a>
-      
-    </h2>
-    
-
-  <p class="page__meta">
-    
-
-    
-
-    
-      
-      
-
-      <span class="page__meta-readtime">
-        <i class="far fa-clock" aria-hidden="true"></i>
-        
-          less than 1 minute read
-        
-      </span>
-    
-  </p>
-
-
-    <p class="archive__item-excerpt" itemprop="description">ESPHome’s WebSerial connection didn’t work for me, and the computer running ESPHome was a bit far.
-Instead, I decided to run a local copy of ESPHome to flash...</p>
-  </article>
-</div>
-
         
           
 
@@ -587,6 +525,47 @@ Instead, I decided to run a local copy of ESPHome to flash...</p>
 
 
     <p class="archive__item-excerpt" itemprop="description">I’m currently on vacation abroad and need access to one of the government-run websites to coordinate a time-sensitive matter. As a very cheap security measur...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/laptop-big-rpi.html" rel="permalink">A Laptop can be a Big Raspberry Pi
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I used to be one of those people running a rpi home server. I have a long history with running rpi, and I learned some things along the way:
+
+  The disastero...</p>
   </article>
 </div>
 
