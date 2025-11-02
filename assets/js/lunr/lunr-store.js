@@ -1126,4 +1126,10 @@ var store = [{
         "tags": ["homeassistant","esp32","weekendproject"],
         "url": "/esphome-flash.html",
         "teaser": null
+      },{
+        "title": "Getting a Git remote from a Sapling repo",
+        "excerpt":"Assuming you have a git-backed sapling repo (e.g. you used sl clone on a git repo, or sl init --git) and you want to access the commits from a git repo, here is the git remote incantation:  git remote add local $PATH_TO_SAPLING_REPO/.sl/store/git  ","categories": [],
+        "tags": ["git","sapling"],
+        "url": "/git-remote-sapling.html",
+        "teaser": null
       },]

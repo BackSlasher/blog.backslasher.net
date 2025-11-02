@@ -9,8 +9,8 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Installing WSUS Prerequisites Easily in a Disconnected Server - BackSlasher</title>
-<meta name="description" content="Our company has an internet-isolated environment, and I was requested to create a WSUS infrastructure there. The most annoying thing about installing a disconnected WSUS server is that you can’t do it via the server manager (because it requires a working internet connection) but rather through an exe file, and that file won’t install the prerequisites, just complain that some of them are missing (without informing you which ones), compared to the automatic prerequisite installation of the server manager. Well, problem solved through the power of scripting! The following line of code will install all of WSUS’s windows-related components without actually installing WSUS through the ServerManager module:">
+<!-- begin _includes/seo.html --><title>Getting a Git remote from a Sapling repo - BackSlasher</title>
+<meta name="description" content="Assuming you have a git-backed sapling repo (e.g. you used sl clone on a git repo, or sl init --git) and you want to access the commits from a git repo, here is the git remote incantation: git remote add local $PATH_TO_SAPLING_REPO/.sl/store/git">
 
 
   <meta name="author" content="Nitzan">
@@ -22,26 +22,26 @@
 <meta property="og:type" content="article">
 <meta property="og:locale" content="en_US">
 <meta property="og:site_name" content="BackSlasher">
-<meta property="og:title" content="Installing WSUS Prerequisites Easily in a Disconnected Server">
-<meta property="og:url" content="https://blog.backslasher.net/installing-wsus-prerequisites-easily-in-a-disconnected-server.html">
+<meta property="og:title" content="Getting a Git remote from a Sapling repo">
+<meta property="og:url" content="https://blog.backslasher.net/git-remote-sapling.html">
 
 
-  <meta property="og:description" content="Our company has an internet-isolated environment, and I was requested to create a WSUS infrastructure there. The most annoying thing about installing a disconnected WSUS server is that you can’t do it via the server manager (because it requires a working internet connection) but rather through an exe file, and that file won’t install the prerequisites, just complain that some of them are missing (without informing you which ones), compared to the automatic prerequisite installation of the server manager. Well, problem solved through the power of scripting! The following line of code will install all of WSUS’s windows-related components without actually installing WSUS through the ServerManager module:">
-
-
-
-
-
-
-
-  <meta property="article:published_time" content="2012-04-27T00:00:00+03:00">
+  <meta property="og:description" content="Assuming you have a git-backed sapling repo (e.g. you used sl clone on a git repo, or sl init --git) and you want to access the commits from a git repo, here is the git remote incantation: git remote add local $PATH_TO_SAPLING_REPO/.sl/store/git">
 
 
 
 
 
 
-<link rel="canonical" href="https://blog.backslasher.net/installing-wsus-prerequisites-easily-in-a-disconnected-server.html">
+
+  <meta property="article:published_time" content="2025-11-02T00:00:00+02:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/git-remote-sapling.html">
 
 
 
@@ -253,15 +253,15 @@
 
 
   <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
-    <meta itemprop="headline" content="Installing WSUS Prerequisites Easily in a Disconnected Server">
-    <meta itemprop="description" content="Our company has an internet-isolated environment, and I was requested tocreate a WSUS infrastructure there.The most annoying thing about installing a disconnected WSUS server isthat you can’t do it via the server manager (because it requires aworking internet connection) but rather through an exe file, and thatfile won’t install the prerequisites, just complain that some of themare missing (without informing you which ones), compared to theautomatic prerequisite installation of the server manager.Well, problem solved through the power of scripting!The following line of code will install all of WSUS’s windows-relatedcomponents without actually installing WSUS through the ServerManagermodule:">
-    <meta itemprop="datePublished" content="2012-04-27T00:00:00+03:00">
+    <meta itemprop="headline" content="Getting a Git remote from a Sapling repo">
+    <meta itemprop="description" content="Assuming you have a git-backed sapling repo (e.g. you used sl clone on a git repo, or sl init --git) and you want to access the commits from a git repo, here is the git remote incantation:git remote add local $PATH_TO_SAPLING_REPO/.sl/store/git">
+    <meta itemprop="datePublished" content="2025-11-02T00:00:00+02:00">
     
 
     <div class="page__inner-wrap">
       
         <header>
-          <h1 id="page-title" class="page__title" itemprop="headline">Installing WSUS Prerequisites Easily in a Disconnected Server
+          <h1 id="page-title" class="page__title" itemprop="headline">Getting a Git remote from a Sapling repo
 </h1>
           
 
@@ -289,22 +289,9 @@
 
       <section class="page__content" itemprop="text">
         
-        <p>Our company has an internet-isolated environment, and I was requested to
-create a WSUS infrastructure there.<br />
-The most annoying thing about installing a disconnected WSUS server is
-that you can’t do it via the server manager (because it requires a
-working internet connection) but rather through an exe file, and that
-file won’t install the prerequisites, just complain that some of them
-are missing (without informing you which ones), compared to the
-automatic prerequisite installation of the server manager.<br />
-Well, problem solved through the power of scripting!<br />
-The following line of code will install all of WSUS’s windows-related
-components without actually installing WSUS through the <code class="language-plaintext highlighter-rouge">ServerManager</code>
-module:</p>
-
-<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ipmo</span><span class="w"> </span><span class="nx">ServerManager</span><span class="p">;</span><span class="w">
-</span><span class="n">Get-WindowsFeature</span><span class="w"> </span><span class="nx">OOB-WSUS</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">select</span><span class="w"> </span><span class="nt">-exp</span><span class="w"> </span><span class="nx">DependsOn</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Add-WindowsFeature</span><span class="w">
-</span></code></pre></div></div>
+        <p>Assuming you have a git-backed sapling repo (e.g. you used <code class="language-plaintext highlighter-rouge">sl clone</code> on a git repo, or <code class="language-plaintext highlighter-rouge">sl init --git</code>) and you want to access the commits from a git repo, here is the <code class="language-plaintext highlighter-rouge">git remote</code> incantation:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git remote add <span class="nb">local</span> <span class="nv">$PATH_TO_SAPLING_REPO</span>/.sl/store/git
+</code></pre></div></div>
 
         
       </section>
@@ -321,36 +308,19 @@ module:</p>
     <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
     <span itemprop="keywords">
     
-      <a href="/tags/#powershell" class="page__taxonomy-item" rel="tag">PowerShell</a><span class="sep">, </span>
+      <a href="/tags/#git" class="page__taxonomy-item" rel="tag">git</a><span class="sep">, </span>
     
-      <a href="/tags/#scripts" class="page__taxonomy-item" rel="tag">Scripts</a><span class="sep">, </span>
-    
-      <a href="/tags/#wsus" class="page__taxonomy-item" rel="tag">WSUS</a>
+      <a href="/tags/#sapling" class="page__taxonomy-item" rel="tag">sapling</a>
     
     </span>
   </p>
 
 
-
-
-  
-
-
-  
-
-  <p class="page__taxonomy">
-    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
-    <span itemprop="keywords">
-    
-      <a href="/categories/#microsoft" class="page__taxonomy-item" rel="tag">Microsoft</a>
-    
-    </span>
-  </p>
 
 
         
 
-  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2012-04-27T00:00:00+03:00">April 27, 2012</time></p>
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2025-11-02T00:00:00+02:00">November 2, 2025</time></p>
 
 
       </footer>
@@ -360,12 +330,11 @@ module:</p>
       
   <nav class="pagination">
     
-      <a href="/automaticlly-extracting-downloaded-torrents.html" class="pagination--pager" title="Automaticlly Extracting Downloaded Torrents
+      <a href="/esphome-flash.html" class="pagination--pager" title="Flashing ESPHome with Docker
 ">Previous</a>
     
     
-      <a href="/windows-event-collection.html" class="pagination--pager" title="Windows Event Collection
-">Next</a>
+      <a href="#" class="pagination--pager disabled">Next</a>
     
   </nav>
 
@@ -420,45 +389,6 @@ module:</p>
       </div>
       <h2 class="page__related-title">You May Also Enjoy</h2>
       <div class="grid__wrapper">
-        
-          
-
-
-
-<div class="grid__item">
-  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
-    
-    <h2 class="archive__item-title no_toc" itemprop="headline">
-      
-        <a href="/git-remote-sapling.html" rel="permalink">Getting a Git remote from a Sapling repo
-</a>
-      
-    </h2>
-    
-
-  <p class="page__meta">
-    
-
-    
-
-    
-      
-      
-
-      <span class="page__meta-readtime">
-        <i class="far fa-clock" aria-hidden="true"></i>
-        
-          less than 1 minute read
-        
-      </span>
-    
-  </p>
-
-
-    <p class="archive__item-excerpt" itemprop="description">Assuming you have a git-backed sapling repo (e.g. you used sl clone on a git repo, or sl init --git) and you want to access the commits from a git repo, here...</p>
-  </article>
-</div>
-
         
           
 
@@ -578,6 +508,45 @@ Instead, I decided to run a local copy of ESPHome to flash...</p>
     <p class="archive__item-excerpt" itemprop="description">When adding a linter to an existing codbase, my methodology is as follows:
 
   Create lint config files and approve them with the team (people have strong opi...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/quick-vpn.html" rel="permalink">A quick and simple VPN
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I’m currently on vacation abroad and need access to one of the government-run websites to coordinate a time-sensitive matter. As a very cheap security measur...</p>
   </article>
 </div>
 
