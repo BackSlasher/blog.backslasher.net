@@ -1132,4 +1132,10 @@ var store = [{
         "tags": ["git","sapling"],
         "url": "/git-remote-sapling.html",
         "teaser": null
+      },{
+        "title": "Ship Today, Scale Tomorrow #1: Different Servers for Different Jobs",
+        "excerpt":"Working with early-stage CTOs, I see two traps repeatedly: over-engineering that steals time today, or decisions that choke growth tomorrow. I wanted to share lessons from the field. “We already have a Python server for the API, so we figured we’d let it do the AI model training too.” This...","categories": [],
+        "tags": ["stst","cloud"],
+        "url": "/stst1.html",
+        "teaser": null
       },]

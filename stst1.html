@@ -9,8 +9,8 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Adding SSL to a SharePoint 2010 Web Application, the Right Way - BackSlasher</title>
-<meta name="description" content="###The Story I haven’t touched SharePoint in a while, but I’ve been asked by a friend to help him do something “the right way”. We were looking for a way to add an HTTPS binding to an existing SharePoint 2010 site. Google is full of ways of doing that, but they involve adding another binding manually via IIS, like this:">
+<!-- begin _includes/seo.html --><title>Ship Today, Scale Tomorrow #1: Different Servers for Different Jobs - BackSlasher</title>
+<meta name="description" content="Working with early-stage CTOs, I see two traps repeatedly: over-engineering that steals time today, or decisions that choke growth tomorrow. I wanted to share lessons from the field.">
 
 
   <meta name="author" content="Nitzan">
@@ -22,26 +22,26 @@
 <meta property="og:type" content="article">
 <meta property="og:locale" content="en_US">
 <meta property="og:site_name" content="BackSlasher">
-<meta property="og:title" content="Adding SSL to a SharePoint 2010 Web Application, the Right Way">
-<meta property="og:url" content="https://blog.backslasher.net/adding-ssl-to-sharepoint-2010-web.html">
+<meta property="og:title" content="Ship Today, Scale Tomorrow #1: Different Servers for Different Jobs">
+<meta property="og:url" content="https://blog.backslasher.net/stst1.html">
 
 
-  <meta property="og:description" content="###The Story I haven’t touched SharePoint in a while, but I’ve been asked by a friend to help him do something “the right way”. We were looking for a way to add an HTTPS binding to an existing SharePoint 2010 site. Google is full of ways of doing that, but they involve adding another binding manually via IIS, like this:">
-
-
-
-
-
-
-
-  <meta property="article:published_time" content="2013-11-11T00:00:00+02:00">
+  <meta property="og:description" content="Working with early-stage CTOs, I see two traps repeatedly: over-engineering that steals time today, or decisions that choke growth tomorrow. I wanted to share lessons from the field.">
 
 
 
 
 
 
-<link rel="canonical" href="https://blog.backslasher.net/adding-ssl-to-sharepoint-2010-web.html">
+
+  <meta property="article:published_time" content="2025-11-05T00:00:00+02:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/stst1.html">
 
 
 
@@ -253,15 +253,15 @@
 
 
   <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
-    <meta itemprop="headline" content="Adding SSL to a SharePoint 2010 Web Application, the Right Way">
-    <meta itemprop="description" content="###The StoryI haven’t touched SharePoint in a while, but I’ve been asked by a friend to help him do something “the right way”.We were looking for a way to add an HTTPS binding to an existing SharePoint 2010 site. Google is full of ways of doing that, but theyinvolve adding another binding manually via IIS, like this:">
-    <meta itemprop="datePublished" content="2013-11-11T00:00:00+02:00">
+    <meta itemprop="headline" content="Ship Today, Scale Tomorrow #1: Different Servers for Different Jobs">
+    <meta itemprop="description" content="Working with early-stage CTOs, I see two traps repeatedly: over-engineering that steals time today, or decisions that choke growth tomorrow. I wanted to share lessons from the field.">
+    <meta itemprop="datePublished" content="2025-11-05T00:00:00+02:00">
     
 
     <div class="page__inner-wrap">
       
         <header>
-          <h1 id="page-title" class="page__title" itemprop="headline">Adding SSL to a SharePoint 2010 Web Application, the Right Way
+          <h1 id="page-title" class="page__title" itemprop="headline">Ship Today, Scale Tomorrow #1: Different Servers for Different Jobs
 </h1>
           
 
@@ -277,7 +277,7 @@
       <span class="page__meta-readtime">
         <i class="far fa-clock" aria-hidden="true"></i>
         
-          2 minute read
+          1 minute read
         
       </span>
     
@@ -289,64 +289,21 @@
 
       <section class="page__content" itemprop="text">
         
-        <p>###The Story
-I haven’t touched SharePoint in a while, but I’ve been asked by a friend to help him do something “the right way”.<br />
-We were looking for a way to add an HTTPS binding to an existing SharePoint 2010 site. Google is full of ways of doing that, but they
-involve adding another binding manually via IIS, like this:</p>
+        <p>Working with early-stage CTOs, I see two traps repeatedly: over-engineering that steals time today, or decisions that choke growth tomorrow. I wanted to share lessons from the field.</p>
 
-<p><img src="/assets/adding-ssl-to-sharepoint-2010-web/SharePointSSL1.png" alt="" /></p>
+<hr />
 
-<p>Everyone who’s familiar with SharePoint (and especially with cleaning after poor SharePoint infrastructure work) can see the issue immediately - even if this method works (and it might, with some added configuration) it will only apply to the current SharePoint front-end server - it won’t be reflected in:</p>
+<blockquote>
+  <p>“We already have a Python server for the API, so we figured we’d let it do the AI model training too.”</p>
+</blockquote>
 
-<ul>
-  <li>Other servers in the farm</li>
-  <li>This server if it’s rejoined (as a troubleshooting measure)</li>
-  <li>Future servers added to the farm</li>
-</ul>
+<p>This explained why their API server had grown from a tiny VM into three always-on GPU servers. API requests failed competing with training jobs. Training runs failed competing with each other. All to handle periodic bursts of heavy workloads.</p>
 
-<p>This happens because SharePoint is not informed of the new
-configuration. The right way is through Web Application Extension</p>
+<p>People can think “this is the server we have” - you already provisioned this server, so it’s easy to add more work to it. But one of the great things about the cloud is you can spin up different machines for different purposes, and only pay for what you use.</p>
 
-<h3 id="what-is-web-application-extension">What is Web Application Extension</h3>
-<p>Having more than one binding (a port the IIS site is listening to) is new to IIS 7 (until then, each site had one HTTP port and one HTTPS port). Since SharePoint 2010 is in this mindset (maybe left-overs from 2007), each SharePoint web application is contained in one IIS site, which has only one port.<br />
-However, an administrator can “extend” a web application to a child-web application, allowing the same SharePoint sites to be served using different authentication mechanisms, ports etc.<br />
-More about extending <a href="http://technet.microsoft.com/en-us/library/cc261698%28v=office.14%29.aspx">here.</a><br />
-Basically, you supply SharePoint with information about the new Web Application you want (name, port, SSL, authentication etc.) and the zone it’s capturing (for <a href="http://technet.microsoft.com/en-us/library/cc261814%28v=office.12%29.aspx">alternate access
-mappings</a></p>
-<ul>
-  <li>other URLs that the application might be viewed from).</li>
-</ul>
+<p>We moved training to a batch system that spun up GPU machines only when needed, and as many as needed. The API dropped back to one tiny server. No conflicts, lower costs, reliable performance.</p>
 
-<h3 id="via-central-administration-gui">Via Central Administration (GUI):</h3>
-<p>Open “Web Applications Management” and select the Web Application you wish to extend</p>
-
-<p><img src="/assets/adding-ssl-to-sharepoint-2010-web/SharePointSSL2.png" alt="" /></p>
-
-<p>Hit “Extend” (under “Contribute”) and fill the form to match the configuration of the <strong>new</strong> web application you wish to create. If you’ve used alternate access mappings before with this web application, make sure not to choose a zone you didn’t use already (if you’re not familiar with this term, you’re probably OK with using “Intranet”)</p>
-
-<p><img src="/assets/adding-ssl-to-sharepoint-2010-web/SharePointSSL3.png" alt="" /></p>
-
-<p>Make sure the IIS site has been created. If you did choose SSL, you probably want to configure the certificate.<br />
-Unfortunately, this is done via IIS console (and has to be repeated for every server).<br />
-Open IIS console, find your new site and select “bindings”. Choose the only binding there, select “edit” and choose your favorite certificate.</p>
-
-<p><img src="/assets/adding-ssl-to-sharepoint-2010-web/SharePointSSL4.png" alt="" /></p>
-
-<p>Make sure everything works!</p>
-
-<h3 id="via-powershell">Via PowerShell:</h3>
-<p>It’s much quicker and even included in the official examples.<br />
-Straight from the <a href="http://technet.microsoft.com/en-us/library/ff607551%28v=office.14%29.aspx">Snap-in’s documentation</a>:</p>
-
-<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Get-SPWebApplication</span><span class="w"> </span><span class="s1">'http://sitename'</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">New-SPWebApplicationExtension</span><span class="w"> </span><span class="nt">-Name</span><span class="w"> </span><span class="s2">"ExtranetSite"</span><span class="w"> </span><span class="nt">-SecureSocketsLayer</span><span class="w"> </span><span class="nt">-Zone</span><span class="w"> </span><span class="s2">"Extranet"</span><span class="w"> </span><span class="nt">-URL</span><span class="w"> </span><span class="s2">"https://extranet.sitename.com"</span><span class="w">
-</span></code></pre></div></div>
-
-<p>“This example extends the given Web application at http://sitename to
-the Extranet zone for SSL use.”<br />
-You still have to configure the SSL certificate and make sure everything works.</p>
-
-<h3 id="undoing">Undoing</h3>
-<p>To reverse the process, see <a href="http://technet.microsoft.com/en-us/library/cc288561%28v=office.14%29.aspx">“Unextend a Web application”</a> for both GUI and PowerShell methods.</p>
+<p>Back-office work (batch jobs, training, reports) comes in bursts and tolerates delays. Front-office work (like user-facing APIs) needs speed and consistency. When they mix, they interfere with each other. When you’re small, one server is probably fine. When you start feeling resource contention, it’s time to split.</p>
 
         
       </section>
@@ -363,44 +320,19 @@ You still have to configure the SSL certificate and make sure everything works.<
     <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
     <span itemprop="keywords">
     
-      <a href="/tags/#http" class="page__taxonomy-item" rel="tag">HTTP</a><span class="sep">, </span>
+      <a href="/tags/#cloud" class="page__taxonomy-item" rel="tag">cloud</a><span class="sep">, </span>
     
-      <a href="/tags/#iis" class="page__taxonomy-item" rel="tag">IIS</a><span class="sep">, </span>
-    
-      <a href="/tags/#one-liner" class="page__taxonomy-item" rel="tag">One-Liner</a><span class="sep">, </span>
-    
-      <a href="/tags/#powershell" class="page__taxonomy-item" rel="tag">PowerShell</a><span class="sep">, </span>
-    
-      <a href="/tags/#scripts" class="page__taxonomy-item" rel="tag">Scripts</a><span class="sep">, </span>
-    
-      <a href="/tags/#security" class="page__taxonomy-item" rel="tag">Security</a><span class="sep">, </span>
-    
-      <a href="/tags/#sharepoint" class="page__taxonomy-item" rel="tag">SharePoint</a>
+      <a href="/tags/#stst" class="page__taxonomy-item" rel="tag">stst</a>
     
     </span>
   </p>
 
 
-
-
-  
-
-
-  
-
-  <p class="page__taxonomy">
-    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
-    <span itemprop="keywords">
-    
-      <a href="/categories/#microsoft" class="page__taxonomy-item" rel="tag">Microsoft</a>
-    
-    </span>
-  </p>
 
 
         
 
-  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2013-11-11T00:00:00+02:00">November 11, 2013</time></p>
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2025-11-05T00:00:00+02:00">November 5, 2025</time></p>
 
 
       </footer>
@@ -410,12 +342,11 @@ You still have to configure the SSL certificate and make sure everything works.<
       
   <nav class="pagination">
     
-      <a href="/parsing-event-log-subscription-runtime-status.html" class="pagination--pager" title="Parsing Event Log Subscription Runtime Status using PowerShell and Regex
+      <a href="/git-remote-sapling.html" class="pagination--pager" title="Getting a Git remote from a Sapling repo
 ">Previous</a>
     
     
-      <a href="/using-remote-desktop-client-without-network-level-authentication.html" class="pagination--pager" title="Using Remote Desktop Client without Network Level Authentication
-">Next</a>
+      <a href="#" class="pagination--pager disabled">Next</a>
     
   </nav>
 
@@ -470,45 +401,6 @@ You still have to configure the SSL certificate and make sure everything works.<
       </div>
       <h2 class="page__related-title">You May Also Enjoy</h2>
       <div class="grid__wrapper">
-        
-          
-
-
-
-<div class="grid__item">
-  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
-    
-    <h2 class="archive__item-title no_toc" itemprop="headline">
-      
-        <a href="/stst1.html" rel="permalink">Ship Today, Scale Tomorrow #1: Different Servers for Different Jobs
-</a>
-      
-    </h2>
-    
-
-  <p class="page__meta">
-    
-
-    
-
-    
-      
-      
-
-      <span class="page__meta-readtime">
-        <i class="far fa-clock" aria-hidden="true"></i>
-        
-          1 minute read
-        
-      </span>
-    
-  </p>
-
-
-    <p class="archive__item-excerpt" itemprop="description">Working with early-stage CTOs, I see two traps repeatedly: over-engineering that steals time today, or decisions that choke growth tomorrow. I wanted to shar...</p>
-  </article>
-</div>
-
         
           
 
@@ -626,6 +518,47 @@ Instead, I decided to run a local copy of ESPHome to flash...</p>
     <p class="archive__item-excerpt" itemprop="description">
 
 </p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/eslint-codebase.html" rel="permalink">Introducing ESLint to your codebase smoothly
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">When adding a linter to an existing codbase, my methodology is as follows:
+
+  Create lint config files and approve them with the team (people have strong opi...</p>
   </article>
 </div>
 

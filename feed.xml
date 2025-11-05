@@ -1,4 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2025-11-02T17:47:11+02:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">Getting a Git remote from a Sapling repo</title><link href="https://blog.backslasher.net/git-remote-sapling.html" rel="alternate" type="text/html" title="Getting a Git remote from a Sapling repo" /><published>2025-11-02T00:00:00+02:00</published><updated>2025-11-02T00:00:00+02:00</updated><id>https://blog.backslasher.net/git-remote-sapling</id><content type="html" xml:base="https://blog.backslasher.net/git-remote-sapling.html">&lt;p&gt;Assuming you have a git-backed sapling repo (e.g. you used &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sl clone&lt;/code&gt; on a git repo, or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sl init --git&lt;/code&gt;) and you want to access the commits from a git repo, here is the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;git remote&lt;/code&gt; incantation:&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2025-11-05T16:24:57+02:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">Ship Today, Scale Tomorrow #1: Different Servers for Different Jobs</title><link href="https://blog.backslasher.net/stst1.html" rel="alternate" type="text/html" title="Ship Today, Scale Tomorrow #1: Different Servers for Different Jobs" /><published>2025-11-05T00:00:00+02:00</published><updated>2025-11-05T00:00:00+02:00</updated><id>https://blog.backslasher.net/stst1</id><content type="html" xml:base="https://blog.backslasher.net/stst1.html">&lt;p&gt;Working with early-stage CTOs, I see two traps repeatedly: over-engineering that steals time today, or decisions that choke growth tomorrow. I wanted to share lessons from the field.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;“We already have a Python server for the API, so we figured we’d let it do the AI model training too.”&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;This explained why their API server had grown from a tiny VM into three always-on GPU servers. API requests failed competing with training jobs. Training runs failed competing with each other. All to handle periodic bursts of heavy workloads.&lt;/p&gt;
+
+&lt;p&gt;People can think “this is the server we have” - you already provisioned this server, so it’s easy to add more work to it. But one of the great things about the cloud is you can spin up different machines for different purposes, and only pay for what you use.&lt;/p&gt;
+
+&lt;p&gt;We moved training to a batch system that spun up GPU machines only when needed, and as many as needed. The API dropped back to one tiny server. No conflicts, lower costs, reliable performance.&lt;/p&gt;
+
+&lt;p&gt;Back-office work (batch jobs, training, reports) comes in bursts and tolerates delays. Front-office work (like user-facing APIs) needs speed and consistency. When they mix, they interfere with each other. When you’re small, one server is probably fine. When you start feeling resource contention, it’s time to split.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="stst" /><category term="cloud" /><summary type="html">Working with early-stage CTOs, I see two traps repeatedly: over-engineering that steals time today, or decisions that choke growth tomorrow. I wanted to share lessons from the field.</summary></entry><entry><title type="html">Getting a Git remote from a Sapling repo</title><link href="https://blog.backslasher.net/git-remote-sapling.html" rel="alternate" type="text/html" title="Getting a Git remote from a Sapling repo" /><published>2025-11-02T00:00:00+02:00</published><updated>2025-11-02T00:00:00+02:00</updated><id>https://blog.backslasher.net/git-remote-sapling</id><content type="html" xml:base="https://blog.backslasher.net/git-remote-sapling.html">&lt;p&gt;Assuming you have a git-backed sapling repo (e.g. you used &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sl clone&lt;/code&gt; on a git repo, or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sl init --git&lt;/code&gt;) and you want to access the commits from a git repo, here is the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;git remote&lt;/code&gt; incantation:&lt;/p&gt;
 &lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git remote add &lt;span class=&quot;nb&quot;&gt;local&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$PATH_TO_SAPLING_REPO&lt;/span&gt;/.sl/store/git
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Nitzan</name></author><category term="git" /><category term="sapling" /><summary type="html">Assuming you have a git-backed sapling repo (e.g. you used sl clone on a git repo, or sl init --git) and you want to access the commits from a git repo, here is the git remote incantation: git remote add local $PATH_TO_SAPLING_REPO/.sl/store/git</summary></entry><entry><title type="html">Flashing ESPHome with Docker</title><link href="https://blog.backslasher.net/esphome-flash.html" rel="alternate" type="text/html" title="Flashing ESPHome with Docker" /><published>2025-10-20T00:00:00+03:00</published><updated>2025-10-20T00:00:00+03:00</updated><id>https://blog.backslasher.net/esphome-flash</id><content type="html" xml:base="https://blog.backslasher.net/esphome-flash.html">&lt;p&gt;ESPHome’s WebSerial connection didn’t work for me, and the computer running ESPHome was a bit far.&lt;br /&gt;
 Instead, I decided to run a local copy of ESPHome to flash the firmware over USB, and figured it’s an incantation worth keeping&lt;/p&gt;
@@ -839,95 +853,4 @@ In addition to the actual data, the file table contains some metadata that’ll 
 &lt;/ol&gt;
 
 &lt;p&gt;If you run into this kind of performance issues, it might be time to invest in a fancier solution like an S3 bucket with presigned URLs.&lt;br /&gt;
-On the other hand, you could just slap a bandaid on it in the shape of a CDN.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="Django" /><category term="Python" /><category term="SQL" /><category term="Web" /><summary type="html">I recently got to work on prototyping a small Django-based website that was somewhat like a message board. One of the features requested was allowing users to upload a profile picture, which necessitated storing said pictures somewhere. Django is very opinionated about storing such files in a filesystem, but I prefer storing them in a DB. Here are my reasons:</summary></entry><entry><title type="html">Running GPU workloads on K3S</title><link href="https://blog.backslasher.net/k3s-gpu.html" rel="alternate" type="text/html" title="Running GPU workloads on K3S" /><published>2024-07-18T00:00:00+03:00</published><updated>2024-07-18T00:00:00+03:00</updated><id>https://blog.backslasher.net/k3s-gpu</id><content type="html" xml:base="https://blog.backslasher.net/k3s-gpu.html">&lt;p&gt;A team I work with is very happy with the k8s / ArgoCD setup we set up, and now wants to manage their experimental ML workloads in k8s as well.
-These workloads run in &lt;a href=&quot;https://lambdalabs.com/&quot;&gt;Lambda Labs&lt;/a&gt;, who we use to quickly set up a few GPU-enabled Ubuntu machines in varying sizes. Those servers are not part of a managed k8s cluster, but instead you’re given SSH and Jupyter access and expected to deploy your workload yourself.&lt;/p&gt;
-
-&lt;p&gt;Onboarding them to k8s seemed like a good use for k3s, a batteries-included curl-to-bash-installation of k8s. Getting a k8s node running and a cpu-based pod on it was pretty trivial. However, I couldn’t find a consistent source on how to run GPU loads. After cobbling it together from several places and getting it to work, I’m happy to share my particular rain-dance for Nvidia GPUs on k3s:&lt;/p&gt;
-
-&lt;h2 id=&quot;1-install-k3s&quot;&gt;1. Install k3s&lt;/h2&gt;
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;curl &lt;span class=&quot;nt&quot;&gt;-sfL&lt;/span&gt; https://get.k3s.io | sh -
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Obviously modify with additional parameters if needed. My actual config is:&lt;/p&gt;
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;MY_IP&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;curl ifconfig.me&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;
-curl &lt;span class=&quot;nt&quot;&gt;-sfL&lt;/span&gt; https://get.k3s.io | &lt;span class=&quot;nv&quot;&gt;INSTALL_K3S_EXEC&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;--node-external-ip=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$MY_IP&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; --flannel-backend=wireguard-native --flannel-external-ip --tls-san &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$MY_IP&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; sh -
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;2-install-nvidias-gpu-operator&quot;&gt;2. Install Nvidia’s GPU operator&lt;/h2&gt;
-&lt;p&gt;This will handle detecting GPUs on the node, installing relevant drivers and runtimes, and reporting the GPUs their metadata back to the cluster for scheduling.
-Done by using the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;HelmChart&lt;/code&gt; CRD included with k3s&lt;/p&gt;
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt; | sudo kubectl apply -f -
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: gpu-operator
----
-apiVersion: helm.cattle.io/v1
-kind: HelmChart
-metadata:
-  name: nvidiagpu
-  namespace: gpu-operator
-spec:
-  chart: gpu-operator
-  repo: https://helm.ngc.nvidia.com/nvidia
-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Give it a minute, and then verify:&lt;/p&gt;
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;kubectl get node &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; json | jq &lt;span class=&quot;s1&quot;&gt;'.items[0].status.capacity'&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;div class=&quot;language-json highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;cpu&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;30&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;ephemeral-storage&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;1422559648Ki&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;hugepages-1Gi&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;0&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;hugepages-2Mi&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;0&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;memory&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;232949228Ki&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;nvidia.com/gpu&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;pods&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;110&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;The important part is that the node has &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nvidia.com/gpu&lt;/code&gt; resources detected.&lt;/p&gt;
-
-&lt;h2 id=&quot;3-test-pod&quot;&gt;3. Test pod&lt;/h2&gt;
-&lt;p&gt;Create a test pod that requires a GPU&lt;/p&gt;
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt; | sudo kubectl create -f -
-apiVersion: v1
-kind: Pod
-metadata:
-  name: gpu
-spec:
-  runtimeClassName: nvidia
-  restartPolicy: Never
-  nodeSelector:
-    nvidia.com/gpu.product: &quot;NVIDIA-A100-SXM4-80GB&quot;
-  containers:
-    - name: gpu
-      image: &quot;ubuntu&quot;
-      command: [ &quot;/bin/bash&quot;, &quot;-c&quot;, &quot;--&quot; ]
-      args: [ &quot;while true; do sleep 30; done;&quot; ]
-      resources:
-        limits:
-          nvidia.com/gpu: 2
-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Things to note/configure in the above template:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;runtimeClassName&lt;/code&gt;: Required to expose Nvidia stuff to the pod&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nodeSelector &amp;gt; nvidia.com/gpu.product&lt;/code&gt;: Asking for a specific GPU (in case you have a hetrogenous environment).
- Collect the model’s string from &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;kubectl describe node&lt;/code&gt;.
- Delete if uneeded&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;containers &amp;gt; resources &amp;gt; limits &amp;gt; nvidia.com/gpu&lt;/code&gt;: How many GPUs the pod needs (affects scheduling and actual access)&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;After the pod is submitted and running (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;kubectl get pod&lt;/code&gt;), you can run some CLI tools on it and ensure the result looks nice, e.g.:&lt;/p&gt;
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;kubectl &lt;span class=&quot;nb&quot;&gt;exec&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-it&lt;/span&gt; gpu &lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt; nvidia-smi
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;4-further-configuration&quot;&gt;4. Further configuration&lt;/h2&gt;
-&lt;p&gt;Once that’s done, you can remove the test pod (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;kubectl delete pod gpu&lt;/code&gt;) and continue configuring your cluster - connecting to ArgoCD, deploying actual workloads, etc&lt;/p&gt;
-
-&lt;h2 id=&quot;5-further-reading&quot;&gt;5. Further reading&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/getting-started.html#operator-install-guide&quot;&gt;https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/getting-started.html#operator-install-guide&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://docs.k3s.io/advanced#nvidia-container-runtime-support&quot;&gt;https://docs.k3s.io/advanced#nvidia-container-runtime-support&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://gist.github.com/bgulla/5ea0e7fd310b5db4f9b66036d1cdb3d3&quot;&gt;https://gist.github.com/bgulla/5ea0e7fd310b5db4f9b66036d1cdb3d3&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>Nitzan</name></author><category term="kubernetes" /><category term="linux" /><category term="gpu" /><category term="k3s" /><summary type="html">A team I work with is very happy with the k8s / ArgoCD setup we set up, and now wants to manage their experimental ML workloads in k8s as well. These workloads run in Lambda Labs, who we use to quickly set up a few GPU-enabled Ubuntu machines in varying sizes. Those servers are not part of a managed k8s cluster, but instead you’re given SSH and Jupyter access and expected to deploy your workload yourself.</summary></entry></feed>
+On the other hand, you could just slap a bandaid on it in the shape of a CDN.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="Django" /><category term="Python" /><category term="SQL" /><category term="Web" /><summary type="html">I recently got to work on prototyping a small Django-based website that was somewhat like a message board. One of the features requested was allowing users to upload a profile picture, which necessitated storing said pictures somewhere. Django is very opinionated about storing such files in a filesystem, but I prefer storing them in a DB. Here are my reasons:</summary></entry></feed>
