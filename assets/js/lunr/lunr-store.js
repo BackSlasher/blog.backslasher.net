@@ -1138,4 +1138,10 @@ var store = [{
         "tags": ["stst","cloud"],
         "url": "/stst1.html",
         "teaser": null
+      },{
+        "title": "Audible MP3 Downloader",
+        "excerpt":"I have a friend that is an avid Audible user. They have a big library and enjoy the service very much. They are also an avid swimmer, and have a water-proof media player they can listen to when swimming. They would really like to listen to legally-purchased audiobooks in the...","categories": [],
+        "tags": ["python","weekendproject"],
+        "url": "/audible-downloader.html",
+        "teaser": null
       },]

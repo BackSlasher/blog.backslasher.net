@@ -9,8 +9,8 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Google Storage using cURL - BackSlasher</title>
-<meta name="description" content="I got around to troubleshooting a Python process running in Docker that had some permission problems accessing Google Storage Reproing inside Python with google-cloud-storage was a bit bothersome, and installing the gcloud cli on an Ubuntu-based Docker image takes too much effort on an ephemeral container (if I change stuff, I need to create a new container and I’ll have to reinstall it all over again). I was looking for something that is both easy to run, and doesn’t require me to modify the base container image (the build pipeline was annoying to mess with).">
+<!-- begin _includes/seo.html --><title>Audible MP3 Downloader - BackSlasher</title>
+<meta name="description" content="I have a friend that is an avid Audible user. They have a big library and enjoy the service very much. They are also an avid swimmer, and have a water-proof media player they can listen to when swimming. They would really like to listen to legally-purchased audiobooks in the pool, but found no proper device that can both do Audible and survive underwater.">
 
 
   <meta name="author" content="Nitzan">
@@ -22,26 +22,26 @@
 <meta property="og:type" content="article">
 <meta property="og:locale" content="en_US">
 <meta property="og:site_name" content="BackSlasher">
-<meta property="og:title" content="Google Storage using cURL">
-<meta property="og:url" content="https://blog.backslasher.net/google-storage-curl.html">
+<meta property="og:title" content="Audible MP3 Downloader">
+<meta property="og:url" content="https://blog.backslasher.net/audible-downloader.html">
 
 
-  <meta property="og:description" content="I got around to troubleshooting a Python process running in Docker that had some permission problems accessing Google Storage Reproing inside Python with google-cloud-storage was a bit bothersome, and installing the gcloud cli on an Ubuntu-based Docker image takes too much effort on an ephemeral container (if I change stuff, I need to create a new container and I’ll have to reinstall it all over again). I was looking for something that is both easy to run, and doesn’t require me to modify the base container image (the build pipeline was annoying to mess with).">
-
-
-
-
-
-
-
-  <meta property="article:published_time" content="2024-10-11T00:00:00+03:00">
+  <meta property="og:description" content="I have a friend that is an avid Audible user. They have a big library and enjoy the service very much. They are also an avid swimmer, and have a water-proof media player they can listen to when swimming. They would really like to listen to legally-purchased audiobooks in the pool, but found no proper device that can both do Audible and survive underwater.">
 
 
 
 
 
 
-<link rel="canonical" href="https://blog.backslasher.net/google-storage-curl.html">
+
+  <meta property="article:published_time" content="2025-12-01T00:00:00+02:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/audible-downloader.html">
 
 
 
@@ -253,15 +253,15 @@
 
 
   <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
-    <meta itemprop="headline" content="Google Storage using cURL">
-    <meta itemprop="description" content="I got around to troubleshooting a Python process running in Docker that had some permission problems accessing Google StorageReproing inside Python with google-cloud-storage was a bit bothersome, and installing the gcloud cli on an Ubuntu-based Docker image takes too much effort on an ephemeral container (if I change stuff, I need to create a new container and I’ll have to reinstall it all over again). I was looking for something that is both easy to run, and doesn’t require me to modify the base container image (the build pipeline was annoying to mess with).">
-    <meta itemprop="datePublished" content="2024-10-11T00:00:00+03:00">
+    <meta itemprop="headline" content="Audible MP3 Downloader">
+    <meta itemprop="description" content="I have a friend that is an avid Audible user. They have a big library and enjoy the service very much. They are also an avid swimmer, and have a water-proof media player they can listen to when swimming.They would really like to listen to legally-purchased audiobooks in the pool, but found no proper device that can both do Audible and survive underwater.">
+    <meta itemprop="datePublished" content="2025-12-01T00:00:00+02:00">
     
 
     <div class="page__inner-wrap">
       
         <header>
-          <h1 id="page-title" class="page__title" itemprop="headline">Google Storage using cURL
+          <h1 id="page-title" class="page__title" itemprop="headline">Audible MP3 Downloader
 </h1>
           
 
@@ -277,7 +277,7 @@
       <span class="page__meta-readtime">
         <i class="far fa-clock" aria-hidden="true"></i>
         
-          1 minute read
+          less than 1 minute read
         
       </span>
     
@@ -289,35 +289,29 @@
 
       <section class="page__content" itemprop="text">
         
-        <p>I got around to troubleshooting a Python process running in Docker that had some permission problems accessing Google Storage
-Reproing inside Python with <code class="language-plaintext highlighter-rouge">google-cloud-storage</code> was a bit bothersome, and installing the gcloud cli on an Ubuntu-based Docker image takes too much effort on an ephemeral container (if I change stuff, I need to create a new container and I’ll have to reinstall it all over again). I was looking for something that is both easy to run, and doesn’t require me to modify the base container image (the build pipeline was annoying to mess with).</p>
+        <p>I have a friend that is an avid Audible user. They have a big library and enjoy the service very much. They are also an avid swimmer, and have a water-proof media player they can listen to when swimming.<br />
+They would really like to listen to legally-purchased audiobooks in the pool, but found no proper device that can both do Audible and survive underwater.</p>
 
-<p>cURL to the rescue!</p>
+<p>My first suggestion was using some Bluetooth trickery, but it seems that it doesn’t really work underwater. A bit of research showed that underwater radio is not a solved problem, so I left this research venue alone.  Last weekend, using some other people’s work and Python-glue, I got them a website they can:</p>
 
-<h3 id="getting-an-access-token">Getting an access token</h3>
-<p>This fetches a token from GKE’s metadata endpoint.</p>
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">TOKEN</span><span class="o">=</span><span class="s2">"</span><span class="si">$(</span>curl <span class="nt">-H</span> <span class="s2">"Metadata-Flavor: Google"</span> <span class="s1">'http://metadata/computeMetadata/v1/instance/service-accounts/default/token'</span> <span class="nt">-s</span> | jq .access_token <span class="nt">-r</span><span class="si">)</span><span class="s2">"</span>
-</code></pre></div></div>
+<ol>
+  <li>Log in to Audible</li>
+  <li>See their library</li>
+  <li>Choose books to download-convert</li>
+  <li>Get a converted book as a zip</li>
+</ol>
 
-<h3 id="listing-files-in-a-bucket">Listing files in a bucket</h3>
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">-X</span> GET <span class="nt">-H</span> <span class="s2">"Authorization: Bearer </span><span class="nv">$TOKEN</span><span class="s2">"</span> <span class="s2">"https://storage.googleapis.com/storage/v1/b/</span><span class="nv">$BUCKET_NAME</span><span class="s2">/o/"</span>
-</code></pre></div></div>
+<p><img src="assets/audible-downloader/ui.png" alt="" /></p>
 
-<h3 id="getting-a-file">Getting a file</h3>
-<p>Note that <code class="language-plaintext highlighter-rouge">FILENAME</code> needs to be url-encoded, even the slashes that are used for “directories”.<br />
-Without <code class="language-plaintext highlighter-rouge">?alt=media</code>, you’ll get metadata for the file</p>
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">-X</span> GET <span class="nt">-H</span> <span class="s2">"Authorization: Bearer </span><span class="nv">$TOKEN</span><span class="s2">"</span> <span class="s2">"https://storage.googleapis.com/storage/v1/b/</span><span class="nv">$BUCKET_NAME</span><span class="s2">/o/</span><span class="nv">$FILENAME</span><span class="s2">?alt=media"</span>
-</code></pre></div></div>
+<h2 id="some-nitty-gritty">Some nitty-gritty</h2>
+<p>FastAPI, uv for dependency management.<br />
+Vibe-coded with Claude CLI.<br />
+Uses the <code class="language-plaintext highlighter-rouge">audible</code> and <code class="language-plaintext highlighter-rouge">audible-cli</code> Python packages for Audible interaction.<br />
+Comes with a Docker image, but can run without (if you have a proper ffmpeg setup)<br />
+Has an SQLite db for saving Audible connections (per browser session) and job management, it’s ok not to persist it.</p>
 
-<h3 id="putting-a-file">Putting a file</h3>
-<p>Again, <code class="language-plaintext highlighter-rouge">FILENAME</code> needs to be properly encoded</p>
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">-X</span> POST <span class="nt">--data-binary</span> @ACTUAL_FILE_PATH <span class="se">\</span>
-    <span class="nt">-H</span> <span class="s2">"Authorization: Bearer </span><span class="nv">$TOKEN</span><span class="s2">"</span> <span class="se">\</span>
-    <span class="s2">"https://storage.googleapis.com/upload/storage/v1/b/</span><span class="nv">$BUCKET_NAME</span><span class="s2">/o?uploadType=media&amp;name=</span><span class="nv">$FILENAME</span><span class="s2">"</span>
-</code></pre></div></div>
-
-<h3 id="further-reading">Further reading</h3>
-<p>Copied most of these from <a href="https://cloud.google.com/storage/docs/downloading-objects">https://cloud.google.com/storage/docs/downloading-objects</a> et al</p>
+<h2 id="get-it-while-its-hot">Get it while it’s hot</h2>
+<p><a href="https://github.com/BackSlasher/audible-downloader">https://github.com/BackSlasher/audible-downloader</a></p>
 
         
       </section>
@@ -334,11 +328,9 @@ Without <code class="language-plaintext highlighter-rouge">?alt=media</code>, yo
     <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
     <span itemprop="keywords">
     
-      <a href="/tags/#cloud" class="page__taxonomy-item" rel="tag">cloud</a><span class="sep">, </span>
+      <a href="/tags/#python" class="page__taxonomy-item" rel="tag">python</a><span class="sep">, </span>
     
-      <a href="/tags/#curl" class="page__taxonomy-item" rel="tag">curl</a><span class="sep">, </span>
-    
-      <a href="/tags/#google" class="page__taxonomy-item" rel="tag">google</a>
+      <a href="/tags/#weekendproject" class="page__taxonomy-item" rel="tag">weekendproject</a>
     
     </span>
   </p>
@@ -348,7 +340,7 @@ Without <code class="language-plaintext highlighter-rouge">?alt=media</code>, yo
 
         
 
-  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2024-10-11T00:00:00+03:00">October 11, 2024</time></p>
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2025-12-01T00:00:00+02:00">December 1, 2025</time></p>
 
 
       </footer>
@@ -358,12 +350,11 @@ Without <code class="language-plaintext highlighter-rouge">?alt=media</code>, yo
       
   <nav class="pagination">
     
-      <a href="/django-db-images.html" class="pagination--pager" title="Serving Images from the DB in Django
+      <a href="/stst1.html" class="pagination--pager" title="Ship Today, Scale Tomorrow #1: Different Servers for Different Jobs
 ">Previous</a>
     
     
-      <a href="/fastapi-sqlalchemy-stream.html" class="pagination--pager" title="Streaming SQL results from SQLALchemy via a FastAPI endpoint
-">Next</a>
+      <a href="#" class="pagination--pager disabled">Next</a>
     
   </nav>
 
@@ -418,45 +409,6 @@ Without <code class="language-plaintext highlighter-rouge">?alt=media</code>, yo
       </div>
       <h2 class="page__related-title">You May Also Enjoy</h2>
       <div class="grid__wrapper">
-        
-          
-
-
-
-<div class="grid__item">
-  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
-    
-    <h2 class="archive__item-title no_toc" itemprop="headline">
-      
-        <a href="/audible-downloader.html" rel="permalink">Audible MP3 Downloader
-</a>
-      
-    </h2>
-    
-
-  <p class="page__meta">
-    
-
-    
-
-    
-      
-      
-
-      <span class="page__meta-readtime">
-        <i class="far fa-clock" aria-hidden="true"></i>
-        
-          1 minute read
-        
-      </span>
-    
-  </p>
-
-
-    <p class="archive__item-excerpt" itemprop="description">I have a friend that is an avid Audible user. They have a big library and enjoy the service very much. They are also an avid swimmer, and have a water-proof ...</p>
-  </article>
-</div>
-
         
           
 
@@ -572,6 +524,47 @@ Without <code class="language-plaintext highlighter-rouge">?alt=media</code>, yo
 
     <p class="archive__item-excerpt" itemprop="description">ESPHome’s WebSerial connection didn’t work for me, and the computer running ESPHome was a bit far.
 Instead, I decided to run a local copy of ESPHome to flash...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/tapestry.html" rel="permalink">Tapestry
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          15 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+
+</p>
   </article>
 </div>
 
