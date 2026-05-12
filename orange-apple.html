@@ -9,8 +9,8 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>DNS Namesake - the DNS MitM - BackSlasher</title>
-<meta name="description" content="The Story Imagine this situtation: ```text       THE WORLD        /   company.com       | A     s1.red.company.com A     s2.red.company.com        … A     sN.red.company.com CNAME lb.red.company.com -&gt; s1.red.company.com CNAME lb.red.company.com -&gt; s2.red.company.com        … CNAME lb.red.company.com -&gt; sN.red.company.com">
+<!-- begin _includes/seo.html --><title>“Can you paint this apple orange?” - BackSlasher</title>
+<meta name="description" content="One of my gigs was about migrating a workload from one hyperscaler to another. I was paired with a team lead that was chronically busy, which is why they couldn’t attend to this project themselves. Managed Kubernetes on both ends meant I didn’t have to worry about images and server provisioning. Easy in and out, I figured. The problem started when we discussed performance comparison. The original setup had 2 pods per node on a specific server type. Since the providers don’t carry the same machine type, I figured I’d check the existing resource requests/limits, and transfer them to the new provider, since comparing the machines themselves is a bit apples to oranges. I got a surprising pushback on this.">
 
 
   <meta name="author" content="Nitzan">
@@ -22,26 +22,26 @@
 <meta property="og:type" content="article">
 <meta property="og:locale" content="en_US">
 <meta property="og:site_name" content="BackSlasher">
-<meta property="og:title" content="DNS Namesake - the DNS MitM">
-<meta property="og:url" content="https://blog.backslasher.net/dns-namesake.html">
+<meta property="og:title" content="“Can you paint this apple orange?”">
+<meta property="og:url" content="https://blog.backslasher.net/orange-apple.html">
 
 
-  <meta property="og:description" content="The Story Imagine this situtation: ```text       THE WORLD        /   company.com       | A     s1.red.company.com A     s2.red.company.com        … A     sN.red.company.com CNAME lb.red.company.com -&gt; s1.red.company.com CNAME lb.red.company.com -&gt; s2.red.company.com        … CNAME lb.red.company.com -&gt; sN.red.company.com">
-
-
-
-
-
-
-
-  <meta property="article:published_time" content="2016-11-05T00:00:00+02:00">
+  <meta property="og:description" content="One of my gigs was about migrating a workload from one hyperscaler to another. I was paired with a team lead that was chronically busy, which is why they couldn’t attend to this project themselves. Managed Kubernetes on both ends meant I didn’t have to worry about images and server provisioning. Easy in and out, I figured. The problem started when we discussed performance comparison. The original setup had 2 pods per node on a specific server type. Since the providers don’t carry the same machine type, I figured I’d check the existing resource requests/limits, and transfer them to the new provider, since comparing the machines themselves is a bit apples to oranges. I got a surprising pushback on this.">
 
 
 
 
 
 
-<link rel="canonical" href="https://blog.backslasher.net/dns-namesake.html">
+
+  <meta property="article:published_time" content="2026-05-11T00:00:00+03:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/orange-apple.html">
 
 
 
@@ -251,15 +251,15 @@
 
 
   <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
-    <meta itemprop="headline" content="DNS Namesake - the DNS MitM">
-    <meta itemprop="description" content="The StoryImagine this situtation:```text      THE WORLD       /  company.com      |A     s1.red.company.comA     s2.red.company.com       …A     sN.red.company.comCNAME lb.red.company.com -&gt; s1.red.company.comCNAME lb.red.company.com -&gt; s2.red.company.com       …CNAME lb.red.company.com -&gt; sN.red.company.com">
-    <meta itemprop="datePublished" content="2016-11-05T00:00:00+02:00">
+    <meta itemprop="headline" content="“Can you paint this apple orange?”">
+    <meta itemprop="description" content="One of my gigs was about migrating a workload from one hyperscaler to another.I was paired with a team lead that was chronically busy, which is why they couldn’t attend to this project themselves.Managed Kubernetes on both ends meant I didn’t have to worry about images and server provisioning. Easy in and out, I figured.The problem started when we discussed performance comparison. The original setup had 2 pods per node on a specific server type.Since the providers don’t carry the same machine type, I figured I’d check the existing resource requests/limits, and transfer them to the new provider, since comparing the machines themselves is a bit apples to oranges. I got a surprising pushback on this.">
+    <meta itemprop="datePublished" content="2026-05-11T00:00:00+03:00">
     
 
     <div class="page__inner-wrap">
       
         <header>
-          <h1 id="page-title" class="page__title" itemprop="headline">DNS Namesake - the DNS MitM
+          <h1 id="page-title" class="page__title" itemprop="headline">“Can you paint this apple orange?”
 </h1>
           
 
@@ -275,7 +275,7 @@
       <span class="page__meta-readtime">
         <i class="far fa-clock" aria-hidden="true"></i>
         
-          2 minute read
+          4 minute read
         
       </span>
     
@@ -287,71 +287,43 @@
 
       <section class="page__content" itemprop="text">
         
-        <h1 id="the-story">The Story</h1>
-<p>Imagine this situtation:</p>
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>      THE WORLD
-       /
-  company.com
-      |
-A     s1.red.company.com
-A     s2.red.company.com
-       ...
-A     sN.red.company.com
-CNAME lb.red.company.com -&gt; s1.red.company.com
-CNAME lb.red.company.com -&gt; s2.red.company.com
-       ...
-CNAME lb.red.company.com -&gt; sN.red.company.com
+        <p>One of my gigs was about migrating a workload from one hyperscaler to another.
+I was paired with a team lead that was chronically busy, which is why they couldn’t attend to this project themselves.
+Managed Kubernetes on both ends meant I didn’t have to worry about images and server provisioning. Easy in and out, I figured.<br />
+The problem started when we discussed performance comparison. The original setup had 2 pods per node on a specific server type.
+Since the providers don’t carry the same machine type, I figured I’d check the existing resource requests/limits, and transfer them to the new provider, since comparing the machines themselves is a bit apples to oranges. I got a surprising pushback on this.</p>
 
-A     s1.blue.company.com
-A     s2.blue.company.com
-       ...
-A     sN.blue.company.com
-CNAME lb.blue.company.com -&gt; s1.blue.company.com
-CNAME lb.blue.company.com -&gt; s2.blue.company.com
-       ...
-CNAME lb.blue.company.com -&gt; sN.blue.company.com
+<h2 id="we-need-2-per-server">“We need 2 per server”</h2>
+<p>The new provider’s k8s scheduler decided to pack 5 pods per server, obviously choosing a bigger machine type than the original one. This performed poorly - choking and failing their healthcheck. When I informed the tech people and started investigating, the lead told me “obviously they’re failing, they’re contending with 4 pods instead of 1!”, and was then needed elsewhere.
+I assumed that the battle-hardened lead had some wisdom hidden in that statement, and assumed that there’s a mystery constrained resource - network bandwidth, some sysctl limitation, open socket count.</p>
 
-CNAME color.company.com -&gt; lb.red.company.com
-</code></pre></div></div>
-<p>In the diagram above, we have multiple RED and BLU servers, and records <code class="language-plaintext highlighter-rouge">red.company.com</code>/<code class="language-plaintext highlighter-rouge">blu.company.com</code> pointing to the servers using some sort of LB mechanism. We also have a <code class="language-plaintext highlighter-rouge">color</code> record, currently pointing to RED.<br />
-<strong>Your mission:</strong>: Run a process of a specific application in an environment where a query for <code class="language-plaintext highlighter-rouge">color</code> points to <code class="language-plaintext highlighter-rouge">blu</code>.
-<strong>The hard part</strong>:</p>
-<ol>
-  <li>You have to simulate the LB, so different queries for <code class="language-plaintext highlighter-rouge">color</code> return different <code class="language-plaintext highlighter-rouge">blu</code> servers.<br />
- This means we can’t use <code class="language-plaintext highlighter-rouge">/etc/hosts</code> and point <code class="language-plaintext highlighter-rouge">color</code> to a random <code class="language-plaintext highlighter-rouge">blu</code> server.</li>
-  <li>The application sends other DNS queries that we can’t predict ahead of time.<br />
-This means we can’t point the app to a custom DNS server that only has the <code class="language-plaintext highlighter-rouge">color</code> record.</li>
-  <li>The application is blackboxed and we have no access to its source code.<br />
- This means we can’t work around the DNS problem by replacing some app logic.</li>
-</ol>
+<h2 id="the-investigation">The investigation</h2>
+<p>The service was very simple. No state, gets some HTTP requests and sends some HTTP requests upstream in response. Very microservice-y. 
+My setup was very straightforward - I observed some requests and synthesized my own. Then I created a special Python script (later a Kubernetes pod) that spams a given target with n requests per second. I put a spammer deployment and a victim pod in a cluster (to avoid external network becoming a problem) and started sending varying amounts of traffic to see when the pod breaks, and why.<br />
+After several hours, I confidently located the constrained external resource.<br />
+It was “nothing”.<br />
+Turns out the process was composed of several queues and workers and producers and consumers, and naturally the flow wasn’t homogenous and some queues were more prone to getting full, as queues do.
+When one of the queues ended up getting full and causing the inserting code to block, that traffic jam grew until it reached the part that consumes HTTP requests. Since the HTTP listener was unbounded (why? unclear. maybe “for performance”), the server would take in more and more requests until all it’d do is accept the TCP handshake and hang, causing it to be terminated and taking all of the inflight requests with it.
+Some time was spent tweaking queue sizes, playing with configs or adding new ones, while trying to avoid completely rewriting the app.
+Where 200 pods were needed because of each process self-constraining, I reached a setup with 10 pods actually needed for peak traffic, so let’s say 20 overall. Since pod count is not an interesting metric, let’s say that a 7K$ monthly spend could be reduced to 1K$.
+Not bad, I figured.</p>
 
-<h2 id="why-its-a-hard-problem">Why it’s a hard problem</h2>
-<p>Since we have to modify the DNS response returning to the app, and we have to let some queries remain untouched, the solution should look like a DNS Man-in-the-Middle.<br />
-There are two options I’ve discarded because they’re difficult:</p>
+<h2 id="its-not-the-same">“It’s not the same”</h2>
+<p>The lead could not be convinced that 20 pods is enough. “What about resiliency?” they said, worried that a crashing server will take 5% of the inflight requests, much more dangerous than the 0.5% in a 200 pod configuration. To my suggestion of making the pods smaller and stacking them up (wasteful, but their money), they responded with “no, that’d be too small”.
+This started a game of trying to make the apples look as orange-ish as possible, despite them growing from the wrong tree.
+We kept the pods, costing the company more money, but looking the same as the legacy configuration if you squint hard enough.
+I tried explaining that comparing servers, or pods, or process count is apples to oranges. That it’s not a metal appliance we’re sticking in another datacenter, it’s a process.
+I said you should look at it as something that costs money and outputs RPS and stability. It doesn’t matter how many copies (beyond let’s say 3, for resiliency), it doesn’t matter what hardware or what size. If it runs on a pumpkin but answers all of my queries, I’ll take it.</p>
 
-<ol>
-  <li>Make the production server treat our app differently: This is impossible to do with the slim DNS server applications that companies usually run</li>
-  <li>Use some network utility to do TCP-level interception of the DNS answers and replace them on the wire: Sounds very difficult</li>
-</ol>
+<h2 id="tangent-autoscaling">Tangent: Autoscaling</h2>
+<p>As a cost-cutting measure, the original cluster had autoscaling. A predictive metric indicating user load was used to preemptively scale the cluster between 100 and 200 pods. Since the original one had it, the new one had to as well, despite it being between 10x and 20x overprovisioned.<br />
+I have to say that I strongly dislike autoscaling. Configuring it properly is hard. It’s a big moving part, depending on several components to work successfully. I found that it’s often used as a way to cover over not having sized your service properly (“what do I care how many RPS a server can handle? we can add as many as we need”), and I instead default to overprovisioning (e.g. 150% of peak traffic) unless the cost is prohibitive</p>
 
-<p>I’m left with somehow delegating queries that I want to modify (<code class="language-plaintext highlighter-rouge">color.company.com</code>) to a special DNS server, and resolve all other queries regularly. For that, we need to set up a DNS server</p>
-
-<h2 id="recursive-or-authorative">Recursive or Authorative</h2>
-<p>According to the DNS FRC, servers can either be Recurisve or Authorative.<br />
-<strong>Recursive</strong> DNS servers will go that extra mile for answering queries that involve upstream servers.<br />
-Say a DNS server gets a query for <code class="language-plaintext highlighter-rouge">color.company.com. IN A</code>, and has to go upstream for it. It get the response <code class="language-plaintext highlighter-rouge">color.company.com. IN CNAME google.com.</code>.<br />
-A recursive server will re-issue a query for <code class="language-plaintext highlighter-rouge">google.com IN A</code>, and give the client the complete answer.<br />
-A non-recursive server will simply return the <code class="language-plaintext highlighter-rouge">CNAME</code> result, risking leaving the client unhappy.</p>
-
-<p><strong>Authorative</strong> DNS servers will answer innacurate queries about zones it knows about.<br />
-Say a DNS server that holds <code class="language-plaintext highlighter-rouge">company.com</code> gets a query for <code class="language-plaintext highlighter-rouge">color.company.com. IN A</code>, but it has <code class="language-plaintext highlighter-rouge">color.company.com IN CNAME</code>.<br />
-An authorative server will respond with the <code class="language-plaintext highlighter-rouge">CNAME</code> answer, and might include the following query if it has it. This will allow the client to continue the resolution.<br />
-A non-authorative server will respond with “nodata”, terminating the journey to the coveted IP address.</p>
-
-<p>I assume that for proper internet functionality, each server has to be only one of those two types, because it’s either affiliated with the client (recursive) or affiliated with the servers (authorative).<br />
-However, in my case I needed a server that is both recursive and authorative - when presented with a question about an <code class="language-plaintext highlighter-rouge">A</code> record which it has a <code class="language-plaintext highlighter-rouge">CNAME</code> for, it must both reply with the <code class="language-plaintext highlighter-rouge">CNAME</code> answer and perform additional resolution for the <code class="language-plaintext highlighter-rouge">CNAME</code> target (in case it doesn’t have it)</p>
-
-<p>If we take the above example, querying for <code class="language-plaintext highlighter-rouge">color.comapny.com. IN A</code>, a non-recursive DNS server will answer negatively</p>
+<h2 id="end-of-story">End of story</h2>
+<p>I managed to convince the tech lead that some of the changes I did are good, or at least not-bad, and got them merged.
+The migration has been completed, and the new cluster is still overprovisioned with autoscaling. I constantly remind myself that it’s not my circus and not my monkeys.
+After some further observation, I think the 2-pod-per-server insistence is a symptom of a team that grew organically without ever having an outsider review their operating procedures. Flawed-but-working methodology became “how things are done here.”
+Anyway, if they want to reduce their cost by ~6K$/mo, I have just the thing :)</p>
 
         
       </section>
@@ -368,34 +340,17 @@ However, in my case I needed a server that is both recursive and authorative - w
     <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
     <span itemprop="keywords">
     
-      <a href="/tags/#dns" class="page__taxonomy-item" rel="tag">DNS</a><span class="sep">, </span>
-    
-      <a href="/tags/#python" class="page__taxonomy-item" rel="tag">Python</a>
+      <a href="/tags/#ramblings" class="page__taxonomy-item" rel="tag">ramblings</a>
     
     </span>
   </p>
 
 
-
-
-  
-
-
-  
-
-  <p class="page__taxonomy">
-    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
-    <span itemprop="keywords">
-    
-      <a href="/categories/#foss" class="page__taxonomy-item" rel="tag">FOSS</a>
-    
-    </span>
-  </p>
 
 
         
 
-  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2016-11-05T00:00:00+02:00">November 5, 2016</time></p>
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2026-05-11T00:00:00+03:00">May 11, 2026</time></p>
 
 
       </footer>
@@ -405,12 +360,11 @@ However, in my case I needed a server that is both recursive and authorative - w
       
   <nav class="pagination">
     
-      <a href="/bs-prettify.html" class="pagination--pager" title="Prettify HTML pages with BeautifulSoup
+      <a href="/audible-downloader.html" class="pagination--pager" title="Audible MP3 Downloader
 ">Previous</a>
     
     
-      <a href="/stringify-hash.html" class="pagination--pager" title="Stringify Hash Keys in Ruby
-">Next</a>
+      <a href="#" class="pagination--pager disabled">Next</a>
     
   </nav>
 
@@ -475,46 +429,6 @@ However, in my case I needed a server that is both recursive and authorative - w
     
     <h2 class="archive__item-title no_toc" itemprop="headline">
       
-        <a href="/orange-apple.html" rel="permalink">“Can you paint this apple orange?”
-</a>
-      
-    </h2>
-    
-
-  <p class="page__meta">
-    
-
-    
-
-    
-      
-      
-
-      <span class="page__meta-readtime">
-        <i class="far fa-clock" aria-hidden="true"></i>
-        
-          4 minute read
-        
-      </span>
-    
-  </p>
-
-
-    <p class="archive__item-excerpt" itemprop="description">One of my gigs was about migrating a workload from one hyperscaler to another.
-I was paired with a team lead that was chronically busy, which is why they cou...</p>
-  </article>
-</div>
-
-        
-          
-
-
-
-<div class="grid__item">
-  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
-    
-    <h2 class="archive__item-title no_toc" itemprop="headline">
-      
         <a href="/audible-downloader.html" rel="permalink">Audible MP3 Downloader
 </a>
       
@@ -533,7 +447,7 @@ I was paired with a team lead that was chronically busy, which is why they cou..
       <span class="page__meta-readtime">
         <i class="far fa-clock" aria-hidden="true"></i>
         
-          1 minute read
+          less than 1 minute read
         
       </span>
     
@@ -619,6 +533,46 @@ I was paired with a team lead that was chronically busy, which is why they cou..
 
 
     <p class="archive__item-excerpt" itemprop="description">Assuming you have a git-backed sapling repo (e.g. you used sl clone on a git repo, or sl init --git) and you want to access the commits from a git repo, here...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/esphome-flash.html" rel="permalink">Flashing ESPHome with Docker
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">ESPHome’s WebSerial connection didn’t work for me, and the computer running ESPHome was a bit far.
+Instead, I decided to run a local copy of ESPHome to flash...</p>
   </article>
 </div>
 

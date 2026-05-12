@@ -1144,4 +1144,10 @@ var store = [{
         "tags": ["python","weekendproject"],
         "url": "/audible-downloader.html",
         "teaser": null
+      },{
+        "title": "\"Can you paint this apple orange?\"",
+        "excerpt":"One of my gigs was about migrating a workload from one hyperscaler to another. I was paired with a team lead that was chronically busy, which is why they couldn’t attend to this project themselves. Managed Kubernetes on both ends meant I didn’t have to worry about images and server...","categories": [],
+        "tags": ["ramblings"],
+        "url": "/orange-apple.html",
+        "teaser": null
       },]
