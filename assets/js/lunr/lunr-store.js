@@ -1123,7 +1123,7 @@ var store = [{
       },{
         "title": "Flashing ESPHome with Docker",
         "excerpt":"ESPHome’s WebSerial connection didn’t work for me, and the computer running ESPHome was a bit far. Instead, I decided to run a local copy of ESPHome to flash the firmware over USB, and figured it’s an incantation worth keeping First, save your target yaml locally, e.g. device.yaml. Then: docker run...","categories": [],
-        "tags": ["homeassistant","esp32","weekendproject"],
+        "tags": ["homeassistant","esp32","weekendproject","docker","podman"],
         "url": "/esphome-flash.html",
         "teaser": null
       },{

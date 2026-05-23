@@ -307,6 +307,17 @@ Then:</p>
 
 <p>Keep this running until you see the device log reporting successfully connecting to wifi</p>
 
+<h2 id="podman-update">Podman update</h2>
+<p>I moved to podman, and improved the original incantations a bit</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>podman run <span class="nt">--group-add</span> keep-groups <span class="nt">--rm</span> <span class="nt">-v</span> .:/app:ro <span class="nt">-v</span> esphome-cache:/app/.esphome ghcr.io/esphome/esphome run /app/device.yaml <span class="nt">--device</span> /dev/ttyUSB0 <span class="nt">--no-logs</span>
+</code></pre></div></div>
+
+<ol>
+  <li>Named cache directory so we can reuse cache but don’t have to make the main one read-write</li>
+  <li><code class="language-plaintext highlighter-rouge">--no-logs</code> makes the process quit when the flashing’s done</li>
+  <li><code class="language-plaintext highlighter-rouge">--group-add keep-groups</code> passes my group membership, which we need because of rootless containers</li>
+</ol>
+
         
       </section>
 
@@ -322,9 +333,13 @@ Then:</p>
     <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
     <span itemprop="keywords">
     
+      <a href="/tags/#docker" class="page__taxonomy-item" rel="tag">docker</a><span class="sep">, </span>
+    
       <a href="/tags/#esp32" class="page__taxonomy-item" rel="tag">esp32</a><span class="sep">, </span>
     
       <a href="/tags/#homeassistant" class="page__taxonomy-item" rel="tag">homeassistant</a><span class="sep">, </span>
+    
+      <a href="/tags/#podman" class="page__taxonomy-item" rel="tag">podman</a><span class="sep">, </span>
     
       <a href="/tags/#weekendproject" class="page__taxonomy-item" rel="tag">weekendproject</a>
     
