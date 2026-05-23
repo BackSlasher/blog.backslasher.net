@@ -1150,4 +1150,10 @@ var store = [{
         "tags": ["ramblings"],
         "url": "/orange-apple.html",
         "teaser": null
+      },{
+        "title": "ESPHome proxy for Switcher",
+        "excerpt":"I have a Switcher at home, which is a smart water heater controller. It lives in the IoT wifi jail, where they’re not allowed to reach to the open internet, and can only reply to requests from other devices (i.e. HomeAssistant). My problem is and was that the Switcher updates...","categories": [],
+        "tags": ["esphome","esp32","switcher","homeassistant"],
+        "url": "/esphome-switcher-proxy.html",
+        "teaser": null
       },]
