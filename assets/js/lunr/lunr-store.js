@@ -1156,4 +1156,10 @@ var store = [{
         "tags": ["esphome","esp32","switcher","homeassistant"],
         "url": "/esphome-switcher-proxy.html",
         "teaser": null
+      },{
+        "title": "Downloading a data uri as file",
+        "excerpt":"While browsing some website, I ran into an audio player that had a source that was embedded: &lt;audio autoplay=\"\"&gt; &lt;source type=\"audio/mpeg\" src=\"data:audio/mpeg;base64,...LONG_BASE_64...\"&gt; &lt;/audio&gt; I wanted to save that audio, but it wasn’t trivial (no “save as” ui, no clear resource I can save from the network tab). I ended up...","categories": [],
+        "tags": ["html","javascript","browser"],
+        "url": "/download-data-uri.html",
+        "teaser": null
       },]

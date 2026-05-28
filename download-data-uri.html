@@ -9,8 +9,8 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Viewing detailed replication status using Repadmin and PowerShell - BackSlasher</title>
-<meta name="description" content="Whenever I want to view the replication status in my domain, I use repadmin /replsum, which queries all of the DCs and gives me a summary of the replication links status per DC, which looks a little like this:">
+<!-- begin _includes/seo.html --><title>Downloading a data uri as file - BackSlasher</title>
+<meta name="description" content="While browsing some website, I ran into an audio player that had a source that was embedded: &lt;audio autoplay=&quot;&quot;&gt;     &lt;source type=&quot;audio/mpeg&quot; src=&quot;data:audio/mpeg;base64,...LONG_BASE_64...&quot;&gt; &lt;/audio&gt;  I wanted to save that audio, but it wasn’t trivial (no “save as” ui, no clear resource I can save from the network tab). I ended up with a small reusable method. Start with right click the source element and choosing “use in console” to have it as temp0: fetch(temp0.src)   .then(r =&gt; r.blob())   .then(blob =&gt; {     const a = document.createElement(&quot;a&quot;);     a.href = URL.createObjectURL(blob);     a.download = &quot;audio.mp3&quot;;     a.click();   });">
 
 
   <meta name="author" content="Nitzan">
@@ -22,26 +22,26 @@
 <meta property="og:type" content="article">
 <meta property="og:locale" content="en_US">
 <meta property="og:site_name" content="BackSlasher">
-<meta property="og:title" content="Viewing detailed replication status using Repadmin and PowerShell">
-<meta property="og:url" content="https://blog.backslasher.net/viewing-detailed-replication-status-using-repadmin-and-powershell.html">
+<meta property="og:title" content="Downloading a data uri as file">
+<meta property="og:url" content="https://blog.backslasher.net/download-data-uri.html">
 
 
-  <meta property="og:description" content="Whenever I want to view the replication status in my domain, I use repadmin /replsum, which queries all of the DCs and gives me a summary of the replication links status per DC, which looks a little like this:">
-
-
-
-
-
-
-
-  <meta property="article:published_time" content="2013-05-03T00:00:00+03:00">
+  <meta property="og:description" content="While browsing some website, I ran into an audio player that had a source that was embedded: &lt;audio autoplay=&quot;&quot;&gt;     &lt;source type=&quot;audio/mpeg&quot; src=&quot;data:audio/mpeg;base64,...LONG_BASE_64...&quot;&gt; &lt;/audio&gt;  I wanted to save that audio, but it wasn’t trivial (no “save as” ui, no clear resource I can save from the network tab). I ended up with a small reusable method. Start with right click the source element and choosing “use in console” to have it as temp0: fetch(temp0.src)   .then(r =&gt; r.blob())   .then(blob =&gt; {     const a = document.createElement(&quot;a&quot;);     a.href = URL.createObjectURL(blob);     a.download = &quot;audio.mp3&quot;;     a.click();   });">
 
 
 
 
 
 
-<link rel="canonical" href="https://blog.backslasher.net/viewing-detailed-replication-status-using-repadmin-and-powershell.html">
+
+  <meta property="article:published_time" content="2026-05-28T00:00:00+03:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/download-data-uri.html">
 
 
 
@@ -251,15 +251,15 @@
 
 
   <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
-    <meta itemprop="headline" content="Viewing detailed replication status using Repadmin and PowerShell">
-    <meta itemprop="description" content="Whenever I want to view the replication status in my domain, I userepadmin /replsum, which queries all of the DCs and gives me a summaryof the replication links status per DC, which looks a little like this:">
-    <meta itemprop="datePublished" content="2013-05-03T00:00:00+03:00">
+    <meta itemprop="headline" content="Downloading a data uri as file">
+    <meta itemprop="description" content="While browsing some website, I ran into an audio player that had a source that was embedded:&lt;audio autoplay=&quot;&quot;&gt;    &lt;source type=&quot;audio/mpeg&quot; src=&quot;data:audio/mpeg;base64,...LONG_BASE_64...&quot;&gt;&lt;/audio&gt;I wanted to save that audio, but it wasn’t trivial (no “save as” ui, no clear resource I can save from the network tab). I ended up with a small reusable method.Start with right click the source element and choosing “use in console” to have it as temp0:fetch(temp0.src)  .then(r =&gt; r.blob())  .then(blob =&gt; {    const a = document.createElement(&quot;a&quot;);    a.href = URL.createObjectURL(blob);    a.download = &quot;audio.mp3&quot;;    a.click();  });">
+    <meta itemprop="datePublished" content="2026-05-28T00:00:00+03:00">
     
 
     <div class="page__inner-wrap">
       
         <header>
-          <h1 id="page-title" class="page__title" itemprop="headline">Viewing detailed replication status using Repadmin and PowerShell
+          <h1 id="page-title" class="page__title" itemprop="headline">Downloading a data uri as file
 </h1>
           
 
@@ -287,47 +287,22 @@
 
       <section class="page__content" itemprop="text">
         
-        <p>Whenever I want to view the replication status in my domain, I use
-<code class="language-plaintext highlighter-rouge">repadmin /replsum</code>, which queries all of the DCs and gives me a summary
-of the replication links status per DC, which looks a little like this:</p>
-
-<p><img src="/assets/viewing-detailed-replication-status-using-repadmin-and-powershell/replsum.png" alt="" /></p>
-
-<p>If I wanted to get detailed information, I’d use <code class="language-plaintext highlighter-rouge">repadmin /showrepl *</code>
-which would print some information for every replication link:</p>
-
-<p><img src="/assets/viewing-detailed-replication-status-using-repadmin-and-powershell/showrepl.png" alt="" /></p>
-
-<p>Since I have more than two DCs in some environments, looking at all of
-the information is quite a long read and I usually avoid using this
-option unless I have to.<br />
-Recently, I discovered a nifty trick.<br />
-<code class="language-plaintext highlighter-rouge">repadmin /showrepl</code> has a csv option, which isn’t exciting by itself:</p>
-<div class="language-bat highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">repadmin</span> <span class="na">/showrepl </span><span class="o">*</span> <span class="na">/csv
-</span></code></pre></div></div>
-<p><img src="/assets/viewing-detailed-replication-status-using-repadmin-and-powershell/showreplCsv.png" alt="" /></p>
-
-<p>However, combined with PowerShell’s <code class="language-plaintext highlighter-rouge">ConvertFrom-Csv</code>, I could convert
-the link status rows into objects and filter them within PowerShell:</p>
-<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">repadmin</span><span class="w"> </span><span class="nx">/showrepl</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nx">/csv</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">ConvertFrom-Csv</span><span class="w">
-</span></code></pre></div></div>
-
-<p><img src="/assets/viewing-detailed-replication-status-using-repadmin-and-powershell/showreplCsvPowerShell.png" alt="" /></p>
-
-<p>Now, for example, if I wanted to view all links that had replication
-errors, I could use</p>
-
-<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">repadmin</span><span class="w"> </span><span class="nx">/showrepl</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nx">/csv</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">ConvertFrom-Csv</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nf">?</span><span class="p">{</span><span class="bp">$_</span><span class="o">.</span><span class="s1">'Number Of Failures'</span><span class="p">}</span><span class="w">
-</span></code></pre></div></div>
-
-<p>And I can even display all of the links in GridView, for ease of use:</p>
-
-<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">repadmin</span><span class="w"> </span><span class="nx">/showrepl</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nx">/csv</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">ConvertFrom-Csv</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">ogv</span><span class="w">
-</span></code></pre></div></div>
-
-<p><img src="/assets/viewing-detailed-replication-status-using-repadmin-and-powershell/replGridView.png" alt="" /></p>
-
-<p>Enjoy!</p>
+        <p>While browsing some website, I ran into an audio player that had a source that was embedded:</p>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;audio</span> <span class="na">autoplay=</span><span class="s">""</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;source</span> <span class="na">type=</span><span class="s">"audio/mpeg"</span> <span class="na">src=</span><span class="s">"data:audio/mpeg;base64,...LONG_BASE_64..."</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/audio&gt;</span>
+</code></pre></div></div>
+<p>I wanted to save that audio, but it wasn’t trivial (no “save as” ui, no clear resource I can save from the network tab). I ended up with a small reusable method.<br />
+Start with right click the source element and choosing “use in console” to have it as <code class="language-plaintext highlighter-rouge">temp0</code>:</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">fetch</span><span class="p">(</span><span class="nx">temp0</span><span class="p">.</span><span class="nx">src</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">r</span> <span class="o">=&gt;</span> <span class="nx">r</span><span class="p">.</span><span class="nx">blob</span><span class="p">())</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">blob</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">a</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="dl">"</span><span class="s2">a</span><span class="dl">"</span><span class="p">);</span>
+    <span class="nx">a</span><span class="p">.</span><span class="nx">href</span> <span class="o">=</span> <span class="nx">URL</span><span class="p">.</span><span class="nx">createObjectURL</span><span class="p">(</span><span class="nx">blob</span><span class="p">);</span>
+    <span class="nx">a</span><span class="p">.</span><span class="nx">download</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">audio.mp3</span><span class="dl">"</span><span class="p">;</span>
+    <span class="nx">a</span><span class="p">.</span><span class="nx">click</span><span class="p">();</span>
+  <span class="p">});</span>
+</code></pre></div></div>
 
         
       </section>
@@ -344,38 +319,21 @@ errors, I could use</p>
     <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
     <span itemprop="keywords">
     
-      <a href="/tags/#active-directory" class="page__taxonomy-item" rel="tag">Active Directory</a><span class="sep">, </span>
+      <a href="/tags/#browser" class="page__taxonomy-item" rel="tag">browser</a><span class="sep">, </span>
     
-      <a href="/tags/#one-liner" class="page__taxonomy-item" rel="tag">One-Liner</a><span class="sep">, </span>
+      <a href="/tags/#html" class="page__taxonomy-item" rel="tag">html</a><span class="sep">, </span>
     
-      <a href="/tags/#powershell" class="page__taxonomy-item" rel="tag">PowerShell</a><span class="sep">, </span>
-    
-      <a href="/tags/#scripts" class="page__taxonomy-item" rel="tag">Scripts</a>
+      <a href="/tags/#javascript" class="page__taxonomy-item" rel="tag">javascript</a>
     
     </span>
   </p>
 
 
-
-
-  
-
-
-  
-
-  <p class="page__taxonomy">
-    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
-    <span itemprop="keywords">
-    
-      <a href="/categories/#microsoft" class="page__taxonomy-item" rel="tag">Microsoft</a>
-    
-    </span>
-  </p>
 
 
         
 
-  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2013-05-03T00:00:00+03:00">May 3, 2013</time></p>
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2026-05-28T00:00:00+03:00">May 28, 2026</time></p>
 
 
       </footer>
@@ -385,12 +343,11 @@ errors, I could use</p>
       
   <nav class="pagination">
     
-      <a href="/solving-event-log-subscription-error-0x138c.html" class="pagination--pager" title="Solving Event Log Subscription Error “0x138C”
+      <a href="/esphome-switcher-proxy.html" class="pagination--pager" title="ESPHome proxy for Switcher
 ">Previous</a>
     
     
-      <a href="/investigating-repeatedly-locked-out-users.html" class="pagination--pager" title="Investigating Repeatedly Locked Out Users
-">Next</a>
+      <a href="#" class="pagination--pager disabled">Next</a>
     
   </nav>
 
@@ -445,47 +402,6 @@ errors, I could use</p>
       </div>
       <h2 class="page__related-title">You May Also Enjoy</h2>
       <div class="grid__wrapper">
-        
-          
-
-
-
-<div class="grid__item">
-  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
-    
-    <h2 class="archive__item-title no_toc" itemprop="headline">
-      
-        <a href="/download-data-uri.html" rel="permalink">Downloading a data uri as file
-</a>
-      
-    </h2>
-    
-
-  <p class="page__meta">
-    
-
-    
-
-    
-      
-      
-
-      <span class="page__meta-readtime">
-        <i class="far fa-clock" aria-hidden="true"></i>
-        
-          less than 1 minute read
-        
-      </span>
-    
-  </p>
-
-
-    <p class="archive__item-excerpt" itemprop="description">While browsing some website, I ran into an audio player that had a source that was embedded:
-&lt;audio autoplay=""&gt;
-    &lt;source type="audio/mpeg" src="...</p>
-  </article>
-</div>
-
         
           
 
@@ -593,7 +509,7 @@ I was paired with a team lead that was chronically busy, which is why they cou..
       <span class="page__meta-readtime">
         <i class="far fa-clock" aria-hidden="true"></i>
         
-          1 minute read
+          less than 1 minute read
         
       </span>
     
@@ -601,6 +517,45 @@ I was paired with a team lead that was chronically busy, which is why they cou..
 
 
     <p class="archive__item-excerpt" itemprop="description">I have a friend that is an avid Audible user. They have a big library and enjoy the service very much. They are also an avid swimmer, and have a water-proof ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/stst1.html" rel="permalink">Ship Today, Scale Tomorrow #1: Different Servers for Different Jobs
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Working with early-stage CTOs, I see two traps repeatedly: over-engineering that steals time today, or decisions that choke growth tomorrow. I wanted to shar...</p>
   </article>
 </div>
 
