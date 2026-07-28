@@ -1,0 +1,809 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Returning to The Sims: 128 errors in a fresh lot - BackSlasher</title>
+<meta name="description" content="This is part of TSaaS (The Sims as a Service), my series about adding LLM-plays capability to The Sims 1.">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Returning to The Sims: 128 errors in a fresh lot">
+<meta property="og:url" content="https://blog.backslasher.net/tsaas-saves.html">
+
+
+  <meta property="og:description" content="This is part of TSaaS (The Sims as a Service), my series about adding LLM-plays capability to The Sims 1.">
+
+
+
+  <meta property="og:image" content="https://blog.backslasher.net/assets/2026-07-28-tsaas-saves/clean-boot.png">
+
+
+
+
+
+  <meta property="article:published_time" content="2026-07-28T00:00:00+03:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/tsaas-saves.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+  
+
+
+
+
+
+
+
+<div class="page__hero--overlay"
+  style=" background-image: url('/assets/2026-07-28-tsaas-saves/clean-boot.png');"
+>
+  
+    <div class="wrapper">
+      <h1 id="page-title" class="page__title" itemprop="headline">
+        
+          Returning to The Sims: 128 errors in a fresh lot
+
+        
+      </h1>
+      
+      
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          7 minute read
+        
+      </span>
+    
+  </p>
+
+
+      
+      
+    </div>
+  
+  
+</div>
+
+
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Returning to The Sims: 128 errors in a fresh lot">
+    <meta itemprop="description" content="This is part of TSaaS (The Sims as a Service), my series about adding LLM-plays capability to The Sims 1. ">
+    <meta itemprop="datePublished" content="2026-07-28T00:00:00+03:00">
+    
+
+    <div class="page__inner-wrap">
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>This is part of TSaaS (The Sims as a Service), my series about adding LLM-plays capability to The Sims 1. <!-- [full list](/tags/#tsaas) --></p>
+
+<h2 id="errors">Errors</h2>
+<p>The main reason this project is possible at all is <a href="https://github.com/riperiperi/Simitone">Simitone</a> — an open-source .NET from-scratch implementation of The Sims 1’s engine, running against the original game’s content files.
+About a year ago, when I tested it as a human, I noticed that entering a new lot caused a bunch of “unhandled sims engine” errors, which was annoying but click-through-able. Some of them had no visible impact on the game world. Some affected a specific object (e.g. a sofa you can’t sit on), which I could then sell and buy again, solving the problem.</p>
+
+<p><img src="/assets/2026-07-28-tsaas-saves/lot-entry-exceptions.png" alt="" /></p>
+
+<p>(Note the dialog half-visible behind this one. When it rains, it pours.)</p>
+
+<p>Part of the project was moving the engine to an unattended container. This involved removing the exception dialogs (as no one is there to acknowledge them), but also made it harder to know whether an exception indeed indicates something bad or not. I decided to treat them like I would treat exceptions in a log of enterprise software - group by callsite, target the most frequent ones first, do the research to figure out which are harmful and which are benign, and then either fix or suppress.</p>
+
+<h2 id="the-big-boys">The big boys</h2>
+
+<p>Loading the lot reported 128 exceptions. Most of them belonged to these types:</p>
+
+<ol>
+  <li>A sim having an 80-slot “values” (motives, skills, flags) array, where the engine wanted 101.<br />
+I added the missing entries with sane values. One might ask “what is the sane value for a new attribute?”, but looking at the code, the new attributes were obvious things like “is a superstar” or “is a ghost”, which I can confidently set to <code class="language-plaintext highlighter-rouge">false</code> for newly-loaded sims.</li>
+  <li>Carry slot mismatch. Simitone knows that a sim should have 3 (head, hands, pelvis), but deferred to the savefile’s slot size (1).<br />
+Fixed by setting the slot size to 3, initializing missing ones as empty</li>
+</ol>
+
+<p>Eliminating both, I managed to get startup errors from 128 to 14, which is a nice start.</p>
+
+<p>Here’s an example of #1, a Makin’ Magic script checking whether Mortimer is a ghost, but Mortimer comes from a pre-Makin’ Magic save and is missing the relevant flag’s slot:
+<img src="/assets/2026-07-28-tsaas-saves/ghost-social-attributes.png" alt="" /></p>
+
+<h2 id="kitchen-counter-breakdown">Kitchen counter breakdown</h2>
+<p>After accepting 14 startup errors, I moved on and tried making the actual gameplay work. On occasion, the sims would fail when trying to cook themselves a meal. The food would just disappear, an exception would pop up, and the sim would forget about the matter completely.
+My only hint was that the meal process involved:</p>
+<ol>
+  <li>Taking food out of the fridge</li>
+  <li>Chopping stuff on the countertop</li>
+  <li>Cooking (this is where fires happen)</li>
+  <li>Taking the meal to eat (if “have a meal”) or on a flat surface (for “serve meal”) for others to utilize later</li>
+</ol>
+
+<p>Since the sim was able to use the fridge and then errored out, I figured it’s related to countertops. The popping exception was obviously involved too, so it was time to do some heavy debugging.</p>
+
+<p><img src="/assets/2026-07-28-tsaas-saves/counter-ip-out-of-range.png" alt="" /></p>
+
+<h2 id="need-to-go-deeper">Need to go deeper</h2>
+<p>Since I was able to modify the engine, I could add more debug printing into the exception handler and the Sims VM in general to get more context on what broke. The stack traces themselves are uninteresting. What IS interesting was the annotation I added:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(Tiled Counter:Tiled Counter)
+ &gt; main:3/2 #4096 (IP OUT OF RANGE) [restored]
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">[restored]</code> marks a frame that came out of a savefile rather than from live execution, which was the smoking gun.<br />
+They were all “<strong>IP</strong> (Instruction Pointer) <strong>OUT OF RANGE</strong>”, coming straight from restored saves</p>
+
+<p>It turns out each object has a small script it runs, looking a bit like assembly. The counter’s state looks like this:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">...</span><span class="w">
+</span><span class="nl">"routine"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"main"</span><span class="p">,</span><span class="w"> </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">4096</span><span class="p">,</span><span class="w">
+           </span><span class="nl">"instructionCount"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="nl">"opcodes"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">8224</span><span class="p">,</span><span class="w"> </span><span class="mi">280</span><span class="p">]</span><span class="w"> </span><span class="p">}</span><span class="err">,</span><span class="w">
+</span><span class="nl">"ip"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="err">,</span><span class="w">
+</span><span class="err">...</span><span class="w">
+</span></code></pre></div></div>
+
+<p>The interesting part here is that despite the routine having two instructions, we’re supposed to resume at instruction #3, which is… what?</p>
+
+<p>The VM’s reaction was acceptable, but I had two problems with it:</p>
+<ol>
+  <li>The error manifested only when someone wanted to use the object, which was just the time where the object was interesting to the player.</li>
+  <li>The current handling caused the affected sim to drop its action completely, possibly losing items or disrupting whatever grand plan it was following.</li>
+</ol>
+
+<p>We should prevent this error outright, at load time</p>
+
+<h2 id="quick-but-incomplete">Quick but incomplete</h2>
+
+<p>Thanks to the e2e framework I set up (worth its own post), I was able to create a regression test.
+I loaded the savefile, and ensured no object has an <code class="language-plaintext highlighter-rouge">ip</code> that is outside the bounds of its instruction array.</p>
+
+<p>Getting this test green means eliminating the exceptions, which I did by reviewing every object when loading, and resetting ones where the ip was out of bounds of the routine.
+This made the exceptions go away and the meal prep complete successfully, so I could leave it there, but I wasn’t quite happy</p>
+
+<h2 id="nagging-feeling">Nagging feeling</h2>
+
+<p>The index being out of bounds happened because the object’s routine (coming from the content directory, in a specific Sims version) was no longer matching the one that was referred by the <code class="language-plaintext highlighter-rouge">ip</code> (which came from the save file). The out-of-bounds is an obvious indicator of such a mismatch, but such a mismatch can happen without an oob.<br />
+For instance, let’s assume there exists a fishtank, and its script looks something like this:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> 1: flip graphic (fish swimming left are now right, etc)
+ 2: sleep 10s
+ 3: if fed_since &gt; 1 sim-day:
+ 4:   goto L7
+&gt;5: else:
+ 6:   goto L1
+ 7: show dead fish graphic
+ 8: (stuck here, fish are dead)
+</code></pre></div></div>
+<p>And the <code class="language-plaintext highlighter-rouge">ip</code> happened to be set on L5, because the fish were alive and well.
+Now, we load this save into another version of content, where the script looks like this:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> 1: flip graphic (fish swimming left are now right, etc)
+ 2: sleep 10s
+ 3: if fed_since &lt; 1 sim-day:
+ 4:   goto L1
+&gt;5: show dead fish graphic
+ 6: (stuck here, fish are dead)
+</code></pre></div></div>
+<p>Simpler script, victory for all. <strong>But</strong> if we load the save that has <code class="language-plaintext highlighter-rouge">ip</code> set to L5, we’ll get a dead fishtank.
+While this is not an exception (a mechanical corruption), it’s definitely wrong (a logical corruption)</p>
+
+<p>My conclusion was that without the original engine available to extract the original scripts from, we have no way of accurately translating <code class="language-plaintext highlighter-rouge">ips</code> to the right instruction.</p>
+
+<h2 id="discarding-everything">Discarding everything</h2>
+<p>When faced with dirty data, I see 3 options:</p>
+<ol>
+  <li>Leave it as is</li>
+  <li>Clean it</li>
+  <li>Discard it</li>
+</ol>
+
+<p>#1 was unacceptable here, because these corruptions could affect the game in a way that’s going to be hard to detect.<br />
+#2, as discussed previously, was only partially doable. Resetting index-bounds-violating objects was easy and solved the mechanical corruption, but silently-remapped lines would stay, causing an unknown amount of logical corruptions.<br />
+#3, the way I see it, is not so bad. I prefer losing object states, since:</p>
+<ol>
+  <li>The first time I load into a lot, I have not initiated any actions that affect object state, so I’m not afraid of losing a state I care about.</li>
+  <li>I get a guarantee that any actions I do initiate only interact with clean objects, so they won’t be ruined by objects with invalid state.</li>
+</ol>
+
+<p>Good deal for me</p>
+
+<h2 id="at-the-end">At the end</h2>
+<p>The sims savefile has a “version identifier”, and the Simitone engine is using it when reading savefiles.<br />
+For instance, to make the savefile smaller, an object’s type is not its fully qualified GUID, but rather a reference to a lookup table in the start of the file that holds a mapping to the GUID. Simitone is built in an era where storage is cheap, so it gets rid of this table completely, dereferencing all objects to point to their direct GUIDs.<br />
+The same treatment is not afforded to the objects’ states, as without concrete data from previous versions, it’s impossible to correct</p>
+
+<p>Having no good understanding on “which version change justifies an object reset”, I used a trick relying on the fact that Simitone’s savefile is different than the original Sims one:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">is_old_savefile</span><span class="p">(</span><span class="n">blob</span><span class="p">):</span>
+  <span class="k">return</span> <span class="n">blob</span><span class="p">.</span><span class="n">simitone_specific_data</span> <span class="ow">is</span> <span class="n">Null</span>
+
+<span class="k">def</span> <span class="nf">deserialize_savefile</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span> <span class="p">...):</span>
+  <span class="k">if</span> <span class="n">is_old_savefile</span><span class="p">(</span><span class="n">blob</span><span class="p">):</span>
+    <span class="n">reset_all_objects</span><span class="p">(</span><span class="n">blob</span><span class="p">)</span>
+  <span class="p">...</span>
+</code></pre></div></div>
+<p>This works because:</p>
+<ol>
+  <li>All of my never-touched-before saves are in the original Sims format</li>
+  <li>Every save I produce is in the new Simitone format</li>
+  <li>I will never ever get a new “content” pack that modifies objects’ behavior. I’m only needed to differentiate between “before me” and “after me”</li>
+</ol>
+
+<p>This solution is:</p>
+<ol>
+  <li>Free of both mechanical and logical corruptions</li>
+  <li>Very easy to explain and implement - “when encountering a savefile that didn’t come from our engine, reset all objects”. No heuristics on the ip of every object, no guesswork on whether this specific state is ok.</li>
+  <li>Losing nothing of value gameplay-wise</li>
+</ol>
+
+<p>We now run with 0 exceptions on load, and even better - we eliminated a class of invisible potential bugs.</p>
+
+<p><img src="/assets/2026-07-28-tsaas-saves/clean-boot.png" alt="" /></p>
+
+<p>My takeaway here was that the original tests were only guarding against the visible symptom (the exceptions). This meant that any solution only aimed at “making the tests green” was not guaranteed to solve the real problem.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#thesims" class="page__taxonomy-item" rel="tag">thesims</a><span class="sep">, </span>
+    
+      <a href="/tags/#tsaas" class="page__taxonomy-item" rel="tag">tsaas</a>
+    
+    </span>
+  </p>
+
+
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2026-07-28T00:00:00+03:00">July 28, 2026</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/download-data-uri.html" class="pagination--pager" title="Downloading a data uri as file
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/download-data-uri.html" rel="permalink">Downloading a data uri as file
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">While browsing some website, I ran into an audio player that had a source that was embedded:
+&lt;audio autoplay=""&gt;
+    &lt;source type="audio/mpeg" src="...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/esphome-switcher-proxy.html" rel="permalink">ESPHome proxy for Switcher
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I have a Switcher at home, which is a smart water heater controller. It lives in the IoT wifi jail, where they’re not allowed to reach to the open internet, ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/orange-apple.html" rel="permalink">“Can you paint this apple orange?”
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">One of my gigs was about migrating a workload from one hyperscaler to another.
+I was paired with a team lead that was chronically busy, which is why they cou...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/audible-downloader.html" rel="permalink">Audible MP3 Downloader
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I have a friend that is an avid Audible user. They have a big library and enjoy the service very much. They are also an avid swimmer, and have a water-proof ...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2026 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S2WYJL3VQ7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-S2WYJL3VQ7', { 'anonymize_ip': true});
+</script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>
