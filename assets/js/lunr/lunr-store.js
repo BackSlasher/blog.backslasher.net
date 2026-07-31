@@ -1164,7 +1164,7 @@ var store = [{
         "teaser": null
       },{
         "title": "Returning to The Sims: 128 errors in a fresh lot",
-        "excerpt":"This is part of TSaaS (The Sims as a Service), my series about adding LLM-plays capability to The Sims 1. Errors The main reason this project is possible at all is Simitone — an open-source .NET from-scratch implementation of The Sims 1’s engine, running against the original game’s content files....","categories": [],
+        "excerpt":"This is part of TSaaS (The Sims as a Service), my series about adding LLM-plays capability to The Sims 1. Motivation My overall goal is to have an unattended setup of an LLM playing the Sims 1. Part of the work is LLM-related, but a bigger part is setting up...","categories": [],
         "tags": ["tsaas","thesims"],
         "url": "/tsaas-saves.html",
         "teaser": null

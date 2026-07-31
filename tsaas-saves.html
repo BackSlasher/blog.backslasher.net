@@ -174,7 +174,7 @@
       <span class="page__meta-readtime">
         <i class="far fa-clock" aria-hidden="true"></i>
         
-          7 minute read
+          8 minute read
         
       </span>
     
@@ -313,6 +313,16 @@
       <section class="page__content" itemprop="text">
         
         <p>This is part of TSaaS (The Sims as a Service), my series about adding LLM-plays capability to The Sims 1. <!-- [full list](/tags/#tsaas) --></p>
+
+<h2 id="motivation">Motivation</h2>
+<p>My overall goal is to have an unattended setup of an LLM playing the Sims 1.<br />
+Part of the work is LLM-related, but a bigger part is setting up a Windows-targeting video game to:</p>
+<ol>
+  <li>Run inside a Linux container</li>
+  <li>Install the wiring for API control rather than GUI</li>
+</ol>
+
+<p>As part of #2, I want to boot the game directly into a lot with a Sim family (for starters, the built-in family “the Goths”) and start playing. That’s where the trouble started</p>
 
 <h2 id="errors">Errors</h2>
 <p>The main reason this project is possible at all is <a href="https://github.com/riperiperi/Simitone">Simitone</a> — an open-source .NET from-scratch implementation of The Sims 1’s engine, running against the original game’s content files.
