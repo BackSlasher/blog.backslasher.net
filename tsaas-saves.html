@@ -30,7 +30,7 @@
 
 
 
-  <meta property="og:image" content="https://blog.backslasher.net/assets/2026-07-28-tsaas-saves/clean-boot.png">
+  <meta property="og:image" content="https://blog.backslasher.net/assets/2026-07-28-tsaas-saves/clean-boot.jpg">
 
 
 
@@ -149,7 +149,7 @@
 
 
 <div class="page__hero--overlay"
-  style=" background-image: url('/assets/2026-07-28-tsaas-saves/clean-boot.png');"
+  style=" background-image: url('/assets/2026-07-28-tsaas-saves/clean-boot.jpg');"
 >
   
     <div class="wrapper">
@@ -174,7 +174,7 @@
       <span class="page__meta-readtime">
         <i class="far fa-clock" aria-hidden="true"></i>
         
-          8 minute read
+          9 minute read
         
       </span>
     
@@ -322,27 +322,43 @@ Part of the work is LLM-related, but a bigger part is setting up a Windows-targe
   <li>Install the wiring for API control rather than GUI</li>
 </ol>
 
-<p>As part of #2, I want to boot the game directly into a lot with a Sim family (for starters, the built-in family “the Goths”) and start playing. That’s where the trouble started</p>
+<p>As part of #2, I want to boot the game directly into a lot with a Sim family (for starters, the built-in family “the Goths”) and start playing. That’s where the trouble started.</p>
 
-<h2 id="errors">Errors</h2>
-<p>The main reason this project is possible at all is <a href="https://github.com/riperiperi/Simitone">Simitone</a> — an open-source .NET from-scratch implementation of The Sims 1’s engine, running against the original game’s content files.
+<h2 id="errors-im-a-sysadmin-now">Errors: I’m a sysadmin now</h2>
+<p>The main reason this project is possible at all is <a href="https://github.com/riperiperi/Simitone">Simitone</a> — an open-source .NET from-scratch implementation of The Sims 1’s engine, running against the original game’s content files.<br />
 About a year ago, when I tested it as a human, I noticed that entering a new lot caused a bunch of “unhandled sims engine” errors, which was annoying but click-through-able. Some of them had no visible impact on the game world. Some affected a specific object (e.g. a sofa you can’t sit on), which I could then sell and buy again, solving the problem.</p>
 
 <p><img src="/assets/2026-07-28-tsaas-saves/lot-entry-exceptions.png" alt="" /></p>
 
 <p>(Note the dialog half-visible behind this one. When it rains, it pours.)</p>
 
-<p>Part of the project was moving the engine to an unattended container. This involved removing the exception dialogs (as no one is there to acknowledge them), but also made it harder to know whether an exception indeed indicates something bad or not. I decided to treat them like I would treat exceptions in a log of enterprise software - group by callsite, target the most frequent ones first, do the research to figure out which are harmful and which are benign, and then either fix or suppress.</p>
+<p>When a human was playing the game, they could review each one of the errors popping up and react, like the sofa case. I wanted an unattended process running in a container, so clickable dialogs had to go, and I had to decide what to do with the exceptions they describe.
+I had two user behaviors I could choose from:</p>
+<ol>
+  <li>The diligent user, carefully reading each exception and reacting to it. This would reflect in pausing the game, reflecting the exception to the agent and asking it what it’d like to do with it</li>
+  <li>The optimistic user, clicking “ok” for each dialog and hoping they won’t affect the gameplay too badly.</li>
+</ol>
+
+<p>I chose option #2, and figured that I can monitor the resulting gameplay and invest my energy in preventing the errors rather than reacting to them. Since I’m used to sysadmin-ing enterprise software, I treated the game like one:</p>
+<ol>
+  <li>If an exception happens, do not display it on GUI.<br />
+Instead, log it, auto-acknowledge it, let the game continue.<br />
+The agent never sees the exception (as if it auto-clicked ok).</li>
+  <li>When I, the sysadmin, am reviewing the gameplay, I also read the log and look for exceptions.<br />
+I do the same thing I’d do when reviewing a service log - group by callsite, target the most frequent ones first, do the research to figure out which are harmful and which are benign, and then either fix or suppress.</li>
+</ol>
 
 <h2 id="the-big-boys">The big boys</h2>
 
-<p>Loading the lot reported 128 exceptions. Most of them belonged to these types:</p>
+<p>Loading the lot reported 128 exceptions, which was weird because the lot was fresh out of the box. It’s one of the lots that come premade with a house and a family so you can start playing immediately, not a random untested combination. So why did it blow up?</p>
+
+<p>Most of them belonged to these types:</p>
 
 <ol>
   <li>A sim having an 80-slot “values” (motives, skills, flags) array, where the engine wanted 101.<br />
 I added the missing entries with sane values. One might ask “what is the sane value for a new attribute?”, but looking at the code, the new attributes were obvious things like “is a superstar” or “is a ghost”, which I can confidently set to <code class="language-plaintext highlighter-rouge">false</code> for newly-loaded sims.</li>
   <li>Carry slot mismatch. Simitone knows that a sim should have 3 (head, hands, pelvis), but deferred to the savefile’s slot size (1).<br />
-Fixed by setting the slot size to 3, initializing missing ones as empty</li>
+Fixed by setting the slot size to 3, initializing missing ones as empty.</li>
 </ol>
 
 <p>Eliminating both, I managed to get startup errors from 128 to 14, which is a nice start.</p>
@@ -372,7 +388,7 @@ My only hint was that the meal process involved:</p>
 </code></pre></div></div>
 
 <p><code class="language-plaintext highlighter-rouge">[restored]</code> marks a frame that came out of a savefile rather than from live execution, which was the smoking gun.<br />
-They were all “<strong>IP</strong> (Instruction Pointer) <strong>OUT OF RANGE</strong>”, coming straight from restored saves</p>
+All of the remaining startup errors were “<strong>IP</strong> (Instruction Pointer) <strong>OUT OF RANGE</strong>”, coming straight from restored saves.</p>
 
 <p>It turns out each object has a small script it runs, looking a bit like assembly. The counter’s state looks like this:</p>
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">...</span><span class="w">
@@ -382,7 +398,8 @@ They were all “<strong>IP</strong> (Instruction Pointer) <strong>OUT OF RANGE<
 </span><span class="err">...</span><span class="w">
 </span></code></pre></div></div>
 
-<p>The interesting part here is that despite the routine having two instructions, we’re supposed to resume at instruction #3, which is… what?</p>
+<p>The interesting part here is that despite the routine having two instructions, we’re supposed to resume at instruction #3, which is… what?<br />
+For the less assembly-language minded, this is the equivalent of you being instructed to refer to chapter 3 in a book with 2 chapters - an obvious indication that the instruction is referring to a different version of the book than the one you’re holding.</p>
 
 <p>The VM’s reaction was acceptable, but I had two problems with it:</p>
 <ol>
@@ -390,7 +407,7 @@ They were all “<strong>IP</strong> (Instruction Pointer) <strong>OUT OF RANGE<
   <li>The current handling caused the affected sim to drop its action completely, possibly losing items or disrupting whatever grand plan it was following.</li>
 </ol>
 
-<p>We should prevent this error outright, at load time</p>
+<p>We should prevent this error outright, at load time.</p>
 
 <h2 id="quick-but-incomplete">Quick but incomplete</h2>
 
@@ -398,12 +415,13 @@ They were all “<strong>IP</strong> (Instruction Pointer) <strong>OUT OF RANGE<
 I loaded the savefile, and ensured no object has an <code class="language-plaintext highlighter-rouge">ip</code> that is outside the bounds of its instruction array.</p>
 
 <p>Getting this test green means eliminating the exceptions, which I did by reviewing every object when loading, and resetting ones where the ip was out of bounds of the routine.
-This made the exceptions go away and the meal prep complete successfully, so I could leave it there, but I wasn’t quite happy</p>
+This made the exceptions go away and the meal prep complete successfully, so I could leave it there, but I wasn’t quite happy.</p>
 
 <h2 id="nagging-feeling">Nagging feeling</h2>
 
-<p>The index being out of bounds happened because the object’s routine (coming from the content directory, in a specific Sims version) was no longer matching the one that was referred by the <code class="language-plaintext highlighter-rouge">ip</code> (which came from the save file). The out-of-bounds is an obvious indicator of such a mismatch, but such a mismatch can happen without an oob.<br />
-For instance, let’s assume there exists a fishtank, and its script looks something like this:</p>
+<p>The index being out of bounds happened because the object’s routine (coming from the content directory, in a specific Sims version) was no longer matching the one that was referred by the <code class="language-plaintext highlighter-rouge">ip</code> (which came from the save file). The out-of-bounds is an obvious indicator of such a mismatch, but is not “required” for the mismatch to happen.</p>
+
+<p>For instance, let’s assume there exists a fishtank, and its script looks something like this (the <code class="language-plaintext highlighter-rouge">&gt;</code> marks where the saved <code class="language-plaintext highlighter-rouge">ip</code> points):</p>
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> 1: flip graphic (fish swimming left are now right, etc)
  2: sleep 10s
  3: if fed_since &gt; 1 sim-day:
@@ -423,7 +441,7 @@ Now, we load this save into another version of content, where the script looks l
  6: (stuck here, fish are dead)
 </code></pre></div></div>
 <p>Simpler script, victory for all. <strong>But</strong> if we load the save that has <code class="language-plaintext highlighter-rouge">ip</code> set to L5, we’ll get a dead fishtank.
-While this is not an exception (a mechanical corruption), it’s definitely wrong (a logical corruption)</p>
+While this is not an exception (a mechanical corruption), it’s definitely wrong (a logical corruption).</p>
 
 <p>My conclusion was that without the original engine available to extract the original scripts from, we have no way of accurately translating <code class="language-plaintext highlighter-rouge">ips</code> to the right instruction.</p>
 
@@ -443,16 +461,17 @@ While this is not an exception (a mechanical corruption), it’s definitely wron
   <li>I get a guarantee that any actions I do initiate only interact with clean objects, so they won’t be ruined by objects with invalid state.</li>
 </ol>
 
-<p>Good deal for me</p>
+<p>Good deal for me.</p>
 
-<h2 id="at-the-end">At the end</h2>
-<p>The sims savefile has a “version identifier”, and the Simitone engine is using it when reading savefiles.<br />
-For instance, to make the savefile smaller, an object’s type is not its fully qualified GUID, but rather a reference to a lookup table in the start of the file that holds a mapping to the GUID. Simitone is built in an era where storage is cheap, so it gets rid of this table completely, dereferencing all objects to point to their direct GUIDs.<br />
-The same treatment is not afforded to the objects’ states, as without concrete data from previous versions, it’s impossible to correct</p>
+<h2 id="postmortem">Postmortem</h2>
+
+<p>This whole problem is a result of serialized class of v1 meeting a runtime of v2. You’re probably wondering “why is this not covered by the engine?”.</p>
+
+<p>Digging through the code, I saw that the sims savefile has a version identifier, and it is being read by Simitone for some things, but not for object state management.</p>
 
 <p>Having no good understanding on “which version change justifies an object reset”, I used a trick relying on the fact that Simitone’s savefile is different than the original Sims one:</p>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">is_old_savefile</span><span class="p">(</span><span class="n">blob</span><span class="p">):</span>
-  <span class="k">return</span> <span class="n">blob</span><span class="p">.</span><span class="n">simitone_specific_data</span> <span class="ow">is</span> <span class="n">Null</span>
+  <span class="k">return</span> <span class="n">blob</span><span class="p">.</span><span class="n">simitone_specific_data</span> <span class="ow">is</span> <span class="bp">None</span>
 
 <span class="k">def</span> <span class="nf">deserialize_savefile</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span> <span class="p">...):</span>
   <span class="k">if</span> <span class="n">is_old_savefile</span><span class="p">(</span><span class="n">blob</span><span class="p">):</span>
@@ -463,7 +482,7 @@ The same treatment is not afforded to the objects’ states, as without concrete
 <ol>
   <li>All of my never-touched-before saves are in the original Sims format</li>
   <li>Every save I produce is in the new Simitone format</li>
-  <li>I will never ever get a new “content” pack that modifies objects’ behavior. I’m only needed to differentiate between “before me” and “after me”</li>
+  <li>I will never ever get a new “content” pack that modifies objects’ behavior. I only need to differentiate between “before me” and “after me”, and the file format already does that for free</li>
 </ol>
 
 <p>This solution is:</p>
@@ -473,11 +492,15 @@ The same treatment is not afforded to the objects’ states, as without concrete
   <li>Losing nothing of value gameplay-wise</li>
 </ol>
 
+<h2 id="happy-ending">Happy ending</h2>
+
 <p>We now run with 0 exceptions on load, and even better - we eliminated a class of invisible potential bugs.</p>
 
-<p><img src="/assets/2026-07-28-tsaas-saves/clean-boot.png" alt="" /></p>
+<p><img src="/assets/2026-07-28-tsaas-saves/clean-boot.jpg" alt="" /></p>
 
-<p>My takeaway here was that the original tests were only guarding against the visible symptom (the exceptions). This meant that any solution only aimed at “making the tests green” was not guaranteed to solve the real problem.</p>
+<p>I don’t think there’s a big learning takeaway here. Enterprise software is full of “take care when parsing old state” and “solve the problem and not the symptom”. Spotting it in “The Sims” surprised me.</p>
+
+<p>Stay tuned to see what the Goths are doing with their countertops. Heads up: utilization less than perfect.</p>
 
         
       </section>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2026-07-31T20:59:46+03:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">Returning to The Sims: 128 errors in a fresh lot</title><link href="https://blog.backslasher.net/tsaas-saves.html" rel="alternate" type="text/html" title="Returning to The Sims: 128 errors in a fresh lot" /><published>2026-07-28T00:00:00+03:00</published><updated>2026-07-28T00:00:00+03:00</updated><id>https://blog.backslasher.net/tsaas-saves</id><content type="html" xml:base="https://blog.backslasher.net/tsaas-saves.html">&lt;p&gt;This is part of TSaaS (The Sims as a Service), my series about adding LLM-plays capability to The Sims 1. &lt;!-- [full list](/tags/#tsaas) --&gt;&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2026-08-01T16:29:47+03:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">Returning to The Sims: 128 errors in a fresh lot</title><link href="https://blog.backslasher.net/tsaas-saves.html" rel="alternate" type="text/html" title="Returning to The Sims: 128 errors in a fresh lot" /><published>2026-07-28T00:00:00+03:00</published><updated>2026-07-28T00:00:00+03:00</updated><id>https://blog.backslasher.net/tsaas-saves</id><content type="html" xml:base="https://blog.backslasher.net/tsaas-saves.html">&lt;p&gt;This is part of TSaaS (The Sims as a Service), my series about adding LLM-plays capability to The Sims 1. &lt;!-- [full list](/tags/#tsaas) --&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;/h2&gt;
 &lt;p&gt;My overall goal is to have an unattended setup of an LLM playing the Sims 1.&lt;br /&gt;
@@ -8,27 +8,43 @@ Part of the work is LLM-related, but a bigger part is setting up a Windows-targe
   &lt;li&gt;Install the wiring for API control rather than GUI&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;As part of #2, I want to boot the game directly into a lot with a Sim family (for starters, the built-in family “the Goths”) and start playing. That’s where the trouble started&lt;/p&gt;
+&lt;p&gt;As part of #2, I want to boot the game directly into a lot with a Sim family (for starters, the built-in family “the Goths”) and start playing. That’s where the trouble started.&lt;/p&gt;
 
-&lt;h2 id=&quot;errors&quot;&gt;Errors&lt;/h2&gt;
-&lt;p&gt;The main reason this project is possible at all is &lt;a href=&quot;https://github.com/riperiperi/Simitone&quot;&gt;Simitone&lt;/a&gt; — an open-source .NET from-scratch implementation of The Sims 1’s engine, running against the original game’s content files.
+&lt;h2 id=&quot;errors-im-a-sysadmin-now&quot;&gt;Errors: I’m a sysadmin now&lt;/h2&gt;
+&lt;p&gt;The main reason this project is possible at all is &lt;a href=&quot;https://github.com/riperiperi/Simitone&quot;&gt;Simitone&lt;/a&gt; — an open-source .NET from-scratch implementation of The Sims 1’s engine, running against the original game’s content files.&lt;br /&gt;
 About a year ago, when I tested it as a human, I noticed that entering a new lot caused a bunch of “unhandled sims engine” errors, which was annoying but click-through-able. Some of them had no visible impact on the game world. Some affected a specific object (e.g. a sofa you can’t sit on), which I could then sell and buy again, solving the problem.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/assets/2026-07-28-tsaas-saves/lot-entry-exceptions.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;(Note the dialog half-visible behind this one. When it rains, it pours.)&lt;/p&gt;
 
-&lt;p&gt;Part of the project was moving the engine to an unattended container. This involved removing the exception dialogs (as no one is there to acknowledge them), but also made it harder to know whether an exception indeed indicates something bad or not. I decided to treat them like I would treat exceptions in a log of enterprise software - group by callsite, target the most frequent ones first, do the research to figure out which are harmful and which are benign, and then either fix or suppress.&lt;/p&gt;
+&lt;p&gt;When a human was playing the game, they could review each one of the errors popping up and react, like the sofa case. I wanted an unattended process running in a container, so clickable dialogs had to go, and I had to decide what to do with the exceptions they describe.
+I had two user behaviors I could choose from:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;The diligent user, carefully reading each exception and reacting to it. This would reflect in pausing the game, reflecting the exception to the agent and asking it what it’d like to do with it&lt;/li&gt;
+  &lt;li&gt;The optimistic user, clicking “ok” for each dialog and hoping they won’t affect the gameplay too badly.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;I chose option #2, and figured that I can monitor the resulting gameplay and invest my energy in preventing the errors rather than reacting to them. Since I’m used to sysadmin-ing enterprise software, I treated the game like one:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;If an exception happens, do not display it on GUI.&lt;br /&gt;
+Instead, log it, auto-acknowledge it, let the game continue.&lt;br /&gt;
+The agent never sees the exception (as if it auto-clicked ok).&lt;/li&gt;
+  &lt;li&gt;When I, the sysadmin, am reviewing the gameplay, I also read the log and look for exceptions.&lt;br /&gt;
+I do the same thing I’d do when reviewing a service log - group by callsite, target the most frequent ones first, do the research to figure out which are harmful and which are benign, and then either fix or suppress.&lt;/li&gt;
+&lt;/ol&gt;
 
 &lt;h2 id=&quot;the-big-boys&quot;&gt;The big boys&lt;/h2&gt;
 
-&lt;p&gt;Loading the lot reported 128 exceptions. Most of them belonged to these types:&lt;/p&gt;
+&lt;p&gt;Loading the lot reported 128 exceptions, which was weird because the lot was fresh out of the box. It’s one of the lots that come premade with a house and a family so you can start playing immediately, not a random untested combination. So why did it blow up?&lt;/p&gt;
+
+&lt;p&gt;Most of them belonged to these types:&lt;/p&gt;
 
 &lt;ol&gt;
   &lt;li&gt;A sim having an 80-slot “values” (motives, skills, flags) array, where the engine wanted 101.&lt;br /&gt;
 I added the missing entries with sane values. One might ask “what is the sane value for a new attribute?”, but looking at the code, the new attributes were obvious things like “is a superstar” or “is a ghost”, which I can confidently set to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;false&lt;/code&gt; for newly-loaded sims.&lt;/li&gt;
   &lt;li&gt;Carry slot mismatch. Simitone knows that a sim should have 3 (head, hands, pelvis), but deferred to the savefile’s slot size (1).&lt;br /&gt;
-Fixed by setting the slot size to 3, initializing missing ones as empty&lt;/li&gt;
+Fixed by setting the slot size to 3, initializing missing ones as empty.&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;p&gt;Eliminating both, I managed to get startup errors from 128 to 14, which is a nice start.&lt;/p&gt;
@@ -58,7 +74,7 @@ My only hint was that the meal process involved:&lt;/p&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;[restored]&lt;/code&gt; marks a frame that came out of a savefile rather than from live execution, which was the smoking gun.&lt;br /&gt;
-They were all “&lt;strong&gt;IP&lt;/strong&gt; (Instruction Pointer) &lt;strong&gt;OUT OF RANGE&lt;/strong&gt;”, coming straight from restored saves&lt;/p&gt;
+All of the remaining startup errors were “&lt;strong&gt;IP&lt;/strong&gt; (Instruction Pointer) &lt;strong&gt;OUT OF RANGE&lt;/strong&gt;”, coming straight from restored saves.&lt;/p&gt;
 
 &lt;p&gt;It turns out each object has a small script it runs, looking a bit like assembly. The counter’s state looks like this:&lt;/p&gt;
 &lt;div class=&quot;language-json highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;err&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
@@ -68,7 +84,8 @@ They were all “&lt;strong&gt;IP&lt;/strong&gt; (Instruction Pointer) &lt;stron
 &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;The interesting part here is that despite the routine having two instructions, we’re supposed to resume at instruction #3, which is… what?&lt;/p&gt;
+&lt;p&gt;The interesting part here is that despite the routine having two instructions, we’re supposed to resume at instruction #3, which is… what?&lt;br /&gt;
+For the less assembly-language minded, this is the equivalent of you being instructed to refer to chapter 3 in a book with 2 chapters - an obvious indication that the instruction is referring to a different version of the book than the one you’re holding.&lt;/p&gt;
 
 &lt;p&gt;The VM’s reaction was acceptable, but I had two problems with it:&lt;/p&gt;
 &lt;ol&gt;
@@ -76,7 +93,7 @@ They were all “&lt;strong&gt;IP&lt;/strong&gt; (Instruction Pointer) &lt;stron
   &lt;li&gt;The current handling caused the affected sim to drop its action completely, possibly losing items or disrupting whatever grand plan it was following.&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;We should prevent this error outright, at load time&lt;/p&gt;
+&lt;p&gt;We should prevent this error outright, at load time.&lt;/p&gt;
 
 &lt;h2 id=&quot;quick-but-incomplete&quot;&gt;Quick but incomplete&lt;/h2&gt;
 
@@ -84,12 +101,13 @@ They were all “&lt;strong&gt;IP&lt;/strong&gt; (Instruction Pointer) &lt;stron
 I loaded the savefile, and ensured no object has an &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ip&lt;/code&gt; that is outside the bounds of its instruction array.&lt;/p&gt;
 
 &lt;p&gt;Getting this test green means eliminating the exceptions, which I did by reviewing every object when loading, and resetting ones where the ip was out of bounds of the routine.
-This made the exceptions go away and the meal prep complete successfully, so I could leave it there, but I wasn’t quite happy&lt;/p&gt;
+This made the exceptions go away and the meal prep complete successfully, so I could leave it there, but I wasn’t quite happy.&lt;/p&gt;
 
 &lt;h2 id=&quot;nagging-feeling&quot;&gt;Nagging feeling&lt;/h2&gt;
 
-&lt;p&gt;The index being out of bounds happened because the object’s routine (coming from the content directory, in a specific Sims version) was no longer matching the one that was referred by the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ip&lt;/code&gt; (which came from the save file). The out-of-bounds is an obvious indicator of such a mismatch, but such a mismatch can happen without an oob.&lt;br /&gt;
-For instance, let’s assume there exists a fishtank, and its script looks something like this:&lt;/p&gt;
+&lt;p&gt;The index being out of bounds happened because the object’s routine (coming from the content directory, in a specific Sims version) was no longer matching the one that was referred by the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ip&lt;/code&gt; (which came from the save file). The out-of-bounds is an obvious indicator of such a mismatch, but is not “required” for the mismatch to happen.&lt;/p&gt;
+
+&lt;p&gt;For instance, let’s assume there exists a fishtank, and its script looks something like this (the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;gt;&lt;/code&gt; marks where the saved &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ip&lt;/code&gt; points):&lt;/p&gt;
 &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; 1: flip graphic (fish swimming left are now right, etc)
  2: sleep 10s
  3: if fed_since &amp;gt; 1 sim-day:
@@ -109,7 +127,7 @@ Now, we load this save into another version of content, where the script looks l
  6: (stuck here, fish are dead)
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 &lt;p&gt;Simpler script, victory for all. &lt;strong&gt;But&lt;/strong&gt; if we load the save that has &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ip&lt;/code&gt; set to L5, we’ll get a dead fishtank.
-While this is not an exception (a mechanical corruption), it’s definitely wrong (a logical corruption)&lt;/p&gt;
+While this is not an exception (a mechanical corruption), it’s definitely wrong (a logical corruption).&lt;/p&gt;
 
 &lt;p&gt;My conclusion was that without the original engine available to extract the original scripts from, we have no way of accurately translating &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ips&lt;/code&gt; to the right instruction.&lt;/p&gt;
 
@@ -129,16 +147,17 @@ While this is not an exception (a mechanical corruption), it’s definitely wron
   &lt;li&gt;I get a guarantee that any actions I do initiate only interact with clean objects, so they won’t be ruined by objects with invalid state.&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;Good deal for me&lt;/p&gt;
+&lt;p&gt;Good deal for me.&lt;/p&gt;
 
-&lt;h2 id=&quot;at-the-end&quot;&gt;At the end&lt;/h2&gt;
-&lt;p&gt;The sims savefile has a “version identifier”, and the Simitone engine is using it when reading savefiles.&lt;br /&gt;
-For instance, to make the savefile smaller, an object’s type is not its fully qualified GUID, but rather a reference to a lookup table in the start of the file that holds a mapping to the GUID. Simitone is built in an era where storage is cheap, so it gets rid of this table completely, dereferencing all objects to point to their direct GUIDs.&lt;br /&gt;
-The same treatment is not afforded to the objects’ states, as without concrete data from previous versions, it’s impossible to correct&lt;/p&gt;
+&lt;h2 id=&quot;postmortem&quot;&gt;Postmortem&lt;/h2&gt;
+
+&lt;p&gt;This whole problem is a result of serialized class of v1 meeting a runtime of v2. You’re probably wondering “why is this not covered by the engine?”.&lt;/p&gt;
+
+&lt;p&gt;Digging through the code, I saw that the sims savefile has a version identifier, and it is being read by Simitone for some things, but not for object state management.&lt;/p&gt;
 
 &lt;p&gt;Having no good understanding on “which version change justifies an object reset”, I used a trick relying on the fact that Simitone’s savefile is different than the original Sims one:&lt;/p&gt;
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;is_old_savefile&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;blob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;blob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;simitone_specific_data&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;is&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Null&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;blob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;simitone_specific_data&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;is&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;
 
 &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;deserialize_savefile&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;blob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;...):&lt;/span&gt;
   &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;is_old_savefile&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;blob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
@@ -149,7 +168,7 @@ The same treatment is not afforded to the objects’ states, as without concrete
 &lt;ol&gt;
   &lt;li&gt;All of my never-touched-before saves are in the original Sims format&lt;/li&gt;
   &lt;li&gt;Every save I produce is in the new Simitone format&lt;/li&gt;
-  &lt;li&gt;I will never ever get a new “content” pack that modifies objects’ behavior. I’m only needed to differentiate between “before me” and “after me”&lt;/li&gt;
+  &lt;li&gt;I will never ever get a new “content” pack that modifies objects’ behavior. I only need to differentiate between “before me” and “after me”, and the file format already does that for free&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;p&gt;This solution is:&lt;/p&gt;
@@ -159,11 +178,15 @@ The same treatment is not afforded to the objects’ states, as without concrete
   &lt;li&gt;Losing nothing of value gameplay-wise&lt;/li&gt;
 &lt;/ol&gt;
 
+&lt;h2 id=&quot;happy-ending&quot;&gt;Happy ending&lt;/h2&gt;
+
 &lt;p&gt;We now run with 0 exceptions on load, and even better - we eliminated a class of invisible potential bugs.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/assets/2026-07-28-tsaas-saves/clean-boot.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/assets/2026-07-28-tsaas-saves/clean-boot.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;My takeaway here was that the original tests were only guarding against the visible symptom (the exceptions). This meant that any solution only aimed at “making the tests green” was not guaranteed to solve the real problem.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="tsaas" /><category term="thesims" /><summary type="html">This is part of TSaaS (The Sims as a Service), my series about adding LLM-plays capability to The Sims 1.</summary></entry><entry><title type="html">Downloading a data uri as file</title><link href="https://blog.backslasher.net/download-data-uri.html" rel="alternate" type="text/html" title="Downloading a data uri as file" /><published>2026-05-28T00:00:00+03:00</published><updated>2026-05-28T00:00:00+03:00</updated><id>https://blog.backslasher.net/download-data-uri</id><content type="html" xml:base="https://blog.backslasher.net/download-data-uri.html">&lt;p&gt;While browsing some website, I ran into an audio player that had a source that was embedded:&lt;/p&gt;
+&lt;p&gt;I don’t think there’s a big learning takeaway here. Enterprise software is full of “take care when parsing old state” and “solve the problem and not the symptom”. Spotting it in “The Sims” surprised me.&lt;/p&gt;
+
+&lt;p&gt;Stay tuned to see what the Goths are doing with their countertops. Heads up: utilization less than perfect.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="tsaas" /><category term="thesims" /><summary type="html">This is part of TSaaS (The Sims as a Service), my series about adding LLM-plays capability to The Sims 1.</summary></entry><entry><title type="html">Downloading a data uri as file</title><link href="https://blog.backslasher.net/download-data-uri.html" rel="alternate" type="text/html" title="Downloading a data uri as file" /><published>2026-05-28T00:00:00+03:00</published><updated>2026-05-28T00:00:00+03:00</updated><id>https://blog.backslasher.net/download-data-uri</id><content type="html" xml:base="https://blog.backslasher.net/download-data-uri.html">&lt;p&gt;While browsing some website, I ran into an audio player that had a source that was embedded:&lt;/p&gt;
 &lt;div class=&quot;language-html highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;audio&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;autoplay=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
     &lt;span class=&quot;nt&quot;&gt;&amp;lt;source&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;type=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;audio/mpeg&quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;src=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;data:audio/mpeg;base64,...LONG_BASE_64...&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
 &lt;span class=&quot;nt&quot;&gt;&amp;lt;/audio&amp;gt;&lt;/span&gt;
