@@ -1,0 +1,350 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Hero / share image specs - BackSlasher</title>
+<meta name="description" content="My blog">
+
+
+  <meta name="author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Hero / share image specs">
+<meta property="og:url" content="https://blog.backslasher.net/assets/">
+
+
+  <meta property="og:description" content="My blog">
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/assets/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+  </head>
+
+  <body class="layout--default">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      <h1 id="hero--share-image-specs">Hero / share image specs</h1>
+
+<p>Notes on what a post’s hero image needs to be so the link preview renders as a big
+card on Facebook, LinkedIn and WhatsApp. Researched 2026-08-17 — re-check the
+official links at the bottom if something stops rendering.</p>
+
+<h2 id="the-short-version">The short version</h2>
+
+<p>One image satisfies all three platforms:</p>
+
+<ul>
+  <li><strong>1200 × 630 px</strong> (1.91:1)</li>
+  <li><strong>JPEG</strong>, sRGB, no alpha</li>
+  <li><strong>under 300 KB</strong></li>
+  <li>served over <strong>HTTPS at an absolute URL</strong>, publicly reachable (no auth, no <code class="language-plaintext highlighter-rouge">robots.txt</code> block)</li>
+  <li>keep text/faces inside the centre <strong>~1080 × 600</strong> safe zone — the edges get cropped
+differently per platform and per client</li>
+</ul>
+
+<p>The 300 KB is the binding constraint: Facebook and LinkedIn are happy with megabytes,
+WhatsApp is the one that quietly drops the image.</p>
+
+<h2 id="per-platform-detail">Per-platform detail</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th>Facebook</th>
+      <th>LinkedIn</th>
+      <th>WhatsApp</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Recommended</td>
+      <td>≥ 1200 × 630</td>
+      <td>≥ 1200 × 627</td>
+      <td>~1200 × 630</td>
+    </tr>
+    <tr>
+      <td>Aspect ratio</td>
+      <td>1.91:1 (else cropped)</td>
+      <td>1.91:1</td>
+      <td>anything up to 4:1 W/H</td>
+    </tr>
+    <tr>
+      <td>Minimum</td>
+      <td>200 × 200</td>
+      <td>401 px wide (below that → small thumbnail)</td>
+      <td>300 px wide</td>
+    </tr>
+    <tr>
+      <td>Max file size</td>
+      <td>8 MB</td>
+      <td>5 MB</td>
+      <td>600 KB official, ~300 KB in practice</td>
+    </tr>
+    <tr>
+      <td>Formats</td>
+      <td>JPG/PNG (WebP works, not guaranteed)</td>
+      <td>JPG, PNG, GIF</td>
+      <td>JPG/PNG; <strong>WebP is unreliable</strong></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Facebook’s fallback ladder: ≥1200 × 630 gives the full-width card; 600 × 315 to
+1199 × 629 still gives a large card but softer; below 600 × 315 collapses to a small
+square thumbnail beside the text.</p>
+
+<p>WhatsApp is the fussiest of the three — it fetches the image inline on the sender’s
+device with a tight budget, so an oversized or WebP image silently degrades to the
+text-only preview.</p>
+
+<h2 id="how-this-blog-picks-the-image">How this blog picks the image</h2>
+
+<p><code class="language-plaintext highlighter-rouge">_includes/seo.html</code> (Minimal Mistakes) resolves <code class="language-plaintext highlighter-rouge">og:image</code> in this order:</p>
+
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">page.header.og_image</code></li>
+  <li><code class="language-plaintext highlighter-rouge">page.header.overlay_image</code></li>
+  <li><code class="language-plaintext highlighter-rouge">page.header.image</code></li>
+  <li><code class="language-plaintext highlighter-rouge">page.header.teaser</code> / <code class="language-plaintext highlighter-rouge">site.og_image</code></li>
+</ol>
+
+<p><code class="language-plaintext highlighter-rouge">site.og_image</code> is <strong>commented out</strong> in <code class="language-plaintext highlighter-rouge">_config.yml</code>, so a post with no <code class="language-plaintext highlighter-rouge">header:</code> block
+gets <em>no</em> <code class="language-plaintext highlighter-rouge">og:image</code> at all and shares as a bare text link. Several existing posts are
+in that state.</p>
+
+<p><code class="language-plaintext highlighter-rouge">overlay_image</code> doubles as the on-page banner, which wants a wide letterbox crop, not
+1.91:1. When the banner crop and the share crop disagree, set both:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">header</span><span class="pi">:</span>
+  <span class="na">overlay_image</span><span class="pi">:</span> <span class="s">/assets/breezy/12-case-render.png</span>   <span class="c1"># on-page banner</span>
+  <span class="na">og_image</span><span class="pi">:</span> <span class="s">/assets/breezy/share.jpg</span>                 <span class="c1"># 1200x630, &lt;300KB</span>
+</code></pre></div></div>
+
+<p>The theme runs both through <code class="language-plaintext highlighter-rouge">absolute_url</code>, so site-relative paths are fine.</p>
+
+<h2 id="making-one">Making one</h2>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># from an existing photo/render: fill 1200x630, centre-crop, strip metadata</span>
+magick input.jpg <span class="se">\</span>
+  <span class="nt">-resize</span> 1200x630^ <span class="nt">-gravity</span> center <span class="nt">-extent</span> 1200x630 <span class="se">\</span>
+  <span class="nt">-colorspace</span> sRGB <span class="nt">-background</span> white <span class="nt">-alpha</span> remove <span class="nt">-alpha</span> off <span class="se">\</span>
+  <span class="nt">-strip</span> <span class="nt">-sampling-factor</span> 4:2:0 <span class="nt">-quality</span> 82 <span class="se">\</span>
+  share.jpg
+
+<span class="c"># check it landed under 300KB</span>
+identify <span class="nt">-format</span> <span class="s2">"%wx%h %b</span><span class="se">\n</span><span class="s2">"</span> share.jpg
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">-alpha remove -background white</code> matters for PNG sources: transparency renders as
+black on most preview clients.</p>
+
+<p>Optionally pin the dimensions in the head so the first ever share renders large
+instead of waiting for the crawler to measure the file:</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">"og:image:width"</span> <span class="na">content=</span><span class="s">"1200"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">"og:image:height"</span> <span class="na">content=</span><span class="s">"630"</span><span class="nt">&gt;</span>
+</code></pre></div></div>
+
+<h2 id="verifying">Verifying</h2>
+
+<p>Previews are cached per-URL and per-platform; after changing an image you must
+re-scrape, not just reload.</p>
+
+<ul>
+  <li>Facebook — <a href="https://developers.facebook.com/tools/debug/">https://developers.facebook.com/tools/debug/</a> (“Scrape Again”)</li>
+  <li>LinkedIn — <a href="https://www.linkedin.com/post-inspector/">https://www.linkedin.com/post-inspector/</a></li>
+  <li>WhatsApp — no official tool. It reuses Facebook’s crawler cache, so scrape via the
+FB debugger first, then test in a chat with yourself. Appending <code class="language-plaintext highlighter-rouge">?v=2</code> to the URL
+forces a fresh fetch if the cache is stuck.</li>
+</ul>
+
+<h2 id="sources">Sources</h2>
+
+<ul>
+  <li><a href="https://developers.facebook.com/docs/sharing/webmasters/images/">Facebook: sharing best practices for images</a></li>
+  <li><a href="https://developers.facebook.com/documentation/business-messaging/whatsapp/link-previews/">WhatsApp link previews (Meta for Developers)</a></li>
+  <li><a href="https://www.linkedin.com/help/linkedin/answer/a521928">LinkedIn: making your website shareable</a></li>
+  <li><a href="https://ogp.me/">The Open Graph protocol</a></li>
+</ul>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2026 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S2WYJL3VQ7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-S2WYJL3VQ7', { 'anonymize_ip': true});
+</script>
+
+
+
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>

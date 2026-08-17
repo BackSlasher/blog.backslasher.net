@@ -1,0 +1,954 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>I reverse-engineered my HVAC because I couldn’t turn it off reliably - BackSlasher</title>
+<meta name="description" content="">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="I reverse-engineered my HVAC because I couldn’t turn it off reliably">
+<meta property="og:url" content="https://blog.backslasher.net/breezy.html">
+
+
+  <meta property="og:description" content="">
+
+
+
+  <meta property="og:image" content="https://blog.backslasher.net/assets/breezy/share.jpg">
+
+
+
+
+
+  <meta property="article:published_time" content="2026-08-16T00:00:00+03:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/breezy.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+  
+
+
+
+
+
+
+
+<div class="page__hero--overlay"
+  style=" background-image: url('/assets/breezy/header.jpg');"
+>
+  
+    <div class="wrapper">
+      <h1 id="page-title" class="page__title" itemprop="headline">
+        
+          I reverse-engineered my HVAC because I couldn’t turn it off reliably
+
+        
+      </h1>
+      
+      
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          18 minute read
+        
+      </span>
+    
+  </p>
+
+
+      
+      
+    </div>
+  
+  
+</div>
+
+
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="I reverse-engineered my HVAC because I couldn’t turn it off reliably">
+    <meta itemprop="description" content="">
+    <meta itemprop="datePublished" content="2026-08-16T00:00:00+03:00">
+    
+
+    <div class="page__inner-wrap">
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p><img src="/assets/breezy/20-boards-family.jpg" alt="All four board revisions, hand-labeled" /></p>
+
+<p>A couple of months ago, I had my HVAC controller replaced in an effort to save on electricity.<br />
+I controlled the previous board with an IR blaster that I loaded with a full matrix of <code class="language-plaintext highlighter-rouge">{mode,fan_speed, target_temp}</code> (and a special command for “off”). The new one didn’t work like that.</p>
+
+<p><img src="/assets/breezy/28-ir-code-dump.png" alt="The old IR code matrix - a Base64 blast for every {mode, fan, temp} combination" /></p>
+
+<h2 id="no-off-button">No “off” button</h2>
+<p>The new remote/controller dialect had no designated “off” command. Instead, it had a “toggle” command, which makes the AC off if it’s on, and on if it’s off.<br />
+It sounds innocent enough when it’s a remote button, because an observer knows whether the AC is currently off or on, and therefore whether it needs this button to get to the wanted state. For a smart home solution, it was a problem.
+If the AC is currently off and I want it set to “cool”, I will need to send a toggle command. However if it’s already on (e.g. fan only) and I send a toggle command, it’ll turn off.<br />
+This meant I needed a way to get the AC’s current status in order to decide which command to send.</p>
+
+<h2 id="reading-status-is-important">Reading status is important</h2>
+<p>The original controller for the AC had no external indication for what it’s currently doing. The “external entity” was a small plastic with a single LED, a single button (on/off toggle) and an IR receiver. It obviously had an internal state (cool/heat, target temp) but didn’t expose it in a way I could read, so my best course of action was remembering the last state I sent it and assuming it landed. It wasn’t perfect, but it worked.</p>
+
+<p>The new controller had a fancy LCD screen<br />
+<img src="/assets/breezy/19-panel-healthy.jpg" alt="The wall panel: mode, fan, room temp, set temp" /><br />
+It showed exactly what the AC was thinking, including the part I desperately needed - whether it’s on or not. Knowing that will let me decide whether I need to send a power toggle with a new command (off-&gt;on, on-&gt;off) or not (on-&gt;on but something else).</p>
+
+<h2 id="naive-idea">Naive idea</h2>
+<p>My original plan was this:</p>
+<ol>
+  <li>Put a device between the controller and the panel</li>
+  <li>Learn the secrets of how they communicate</li>
+  <li>Create a device to permanently tap that channel and read/write AC state</li>
+</ol>
+
+<p>Which sounds good, if you discount the fact I know very little about electronics or signaling.</p>
+
+<h2 id="1-cutting-things">1. Cutting things</h2>
+<p>I bothered my HVAC tech enough to learn where they buy their electronics and got myself another HVAC controller (~50$), fully expecting me to destroy some components during my experiments.<br />
+<img src="/assets/breezy/03-panel-alive-on-bench.jpg" alt="The spare panel, alive on the bench" /><br />
+I disconnected the nice installed LCD panel and connected the spare one, which was placed on my crafts desk.<br />
+I cut the cable and started probing it with my multimeter to find it’s 5v. I then consulted a friend who did some hardware reverse engineering.</p>
+
+<h2 id="2-wiretapping">2. Wiretapping</h2>
+<p><img src="/assets/breezy/05-bus-pirate-probing.jpg" alt="Bus Pirate spliced into the cut cable" /></p>
+
+<p>The friend recommended I get “some hardware you can use to listen in”. I had several Arduinos, but they weren’t good enough. I pushed back against getting an oscilloscope and we settled on a BusPirate. It’s small, programmable, designed to help you crack protocols on other people’s electronics. I chose BusPirate 5, which is not the newest, but probably enough for me.</p>
+
+<p>I thought I was really clever by doing the following:</p>
+<ol>
+  <li>Splice the BP to the LCD cable, connecting both it and the LCD panel to the controller in a way that showed the data on the BP while keeping the LCD panel working</li>
+  <li>Connect the BP over USB to a Raspberry PI I had lying around, and setting wifi+ssh on the RPI.</li>
+  <li>SSHing to the RPI from my laptop, so I don’t have to sit next to the very touchy wires</li>
+  <li>Opening an account for my friend so they can remote-ssh to the RPI, doing whatever debugging they want</li>
+</ol>
+
+<p>This entire procedure took way way longer than it should have (about 7 work days).<br />
+One of the blockers was that the protocol is not standard. e.g. it wasn’t SPI or I2C.<br />
+The other was that I connected the wrong cable to BP’s ground wire, meaning it got garbage readings.</p>
+
+<p>During this time of despair, I told my friend “what if those engineers at $COMPANY built a really sophisticated protocol? What chance do we have against the smart people in the lab?”<br />
+He replied with “as much as you think you don’t know about electronic signals, these guys don’t know either. They’re not here to reinvent the wheel, they’re here to get something working and move on”.<br />
+After that, I found the bad wiring and immediately made progress. My friend was right.</p>
+
+<h2 id="3-protocol-basics">3. Protocol basics</h2>
+<p>BP was running in “logic analyzer” mode, being connected to sigrok / sigrok-cli on the rpi to read the inputs.<br />
+At this stage my friend was bored (“it’s just the bits now”) and I needed another partner, so I got Claude Opus (4.5 I think) to help me. I gave it unfettered access to the rpi over ssh (because it was isolated and had nothing of significance on it) and told it to go wild with analysis.</p>
+
+<p><img src="/assets/breezy/27-bp-session.jpg" alt="A session: the LLM mapping cable wires via the Bus Pirate, panel on the desk" /><br />
+Together, we produced the following bits of information:</p>
+
+<ol>
+  <li>There are 5 wires. Two of them were GND and +5V.</li>
+  <li>One wire had no activity, unless I was sending IR blasts from the remote. We deduced that this is a dedicated IR line.<br />
+This made sense to me because the controller supports secondary “heads” that only have a led and IR receiver, so it makes sense that IR is not part of a complex protocol.</li>
+  <li>Two wires contained some sort of activity. One was rhythmic, and we’ve decided it’s a clock line. The other had rises and drops that somewhat correlated to the clock rate, but contained more variability. We’ve decided that one is data, and the entire protocol is SPI-like (although not full SPI).</li>
+</ol>
+
+<p>The data was repetitive enough that we could identify repeating patterns (hereby declared “frames”), although we didn’t know what they contained.</p>
+
+<h2 id="4-the-ultimate-contraption">4. The ultimate contraption</h2>
+<p>I already had an authoritative source for what the frames contained - the LCD screen itself. I started with recording frames and manually labeling them with what the lcd panel said at the moment, but it was manual, slow, boring. I decided to automate, and involve as many “things I have lying around” in the effort.</p>
+
+<p><img src="/assets/breezy/06-camera-correlation-rig.jpg" alt="The contraption: rpi camera pointed at the zip-tied panel, Bus Pirate on the breadboard" /></p>
+
+<ol>
+  <li>I 3D-printed a “camera-screen mount”</li>
+  <li>The LCD panel was zip-tied to the mount and connected to a breadboard</li>
+  <li>The breadboard was connected to the LCD panel, BP, HVAC controller</li>
+  <li>A rpicam was mounted to the mount, pointing at the LCD panel (and focused correctly)</li>
+  <li>The rpi was connected to the rpicam and the BP</li>
+</ol>
+
+<p>I wrote a tiny script that ran on rpi that did the following:</p>
+<ol>
+  <li>Take a picture of the LCD screen</li>
+  <li>Record a full buffer-worth of buspirate via sigrok-cli</li>
+  <li>Take another picture of the LCD screen</li>
+  <li>Run some poor man’s computer vision on the LCD screen pictures to grab the following:
+    <ol>
+      <li>room temperature</li>
+      <li>target temperature</li>
+      <li>mode (cool / heat / fan only), fan speed, whether compressor is running</li>
+    </ol>
+  </li>
+  <li>If any of the pictures don’t parse well, or disagree (indicating a change in the middle of the recording), mark the packet as garbage</li>
+  <li>Otherwise, create a small metadata.json to label the recording</li>
+</ol>
+
+<p>I ran this script on several different configurations and let it run for several days in a cronjob.<br />
+I handed all of the recordings to Opus and had it do some disassembly work.<br />
+It succeeded.</p>
+
+<p>Opus was able to create a script that grabbed a BP dump and deterministically extracted the current HVAC status from it, which indicated a success on the reading front.</p>
+
+<p>For instance, we noticed two kinds of frames - one 76-bit long coming from the controller indicating state, and another “poll” frame that involves the controller asking a question, then leaving 36 bits of quiet for the LCD panel to report back (I assume button presses are reported in that window), all happening on the same data line.</p>
+
+<h2 id="5-time-to-write">5. Time to write</h2>
+<p>Now that we covered the read path, we could tackle writing. I had two options for writing:</p>
+
+<ol>
+  <li>simulating LCD panel keypresses, which let us cycle mode / fan speed, change temp -1/+1, toggle power</li>
+  <li>Copying the remote IR blasts, which contained full state (with a possible power toggle)</li>
+</ol>
+
+<p>I chose to ignore #1 because it was a subset of #2. BP was not designed for writing, and I had to find another gizmo for doing the writes. Luckily I had all of those Arduinos.</p>
+
+<p>I really wanted an ESP32-based solution because I know how to program them and my devkits had wifi, but ESP32 runs its GPIOs on 3.3v and the HVAC was doing 5v. While this isn’t magic-smoke-level incompatibility, it will ruin the ESP32 over time. Arduino doesn’t have the problem as it runs on 5v, but it doesn’t have wifi.<br />
+I started with an Arduino Uno, getting commands over serial from the rpi, and graduated later on to an Arduino R4 I found, which is both 5v and has wifi (which let me control it via MQTT).</p>
+
+<p><img src="/assets/breezy/07-arduino-era.jpg" alt="Arduino R4 joining the rig, Bus Pirate still on duty" /></p>
+
+<p><img src="/assets/breezy/08-interim-production-rig.jpg" alt="The interim production setup - Arduino only, Bus Pirate retired" /><br />
+<em>Arduino R4 doing both reading and writing, accessible over WiFi. The rpi allows “OTA” since R4 didn’t do it nicely. The R4 matrix shows the room temp because LED matrixes are fun</em></p>
+
+<p>I didn’t do as much IR decoding as I did IR recording at this point - I connected some IR receiver to the Arduino, recorded a blast, then replayed it on the IR line and checked the data before/after to see the HVAC state change.<br />
+This helped me build a capture script that does the following:</p>
+
+<ol>
+  <li>Record IR blast</li>
+  <li>Grab HVAC state before</li>
+  <li>Play IR blast</li>
+  <li>Grab HVAC state after</li>
+  <li>If before and after are different, categorize IR blast as generating the “after” change</li>
+</ol>
+
+<p>I built a healthy matrix of <code class="language-plaintext highlighter-rouge">{mode,fan_speed, target_temp, is_power_toggle}</code> and had Opus work hard on the captures to reverse engineer the protocol.</p>
+
+<h2 id="6-decoding-ir">6. Decoding IR</h2>
+<p>I gave Opus permission to craft all sorts of weird IR sequences and send them at the controller, each session provided value.<br />
+The biggest discovery was Opus finding out that <strong>it’s not only about bits sent, but about cadence.</strong><br />
+A logical first step the LLM did was converting the BP dumps into “the bits the IR transmission contained”. While it was able to reproduce some state changes, it couldn’t do others. Even more confusing - some state transitions looked the same, but evidence showed they pointed to different states.<br />
+Once Opus turned around to compare the raw recordings, it found that the duration of some 1s or 0s was different between the recordings, and keeping that as part of the blast made the difference.<br />
+I, personally, as a non-electronics-signals-person, do not understand the value of playing with the duration. However, I’ve confirmed with some more savvy friends that this is indeed standard practice - “pulse-width encoding”.</p>
+
+<h2 id="7-hardware-oclock">7. Hardware o’clock</h2>
+<p>Getting read/writes was great, but I wanted to find a solution that doesn’t live on my desk (and has a bunch of delicate wiring). I contracted Opus to design a PCB that will live next to the HVAC controller in the attic.<br />
+Our design constraints were these:</p>
+<ol>
+  <li>The 5v on the AC’s cable is too weak to feed an ESP32, so we’re going to need to get mains power and convert to 5V for internal use</li>
+  <li>The ESP32 is operating internally on 3.3v, so we’ll need some sort of adapter between it and the HVAC wiring</li>
+  <li>I hate doing UART for flashing, so I want USB flashing, and OTA if possible</li>
+</ol>
+
+<p>#3 was easiest to resolve. I decided to take ESP32 devkits (as opposed to wired on the board), which also let me switch them between PCB iterations (and in case I burn something).<br />
+#1 made the PCBs a bit more expensive (and dangerous because mains) but overall doable.<br />
+#2 was a cause of so many problems.</p>
+
+<p>The development flow was this:</p>
+<ol>
+  <li>Opus builds a textual spec in markdown, possibly a list of changes from the previous iteration</li>
+  <li>I find someone on Fiverr to turn this into a proper PCB schematic and BOM</li>
+  <li>Send those to JLCPCB for fabrication</li>
+  <li>When it arrives, test the following:
+    <ol>
+      <li>Powered by USB, connected to HVAC cabling</li>
+      <li>Powered by mains power, connected to HVAC cabling</li>
+      <li>Assuming everything works, install at the attic</li>
+    </ol>
+  </li>
+</ol>
+
+<p>I had 4 different iterations, and the failures came pretty early.</p>
+
+<h2 id="8-hardware-iterations">8. Hardware iterations</h2>
+
+<p><img src="/assets/breezy/21-v1-board.jpg" alt="The v1 board" /></p>
+
+<p><strong>V1</strong> was naive about GPIOs and failed when the ESP32 was seated. It wired the AC’s clock wire into ESP32’s gpio 12, which was a strapping pin. The 5v-3.3v level shifter had “HIGH” as default (no input), meaning gpio 12 was enabled, instructing the ESP32 to treat its flash storage as “requires 1.8v to operate”.<br />
+Well, the flash doesn’t work at 1.8v, it’s built for 3.3v, so fed with 1.8v it returned garbage, causing the ESP to reboot, again into “flash 1.8v” mode, putting us in a perma-boot-loop. <br />
+The level shifters also had something wrong. Even without any ESP32 present, they generated noise that corrupted the data lane, causing the screen to display garbage.<br />
+At the time, I thought the problem was also “level shifter being too slow” (shows just how much I know what I’m doing, the bus itself is pretty slow at 7.1kHz), and decided we need “faster and therefore better” ones.<br />
+Lastly, I also seated one ESP32 devkit the wrong way around, magic-smoking it.</p>
+
+<p><img src="/assets/breezy/22-v2-board.jpg" alt="The v2 board - screw terminal in, IR LED out, TXS0104 aboard" /></p>
+
+<p><strong>V2</strong> shuffled the GPIOs around to prevent bootlooping, and added an indicator for which direction the ESP32 should go in, so no more magic smoke.<br />
+It did reverse the HVAC cable pinout, meaning I had to mangle the plastic receptacles to do basic testing.<br />
+The ESP32 now had multiple sources of power (mains power, HVAC cable) that were all bridged with each other, meaning that either the ESP32 was leeching power from the LCD panel (that died whenever wifi was established), or polluting the HVAC data with power oscillations.<br />
+As a side adventure, playing with the HVAC cable’s positioning while the device was connected to mains power gave me a painful shock - luckily it was just one finger closing the circuit, and only for a moment. It convinced me to not mess around with mains power myself (don’t be an idiot like me).</p>
+
+<p><img src="/assets/breezy/23-v2-mangled-connector.jpg" alt="The carved-open connectors that let me test v2 despite the reversed pinout" /></p>
+
+<p>Despite all of this, I was able to tell something was still wrong with the hvac-esp32 connection. When powering the esp32 from its USB socket and trying to read the HVAC state, I got more clock ticks than I expected.<br />
+Just for fun, I added a name and logo for the silkscreen of the back of the pcb. Called it “Breezy”.</p>
+
+<p><img src="/assets/breezy/26-logo-silkscreen.jpg" alt="The Breezy logo on the back silkscreen" /></p>
+
+<p><strong>V3</strong> fixed the power mingling and the wrong pinout. No problem, no complaints.<br />
+The clock ticks I tried fixing by adding a resistor and a capacitor (100 Ω, 100 pF) to reduce noise I suspected was amplified by the level shifter. This didn’t work. Instead, the screen alternated between displaying an error and claiming the current room temp is -9°C (below freezing), which was not the case. It was provably involving the shifters/ESP32, because when unseating the ESP32 kit, the LCD screen went back to normal.</p>
+
+<p><img src="/assets/breezy/18-minus9-room-temp.jpg" alt="Room Temp: -9.0°C. It was not." /></p>
+
+<p>I was a bit lost, as my knowledge about level shifters was exhausted. Then, Claude Fable came out.<br />
+Friends told me how much better it was at “difficult problems”, and I figured I’d spill my free credits on this conundrum.<br />
+I’m unsure whether Fable had more electronics knowledge, or it can be credited to a new deduction model, but Fable said the level shifters were the absolute wrong tool for the job and suggested something else.</p>
+
+<p><img src="/assets/breezy/25-v4-board.jpg" alt="The v4 board" /></p>
+
+<p><strong>V4</strong>’s dramatic change was removing the level shifters.<br />
+Fable’s angle is that bidirectional conversion of 5v to 3.3v requires level shifters, which adds complexity and bug-shelters that we don’t need. If we switch to unidirectional reads/writes, we can trade those active components for simpler passive ones.<br />
+For reading, a pair of resistors reduces a 5v range into a 3.3v one. lows stay low (zero), and high 5v becomes high 3.3v. No active component that can generate noise, or round edges, or be too slow.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>HVAC wire (5v) ─[100KΩ]─┬─ ESP32 pin (reads ~3.2v)
+                        │
+                     [180KΩ]
+                        │
+                       GND
+</code></pre></div></div>
+<p>For writes, because the signaling method is “active low” (meaning that “nothing” is 1s and “something” is 0s), the ESP32 only needs the ability to set the line to 0 when it wants to. For this, a transistor was enough. It would do nothing on its own, and when instructed it would write “0”.<br />
+Our design has us reading and writing the IR line (because we want to be able to learn new IR commands if we need to without the BusPirate), so the solution is to connect the IR line twice, to two different GPIOs. Once with a resistor as a read line, and once with a transistor as a write line.</p>
+
+<p>This worked <strong>perfectly</strong>. I ran the following series of tests:</p>
+<ol>
+  <li>Connect the pcb to the hvac controller and panel, no power or esp32 seated. LCD screen worked.</li>
+  <li>Same with ESP32 seated, but no power. LCD screen worked.</li>
+  <li>Same with usb power for the ESP32. LCD screen worked, and ESP32 able to read the state and send IR.</li>
+  <li>Same with mains power instead of USB. LCD screen and ESP32 work. Device doesn’t overheat.</li>
+  <li>Installed in the attic with a usb powerbank. Worked.</li>
+  <li>Electrician-installed in the attic with mains. Worked.</li>
+</ol>
+
+<p><img src="/assets/breezy/16-attic-install-open.jpg" alt="Breezy installed in the attic, lid off: mains supply, ESP32, both cables" /></p>
+
+<h2 id="9-esphome">9. ESPHome</h2>
+<p>Before installing Breezy in the attic, where it’d be hard to reach, I flashed it with ESPHome and tested its OTA capability.<br />
+This let me continue development without having hardware and cabling littering my desk.<br />
+Reasons I like ESPHome for this kind of project:</p>
+<ol>
+  <li>Great Home Assistant integration</li>
+  <li>Blessed toolchain - no need to hunt for libraries</li>
+  <li>Support for USB and OTA version upgrades, with reasonable security</li>
+</ol>
+
+<p>Boring, works. No complaints.</p>
+
+<p><img src="/assets/breezy/15-esphome-ui.png" alt="The ESPHome web UI" /><br />
+<em>Entity states on the left; on the right, the actual bus frames scrolling by - the long ones are the controller announcing its state, the short ones are it polling the panel’s buttons.</em></p>
+
+<h2 id="10-case">10. Case</h2>
+<p>The reason I got shocked is grabbing the PCB’s body when messing with the mangled V2 cable socket, accidentally touching the backside of the mains voltage socket. To stop this area from being exposed, I designed both a small tray (for testing) and a full box (for attic-time) for the case.<br />
+Printed out of PETG, works well.</p>
+
+<p><img src="/assets/breezy/11-tray-render.png" alt="The test tray" />
+<img src="/assets/breezy/12-case-render.png" alt="The attic box, lid hovering" /></p>
+
+<h2 id="11-full-decoding-and-the-hardships-on-the-way">11. Full decoding and the hardships on the way</h2>
+<p>Even when I had Breezy installed in its final position (by a professional electrician!), I continued working on decoding both the read and write protocols.<br />
+They both fed into each other to let the LLM test things mostly independently.<br />
+For instance, each IR blast repeated the same exact message 3 times, which I assume was for redundancy, since IR is not a 100% reliable medium (strong Pokemon-trading-over-IR vibes), so the LLM sent an “IR” blast (quotes because it was actually over the wire) that composed only two frames. This was not accepted, and neither was trying to get the ESP32 hardware to repeat the frame 3 times, as opposed to loading all 3 frames as a very long byte sequence.</p>
+
+<p>We overall did a lot of experimentation over our IR commands being occasionally ignored. We had some theories, like “the HVAC controller is busy doing compressor things and is ignoring us then”, or “it needs multiple repeats of the same 3 frames”.<br />
+Turns out we were not being ignored at all. Instead, I had two problems:</p>
+<ol>
+  <li>I forgot that the ESP32 is not a full fledged computer. I kept its tiny CPU so busy with IR retries and dumping debug data into websockets, so that it didn’t have enough time to listen and parse the state packets from the HVAC controller.<br />
+After realizing that, I reduced logging dramatically. If I ever need very detailed logging, I’ll get another Breezy set up (I have 5, as it’s the minimum amount for JLCPCB fabrication), or bring the BusPirate out of retirement.</li>
+  <li>The state reader was over-strict on frame validation.<br />
+It decided that a certain area (e.g. byte #3) was supposed to be 0, and discarded any frame where this wasn’t the case. <br />
+In retrospect, there’s probably a bit there indicating whether the LCD backlight should turn on, which happens for a couple of seconds after a valid IR command is accepted. All of the dumps came from backlight-off durations, meaning this byte was 0, so the LLM decided that this byte should always be 0.<br />
+Ironically, this made it reject any frame happening after a valid IR command, meaning the new state was not accepted, causing us to retry the IR transmission, getting some more backlight frames, causing us to retry again, and so on.</li>
+</ol>
+
+<p>Other enhancements and discoveries we did post-installation:</p>
+<ol>
+  <li>Some items, like “target temp 24c” or “mode heat, medium fan” can seem like 7 bits instead of 8, which didn’t make sense to me.<br />
+Further testing showed they’re all 8-bit, but looked like 7-bit when decoded wrongly.</li>
+  <li>Power toggle frames are different in structure from the non-power-toggle ones, but contain the same data, meaning we could kick the HVAC directly to a specific state (no need for a power toggle and then sending the new state).<br />
+LLM says that making the power frame drastically different than a regular one prevents a random bitflip on a regular frame turning the HVAC off. I don’t have enough understanding in signals / electronics to have an opinion here.</li>
+  <li>The state protocol’s checksum was understood, and we switched from “majority vote” validation, as in choosing the most-repeated state within a second as the HVAC’s true state, to validating via the checksum.<br />
+We needed that because the captures, although good, were not perfect</li>
+</ol>
+
+<h2 id="12-public-repo-and-future-work">12. Public repo and future work</h2>
+<p>I uploaded all of the usable parts to a repo (<a href="https://github.com/BackSlasher/breezy">Backslasher/breezy</a>), so if you happen to have a “USP 5010”, you can make your own.<br />
+If you don’t have that model but you have something similar enough, you can probably copy a big bunch of my work. The ESP32 read/writing 5v was very annoying and I hope to reduce the amount of pain it causes other people.</p>
+
+<p>The actual v4 of Breezy works well. I have a list of future requirements for v5, but it only has one item, and I’m not sure it’s needed (“allow writes to data to emulate LCD screen keypresses”).</p>
+
+<p>Overall very happy with this.</p>
+
+<p><img src="/assets/breezy/14-ha-climate-light.png" alt="Home Assistant: 29.9°C outside, 22°C inside, Cooling" /></p>
+
+<p><img src="/assets/breezy/17-attic-install-closed.jpg" alt="The sealed box in the attic, LEDs through the vents" /></p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#breezy" class="page__taxonomy-item" rel="tag">breezy</a><span class="sep">, </span>
+    
+      <a href="/tags/#hardware" class="page__taxonomy-item" rel="tag">hardware</a><span class="sep">, </span>
+    
+      <a href="/tags/#python" class="page__taxonomy-item" rel="tag">python</a><span class="sep">, </span>
+    
+      <a href="/tags/#ramblings" class="page__taxonomy-item" rel="tag">ramblings</a>
+    
+    </span>
+  </p>
+
+
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2026-08-16T00:00:00+03:00">August 16, 2026</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/tsaas-saves.html" class="pagination--pager" title="Returning to The Sims: 128 errors in a fresh lot
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/tsaas-saves.html" rel="permalink">Returning to The Sims: 128 errors in a fresh lot
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          9 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">This is part of TSaaS (The Sims as a Service), my series about adding LLM-plays capability to The Sims 1. 
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/download-data-uri.html" rel="permalink">Downloading a data uri as file
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">While browsing some website, I ran into an audio player that had a source that was embedded:
+&lt;audio autoplay=""&gt;
+    &lt;source type="audio/mpeg" src="...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/esphome-switcher-proxy.html" rel="permalink">ESPHome proxy for Switcher
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I have a Switcher at home, which is a smart water heater controller. It lives in the IoT wifi jail, where they’re not allowed to reach to the open internet, ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/orange-apple.html" rel="permalink">“Can you paint this apple orange?”
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">One of my gigs was about migrating a workload from one hyperscaler to another.
+I was paired with a team lead that was chronically busy, which is why they cou...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2026 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S2WYJL3VQ7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-S2WYJL3VQ7', { 'anonymize_ip': true});
+</script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>

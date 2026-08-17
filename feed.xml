@@ -1,4 +1,298 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2026-08-01T16:29:47+03:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">Returning to The Sims: 128 errors in a fresh lot</title><link href="https://blog.backslasher.net/tsaas-saves.html" rel="alternate" type="text/html" title="Returning to The Sims: 128 errors in a fresh lot" /><published>2026-07-28T00:00:00+03:00</published><updated>2026-07-28T00:00:00+03:00</updated><id>https://blog.backslasher.net/tsaas-saves</id><content type="html" xml:base="https://blog.backslasher.net/tsaas-saves.html">&lt;p&gt;This is part of TSaaS (The Sims as a Service), my series about adding LLM-plays capability to The Sims 1. &lt;!-- [full list](/tags/#tsaas) --&gt;&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2026-08-17T20:17:42+03:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">I reverse-engineered my HVAC because I couldn’t turn it off reliably</title><link href="https://blog.backslasher.net/breezy.html" rel="alternate" type="text/html" title="I reverse-engineered my HVAC because I couldn’t turn it off reliably" /><published>2026-08-16T00:00:00+03:00</published><updated>2026-08-16T00:00:00+03:00</updated><id>https://blog.backslasher.net/breezy</id><content type="html" xml:base="https://blog.backslasher.net/breezy.html">&lt;p&gt;&lt;img src=&quot;/assets/breezy/20-boards-family.jpg&quot; alt=&quot;All four board revisions, hand-labeled&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;A couple of months ago, I had my HVAC controller replaced in an effort to save on electricity.&lt;br /&gt;
+I controlled the previous board with an IR blaster that I loaded with a full matrix of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;{mode,fan_speed, target_temp}&lt;/code&gt; (and a special command for “off”). The new one didn’t work like that.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/breezy/28-ir-code-dump.png&quot; alt=&quot;The old IR code matrix - a Base64 blast for every {mode, fan, temp} combination&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;no-off-button&quot;&gt;No “off” button&lt;/h2&gt;
+&lt;p&gt;The new remote/controller dialect had no designated “off” command. Instead, it had a “toggle” command, which makes the AC off if it’s on, and on if it’s off.&lt;br /&gt;
+It sounds innocent enough when it’s a remote button, because an observer knows whether the AC is currently off or on, and therefore whether it needs this button to get to the wanted state. For a smart home solution, it was a problem.
+If the AC is currently off and I want it set to “cool”, I will need to send a toggle command. However if it’s already on (e.g. fan only) and I send a toggle command, it’ll turn off.&lt;br /&gt;
+This meant I needed a way to get the AC’s current status in order to decide which command to send.&lt;/p&gt;
+
+&lt;h2 id=&quot;reading-status-is-important&quot;&gt;Reading status is important&lt;/h2&gt;
+&lt;p&gt;The original controller for the AC had no external indication for what it’s currently doing. The “external entity” was a small plastic with a single LED, a single button (on/off toggle) and an IR receiver. It obviously had an internal state (cool/heat, target temp) but didn’t expose it in a way I could read, so my best course of action was remembering the last state I sent it and assuming it landed. It wasn’t perfect, but it worked.&lt;/p&gt;
+
+&lt;p&gt;The new controller had a fancy LCD screen&lt;br /&gt;
+&lt;img src=&quot;/assets/breezy/19-panel-healthy.jpg&quot; alt=&quot;The wall panel: mode, fan, room temp, set temp&quot; /&gt;&lt;br /&gt;
+It showed exactly what the AC was thinking, including the part I desperately needed - whether it’s on or not. Knowing that will let me decide whether I need to send a power toggle with a new command (off-&amp;gt;on, on-&amp;gt;off) or not (on-&amp;gt;on but something else).&lt;/p&gt;
+
+&lt;h2 id=&quot;naive-idea&quot;&gt;Naive idea&lt;/h2&gt;
+&lt;p&gt;My original plan was this:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Put a device between the controller and the panel&lt;/li&gt;
+  &lt;li&gt;Learn the secrets of how they communicate&lt;/li&gt;
+  &lt;li&gt;Create a device to permanently tap that channel and read/write AC state&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Which sounds good, if you discount the fact I know very little about electronics or signaling.&lt;/p&gt;
+
+&lt;h2 id=&quot;1-cutting-things&quot;&gt;1. Cutting things&lt;/h2&gt;
+&lt;p&gt;I bothered my HVAC tech enough to learn where they buy their electronics and got myself another HVAC controller (~50$), fully expecting me to destroy some components during my experiments.&lt;br /&gt;
+&lt;img src=&quot;/assets/breezy/03-panel-alive-on-bench.jpg&quot; alt=&quot;The spare panel, alive on the bench&quot; /&gt;&lt;br /&gt;
+I disconnected the nice installed LCD panel and connected the spare one, which was placed on my crafts desk.&lt;br /&gt;
+I cut the cable and started probing it with my multimeter to find it’s 5v. I then consulted a friend who did some hardware reverse engineering.&lt;/p&gt;
+
+&lt;h2 id=&quot;2-wiretapping&quot;&gt;2. Wiretapping&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&quot;/assets/breezy/05-bus-pirate-probing.jpg&quot; alt=&quot;Bus Pirate spliced into the cut cable&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The friend recommended I get “some hardware you can use to listen in”. I had several Arduinos, but they weren’t good enough. I pushed back against getting an oscilloscope and we settled on a BusPirate. It’s small, programmable, designed to help you crack protocols on other people’s electronics. I chose BusPirate 5, which is not the newest, but probably enough for me.&lt;/p&gt;
+
+&lt;p&gt;I thought I was really clever by doing the following:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Splice the BP to the LCD cable, connecting both it and the LCD panel to the controller in a way that showed the data on the BP while keeping the LCD panel working&lt;/li&gt;
+  &lt;li&gt;Connect the BP over USB to a Raspberry PI I had lying around, and setting wifi+ssh on the RPI.&lt;/li&gt;
+  &lt;li&gt;SSHing to the RPI from my laptop, so I don’t have to sit next to the very touchy wires&lt;/li&gt;
+  &lt;li&gt;Opening an account for my friend so they can remote-ssh to the RPI, doing whatever debugging they want&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;This entire procedure took way way longer than it should have (about 7 work days).&lt;br /&gt;
+One of the blockers was that the protocol is not standard. e.g. it wasn’t SPI or I2C.&lt;br /&gt;
+The other was that I connected the wrong cable to BP’s ground wire, meaning it got garbage readings.&lt;/p&gt;
+
+&lt;p&gt;During this time of despair, I told my friend “what if those engineers at $COMPANY built a really sophisticated protocol? What chance do we have against the smart people in the lab?”&lt;br /&gt;
+He replied with “as much as you think you don’t know about electronic signals, these guys don’t know either. They’re not here to reinvent the wheel, they’re here to get something working and move on”.&lt;br /&gt;
+After that, I found the bad wiring and immediately made progress. My friend was right.&lt;/p&gt;
+
+&lt;h2 id=&quot;3-protocol-basics&quot;&gt;3. Protocol basics&lt;/h2&gt;
+&lt;p&gt;BP was running in “logic analyzer” mode, being connected to sigrok / sigrok-cli on the rpi to read the inputs.&lt;br /&gt;
+At this stage my friend was bored (“it’s just the bits now”) and I needed another partner, so I got Claude Opus (4.5 I think) to help me. I gave it unfettered access to the rpi over ssh (because it was isolated and had nothing of significance on it) and told it to go wild with analysis.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/breezy/27-bp-session.jpg&quot; alt=&quot;A session: the LLM mapping cable wires via the Bus Pirate, panel on the desk&quot; /&gt;&lt;br /&gt;
+Together, we produced the following bits of information:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;There are 5 wires. Two of them were GND and +5V.&lt;/li&gt;
+  &lt;li&gt;One wire had no activity, unless I was sending IR blasts from the remote. We deduced that this is a dedicated IR line.&lt;br /&gt;
+This made sense to me because the controller supports secondary “heads” that only have a led and IR receiver, so it makes sense that IR is not part of a complex protocol.&lt;/li&gt;
+  &lt;li&gt;Two wires contained some sort of activity. One was rhythmic, and we’ve decided it’s a clock line. The other had rises and drops that somewhat correlated to the clock rate, but contained more variability. We’ve decided that one is data, and the entire protocol is SPI-like (although not full SPI).&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;The data was repetitive enough that we could identify repeating patterns (hereby declared “frames”), although we didn’t know what they contained.&lt;/p&gt;
+
+&lt;h2 id=&quot;4-the-ultimate-contraption&quot;&gt;4. The ultimate contraption&lt;/h2&gt;
+&lt;p&gt;I already had an authoritative source for what the frames contained - the LCD screen itself. I started with recording frames and manually labeling them with what the lcd panel said at the moment, but it was manual, slow, boring. I decided to automate, and involve as many “things I have lying around” in the effort.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/breezy/06-camera-correlation-rig.jpg&quot; alt=&quot;The contraption: rpi camera pointed at the zip-tied panel, Bus Pirate on the breadboard&quot; /&gt;&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;I 3D-printed a “camera-screen mount”&lt;/li&gt;
+  &lt;li&gt;The LCD panel was zip-tied to the mount and connected to a breadboard&lt;/li&gt;
+  &lt;li&gt;The breadboard was connected to the LCD panel, BP, HVAC controller&lt;/li&gt;
+  &lt;li&gt;A rpicam was mounted to the mount, pointing at the LCD panel (and focused correctly)&lt;/li&gt;
+  &lt;li&gt;The rpi was connected to the rpicam and the BP&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;I wrote a tiny script that ran on rpi that did the following:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Take a picture of the LCD screen&lt;/li&gt;
+  &lt;li&gt;Record a full buffer-worth of buspirate via sigrok-cli&lt;/li&gt;
+  &lt;li&gt;Take another picture of the LCD screen&lt;/li&gt;
+  &lt;li&gt;Run some poor man’s computer vision on the LCD screen pictures to grab the following:
+    &lt;ol&gt;
+      &lt;li&gt;room temperature&lt;/li&gt;
+      &lt;li&gt;target temperature&lt;/li&gt;
+      &lt;li&gt;mode (cool / heat / fan only), fan speed, whether compressor is running&lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/li&gt;
+  &lt;li&gt;If any of the pictures don’t parse well, or disagree (indicating a change in the middle of the recording), mark the packet as garbage&lt;/li&gt;
+  &lt;li&gt;Otherwise, create a small metadata.json to label the recording&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;I ran this script on several different configurations and let it run for several days in a cronjob.&lt;br /&gt;
+I handed all of the recordings to Opus and had it do some disassembly work.&lt;br /&gt;
+It succeeded.&lt;/p&gt;
+
+&lt;p&gt;Opus was able to create a script that grabbed a BP dump and deterministically extracted the current HVAC status from it, which indicated a success on the reading front.&lt;/p&gt;
+
+&lt;p&gt;For instance, we noticed two kinds of frames - one 76-bit long coming from the controller indicating state, and another “poll” frame that involves the controller asking a question, then leaving 36 bits of quiet for the LCD panel to report back (I assume button presses are reported in that window), all happening on the same data line.&lt;/p&gt;
+
+&lt;h2 id=&quot;5-time-to-write&quot;&gt;5. Time to write&lt;/h2&gt;
+&lt;p&gt;Now that we covered the read path, we could tackle writing. I had two options for writing:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;simulating LCD panel keypresses, which let us cycle mode / fan speed, change temp -1/+1, toggle power&lt;/li&gt;
+  &lt;li&gt;Copying the remote IR blasts, which contained full state (with a possible power toggle)&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;I chose to ignore #1 because it was a subset of #2. BP was not designed for writing, and I had to find another gizmo for doing the writes. Luckily I had all of those Arduinos.&lt;/p&gt;
+
+&lt;p&gt;I really wanted an ESP32-based solution because I know how to program them and my devkits had wifi, but ESP32 runs its GPIOs on 3.3v and the HVAC was doing 5v. While this isn’t magic-smoke-level incompatibility, it will ruin the ESP32 over time. Arduino doesn’t have the problem as it runs on 5v, but it doesn’t have wifi.&lt;br /&gt;
+I started with an Arduino Uno, getting commands over serial from the rpi, and graduated later on to an Arduino R4 I found, which is both 5v and has wifi (which let me control it via MQTT).&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/breezy/07-arduino-era.jpg&quot; alt=&quot;Arduino R4 joining the rig, Bus Pirate still on duty&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/breezy/08-interim-production-rig.jpg&quot; alt=&quot;The interim production setup - Arduino only, Bus Pirate retired&quot; /&gt;&lt;br /&gt;
+&lt;em&gt;Arduino R4 doing both reading and writing, accessible over WiFi. The rpi allows “OTA” since R4 didn’t do it nicely. The R4 matrix shows the room temp because LED matrixes are fun&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;I didn’t do as much IR decoding as I did IR recording at this point - I connected some IR receiver to the Arduino, recorded a blast, then replayed it on the IR line and checked the data before/after to see the HVAC state change.&lt;br /&gt;
+This helped me build a capture script that does the following:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Record IR blast&lt;/li&gt;
+  &lt;li&gt;Grab HVAC state before&lt;/li&gt;
+  &lt;li&gt;Play IR blast&lt;/li&gt;
+  &lt;li&gt;Grab HVAC state after&lt;/li&gt;
+  &lt;li&gt;If before and after are different, categorize IR blast as generating the “after” change&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;I built a healthy matrix of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;{mode,fan_speed, target_temp, is_power_toggle}&lt;/code&gt; and had Opus work hard on the captures to reverse engineer the protocol.&lt;/p&gt;
+
+&lt;h2 id=&quot;6-decoding-ir&quot;&gt;6. Decoding IR&lt;/h2&gt;
+&lt;p&gt;I gave Opus permission to craft all sorts of weird IR sequences and send them at the controller, each session provided value.&lt;br /&gt;
+The biggest discovery was Opus finding out that &lt;strong&gt;it’s not only about bits sent, but about cadence.&lt;/strong&gt;&lt;br /&gt;
+A logical first step the LLM did was converting the BP dumps into “the bits the IR transmission contained”. While it was able to reproduce some state changes, it couldn’t do others. Even more confusing - some state transitions looked the same, but evidence showed they pointed to different states.&lt;br /&gt;
+Once Opus turned around to compare the raw recordings, it found that the duration of some 1s or 0s was different between the recordings, and keeping that as part of the blast made the difference.&lt;br /&gt;
+I, personally, as a non-electronics-signals-person, do not understand the value of playing with the duration. However, I’ve confirmed with some more savvy friends that this is indeed standard practice - “pulse-width encoding”.&lt;/p&gt;
+
+&lt;h2 id=&quot;7-hardware-oclock&quot;&gt;7. Hardware o’clock&lt;/h2&gt;
+&lt;p&gt;Getting read/writes was great, but I wanted to find a solution that doesn’t live on my desk (and has a bunch of delicate wiring). I contracted Opus to design a PCB that will live next to the HVAC controller in the attic.&lt;br /&gt;
+Our design constraints were these:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;The 5v on the AC’s cable is too weak to feed an ESP32, so we’re going to need to get mains power and convert to 5V for internal use&lt;/li&gt;
+  &lt;li&gt;The ESP32 is operating internally on 3.3v, so we’ll need some sort of adapter between it and the HVAC wiring&lt;/li&gt;
+  &lt;li&gt;I hate doing UART for flashing, so I want USB flashing, and OTA if possible&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;#3 was easiest to resolve. I decided to take ESP32 devkits (as opposed to wired on the board), which also let me switch them between PCB iterations (and in case I burn something).&lt;br /&gt;
+#1 made the PCBs a bit more expensive (and dangerous because mains) but overall doable.&lt;br /&gt;
+#2 was a cause of so many problems.&lt;/p&gt;
+
+&lt;p&gt;The development flow was this:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Opus builds a textual spec in markdown, possibly a list of changes from the previous iteration&lt;/li&gt;
+  &lt;li&gt;I find someone on Fiverr to turn this into a proper PCB schematic and BOM&lt;/li&gt;
+  &lt;li&gt;Send those to JLCPCB for fabrication&lt;/li&gt;
+  &lt;li&gt;When it arrives, test the following:
+    &lt;ol&gt;
+      &lt;li&gt;Powered by USB, connected to HVAC cabling&lt;/li&gt;
+      &lt;li&gt;Powered by mains power, connected to HVAC cabling&lt;/li&gt;
+      &lt;li&gt;Assuming everything works, install at the attic&lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;I had 4 different iterations, and the failures came pretty early.&lt;/p&gt;
+
+&lt;h2 id=&quot;8-hardware-iterations&quot;&gt;8. Hardware iterations&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/breezy/21-v1-board.jpg&quot; alt=&quot;The v1 board&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;V1&lt;/strong&gt; was naive about GPIOs and failed when the ESP32 was seated. It wired the AC’s clock wire into ESP32’s gpio 12, which was a strapping pin. The 5v-3.3v level shifter had “HIGH” as default (no input), meaning gpio 12 was enabled, instructing the ESP32 to treat its flash storage as “requires 1.8v to operate”.&lt;br /&gt;
+Well, the flash doesn’t work at 1.8v, it’s built for 3.3v, so fed with 1.8v it returned garbage, causing the ESP to reboot, again into “flash 1.8v” mode, putting us in a perma-boot-loop. &lt;br /&gt;
+The level shifters also had something wrong. Even without any ESP32 present, they generated noise that corrupted the data lane, causing the screen to display garbage.&lt;br /&gt;
+At the time, I thought the problem was also “level shifter being too slow” (shows just how much I know what I’m doing, the bus itself is pretty slow at 7.1kHz), and decided we need “faster and therefore better” ones.&lt;br /&gt;
+Lastly, I also seated one ESP32 devkit the wrong way around, magic-smoking it.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/breezy/22-v2-board.jpg&quot; alt=&quot;The v2 board - screw terminal in, IR LED out, TXS0104 aboard&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;V2&lt;/strong&gt; shuffled the GPIOs around to prevent bootlooping, and added an indicator for which direction the ESP32 should go in, so no more magic smoke.&lt;br /&gt;
+It did reverse the HVAC cable pinout, meaning I had to mangle the plastic receptacles to do basic testing.&lt;br /&gt;
+The ESP32 now had multiple sources of power (mains power, HVAC cable) that were all bridged with each other, meaning that either the ESP32 was leeching power from the LCD panel (that died whenever wifi was established), or polluting the HVAC data with power oscillations.&lt;br /&gt;
+As a side adventure, playing with the HVAC cable’s positioning while the device was connected to mains power gave me a painful shock - luckily it was just one finger closing the circuit, and only for a moment. It convinced me to not mess around with mains power myself (don’t be an idiot like me).&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/breezy/23-v2-mangled-connector.jpg&quot; alt=&quot;The carved-open connectors that let me test v2 despite the reversed pinout&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Despite all of this, I was able to tell something was still wrong with the hvac-esp32 connection. When powering the esp32 from its USB socket and trying to read the HVAC state, I got more clock ticks than I expected.&lt;br /&gt;
+Just for fun, I added a name and logo for the silkscreen of the back of the pcb. Called it “Breezy”.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/breezy/26-logo-silkscreen.jpg&quot; alt=&quot;The Breezy logo on the back silkscreen&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;V3&lt;/strong&gt; fixed the power mingling and the wrong pinout. No problem, no complaints.&lt;br /&gt;
+The clock ticks I tried fixing by adding a resistor and a capacitor (100 Ω, 100 pF) to reduce noise I suspected was amplified by the level shifter. This didn’t work. Instead, the screen alternated between displaying an error and claiming the current room temp is -9°C (below freezing), which was not the case. It was provably involving the shifters/ESP32, because when unseating the ESP32 kit, the LCD screen went back to normal.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/breezy/18-minus9-room-temp.jpg&quot; alt=&quot;Room Temp: -9.0°C. It was not.&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;I was a bit lost, as my knowledge about level shifters was exhausted. Then, Claude Fable came out.&lt;br /&gt;
+Friends told me how much better it was at “difficult problems”, and I figured I’d spill my free credits on this conundrum.&lt;br /&gt;
+I’m unsure whether Fable had more electronics knowledge, or it can be credited to a new deduction model, but Fable said the level shifters were the absolute wrong tool for the job and suggested something else.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/breezy/25-v4-board.jpg&quot; alt=&quot;The v4 board&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;V4&lt;/strong&gt;’s dramatic change was removing the level shifters.&lt;br /&gt;
+Fable’s angle is that bidirectional conversion of 5v to 3.3v requires level shifters, which adds complexity and bug-shelters that we don’t need. If we switch to unidirectional reads/writes, we can trade those active components for simpler passive ones.&lt;br /&gt;
+For reading, a pair of resistors reduces a 5v range into a 3.3v one. lows stay low (zero), and high 5v becomes high 3.3v. No active component that can generate noise, or round edges, or be too slow.&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;HVAC wire (5v) ─[100KΩ]─┬─ ESP32 pin (reads ~3.2v)
+                        │
+                     [180KΩ]
+                        │
+                       GND
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;For writes, because the signaling method is “active low” (meaning that “nothing” is 1s and “something” is 0s), the ESP32 only needs the ability to set the line to 0 when it wants to. For this, a transistor was enough. It would do nothing on its own, and when instructed it would write “0”.&lt;br /&gt;
+Our design has us reading and writing the IR line (because we want to be able to learn new IR commands if we need to without the BusPirate), so the solution is to connect the IR line twice, to two different GPIOs. Once with a resistor as a read line, and once with a transistor as a write line.&lt;/p&gt;
+
+&lt;p&gt;This worked &lt;strong&gt;perfectly&lt;/strong&gt;. I ran the following series of tests:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Connect the pcb to the hvac controller and panel, no power or esp32 seated. LCD screen worked.&lt;/li&gt;
+  &lt;li&gt;Same with ESP32 seated, but no power. LCD screen worked.&lt;/li&gt;
+  &lt;li&gt;Same with usb power for the ESP32. LCD screen worked, and ESP32 able to read the state and send IR.&lt;/li&gt;
+  &lt;li&gt;Same with mains power instead of USB. LCD screen and ESP32 work. Device doesn’t overheat.&lt;/li&gt;
+  &lt;li&gt;Installed in the attic with a usb powerbank. Worked.&lt;/li&gt;
+  &lt;li&gt;Electrician-installed in the attic with mains. Worked.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/breezy/16-attic-install-open.jpg&quot; alt=&quot;Breezy installed in the attic, lid off: mains supply, ESP32, both cables&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;9-esphome&quot;&gt;9. ESPHome&lt;/h2&gt;
+&lt;p&gt;Before installing Breezy in the attic, where it’d be hard to reach, I flashed it with ESPHome and tested its OTA capability.&lt;br /&gt;
+This let me continue development without having hardware and cabling littering my desk.&lt;br /&gt;
+Reasons I like ESPHome for this kind of project:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Great Home Assistant integration&lt;/li&gt;
+  &lt;li&gt;Blessed toolchain - no need to hunt for libraries&lt;/li&gt;
+  &lt;li&gt;Support for USB and OTA version upgrades, with reasonable security&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Boring, works. No complaints.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/breezy/15-esphome-ui.png&quot; alt=&quot;The ESPHome web UI&quot; /&gt;&lt;br /&gt;
+&lt;em&gt;Entity states on the left; on the right, the actual bus frames scrolling by - the long ones are the controller announcing its state, the short ones are it polling the panel’s buttons.&lt;/em&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;10-case&quot;&gt;10. Case&lt;/h2&gt;
+&lt;p&gt;The reason I got shocked is grabbing the PCB’s body when messing with the mangled V2 cable socket, accidentally touching the backside of the mains voltage socket. To stop this area from being exposed, I designed both a small tray (for testing) and a full box (for attic-time) for the case.&lt;br /&gt;
+Printed out of PETG, works well.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/breezy/11-tray-render.png&quot; alt=&quot;The test tray&quot; /&gt;
+&lt;img src=&quot;/assets/breezy/12-case-render.png&quot; alt=&quot;The attic box, lid hovering&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;11-full-decoding-and-the-hardships-on-the-way&quot;&gt;11. Full decoding and the hardships on the way&lt;/h2&gt;
+&lt;p&gt;Even when I had Breezy installed in its final position (by a professional electrician!), I continued working on decoding both the read and write protocols.&lt;br /&gt;
+They both fed into each other to let the LLM test things mostly independently.&lt;br /&gt;
+For instance, each IR blast repeated the same exact message 3 times, which I assume was for redundancy, since IR is not a 100% reliable medium (strong Pokemon-trading-over-IR vibes), so the LLM sent an “IR” blast (quotes because it was actually over the wire) that composed only two frames. This was not accepted, and neither was trying to get the ESP32 hardware to repeat the frame 3 times, as opposed to loading all 3 frames as a very long byte sequence.&lt;/p&gt;
+
+&lt;p&gt;We overall did a lot of experimentation over our IR commands being occasionally ignored. We had some theories, like “the HVAC controller is busy doing compressor things and is ignoring us then”, or “it needs multiple repeats of the same 3 frames”.&lt;br /&gt;
+Turns out we were not being ignored at all. Instead, I had two problems:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;I forgot that the ESP32 is not a full fledged computer. I kept its tiny CPU so busy with IR retries and dumping debug data into websockets, so that it didn’t have enough time to listen and parse the state packets from the HVAC controller.&lt;br /&gt;
+After realizing that, I reduced logging dramatically. If I ever need very detailed logging, I’ll get another Breezy set up (I have 5, as it’s the minimum amount for JLCPCB fabrication), or bring the BusPirate out of retirement.&lt;/li&gt;
+  &lt;li&gt;The state reader was over-strict on frame validation.&lt;br /&gt;
+It decided that a certain area (e.g. byte #3) was supposed to be 0, and discarded any frame where this wasn’t the case. &lt;br /&gt;
+In retrospect, there’s probably a bit there indicating whether the LCD backlight should turn on, which happens for a couple of seconds after a valid IR command is accepted. All of the dumps came from backlight-off durations, meaning this byte was 0, so the LLM decided that this byte should always be 0.&lt;br /&gt;
+Ironically, this made it reject any frame happening after a valid IR command, meaning the new state was not accepted, causing us to retry the IR transmission, getting some more backlight frames, causing us to retry again, and so on.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Other enhancements and discoveries we did post-installation:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Some items, like “target temp 24c” or “mode heat, medium fan” can seem like 7 bits instead of 8, which didn’t make sense to me.&lt;br /&gt;
+Further testing showed they’re all 8-bit, but looked like 7-bit when decoded wrongly.&lt;/li&gt;
+  &lt;li&gt;Power toggle frames are different in structure from the non-power-toggle ones, but contain the same data, meaning we could kick the HVAC directly to a specific state (no need for a power toggle and then sending the new state).&lt;br /&gt;
+LLM says that making the power frame drastically different than a regular one prevents a random bitflip on a regular frame turning the HVAC off. I don’t have enough understanding in signals / electronics to have an opinion here.&lt;/li&gt;
+  &lt;li&gt;The state protocol’s checksum was understood, and we switched from “majority vote” validation, as in choosing the most-repeated state within a second as the HVAC’s true state, to validating via the checksum.&lt;br /&gt;
+We needed that because the captures, although good, were not perfect&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;12-public-repo-and-future-work&quot;&gt;12. Public repo and future work&lt;/h2&gt;
+&lt;p&gt;I uploaded all of the usable parts to a repo (&lt;a href=&quot;https://github.com/BackSlasher/breezy&quot;&gt;Backslasher/breezy&lt;/a&gt;), so if you happen to have a “USP 5010”, you can make your own.&lt;br /&gt;
+If you don’t have that model but you have something similar enough, you can probably copy a big bunch of my work. The ESP32 read/writing 5v was very annoying and I hope to reduce the amount of pain it causes other people.&lt;/p&gt;
+
+&lt;p&gt;The actual v4 of Breezy works well. I have a list of future requirements for v5, but it only has one item, and I’m not sure it’s needed (“allow writes to data to emulate LCD screen keypresses”).&lt;/p&gt;
+
+&lt;p&gt;Overall very happy with this.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/breezy/14-ha-climate-light.png&quot; alt=&quot;Home Assistant: 29.9°C outside, 22°C inside, Cooling&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/breezy/17-attic-install-closed.jpg&quot; alt=&quot;The sealed box in the attic, LEDs through the vents&quot; /&gt;&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="python" /><category term="hardware" /><category term="breezy" /><category term="ramblings" /><summary type="html"></summary></entry><entry><title type="html">Returning to The Sims: 128 errors in a fresh lot</title><link href="https://blog.backslasher.net/tsaas-saves.html" rel="alternate" type="text/html" title="Returning to The Sims: 128 errors in a fresh lot" /><published>2026-07-28T00:00:00+03:00</published><updated>2026-07-28T00:00:00+03:00</updated><id>https://blog.backslasher.net/tsaas-saves</id><content type="html" xml:base="https://blog.backslasher.net/tsaas-saves.html">&lt;p&gt;This is part of TSaaS (The Sims as a Service), my series about adding LLM-plays capability to The Sims 1. &lt;!-- [full list](/tags/#tsaas) --&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;/h2&gt;
 &lt;p&gt;My overall goal is to have an unattended setup of an LLM playing the Sims 1.&lt;br /&gt;
@@ -670,172 +964,4 @@ I’m waiting on a smaller PSU and some wiring that will allow me to replace the
 I’m also thinking about whether the SKÅDIS board is a good enough mount, or should I try doing something more bespoke and elegant.&lt;br /&gt;
 Software-wise, I’m thinking about making the displayed image depend on something, like the time of day, the weather outside, holidays etc.&lt;/p&gt;
 
-&lt;p&gt;I’ll try to post updates whenever I have any really interesting changes.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="python" /><category term="tapestry" /><category term="weekendproject" /><summary type="html"></summary></entry><entry><title type="html">Introducing ESLint to your codebase smoothly</title><link href="https://blog.backslasher.net/eslint-codebase.html" rel="alternate" type="text/html" title="Introducing ESLint to your codebase smoothly" /><published>2025-07-03T00:00:00+03:00</published><updated>2025-07-03T00:00:00+03:00</updated><id>https://blog.backslasher.net/eslint-codebase</id><content type="html" xml:base="https://blog.backslasher.net/eslint-codebase.html">&lt;p&gt;When adding a linter to an existing codbase, my methodology is as follows:&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;Create lint config files and approve them with the team (people have strong opinions about tab widths), add them to the repo&lt;/li&gt;
-  &lt;li&gt;Run the linter a single time over the entire codebase, autofixing what it can, and adding comments to ignore what it can’t.&lt;/li&gt;
-  &lt;li&gt;Add some pre-commit / pre-merge rule to run the linter and preventing new violations being added&lt;/li&gt;
-  &lt;li&gt;Grepping the ignore comments we added in #2, fixing their violations carefully&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;While it might seem a bit complex, I like it because&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;Each commit is easy to review - either small or non-risky (adding comments)&lt;/li&gt;
-  &lt;li&gt;There are no “no one commit, I’m doing a thing” moments that sometimes occur when refactoring&lt;/li&gt;
-  &lt;li&gt;We’re not blocked on “fixing all violations” before introducing linting&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;Ruff is great for this as it has &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--add-noqa&lt;/code&gt;, which adds “ignore” comments over every violation it finds.
-I recently had to do the same with ESLint, which &lt;a href=&quot;https://github.com/eslint/eslint/discussions/18401&quot;&gt;doesn’t have that feature&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;I had to improvise.&lt;/p&gt;
-
-&lt;h2 id=&quot;solution&quot;&gt;Solution&lt;/h2&gt;
-
-&lt;p&gt;With some LLMing, I composed a script that iterates over ESLint’s errors, and adds an “ignore on next line” comment before it&lt;/p&gt;
-
-&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// add_comments.js&lt;/span&gt;
-&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;fs&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;fs&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;path&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;path&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-
-&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;errorsFilePath&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;argv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;errorsFilePath&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;error&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;Please provide the path to the eslint errors JSON file&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;exit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;errors&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;JSON&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;parse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;fs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;readFileSync&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;errorsFilePath&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;utf-8&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
-&lt;span class=&quot;nx&quot;&gt;errors&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;forEach&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;file&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;filePath&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;resolve&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;file&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;filePath&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;content&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;fs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;readFileSync&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;filePath&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;utf-8&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;lines&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;content&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;split&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-
-    &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;rulesMap&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;Map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
-    &lt;span class=&quot;c1&quot;&gt;// Multiple rules per line&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;file&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;messages&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;forEach&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;message&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;line&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;line&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-        &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;ruleId&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ruleId&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-
-        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;rulesMap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;has&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;line&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;nx&quot;&gt;rulesMap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;set&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;line&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[]);&lt;/span&gt;
-        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-        &lt;span class=&quot;nx&quot;&gt;rulesMap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;line&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;push&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ruleId&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
-
-    &lt;span class=&quot;c1&quot;&gt;// Reverse order to avoid spoiling next lines&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;line&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;of&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;Array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;from&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;rulesMap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;keys&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;sort&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;b&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;ruleIds&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;rulesMap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;line&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;join&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;, &lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// Join rule IDs for the comment&lt;/span&gt;
-        &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;comment&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;`// eslint-disable-next-line &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ruleIds&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-        &lt;span class=&quot;nx&quot;&gt;lines&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;splice&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;line&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;comment&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-    &lt;span class=&quot;nx&quot;&gt;content&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;lines&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;join&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;fs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;writeFileSync&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;filePath&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;content&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;utf-8&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;It’s then used like this:&lt;/p&gt;
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git checkout :/ &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; npx eslint &lt;span class=&quot;nt&quot;&gt;--format&lt;/span&gt; json &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; complaints.json &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; node /tmp/add_comments.js complaints.json &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; npx eslint
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Notable items about the script:&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;Crude way to select an input file. I miss &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;argparse&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;Grouping the errors by line, as one line might have multiple errors&lt;/li&gt;
-  &lt;li&gt;Applying the fixes in reverse, as adding new lines will skew the line numbers of the following lines&lt;/li&gt;
-  &lt;li&gt;Not caring about indentation - this can be handled by e.g. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;prettier&lt;/code&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h2 id=&quot;solution-2-jsx&quot;&gt;Solution #2: jsx&lt;/h2&gt;
-
-&lt;p&gt;Running the same procedure on files containing JSX didn’t work as well, as it produced JS comments in the middle of JSX templates.
-Consider this:&lt;/p&gt;
-&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;best&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;div&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
-      &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ul&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;li&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;item&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Item&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/li&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;gt;
-&lt;/span&gt;        &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;li&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;item&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Item&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/li&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;gt;
-&lt;/span&gt;      &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/ul&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;gt;
-&lt;/span&gt;    &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/div&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;gt;
-&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Naively, it would get processed into&lt;/p&gt;
-&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;best&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;div&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
-      &lt;span class=&quot;nx&quot;&gt;The&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;of&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;is&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-      &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ul&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
-&lt;span class=&quot;c1&quot;&gt;// eslint-disable-next-line react/jsx-key&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;li&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;item&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Item&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/li&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;gt;
-&lt;/span&gt;        &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;li&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;item&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Item&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/li&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;gt;
-&lt;/span&gt;      &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/ul&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;gt;
-&lt;/span&gt;    &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/div&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;gt;
-&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Where the new comment obviously breaks the JSX tempalte.
-It’d need to be converted into this:&lt;/p&gt;
-&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;best&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;div&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
-      &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ul&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
-        &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;cm&quot;&gt;/* eslint-disable-next-line react/jsx-key */&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;li&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;item&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Item&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/li&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;gt;
-&lt;/span&gt;        &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;li&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;item&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Item&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/li&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;gt;
-&lt;/span&gt;      &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/ul&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;gt;
-&lt;/span&gt;    &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/div&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;gt;
-&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;I considered improving the original script to detect whether we’re inside a JSX tag or not, but it was too complicated.
-Instead, I decided on running ESLint again, picking up its complaints on “you can’t have a comment here” and rewriting the lines referenced.&lt;/p&gt;
-
-&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// jsx_comments.js&lt;/span&gt;
-&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;fs&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;fs&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;path&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;path&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;assert&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-
-&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;errorsFilePath&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;argv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;errorsFilePath&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;error&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;Please provide the path to the eslint errors JSON file as an argument.&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;exit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;errors&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;JSON&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;parse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;fs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;readFileSync&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;errorsFilePath&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;utf-8&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
-&lt;span class=&quot;nx&quot;&gt;errors&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;forEach&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;file&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;filePath&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;resolve&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;file&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;filePath&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;content&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;fs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;readFileSync&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;filePath&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;utf-8&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;lines&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;content&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;split&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;messages&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;file&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;messages&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;filter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ruleId&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;react/jsx-no-comment-textnodes&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;messages&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;forEach&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-      &lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;lineIndex&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;line&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-      &lt;span class=&quot;c1&quot;&gt;// Eat some newlines&lt;/span&gt;
-      &lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/^&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\s&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;*$/&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;test&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;lines&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;lineIndex&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]))&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;nx&quot;&gt;lineIndex&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-      &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-      &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;line&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;lines&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;lineIndex&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
-      &lt;span class=&quot;nx&quot;&gt;assert&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/^&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\s&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\/\/&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt; eslint-disable-next-line/&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;test&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;line&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;`line needs to match: &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;line&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-      &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;newLine&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;line&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;replace&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/^&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\/\/&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt; eslint-disable-next-line &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;.+&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;$/&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;{/* eslint-disable-next-line $1 */}&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-      &lt;span class=&quot;nx&quot;&gt;lines&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;lineIndex&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;newLine&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
-
-    &lt;span class=&quot;nx&quot;&gt;content&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;lines&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;join&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;fs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;writeFileSync&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;filePath&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;content&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;utf-8&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Then&lt;/p&gt;
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git checkout :/ &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; npx eslint &lt;span class=&quot;nt&quot;&gt;--format&lt;/span&gt; json &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; jsx_complaints.json &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; node /tmp/jsx_comments.js jsx_complaints.json &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; npx eslint 
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Or all at once:&lt;/p&gt;
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git checkout :/ &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; npx eslint &lt;span class=&quot;nt&quot;&gt;--format&lt;/span&gt; json &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; complaints.json &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; node /tmp/add_comments.js complaints.json &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; npx eslint &lt;span class=&quot;nt&quot;&gt;--format&lt;/span&gt; json &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; jsx_complaints.json &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; node /tmp/jsx_comments.js jsx_complaints.json &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; npx eslint 
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Worked great.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="nodejs" /><category term="javascript" /><category term="lint" /><summary type="html">When adding a linter to an existing codbase, my methodology is as follows: Create lint config files and approve them with the team (people have strong opinions about tab widths), add them to the repo Run the linter a single time over the entire codebase, autofixing what it can, and adding comments to ignore what it can’t. Add some pre-commit / pre-merge rule to run the linter and preventing new violations being added Grepping the ignore comments we added in #2, fixing their violations carefully</summary></entry></feed>
+&lt;p&gt;I’ll try to post updates whenever I have any really interesting changes.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="python" /><category term="tapestry" /><category term="weekendproject" /><summary type="html"></summary></entry></feed>
