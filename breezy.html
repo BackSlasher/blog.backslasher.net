@@ -317,7 +317,8 @@
 <p>A couple of months ago, I had my HVAC controller replaced in an effort to save on electricity.<br />
 I controlled the previous board with an IR blaster that I loaded with a full matrix of <code class="language-plaintext highlighter-rouge">{mode,fan_speed, target_temp}</code> (and a special command for “off”). The new one didn’t work like that.</p>
 
-<p><img src="/assets/breezy/28-ir-code-dump.png" alt="The old IR code matrix - a Base64 blast for every {mode, fan, temp} combination" /></p>
+<p><img src="/assets/breezy/28-ir-code-dump.png" alt="A YAML config listing dozens of Base64-encoded IR codes" /><br />
+<em>The old blaster’s config: one recorded Base64 blast per {mode, fan, temp} combination</em></p>
 
 <h2 id="no-off-button">No “off” button</h2>
 <p>The new remote/controller dialect had no designated “off” command. Instead, it had a “toggle” command, which makes the AC off if it’s on, and on if it’s off.<br />
@@ -344,7 +345,8 @@ It showed exactly what the AC was thinking, including the part I desperately nee
 
 <h2 id="1-cutting-things">1. Cutting things</h2>
 <p>I bothered my HVAC tech enough to learn where they buy their electronics and got myself another HVAC controller (~50$), fully expecting me to destroy some components during my experiments.<br />
-<img src="/assets/breezy/03-panel-alive-on-bench.jpg" alt="The spare panel, alive on the bench" /><br />
+<img src="/assets/breezy/30-spare-controller.jpg" alt="The spare USP-5010 controller board: six relays, a compressor contactor, a transformer, and one small white JST connector" /><br />
+<em>The spare HVAC controller. I only care about the white connector on the left.</em><br />
 I disconnected the nice installed LCD panel and connected the spare one, which was placed on my crafts desk.<br />
 I cut the cable and started probing it with my multimeter to find it’s 5v. I then consulted a friend who did some hardware reverse engineering.</p>
 
@@ -392,8 +394,8 @@ This made sense to me because the controller supports secondary “heads” that
 
 <ol>
   <li>I 3D-printed a “camera-screen mount”</li>
-  <li>The LCD panel was zip-tied to the mount and connected to a breadboard</li>
-  <li>The breadboard was connected to the LCD panel, BP, HVAC controller</li>
+  <li>The LCD panel was zip-tied to the mount</li>
+  <li>A breadboard connected the LCD panel, the BP and the HVAC controller together</li>
   <li>A rpicam was mounted to the mount, pointing at the LCD panel (and focused correctly)</li>
   <li>The rpi was connected to the rpicam and the BP</li>
 </ol>
@@ -457,8 +459,10 @@ This helped me build a capture script that does the following:</p>
 <p>I gave Opus permission to craft all sorts of weird IR sequences and send them at the controller, each session provided value.<br />
 The biggest discovery was Opus finding out that <strong>it’s not only about bits sent, but about cadence.</strong><br />
 A logical first step the LLM did was converting the BP dumps into “the bits the IR transmission contained”. While it was able to reproduce some state changes, it couldn’t do others. Even more confusing - some state transitions looked the same, but evidence showed they pointed to different states.<br />
-Once Opus turned around to compare the raw recordings, it found that the duration of some 1s or 0s was different between the recordings, and keeping that as part of the blast made the difference.<br />
-I, personally, as a non-electronics-signals-person, do not understand the value of playing with the duration. However, I’ve confirmed with some more savvy friends that this is indeed standard practice - “pulse-width encoding”.</p>
+Once Opus turned around to compare the raw recordings, it found that the duration of the waves making those 1s or 0s was different, and keeping that as part of the blast resolved matters.</p>
+
+<p><img src="/assets/breezy/30-same-bits-different-waveforms.png" alt="Two commands with identical bits but different pulse widths" /><br />
+I, personally, as a non-electronics-signals-person, do not understand the value of playing with the duration. However, I’ve confirmed with some more savvy friends that this is indeed standard practice (“pulse-width encoding”).</p>
 
 <h2 id="7-hardware-oclock">7. Hardware o’clock</h2>
 <p>Getting read/writes was great, but I wanted to find a solution that doesn’t live on my desk (and has a bunch of delicate wiring). I contracted Opus to design a PCB that will live next to the HVAC controller in the attic.<br />
@@ -486,6 +490,9 @@ Our design constraints were these:</p>
     </ol>
   </li>
 </ol>
+
+<p><img src="/assets/breezy/29-incoming-inspection.jpg" alt="A cat sleeping inside the JLCPCB shipping box" /><br />
+<em>The true winner of the JLCPCB shipment</em></p>
 
 <p>I had 4 different iterations, and the failures came pretty early.</p>
 
@@ -516,7 +523,8 @@ Just for fun, I added a name and logo for the silkscreen of the back of the pcb.
 <p><strong>V3</strong> fixed the power mingling and the wrong pinout. No problem, no complaints.<br />
 The clock ticks I tried fixing by adding a resistor and a capacitor (100 Ω, 100 pF) to reduce noise I suspected was amplified by the level shifter. This didn’t work. Instead, the screen alternated between displaying an error and claiming the current room temp is -9°C (below freezing), which was not the case. It was provably involving the shifters/ESP32, because when unseating the ESP32 kit, the LCD screen went back to normal.</p>
 
-<p><img src="/assets/breezy/18-minus9-room-temp.jpg" alt="Room Temp: -9.0°C. It was not." /></p>
+<p><img src="/assets/breezy/18-minus9-room-temp.jpg" alt="The wall panel claiming the room temperature is -9.0°C" /><br />
+<em>Room Temp: -9.0°C. It was not.</em></p>
 
 <p>I was a bit lost, as my knowledge about level shifters was exhausted. Then, Claude Fable came out.<br />
 Friends told me how much better it was at “difficult problems”, and I figured I’d spill my free credits on this conundrum.<br />
@@ -604,7 +612,8 @@ If you don’t have that model but you have something similar enough, you can pr
 
 <p>Overall very happy with this.</p>
 
-<p><img src="/assets/breezy/14-ha-climate-light.png" alt="Home Assistant: 29.9°C outside, 22°C inside, Cooling" /></p>
+<p><img src="/assets/breezy/14-ha-climate-light.png" alt="Home Assistant climate card for Breezy" /><br />
+<em>29.9°C outside, 22°C inside, actively cooling.</em></p>
 
 <p><img src="/assets/breezy/17-attic-install-closed.jpg" alt="The sealed box in the attic, LEDs through the vents" /></p>
 

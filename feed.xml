@@ -1,9 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2026-08-17T20:17:42+03:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">I reverse-engineered my HVAC because I couldn’t turn it off reliably</title><link href="https://blog.backslasher.net/breezy.html" rel="alternate" type="text/html" title="I reverse-engineered my HVAC because I couldn’t turn it off reliably" /><published>2026-08-16T00:00:00+03:00</published><updated>2026-08-16T00:00:00+03:00</updated><id>https://blog.backslasher.net/breezy</id><content type="html" xml:base="https://blog.backslasher.net/breezy.html">&lt;p&gt;&lt;img src=&quot;/assets/breezy/20-boards-family.jpg&quot; alt=&quot;All four board revisions, hand-labeled&quot; /&gt;&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2026-08-17T22:53:12+03:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">I reverse-engineered my HVAC because I couldn’t turn it off reliably</title><link href="https://blog.backslasher.net/breezy.html" rel="alternate" type="text/html" title="I reverse-engineered my HVAC because I couldn’t turn it off reliably" /><published>2026-08-16T00:00:00+03:00</published><updated>2026-08-16T00:00:00+03:00</updated><id>https://blog.backslasher.net/breezy</id><content type="html" xml:base="https://blog.backslasher.net/breezy.html">&lt;p&gt;&lt;img src=&quot;/assets/breezy/20-boards-family.jpg&quot; alt=&quot;All four board revisions, hand-labeled&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;A couple of months ago, I had my HVAC controller replaced in an effort to save on electricity.&lt;br /&gt;
 I controlled the previous board with an IR blaster that I loaded with a full matrix of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;{mode,fan_speed, target_temp}&lt;/code&gt; (and a special command for “off”). The new one didn’t work like that.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/assets/breezy/28-ir-code-dump.png&quot; alt=&quot;The old IR code matrix - a Base64 blast for every {mode, fan, temp} combination&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/assets/breezy/28-ir-code-dump.png&quot; alt=&quot;A YAML config listing dozens of Base64-encoded IR codes&quot; /&gt;&lt;br /&gt;
+&lt;em&gt;The old blaster’s config: one recorded Base64 blast per {mode, fan, temp} combination&lt;/em&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;no-off-button&quot;&gt;No “off” button&lt;/h2&gt;
 &lt;p&gt;The new remote/controller dialect had no designated “off” command. Instead, it had a “toggle” command, which makes the AC off if it’s on, and on if it’s off.&lt;br /&gt;
@@ -30,7 +31,8 @@ It showed exactly what the AC was thinking, including the part I desperately nee
 
 &lt;h2 id=&quot;1-cutting-things&quot;&gt;1. Cutting things&lt;/h2&gt;
 &lt;p&gt;I bothered my HVAC tech enough to learn where they buy their electronics and got myself another HVAC controller (~50$), fully expecting me to destroy some components during my experiments.&lt;br /&gt;
-&lt;img src=&quot;/assets/breezy/03-panel-alive-on-bench.jpg&quot; alt=&quot;The spare panel, alive on the bench&quot; /&gt;&lt;br /&gt;
+&lt;img src=&quot;/assets/breezy/30-spare-controller.jpg&quot; alt=&quot;The spare USP-5010 controller board: six relays, a compressor contactor, a transformer, and one small white JST connector&quot; /&gt;&lt;br /&gt;
+&lt;em&gt;The spare HVAC controller. I only care about the white connector on the left.&lt;/em&gt;&lt;br /&gt;
 I disconnected the nice installed LCD panel and connected the spare one, which was placed on my crafts desk.&lt;br /&gt;
 I cut the cable and started probing it with my multimeter to find it’s 5v. I then consulted a friend who did some hardware reverse engineering.&lt;/p&gt;
 
@@ -78,8 +80,8 @@ This made sense to me because the controller supports secondary “heads” that
 
 &lt;ol&gt;
   &lt;li&gt;I 3D-printed a “camera-screen mount”&lt;/li&gt;
-  &lt;li&gt;The LCD panel was zip-tied to the mount and connected to a breadboard&lt;/li&gt;
-  &lt;li&gt;The breadboard was connected to the LCD panel, BP, HVAC controller&lt;/li&gt;
+  &lt;li&gt;The LCD panel was zip-tied to the mount&lt;/li&gt;
+  &lt;li&gt;A breadboard connected the LCD panel, the BP and the HVAC controller together&lt;/li&gt;
   &lt;li&gt;A rpicam was mounted to the mount, pointing at the LCD panel (and focused correctly)&lt;/li&gt;
   &lt;li&gt;The rpi was connected to the rpicam and the BP&lt;/li&gt;
 &lt;/ol&gt;
@@ -143,8 +145,10 @@ This helped me build a capture script that does the following:&lt;/p&gt;
 &lt;p&gt;I gave Opus permission to craft all sorts of weird IR sequences and send them at the controller, each session provided value.&lt;br /&gt;
 The biggest discovery was Opus finding out that &lt;strong&gt;it’s not only about bits sent, but about cadence.&lt;/strong&gt;&lt;br /&gt;
 A logical first step the LLM did was converting the BP dumps into “the bits the IR transmission contained”. While it was able to reproduce some state changes, it couldn’t do others. Even more confusing - some state transitions looked the same, but evidence showed they pointed to different states.&lt;br /&gt;
-Once Opus turned around to compare the raw recordings, it found that the duration of some 1s or 0s was different between the recordings, and keeping that as part of the blast made the difference.&lt;br /&gt;
-I, personally, as a non-electronics-signals-person, do not understand the value of playing with the duration. However, I’ve confirmed with some more savvy friends that this is indeed standard practice - “pulse-width encoding”.&lt;/p&gt;
+Once Opus turned around to compare the raw recordings, it found that the duration of the waves making those 1s or 0s was different, and keeping that as part of the blast resolved matters.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/breezy/30-same-bits-different-waveforms.png&quot; alt=&quot;Two commands with identical bits but different pulse widths&quot; /&gt;&lt;br /&gt;
+I, personally, as a non-electronics-signals-person, do not understand the value of playing with the duration. However, I’ve confirmed with some more savvy friends that this is indeed standard practice (“pulse-width encoding”).&lt;/p&gt;
 
 &lt;h2 id=&quot;7-hardware-oclock&quot;&gt;7. Hardware o’clock&lt;/h2&gt;
 &lt;p&gt;Getting read/writes was great, but I wanted to find a solution that doesn’t live on my desk (and has a bunch of delicate wiring). I contracted Opus to design a PCB that will live next to the HVAC controller in the attic.&lt;br /&gt;
@@ -172,6 +176,9 @@ Our design constraints were these:&lt;/p&gt;
     &lt;/ol&gt;
   &lt;/li&gt;
 &lt;/ol&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/breezy/29-incoming-inspection.jpg&quot; alt=&quot;A cat sleeping inside the JLCPCB shipping box&quot; /&gt;&lt;br /&gt;
+&lt;em&gt;The true winner of the JLCPCB shipment&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;I had 4 different iterations, and the failures came pretty early.&lt;/p&gt;
 
@@ -202,7 +209,8 @@ Just for fun, I added a name and logo for the silkscreen of the back of the pcb.
 &lt;p&gt;&lt;strong&gt;V3&lt;/strong&gt; fixed the power mingling and the wrong pinout. No problem, no complaints.&lt;br /&gt;
 The clock ticks I tried fixing by adding a resistor and a capacitor (100 Ω, 100 pF) to reduce noise I suspected was amplified by the level shifter. This didn’t work. Instead, the screen alternated between displaying an error and claiming the current room temp is -9°C (below freezing), which was not the case. It was provably involving the shifters/ESP32, because when unseating the ESP32 kit, the LCD screen went back to normal.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/assets/breezy/18-minus9-room-temp.jpg&quot; alt=&quot;Room Temp: -9.0°C. It was not.&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/assets/breezy/18-minus9-room-temp.jpg&quot; alt=&quot;The wall panel claiming the room temperature is -9.0°C&quot; /&gt;&lt;br /&gt;
+&lt;em&gt;Room Temp: -9.0°C. It was not.&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;I was a bit lost, as my knowledge about level shifters was exhausted. Then, Claude Fable came out.&lt;br /&gt;
 Friends told me how much better it was at “difficult problems”, and I figured I’d spill my free credits on this conundrum.&lt;br /&gt;
@@ -290,7 +298,8 @@ If you don’t have that model but you have something similar enough, you can pr
 
 &lt;p&gt;Overall very happy with this.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/assets/breezy/14-ha-climate-light.png&quot; alt=&quot;Home Assistant: 29.9°C outside, 22°C inside, Cooling&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/assets/breezy/14-ha-climate-light.png&quot; alt=&quot;Home Assistant climate card for Breezy&quot; /&gt;&lt;br /&gt;
+&lt;em&gt;29.9°C outside, 22°C inside, actively cooling.&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/assets/breezy/17-attic-install-closed.jpg&quot; alt=&quot;The sealed box in the attic, LEDs through the vents&quot; /&gt;&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="python" /><category term="hardware" /><category term="breezy" /><category term="ramblings" /><summary type="html"></summary></entry><entry><title type="html">Returning to The Sims: 128 errors in a fresh lot</title><link href="https://blog.backslasher.net/tsaas-saves.html" rel="alternate" type="text/html" title="Returning to The Sims: 128 errors in a fresh lot" /><published>2026-07-28T00:00:00+03:00</published><updated>2026-07-28T00:00:00+03:00</updated><id>https://blog.backslasher.net/tsaas-saves</id><content type="html" xml:base="https://blog.backslasher.net/tsaas-saves.html">&lt;p&gt;This is part of TSaaS (The Sims as a Service), my series about adding LLM-plays capability to The Sims 1. &lt;!-- [full list](/tags/#tsaas) --&gt;&lt;/p&gt;
 
