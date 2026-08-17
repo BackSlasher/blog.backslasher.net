@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2026-08-17T22:53:12+03:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">I reverse-engineered my HVAC because I couldn’t turn it off reliably</title><link href="https://blog.backslasher.net/breezy.html" rel="alternate" type="text/html" title="I reverse-engineered my HVAC because I couldn’t turn it off reliably" /><published>2026-08-16T00:00:00+03:00</published><updated>2026-08-16T00:00:00+03:00</updated><id>https://blog.backslasher.net/breezy</id><content type="html" xml:base="https://blog.backslasher.net/breezy.html">&lt;p&gt;&lt;img src=&quot;/assets/breezy/20-boards-family.jpg&quot; alt=&quot;All four board revisions, hand-labeled&quot; /&gt;&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2026-08-17T23:22:13+03:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">I reverse-engineered my HVAC because I couldn’t turn it off reliably</title><link href="https://blog.backslasher.net/breezy.html" rel="alternate" type="text/html" title="I reverse-engineered my HVAC because I couldn’t turn it off reliably" /><published>2026-08-16T00:00:00+03:00</published><updated>2026-08-16T00:00:00+03:00</updated><id>https://blog.backslasher.net/breezy</id><content type="html" xml:base="https://blog.backslasher.net/breezy.html">&lt;p&gt;&lt;img src=&quot;/assets/breezy/20-boards-family.jpg&quot; alt=&quot;All four board revisions, hand-labeled&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;A couple of months ago, I had my HVAC controller replaced in an effort to save on electricity.&lt;br /&gt;
 I controlled the previous board with an IR blaster that I loaded with a full matrix of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;{mode,fan_speed, target_temp}&lt;/code&gt; (and a special command for “off”). The new one didn’t work like that.&lt;/p&gt;
@@ -125,9 +125,6 @@ I started with an Arduino Uno, getting commands over serial from the rpi, and gr
 
 &lt;p&gt;&lt;img src=&quot;/assets/breezy/07-arduino-era.jpg&quot; alt=&quot;Arduino R4 joining the rig, Bus Pirate still on duty&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/assets/breezy/08-interim-production-rig.jpg&quot; alt=&quot;The interim production setup - Arduino only, Bus Pirate retired&quot; /&gt;&lt;br /&gt;
-&lt;em&gt;Arduino R4 doing both reading and writing, accessible over WiFi. The rpi allows “OTA” since R4 didn’t do it nicely. The R4 matrix shows the room temp because LED matrixes are fun&lt;/em&gt;&lt;/p&gt;
-
 &lt;p&gt;I didn’t do as much IR decoding as I did IR recording at this point - I connected some IR receiver to the Arduino, recorded a blast, then replayed it on the IR line and checked the data before/after to see the HVAC state change.&lt;br /&gt;
 This helped me build a capture script that does the following:&lt;/p&gt;
 
@@ -151,6 +148,10 @@ Once Opus turned around to compare the raw recordings, it found that the duratio
 I, personally, as a non-electronics-signals-person, do not understand the value of playing with the duration. However, I’ve confirmed with some more savvy friends that this is indeed standard practice (“pulse-width encoding”).&lt;/p&gt;
 
 &lt;h2 id=&quot;7-hardware-oclock&quot;&gt;7. Hardware o’clock&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/breezy/08-interim-production-rig.jpg&quot; alt=&quot;The interim production setup - Arduino only, Bus Pirate retired&quot; /&gt;&lt;br /&gt;
+&lt;em&gt;Arduino R4 doing both reading and writing, accessible over WiFi. The rpi allows “OTA” since R4 didn’t do it nicely. The R4 matrix shows the room temp because LED matrixes are fun&lt;/em&gt;&lt;/p&gt;
+
 &lt;p&gt;Getting read/writes was great, but I wanted to find a solution that doesn’t live on my desk (and has a bunch of delicate wiring). I contracted Opus to design a PCB that will live next to the HVAC controller in the attic.&lt;br /&gt;
 Our design constraints were these:&lt;/p&gt;
 &lt;ol&gt;

@@ -439,9 +439,6 @@ I started with an Arduino Uno, getting commands over serial from the rpi, and gr
 
 <p><img src="/assets/breezy/07-arduino-era.jpg" alt="Arduino R4 joining the rig, Bus Pirate still on duty" /></p>
 
-<p><img src="/assets/breezy/08-interim-production-rig.jpg" alt="The interim production setup - Arduino only, Bus Pirate retired" /><br />
-<em>Arduino R4 doing both reading and writing, accessible over WiFi. The rpi allows “OTA” since R4 didn’t do it nicely. The R4 matrix shows the room temp because LED matrixes are fun</em></p>
-
 <p>I didn’t do as much IR decoding as I did IR recording at this point - I connected some IR receiver to the Arduino, recorded a blast, then replayed it on the IR line and checked the data before/after to see the HVAC state change.<br />
 This helped me build a capture script that does the following:</p>
 
@@ -465,6 +462,10 @@ Once Opus turned around to compare the raw recordings, it found that the duratio
 I, personally, as a non-electronics-signals-person, do not understand the value of playing with the duration. However, I’ve confirmed with some more savvy friends that this is indeed standard practice (“pulse-width encoding”).</p>
 
 <h2 id="7-hardware-oclock">7. Hardware o’clock</h2>
+
+<p><img src="/assets/breezy/08-interim-production-rig.jpg" alt="The interim production setup - Arduino only, Bus Pirate retired" /><br />
+<em>Arduino R4 doing both reading and writing, accessible over WiFi. The rpi allows “OTA” since R4 didn’t do it nicely. The R4 matrix shows the room temp because LED matrixes are fun</em></p>
+
 <p>Getting read/writes was great, but I wanted to find a solution that doesn’t live on my desk (and has a bunch of delicate wiring). I contracted Opus to design a PCB that will live next to the HVAC controller in the attic.<br />
 Our design constraints were these:</p>
 <ol>
