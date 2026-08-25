@@ -290,20 +290,105 @@
 
       <section class="page__content" itemprop="text">
         
-        <p>List of interesting projects I can share</p>
+        <p>Interesting projects I can share</p>
 
-<h2 id="money-tiger"><a href="https://www.money-tiger.tech">Money Tiger</a></h2>
-<p><img src="/assets/projects/money-tiger.png" alt="" />
-Website to monitor your monetary transactions (banks / CCs) in a single, searchable place.</p>
+<style>
+.proj-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5em;
+  margin-top: 1em;
+}
+.proj-card {
+  border: 1px solid rgba(128,128,128,0.3);
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.proj-card img {
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  display: block;
+}
+.proj-card .proj-body {
+  padding: 0.8em 1em 1em;
+  font-size: 0.85em;
+  line-height: 1.45;
+}
+.proj-card h3 {
+  margin: 0 0 0.4em;
+  font-size: 1.1em;
+}
+.proj-card .proj-links {
+  margin-top: 0.6em;
+}
+.proj-card .proj-links a {
+  margin-right: 1em;
+}
+</style>
 
-<h2 id="tapestry"><a href="/tapestry.html">Tapestry</a></h2>
-<p><img src="/assets/tapestry/close.jpg" alt="" />
-Use multiple e-paper displays as a big poster</p>
+<div class="proj-grid">
 
-<h2 id="puzzlepoints"><a href="https://puzzlepoints.backslasher.net/">PuzzlePoints</a></h2>
-<p><img src="/assets/projects/puzzlepoints.png" alt="" />
-Track your daily puzzle points.<br />
-Vibe coded on Claude, running on PHP</p>
+<div class="proj-card">
+  <img src="/assets/projects/toasters.png" alt="Flying toasters and toast on a black background" />
+  <div class="proj-body">
+    <h3>Flying Toasters!</h3>
+    1:1 reconstruction of the 1996 After Dark module, in the browser. Logic, sprites and audio extracted from the original binary. Includes the karaoke mode.
+    <div class="proj-links">
+      <a href="https://backslasher.github.io/flying-toasters-reverse-engineered/">Play</a>
+      <a href="https://github.com/BackSlasher/flying-toasters-reverse-engineered">Source</a>
+    </div>
+  </div>
+</div>
+
+<div class="proj-card">
+  <img src="/assets/breezy/25-v4-board.jpg" alt="The Breezy v4 PCB" />
+  <div class="proj-body">
+    <h3>Breezy</h3>
+    Reverse-engineered my HVAC's SPI bus and IR protocol, then designed a PCB (four revisions) to speak them. The house AC now runs from Home Assistant.
+    <div class="proj-links">
+      <a href="/breezy.html">The full story</a>
+      <a href="https://github.com/BackSlasher/breezy">Source</a>
+    </div>
+  </div>
+</div>
+
+<div class="proj-card">
+  <img src="/assets/projects/money-tiger.png" alt="Money Tiger screenshot" />
+  <div class="proj-body">
+    <h3>Money Tiger</h3>
+    Website to monitor your monetary transactions (banks / CCs) in a single, searchable place.
+    <div class="proj-links">
+      <a href="https://www.money-tiger.tech">Visit</a>
+    </div>
+  </div>
+</div>
+
+<div class="proj-card">
+  <img src="/assets/tapestry/close.jpg" alt="E-paper displays forming a poster" />
+  <div class="proj-body">
+    <h3>Tapestry</h3>
+    Use multiple e-paper displays as a big poster.
+    <div class="proj-links">
+      <a href="/tapestry.html">Details</a>
+    </div>
+  </div>
+</div>
+
+<div class="proj-card">
+  <img src="/assets/projects/puzzlepoints.png" alt="PuzzlePoints screenshot" />
+  <div class="proj-body">
+    <h3>PuzzlePoints</h3>
+    Daily puzzle-score tracker for the group chat.
+    <div class="proj-links">
+      <a href="https://puzzlepoints.backslasher.net/">Visit</a>
+    </div>
+  </div>
+</div>
+
+</div>
 
         
       </section>
