@@ -1,0 +1,728 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Reality Check - an OctoPrint plugin to stop me from using the wrong filament - BackSlasher</title>
+<meta name="description" content="">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Reality Check - an OctoPrint plugin to stop me from using the wrong filament">
+<meta property="og:url" content="https://blog.backslasher.net/reality-check.html">
+
+
+  <meta property="og:description" content="">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2026-09-10T00:00:00+03:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/reality-check.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Reality Check - an OctoPrint plugin to stop me from using the wrong filament">
+    <meta itemprop="description" content="">
+    <meta itemprop="datePublished" content="2026-09-10T00:00:00+03:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Reality Check - an OctoPrint plugin to stop me from using the wrong filament
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          6 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p><img src="/assets/reality-check/popup-closeup.png" alt="Reality Check popup: gcode is sliced for PLA but printer has PETG, with three suggested solutions" /></p>
+
+<p>Yesterday, and not for the first time, I used the wrong filament for a print.<br />
+My printer is a Prusa Core One Plus, and it can handle one filament at a time. I mainly alternate between printing two types of things:</p>
+<ol>
+  <li>Small figurines I find on Thingiverse<br />
+These I print with PLA, of which I have several colors and styles</li>
+  <li>Stupid engineering prototypes, including things that go on the printer<br />
+For these I use PETG, which is more resistant to high temperatures (PLA gets soft at 60°C)</li>
+</ol>
+
+<p>Those materials differ in how the printer handles them. Specifically, each one has a different nozzle temperature (how hot the printhead needs to get for the material to melt) and bed temperature (what temperature the surface I print on needs to keep the material solid, but still adherent). The program that converts models to printing instructions, called a slicer, takes the type of material I want to use as a parameter, and based on that parameter codifies into the print instructions the different temperatures, amongst other things (e.g. the movement speed of the printhead).</p>
+
+<p><img src="/assets/reality-check/print-temps.jpg" alt="Spool labels: the PETG calls for 230-260°C, the PLA for 190-220°C" /></p>
+
+<p>Yesterday I was experimenting with a new printcam mount, which is a PETG contraption holding a small camera in the corner of the printer, so I can see how prints are going.</p>
+
+<p><img src="/assets/reality-check/camera-feed.jpg" alt="The printcam's view of the bed" /></p>
+
+<p><img src="/assets/reality-check/camera-mount.jpg" alt="printcam mounted" /></p>
+
+<p>For this, I was printing, tweaking, and printing again some parts in PETG.<br />
+While doing some tweaking for the models on the computer, I put the printer to work on a <a href="https://www.thingiverse.com/thing:19881">SC2 Thor model</a> I found. It’s made of multiple parts and can move some of its appendages, and I like it very much. This was printed in PLA, as it doesn’t need to stand weird temperatures, but it does need to look pretty</p>
+
+<p><img src="/assets/reality-check/thor.jpg" alt="A blue PLA print of the StarCraft 2 Thor, with shoulder cannons and articulated arms" /></p>
+
+<p>When I went back to printing my camera mount, I remembered to switch the printer’s filament to PETG (my PETG is boring black, very differentiable from the stunning blue of the Thor’s PLA), but I forgot to change the slicer’s filament setting, so the instructions were written assuming PLA.</p>
+
+<p>While the models started to print just fine, they would lose their grip mid-print, causing the printer to extrude “spaghetti” in the air instead of adding layers to the model, ruining the print and sometimes accumulating print material on the printhead. I started with blaming myself with putting my greasy fingers all over the print surface, ruining its adhesion with my skin oils. It got an IPA wipe, and when that didn’t help it went to the sink for some dish soap. When that didn’t work, I got a bit confused and tried thinking what changed from the morning, when everything worked perfectly.</p>
+
+<p><img src="/assets/reality-check/failed-prints.jpg" alt="Failed black PETG camera-mount prints, covered in stringy spaghetti" /></p>
+
+<p>Luckily, the slicing software names its files with all kinds of metadata, and I noticed the file was called <code class="language-plaintext highlighter-rouge">b0471-adapter-v9_0.4n_0.15mm_PLA_COREONE_50m.gcode</code>. Sharper eyes can see that the file contains “PLA” and not “PETG”, while the material being printed was PETG. This explained the problem.</p>
+
+<p><img src="/assets/reality-check/file-list.png" alt="OctoPrint's file list, with the PLA-sliced adapter file highlighted next to its PETG sibling" /></p>
+
+<p>The PLA nozzle temp luckily is in range of PETG’s melt temp, although it probably was more gloopy than the printer would have liked, and the bed temperature for PLA isn’t hot enough to keep PETG sticky, which explains why the models were so keen to leave midprint.<br />
+Obviously I resliced the model (<code class="language-plaintext highlighter-rouge">b0471-adapter-v9_0.4n_0.15mm_PETG_COREONE_58m.gcode</code> for the win) and got on with my testing, but it left me frustrated. “This could have been avoided”, I thought.</p>
+
+<h2 id="it-knows-already">It knows already</h2>
+<p>When I swap filaments in the printer, it asks me what kind of filament it has now. It needs to know in order to warm up the hotend and ensure it can pull it through. It also remembers this info because it shows it on its tiny screen when printing</p>
+
+<p><img src="/assets/reality-check/printer-screen-material.png" alt="The Core One's screen during a serial print, showing PLA as the loaded filament" /></p>
+
+<p>As I suspected, the file also specifies which filament it wants. gcode files are text, and they have a sort of frontmatter that contains this:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>; filament_type = PLA
+</code></pre></div></div>
+<p>So the printer could say “You want to print PLA but I have PETG. This is probably a bad idea”.<br />
+Turns out it does - Prusa firmware, when asked to print a file from local storage or network, already does that check and stops you from printing the wrong material</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="p">(</span><span class="n">report</span><span class="p">.</span><span class="n">failed</span><span class="p">(</span><span class="n">buddy</span><span class="o">::</span><span class="n">gcode_compatibility</span><span class="o">::</span><span class="n">VirtualToolCheck</span><span class="o">::</span><span class="n">filament_type</span><span class="p">))</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">State</span><span class="o">::</span><span class="n">wrong_filament_wait_user</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>(Source: <a href="https://github.com/prusa3d/Prusa-Firmware-Buddy/blob/1ce23f33ed3b94e26aa33a44557d6c4a4be11eb6/src/common/marlin_print_preview.cpp#L361-L363">src/common/marlin_print_preview.cpp</a>)</p>
+
+<p>My problem was that I was not printing from local storage, but rather over USB (“serial connection”) from my OctoPrint instance.<br />
+Any printer that prints from serial never sees the file metadata that contains the filament type - it only gets “go there do that” instructions, so it can’t run the check for mismatches. <br />
+OctoPrint becomes the only entity that sees both the file and the printer, and therefore the only one that can prevent those moments of stupidity from translating into bad prints.<br />
+It also has plugins, which means I don’t have to fork OctoPrint to get the change I wanted.</p>
+
+<p>Cruising through the plugin repository and the forum, the closest match I found was <a href="https://github.com/OllisGit/OctoPrint-SpoolManager">SpoolManager</a> which does something similar, but wants you to maintain which filament you’re currently holding, meaning that instead of taking updating off my hands, it adds another layer.</p>
+
+<p>Instead, I looked through Prusa’s BuddyBoard firmware and picked up command <a href="https://github.com/prusa3d/Prusa-Firmware-Buddy/blob/1ce23f33ed3b94e26aa33a44557d6c4a4be11eb6/src/marlin_stubs/M865.cpp#L15-L27"><code class="language-plaintext highlighter-rouge">M865</code></a> that lets me read (or write) the filament currently loaded to the printer. This meant I can have a plugin read the filament type from the file, read the one from the printer, and stop any foolish attempts to print when the two aren’t equal</p>
+
+<h2 id="the-result">The result</h2>
+<p><a href="https://github.com/BackSlasher/OctoPrint-Reality-Check/">Reality Check</a> does exactly that.</p>
+
+<p><img src="/assets/reality-check/block-popup.png" alt="OctoPrint with Reality Check's popup" /></p>
+
+<p>It can be installed from OctoPrint’s Plugin Manager:<br />
+<code class="language-plaintext highlighter-rouge">Get More…</code>, <code class="language-plaintext highlighter-rouge">…from URL</code>, then <code class="language-plaintext highlighter-rouge">https://github.com/BackSlasher/OctoPrint-Reality-Check/archive/main.zip</code>.<br />
+I’d put it on the OctoPrint plugin gallery but they <a href="https://plugins.octoprint.org/help/registering/">don’t allow vibecoded plugins</a>, which is fully understandable.</p>
+
+<p>It queries the printer for what it has (filament and nozzle specs), and when a print starts, it scans the file for that expected configuration metadata. If it finds a discrepancy, it blocks the print and shows a popup. The part I like best about it is that there’s no extra maintenance to be done - Prusa’s Slicer already emits the file metadata I need, and the printer itself already has a gcode to query for its inventory. For someone whose original problem was not remembering to update configs, this is perfect.</p>
+
+<p>I added support for nozzles despite me only having one kind, because the data was readily accessible in the files and the printer.</p>
+
+<p>Interesting implementation quirks:</p>
+<ol>
+  <li>
+    <p>Because of the way OctoPrint implements “print blockers”, I couldn’t ask the printer at real-time for its inventory. The blocker gate is at “start sending gcode to the printer”, which blocks the serial write thread. This means that inside the block, I can’t initiate any serial writes.<br />
+Instead, I query the printer every 30s (configurable) when idling, and use the last value at the moment of truth. As long as someone can’t change a tool in under 30s (I can’t on my printer), I’ll be up to date.<br />
+As a side effect, knowing the printer’s values at all times lets me show them in a tab</p>
+
+    <p><img src="/assets/reality-check/material-tab.png" alt="The Reality Check tab showing tool 0 with PLA and a 0.40 mm high-flow nozzle" /></p>
+  </li>
+  <li>I support a more relaxed mode, where I only care when the file explicitly asks for something, and the printer explicitly reports something, and the values mismatch. Empty values (printer doesn’t report, file doesn’t say) pass. I also added a “paranoid mode” which I now use that complains on empty values as well.<br />
+<img src="/assets/reality-check/settings.png" alt="Reality Check's settings panel, with warn only and paranoid mode under Blocking" /></li>
+  <li>There is no true concept of RPC in OctoPrint’s codebase (where I ask a question, block until I get the answer, let the serial get back to its business). Instead, we have some hacky helper methods that track which question we asked (e.g. <code class="language-plaintext highlighter-rouge">M865</code> which is “which filament do you have”) and fish out the one line we expect using regex. Not perfect, but robust enough for this case.</li>
+</ol>
+
+<h2 id="claude-helped">Claude helped</h2>
+<p>I leaned heavily on Claude on this one. It did both the footwork in the Buddyboard firmware to discover the gcodes and their format response, the coding of the actual plugin, and deployment and testing on my OctoPrint instance.<br />
+I mainly “directed” it, and I’m very happy with its performance here. ~1.5h of laptop time, and I scratched this itch, probably for good.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#claude" class="page__taxonomy-item" rel="tag">claude</a><span class="sep">, </span>
+    
+      <a href="/tags/#octoprint" class="page__taxonomy-item" rel="tag">octoprint</a><span class="sep">, </span>
+    
+      <a href="/tags/#python" class="page__taxonomy-item" rel="tag">python</a>
+    
+    </span>
+  </p>
+
+
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2026-09-10T00:00:00+03:00">September 10, 2026</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/breezy.html" class="pagination--pager" title="I reverse-engineered my HVAC because I couldn’t turn it off reliably
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/breezy.html" rel="permalink">I reverse-engineered my HVAC because I couldn’t turn it off reliably
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          18 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/tsaas-saves.html" rel="permalink">Returning to The Sims: 128 errors in a fresh lot
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          9 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">This is part of TSaaS (The Sims as a Service), my series about adding LLM-plays capability to The Sims 1. 
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/download-data-uri.html" rel="permalink">Downloading a data uri as file
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">While browsing some website, I ran into an audio player that had a source that was embedded:
+&lt;audio autoplay=""&gt;
+    &lt;source type="audio/mpeg" src="...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/esphome-switcher-proxy.html" rel="permalink">ESPHome proxy for Switcher
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I have a Switcher at home, which is a smart water heater controller. It lives in the IoT wifi jail, where they’re not allowed to reach to the open internet, ...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2026 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S2WYJL3VQ7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-S2WYJL3VQ7', { 'anonymize_ip': true});
+</script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>

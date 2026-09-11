@@ -1174,4 +1174,10 @@ var store = [{
         "tags": ["python","hardware","breezy","ramblings"],
         "url": "/breezy.html",
         "teaser": null
+      },{
+        "title": "Reality Check - an OctoPrint plugin to stop me from using the wrong filament",
+        "excerpt":"Yesterday, and not for the first time, I used the wrong filament for a print. My printer is a Prusa Core One Plus, and it can handle one filament at a time. I mainly alternate between printing two types of things: Small figurines I find on Thingiverse These I print...","categories": [],
+        "tags": ["python","octoprint","claude"],
+        "url": "/reality-check.html",
+        "teaser": null
       },]

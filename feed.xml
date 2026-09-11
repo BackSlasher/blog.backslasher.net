@@ -1,4 +1,98 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2026-08-25T15:55:56+03:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">I reverse-engineered my HVAC because I couldn’t turn it off reliably</title><link href="https://blog.backslasher.net/breezy.html" rel="alternate" type="text/html" title="I reverse-engineered my HVAC because I couldn’t turn it off reliably" /><published>2026-08-16T00:00:00+03:00</published><updated>2026-08-16T00:00:00+03:00</updated><id>https://blog.backslasher.net/breezy</id><content type="html" xml:base="https://blog.backslasher.net/breezy.html">&lt;p&gt;&lt;img src=&quot;/assets/breezy/20-boards-family.jpg&quot; alt=&quot;All four board revisions, hand-labeled&quot; /&gt;&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://blog.backslasher.net/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.backslasher.net/" rel="alternate" type="text/html" /><updated>2026-09-11T15:15:39+03:00</updated><id>https://blog.backslasher.net/feed.xml</id><title type="html">BackSlasher</title><subtitle>My blog</subtitle><author><name>Nitzan</name></author><entry><title type="html">Reality Check - an OctoPrint plugin to stop me from using the wrong filament</title><link href="https://blog.backslasher.net/reality-check.html" rel="alternate" type="text/html" title="Reality Check - an OctoPrint plugin to stop me from using the wrong filament" /><published>2026-09-10T00:00:00+03:00</published><updated>2026-09-10T00:00:00+03:00</updated><id>https://blog.backslasher.net/reality-check</id><content type="html" xml:base="https://blog.backslasher.net/reality-check.html">&lt;p&gt;&lt;img src=&quot;/assets/reality-check/popup-closeup.png&quot; alt=&quot;Reality Check popup: gcode is sliced for PLA but printer has PETG, with three suggested solutions&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Yesterday, and not for the first time, I used the wrong filament for a print.&lt;br /&gt;
+My printer is a Prusa Core One Plus, and it can handle one filament at a time. I mainly alternate between printing two types of things:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Small figurines I find on Thingiverse&lt;br /&gt;
+These I print with PLA, of which I have several colors and styles&lt;/li&gt;
+  &lt;li&gt;Stupid engineering prototypes, including things that go on the printer&lt;br /&gt;
+For these I use PETG, which is more resistant to high temperatures (PLA gets soft at 60°C)&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Those materials differ in how the printer handles them. Specifically, each one has a different nozzle temperature (how hot the printhead needs to get for the material to melt) and bed temperature (what temperature the surface I print on needs to keep the material solid, but still adherent). The program that converts models to printing instructions, called a slicer, takes the type of material I want to use as a parameter, and based on that parameter codifies into the print instructions the different temperatures, amongst other things (e.g. the movement speed of the printhead).&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/reality-check/print-temps.jpg&quot; alt=&quot;Spool labels: the PETG calls for 230-260°C, the PLA for 190-220°C&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Yesterday I was experimenting with a new printcam mount, which is a PETG contraption holding a small camera in the corner of the printer, so I can see how prints are going.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/reality-check/camera-feed.jpg&quot; alt=&quot;The printcam's view of the bed&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/reality-check/camera-mount.jpg&quot; alt=&quot;printcam mounted&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;For this, I was printing, tweaking, and printing again some parts in PETG.&lt;br /&gt;
+While doing some tweaking for the models on the computer, I put the printer to work on a &lt;a href=&quot;https://www.thingiverse.com/thing:19881&quot;&gt;SC2 Thor model&lt;/a&gt; I found. It’s made of multiple parts and can move some of its appendages, and I like it very much. This was printed in PLA, as it doesn’t need to stand weird temperatures, but it does need to look pretty&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/reality-check/thor.jpg&quot; alt=&quot;A blue PLA print of the StarCraft 2 Thor, with shoulder cannons and articulated arms&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;When I went back to printing my camera mount, I remembered to switch the printer’s filament to PETG (my PETG is boring black, very differentiable from the stunning blue of the Thor’s PLA), but I forgot to change the slicer’s filament setting, so the instructions were written assuming PLA.&lt;/p&gt;
+
+&lt;p&gt;While the models started to print just fine, they would lose their grip mid-print, causing the printer to extrude “spaghetti” in the air instead of adding layers to the model, ruining the print and sometimes accumulating print material on the printhead. I started with blaming myself with putting my greasy fingers all over the print surface, ruining its adhesion with my skin oils. It got an IPA wipe, and when that didn’t help it went to the sink for some dish soap. When that didn’t work, I got a bit confused and tried thinking what changed from the morning, when everything worked perfectly.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/reality-check/failed-prints.jpg&quot; alt=&quot;Failed black PETG camera-mount prints, covered in stringy spaghetti&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Luckily, the slicing software names its files with all kinds of metadata, and I noticed the file was called &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;b0471-adapter-v9_0.4n_0.15mm_PLA_COREONE_50m.gcode&lt;/code&gt;. Sharper eyes can see that the file contains “PLA” and not “PETG”, while the material being printed was PETG. This explained the problem.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/reality-check/file-list.png&quot; alt=&quot;OctoPrint's file list, with the PLA-sliced adapter file highlighted next to its PETG sibling&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The PLA nozzle temp luckily is in range of PETG’s melt temp, although it probably was more gloopy than the printer would have liked, and the bed temperature for PLA isn’t hot enough to keep PETG sticky, which explains why the models were so keen to leave midprint.&lt;br /&gt;
+Obviously I resliced the model (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;b0471-adapter-v9_0.4n_0.15mm_PETG_COREONE_58m.gcode&lt;/code&gt; for the win) and got on with my testing, but it left me frustrated. “This could have been avoided”, I thought.&lt;/p&gt;
+
+&lt;h2 id=&quot;it-knows-already&quot;&gt;It knows already&lt;/h2&gt;
+&lt;p&gt;When I swap filaments in the printer, it asks me what kind of filament it has now. It needs to know in order to warm up the hotend and ensure it can pull it through. It also remembers this info because it shows it on its tiny screen when printing&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/reality-check/printer-screen-material.png&quot; alt=&quot;The Core One's screen during a serial print, showing PLA as the loaded filament&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;As I suspected, the file also specifies which filament it wants. gcode files are text, and they have a sort of frontmatter that contains this:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;; filament_type = PLA
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;So the printer could say “You want to print PLA but I have PETG. This is probably a bad idea”.&lt;br /&gt;
+Turns out it does - Prusa firmware, when asked to print a file from local storage or network, already does that check and stops you from printing the wrong material&lt;/p&gt;
+
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;report&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;failed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;buddy&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;gcode_compatibility&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;VirtualToolCheck&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;filament_type&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;State&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;wrong_filament_wait_user&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;(Source: &lt;a href=&quot;https://github.com/prusa3d/Prusa-Firmware-Buddy/blob/1ce23f33ed3b94e26aa33a44557d6c4a4be11eb6/src/common/marlin_print_preview.cpp#L361-L363&quot;&gt;src/common/marlin_print_preview.cpp&lt;/a&gt;)&lt;/p&gt;
+
+&lt;p&gt;My problem was that I was not printing from local storage, but rather over USB (“serial connection”) from my OctoPrint instance.&lt;br /&gt;
+Any printer that prints from serial never sees the file metadata that contains the filament type - it only gets “go there do that” instructions, so it can’t run the check for mismatches. &lt;br /&gt;
+OctoPrint becomes the only entity that sees both the file and the printer, and therefore the only one that can prevent those moments of stupidity from translating into bad prints.&lt;br /&gt;
+It also has plugins, which means I don’t have to fork OctoPrint to get the change I wanted.&lt;/p&gt;
+
+&lt;p&gt;Cruising through the plugin repository and the forum, the closest match I found was &lt;a href=&quot;https://github.com/OllisGit/OctoPrint-SpoolManager&quot;&gt;SpoolManager&lt;/a&gt; which does something similar, but wants you to maintain which filament you’re currently holding, meaning that instead of taking updating off my hands, it adds another layer.&lt;/p&gt;
+
+&lt;p&gt;Instead, I looked through Prusa’s BuddyBoard firmware and picked up command &lt;a href=&quot;https://github.com/prusa3d/Prusa-Firmware-Buddy/blob/1ce23f33ed3b94e26aa33a44557d6c4a4be11eb6/src/marlin_stubs/M865.cpp#L15-L27&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;M865&lt;/code&gt;&lt;/a&gt; that lets me read (or write) the filament currently loaded to the printer. This meant I can have a plugin read the filament type from the file, read the one from the printer, and stop any foolish attempts to print when the two aren’t equal&lt;/p&gt;
+
+&lt;h2 id=&quot;the-result&quot;&gt;The result&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/BackSlasher/OctoPrint-Reality-Check/&quot;&gt;Reality Check&lt;/a&gt; does exactly that.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/reality-check/block-popup.png&quot; alt=&quot;OctoPrint with Reality Check's popup&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;It can be installed from OctoPrint’s Plugin Manager:&lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Get More…&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;…from URL&lt;/code&gt;, then &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;https://github.com/BackSlasher/OctoPrint-Reality-Check/archive/main.zip&lt;/code&gt;.&lt;br /&gt;
+I’d put it on the OctoPrint plugin gallery but they &lt;a href=&quot;https://plugins.octoprint.org/help/registering/&quot;&gt;don’t allow vibecoded plugins&lt;/a&gt;, which is fully understandable.&lt;/p&gt;
+
+&lt;p&gt;It queries the printer for what it has (filament and nozzle specs), and when a print starts, it scans the file for that expected configuration metadata. If it finds a discrepancy, it blocks the print and shows a popup. The part I like best about it is that there’s no extra maintenance to be done - Prusa’s Slicer already emits the file metadata I need, and the printer itself already has a gcode to query for its inventory. For someone whose original problem was not remembering to update configs, this is perfect.&lt;/p&gt;
+
+&lt;p&gt;I added support for nozzles despite me only having one kind, because the data was readily accessible in the files and the printer.&lt;/p&gt;
+
+&lt;p&gt;Interesting implementation quirks:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;Because of the way OctoPrint implements “print blockers”, I couldn’t ask the printer at real-time for its inventory. The blocker gate is at “start sending gcode to the printer”, which blocks the serial write thread. This means that inside the block, I can’t initiate any serial writes.&lt;br /&gt;
+Instead, I query the printer every 30s (configurable) when idling, and use the last value at the moment of truth. As long as someone can’t change a tool in under 30s (I can’t on my printer), I’ll be up to date.&lt;br /&gt;
+As a side effect, knowing the printer’s values at all times lets me show them in a tab&lt;/p&gt;
+
+    &lt;p&gt;&lt;img src=&quot;/assets/reality-check/material-tab.png&quot; alt=&quot;The Reality Check tab showing tool 0 with PLA and a 0.40 mm high-flow nozzle&quot; /&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;I support a more relaxed mode, where I only care when the file explicitly asks for something, and the printer explicitly reports something, and the values mismatch. Empty values (printer doesn’t report, file doesn’t say) pass. I also added a “paranoid mode” which I now use that complains on empty values as well.&lt;br /&gt;
+&lt;img src=&quot;/assets/reality-check/settings.png&quot; alt=&quot;Reality Check's settings panel, with warn only and paranoid mode under Blocking&quot; /&gt;&lt;/li&gt;
+  &lt;li&gt;There is no true concept of RPC in OctoPrint’s codebase (where I ask a question, block until I get the answer, let the serial get back to its business). Instead, we have some hacky helper methods that track which question we asked (e.g. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;M865&lt;/code&gt; which is “which filament do you have”) and fish out the one line we expect using regex. Not perfect, but robust enough for this case.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;claude-helped&quot;&gt;Claude helped&lt;/h2&gt;
+&lt;p&gt;I leaned heavily on Claude on this one. It did both the footwork in the Buddyboard firmware to discover the gcodes and their format response, the coding of the actual plugin, and deployment and testing on my OctoPrint instance.&lt;br /&gt;
+I mainly “directed” it, and I’m very happy with its performance here. ~1.5h of laptop time, and I scratched this itch, probably for good.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="python" /><category term="octoprint" /><category term="claude" /><summary type="html"></summary></entry><entry><title type="html">I reverse-engineered my HVAC because I couldn’t turn it off reliably</title><link href="https://blog.backslasher.net/breezy.html" rel="alternate" type="text/html" title="I reverse-engineered my HVAC because I couldn’t turn it off reliably" /><published>2026-08-16T00:00:00+03:00</published><updated>2026-08-16T00:00:00+03:00</updated><id>https://blog.backslasher.net/breezy</id><content type="html" xml:base="https://blog.backslasher.net/breezy.html">&lt;p&gt;&lt;img src=&quot;/assets/breezy/20-boards-family.jpg&quot; alt=&quot;All four board revisions, hand-labeled&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;A couple of months ago, I had my HVAC controller replaced in an effort to save on electricity.&lt;br /&gt;
 I controlled the previous board with an IR blaster that I loaded with a full matrix of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;{mode,fan_speed, target_temp}&lt;/code&gt; (and a special command for “off”). The new one didn’t work like that.&lt;/p&gt;
@@ -632,346 +726,4 @@ Then:&lt;/p&gt;
   &lt;li&gt;Named cache directory so we can reuse cache but don’t have to make the main one read-write&lt;/li&gt;
   &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--no-logs&lt;/code&gt; makes the process quit when the flashing’s done&lt;/li&gt;
   &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--group-add keep-groups&lt;/code&gt; passes my group membership, which we need because of rootless containers&lt;/li&gt;
-&lt;/ol&gt;</content><author><name>Nitzan</name></author><category term="homeassistant" /><category term="esp32" /><category term="weekendproject" /><category term="docker" /><category term="podman" /><summary type="html">ESPHome’s WebSerial connection didn’t work for me, and the computer running ESPHome was a bit far. Instead, I decided to run a local copy of ESPHome to flash the firmware over USB, and figured it’s an incantation worth keeping</summary></entry><entry><title type="html">Tapestry</title><link href="https://blog.backslasher.net/tapestry.html" rel="alternate" type="text/html" title="Tapestry" /><published>2025-10-18T00:00:00+03:00</published><updated>2025-10-18T00:00:00+03:00</updated><id>https://blog.backslasher.net/tapestry</id><content type="html" xml:base="https://blog.backslasher.net/tapestry.html">&lt;p&gt;&lt;img src=&quot;assets/tapestry/close.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;This is a big writeup of a project I’ve been ideating for a couple of years, and working heavily on in the last couple of months.&lt;br /&gt;
-It involves Python, hardware, 3D printing, a bit of computer vision, and a surprising amount of &lt;em&gt;vibe coding&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;All code and 3d models are available in:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://github.com/BackSlasher/tapestry-node&quot;&gt;BackSlasher/tapestry-node&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://github.com/BackSlasher/tapestry-controller&quot;&gt;BackSlasher/tapestry-controller&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://github.com/BackSlasher/tapestry-case&quot;&gt;BackSlasher/tapestry-case&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;what-and-why&quot;&gt;What and why&lt;/h2&gt;
-&lt;p&gt;&lt;strong&gt;TL;DR&lt;/strong&gt; - a big display, composed of multiple smaller &lt;a href=&quot;https://en.wikipedia.org/wiki/Electronic_paper&quot;&gt;electronic paper&lt;/a&gt; displays.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;The long way&lt;/strong&gt; - ever since I first owned a Kindle, I was impressed by the unique quality of images whenever the Kindle was on screensaver mode, and figured how great it’d be to have a full-sized poster with this unique quality.
-Since full-sized e-paper displays are crazy expensive (thousands of USD) and probably use some terrible software instead of an API, I figured I can try building one from multiple smaller displays.
-&lt;img src=&quot;assets/tapestry/kindle.webp&quot; alt=&quot;kindle&quot; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;history&quot;&gt;History&lt;/h3&gt;
-&lt;p&gt;I started with a rpi and Waveshare screen, specifically IT8951.
-&lt;img src=&quot;assets/tapestry/IT8951.jpg&quot; alt=&quot;Image from https://www.waveshare.com/10.3inch-e-paper-hat-d.htm&quot; /&gt;
-While I managed to get it working by copying the code and connecting the hat, I couldn’t get it to work using USB / SPI, meaning I needed 1 rpi per screen, which seems expensive and complicated.&lt;br /&gt;
-When connecting the USB interface, it showed up as a block device, and the demo software they provided (binary, no source) worked by sending specific weird instructions to the block device.&lt;br /&gt;
-I couldn’t get their windows-based demo to work, and disassembling it didn’t make me any wiser. Asking their support for help, they said they’re unable to provide source code, so I was stuck.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;assets/tapestry/epdiy.jpg&quot; alt=&quot;&quot; /&gt;
-When idly browsing the internet, I found &lt;a href=&quot;https://github.com/vroland/epdiy&quot;&gt;EPDiy&lt;/a&gt;, which is an ESP32-based FOSS solution (hardware+firmware) for controlling e-paper devices. The author had some demos that looked quite promising, and was really friendly when we chatted.
-I decided to try and create a solution based on that.&lt;/p&gt;
-
-&lt;video controls=&quot;&quot; style=&quot;width: 100%;&quot;&gt;
-  &lt;source src=&quot;assets/tapestry/demo.webm&quot; type=&quot;video/webm&quot; /&gt;
-  &lt;img src=&quot;assets/tapestry/poc.jpg&quot; /&gt;
-&lt;/video&gt;
-
-&lt;p&gt;PoCing the idea involved setting up multiple screens with multiple EPDiys, having them join my home network and driving them from some Python code from my laptop.&lt;br /&gt;
-Power was from my Framework laptop’s power brick, with multiple dumb USB-C splitters.&lt;br /&gt;
-The resulting setup produces great images, but was very delicate. Many screens were destroyed during experimentation, especially their delicate ribbons.
-&lt;img src=&quot;assets/tapestry/broken.jpg&quot; alt=&quot;&quot; /&gt;
-The recent breakthrough was with the case design, which is detailed later in this post.&lt;/p&gt;
-
-&lt;h2 id=&quot;composition&quot;&gt;Composition&lt;/h2&gt;
-
-&lt;p&gt;&lt;img src=&quot;assets/tapestry/biggy.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;rpi controller&lt;/li&gt;
-  &lt;li&gt;“nodes” composed of e-paper displays, their driving custom PCBs, and a case holding them together&lt;/li&gt;
-  &lt;li&gt;Board everything is mounted on&lt;/li&gt;
-  &lt;li&gt;PSU and wiring&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;controller&quot;&gt;Controller&lt;/h2&gt;
-&lt;p&gt;&lt;img src=&quot;assets/tapestry/controller.jpg&quot; alt=&quot;&quot; /&gt;
-RPi4, running &lt;a href=&quot;https://archlinuxarm.org/&quot;&gt;Arch Linux ARM&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h3 id=&quot;networking&quot;&gt;Networking&lt;/h3&gt;
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ nmcli con
-NAME                UUID                                  TYPE      DEVICE
-tapestry            afd20737-a86d-4969-a051-f349c7fa3633  wifi      wlp1s0u1 
-home-wifi           2183e6b3-13bb-4da6-8e93-13dd9811433b  wifi      wlan0
-lo                  87be8e66-b14e-4b99-b8a5-fe91ef924416  loopback  lo
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Run by NetworkManager.&lt;br /&gt;
-Multiple WiFi cards. Built-in card used for connecting to my home WiFi. Additional USB one (MediaTek Inc. MT7612U) used as an Access Point (“WiFi host”) using NetworkManager’s “Shared” internet connection.&lt;br /&gt;
-The “Shared” network is internal for communicating with the nodes.&lt;br /&gt;
-NetworkManager spawns dnsmasq for DHCP which has a leases file I utilize for positioning (see later on).&lt;/p&gt;
-
-&lt;p&gt;I use NM because it’s minimal-hassle and works relatively well.&lt;br /&gt;
-I don’t need the upstream internet access the “shared” config is providing, but it doesn’t hurt so far.&lt;br /&gt;
-What I am missing is the ability to resolve WiFi clients’ hostnames from the AP. As a workaround, I address them by IP addresses.&lt;/p&gt;
-
-&lt;h3 id=&quot;controller-software&quot;&gt;Controller software&lt;/h3&gt;
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ systemctl status tapestry-webui
-* tapestry-webui.service - Tapestry Web UI - Distributed E-ink Display Controller
-     Loaded: loaded (/etc/systemd/system/tapestry-webui.service; enabled; preset: disabled)
-     Active: active (running) since Thu 2025-10-16 22:01:58 IDT; 1 day 14h ago
- Invocation: d7d6ce0b8a1c4bbfab438208672668c0
-   Main PID: 4456 (tapestry-webui)
-      Tasks: 3 (limit: 4915)
-        CPU: 28min 24.779s
-     CGroup: /system.slice/tapestry-webui.service
-             `-4456 /home/nitz/controller/.venv/bin/python3 /home/nitz/controller/.venv/bin/tapestry-webui
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;A Python process, spawned by a systemd service with autostart.&lt;br /&gt;
-Env managed with uv.&lt;br /&gt;
-Flask for “people facing” WebUI / API.&lt;br /&gt;
-Composed of two “modules”.&lt;br /&gt;
-The “backend” module in charge of interacting with the nodes, slicing images, converting them into the nodes’ binary format etc, was written by me a long while ago.&lt;br /&gt;
-The “frontend” module that handles WebUI was almost completely vibe-coded. I acted more as a PM there.&lt;/p&gt;
-
-&lt;h3 id=&quot;node-firmware&quot;&gt;Node firmware&lt;/h3&gt;
-&lt;p&gt;Controller has a copy of the firmware so it can flash it into nodes.&lt;br /&gt;
-&lt;a href=&quot;https://gitlab.com/dnlmsr/esp-idf-helper&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;esp-idf-helper&lt;/code&gt;&lt;/a&gt; from the Arch Aur repository used to grab a specific &lt;a href=&quot;https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/tools/idf-py.html&quot;&gt;idf.py&lt;/a&gt; version I found to work.&lt;br /&gt;
-The controller is able to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;git pull&lt;/code&gt; my node firmware from Github, then use a script to:&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;Initialize idf.py&lt;/li&gt;
-  &lt;li&gt;Create a CSV file for populating the node’s NVS (“non-volatile storage”, key-value) with operational parameters (connected screen type, internal WiFi credentials).&lt;/li&gt;
-  &lt;li&gt;Build binary including partition table, flash to device over USB&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;Additionally, the controller can use an HTTP endpoint on the node to send OTA changes of firmware (e.g. changes in the nodes’ HTTP server, support for more displays) or parameters (e.g. new WiFi config).&lt;/p&gt;
-
-&lt;h3 id=&quot;deploying-new-controller-code&quot;&gt;Deploying new Controller code&lt;/h3&gt;
-&lt;p&gt;Done from my laptop via a makefile incantation that involves &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rsync&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;uv sync&lt;/code&gt;, and restarting the systemd service.&lt;/p&gt;
-
-&lt;h2 id=&quot;node-pcb&quot;&gt;Node: PCB&lt;/h2&gt;
-&lt;p&gt;&lt;img src=&quot;assets/tapestry/node.jpg&quot; alt=&quot;&quot; /&gt;
-Custom-made PCB made using &lt;a href=&quot;https://github.com/vroland/epdiy&quot;&gt;EPDiy&lt;/a&gt; v7, based on ESP32-S3.&lt;br /&gt;
-I understand very little about the hardware, and I found a service (&lt;a href=&quot;https://jlcpcb.com/&quot;&gt;jlcpcb.com&lt;/a&gt;) that will take a schema and a BoM (and some money), and mail me ready-to-be-used PCBs.&lt;br /&gt;
-I added a prototype of my HTTP server &lt;a href=&quot;https://github.com/vroland/epdiy/tree/main/examples/http-server&quot;&gt;to the EPDiy repo&lt;/a&gt;. However, it doesn’t include the config-reading OTA-supporting fanciness that the current iteration has.&lt;/p&gt;
-
-&lt;p&gt;Coding-wise, the bootstrapping and drawing logic was done by me, but a lot of the later additions (e.g. OTA) were vibe-coded with me reviewing the code thoroughly.&lt;/p&gt;
-
-&lt;h3 id=&quot;boot&quot;&gt;Boot&lt;/h3&gt;
-&lt;p&gt;The software is an HTTP server, with the base logic being:&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;Read config from NVS&lt;/li&gt;
-  &lt;li&gt;Initialize screen&lt;/li&gt;
-  &lt;li&gt;Connect to WiFi. If failed, wait for 30s and try again (to handle startup races with the controller)&lt;/li&gt;
-  &lt;li&gt;Start an HTTP server on port 80, handle requests as they come in.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;The requests are (at the moment):&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;GET /&lt;/code&gt;: Reply with data about configured screen - temperature, resolution&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;POST /clear&lt;/code&gt;: Clear the screen&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;POST /draw&lt;/code&gt;: Draws on the screen a given custom-format (4-bit grayscale bitmap) image.&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;GET /ota&lt;/code&gt;: Data about currently running firmware version&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;POST /ota&lt;/code&gt;: Upload a new firmware binary using OTA, verify and restart&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;GET /ota/parameters&lt;/code&gt;: Get current configuration. WiFi password is redacted&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;POST /ota/parameters&lt;/code&gt;: Set new configurations&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&quot;ota&quot;&gt;OTA&lt;/h3&gt;
-&lt;p&gt;(&lt;a href=&quot;https://en.wikipedia.org/wiki/Over-the-air_update&quot;&gt;Over the Air updates&lt;/a&gt;)&lt;br /&gt;
-I chose a “safe” OTA methodology:&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;The device is partitioned to have 2 “application” partitions. While the bootloader is using one, the other is available to have a new version written into it.&lt;/li&gt;
-  &lt;li&gt;After OTA, the bootloader switches to the new partition in “test” mode. If the new firmware won’t boot, crashes out, or doesn’t confirm it’s healthy within 5 minutes, the upgrade is considered a failure and the bootloader switches to the previous partition.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;This was a bit tricky to implement, as the default application size partition is 1MB, but the device has 2MB memory, meaning there’s no room left over for bootstrap and NVS partitions if we take 2 application partitions at that size.&lt;br /&gt;
-Some measuring led me to find out that the current binary is only ~800K, so the app partition can be 900K (a bit more because of alignment I think), and room was found for the other partitions.&lt;/p&gt;
-
-&lt;h2 id=&quot;node-display&quot;&gt;Node: Display&lt;/h2&gt;
-&lt;p&gt;&lt;img src=&quot;assets/tapestry/display.jpg&quot; alt=&quot;&quot; /&gt;
-I chose ED097TC2, a biggish screen from &lt;a href=&quot;https://github.com/vroland/epdiy?tab=readme-ov-file#displays&quot;&gt;EPDiy’s support matrix&lt;/a&gt;, and ordered a bunch from AliExpress.&lt;br /&gt;
-I experimented with smaller screens (ED060XC3), but their awkward positioning relative to the EPDiy’s connector made the nodes less aesthetically pleasing&lt;/p&gt;
-
-&lt;h2 id=&quot;node-case&quot;&gt;Node: Case&lt;/h2&gt;
-&lt;p&gt;&lt;img src=&quot;assets/tapestry/case.jpg&quot; alt=&quot;&quot; /&gt;
-The node’s components (PCB, e-paper display) are coupled together by a case that holds the display in place with three grooved “arms” that the screen slides into from the top, and on the other side has mount holes for the PCB. Both are positioned so the ribbon connecting them is on a good balance of tight/free, and protected from stress (as before the case, the ribbon tearing was the most common cause of my prototypes being destroyed).&lt;br /&gt;
-The cases are designed by mostly by the LLM and 3D-printed by me.
-&lt;img src=&quot;assets/tapestry/case2.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;design&quot;&gt;Design&lt;/h3&gt;
-&lt;p&gt;&lt;img src=&quot;assets/tapestry/design.png&quot; alt=&quot;&quot; /&gt;
-I don’t consider myself good at physical engineering, and for a long while designing a case was the blocker for my project. The pairing was so custom that there was nothing in the wild I could use, and I couldn’t convince my few industrial-design friends to help me on this.&lt;br /&gt;
-Recently I figured that since “AI” is taking over everything, maybe it could take over this. I looked for some foss-autocad-like-MCP server, and found that freecad has an MCP server &lt;a href=&quot;https://github.com/neka-nat/freecad-mcp&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;I couldn’t get it to work.&lt;/p&gt;
-
-&lt;p&gt;When using Gemini CLI, it made very silly mistakes and insisted everything is OK.&lt;br /&gt;
-Claude CLI couldn’t get the MCP server to work, and suggested it write SCAD files instead and I can compile them. This was a &lt;strong&gt;MAGNIFICENT&lt;/strong&gt; idea.&lt;br /&gt;
-We ended up with the following work procedure:&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;Claude generates / modifies scad files&lt;/li&gt;
-  &lt;li&gt;It can use CLI tools to get renders of the model, and feed said renders to its image recognition to get some clue on how the end result looks (did not work perfectly)&lt;/li&gt;
-  &lt;li&gt;I have &lt;a href=&quot;https://en.wikipedia.org/wiki/OpenSCAD&quot;&gt;OpenSCAD&lt;/a&gt; open on the same file, able to pick up changes on file writes and review the LLM’s work&lt;/li&gt;
-  &lt;li&gt;OpenSCAD can compile into an STL I can print&lt;/li&gt;
-  &lt;li&gt;Being text, everything can be stored in a git repo&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;This methodology helped me greatly. Some impressions from it:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;During our work, I occasionally had to tell the LLM that the model it generated doesn’t work (e.g. pieces floating in the air), which I consider a failure, but manageable.&lt;/li&gt;
-  &lt;li&gt;When I wanted to describe a situation, e.g. some screens stacking next to each other, I used ASCII symbology like so:
-    &lt;blockquote&gt;
-      &lt;p&gt;Imagine that this is a single screen:&lt;/p&gt;
-    &lt;/blockquote&gt;
-    &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;|---|
-  |
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/div&gt;
-    &lt;blockquote&gt;
-      &lt;p&gt;I want to stack them like this:&lt;/p&gt;
-    &lt;/blockquote&gt;
-    &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    |---|
-|---| | |---|
-  | |---| |
-      |
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/div&gt;
-    &lt;p&gt;Or this to describe a keyhole mount, where the bottom area is wide enough to let the pin head go through, but the top is narrow so it can’t leave:&lt;/p&gt;
-    &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; ___
- | |
- | |
-/   \
-|   |
-\---/
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-    &lt;p&gt;And surprisingly enough, the LLM understood. Not only by saying it did, but by adjusting the case designs to match my requests.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;My silly terminology (“keyhole mounts”, “arms” vs “tendrils”) persisted into the resulting SCAD file, meaning I could reuse it when conversing with the LLM about changes rather than having to describe the specific block I was interested in.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;printing&quot;&gt;Printing&lt;/h3&gt;
-&lt;p&gt;&lt;img src=&quot;assets/tapestry/print.png&quot; alt=&quot;&quot; /&gt;
-I use a &lt;a href=&quot;https://help.prusa3d.com/product/mk3s&quot;&gt;Prusa MK3S+ printer&lt;/a&gt; I bought and assembled a couple of years ago.
-It has an RPi4 mounted on it running &lt;a href=&quot;https://octoprint.org/download/&quot;&gt;OctoPi&lt;/a&gt; and &lt;a href=&quot;https://octoprint.org/&quot;&gt;OctoPrint&lt;/a&gt;.&lt;br /&gt;
-I’m using whatever PLA I have lying around, since prototyping means there’s a high turnover of the prints (e.g. I added external grooves to the cases and needed to replace all of the perfectly-working ones I previously had).&lt;br /&gt;
-Slicing is done via &lt;a href=&quot;https://www.prusa3d.com/page/prusaslicer_424/&quot;&gt;PrusaSlicer&lt;/a&gt; (based on Slic3r).&lt;br /&gt;
-Each case takes ~5 hours to print.&lt;/p&gt;
-
-&lt;p&gt;I find it incredible to think that I have a small factory in my study, ready to print stuff I design on my computer. Even more so when you consider I assembled this printer from parts that I relatively understand how they work, so there’s no magic involved, just excellent engineering.
-&lt;img src=&quot;assets/tapestry/printer2.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;functionality&quot;&gt;Functionality&lt;/h2&gt;
-&lt;p&gt;The webui allows the user to:&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;See what is currently displaying - both the source image and how it’s divided into the screens
-  &lt;img src=&quot;assets/tapestry/webui-home.png&quot; alt=&quot;&quot; /&gt;&lt;/li&gt;
-  &lt;li&gt;Post a new image to be displayed (file upload or drag and drop)
-  &lt;img src=&quot;assets/tapestry/webui-upload.png&quot; alt=&quot;&quot; /&gt;&lt;/li&gt;
-  &lt;li&gt;Set up a “screensaver”, which can be:
-  &lt;img src=&quot;assets/tapestry/webui-screensaver.png&quot; alt=&quot;&quot; /&gt;
-    &lt;ol&gt;
-      &lt;li&gt;A directory of images, random-picking from the files&lt;/li&gt;
-      &lt;li&gt;A subreddit, random-picking from the top N posts containing photos&lt;/li&gt;
-      &lt;li&gt;Pixabay (given an API key), random-picking from the search results of definable keywords.
-I stopped following through there because I noticed &lt;a href=&quot;https://pixabay.com/forum/support-help-28/advanced-search-exclude-words-17522/&quot;&gt;their search is broken&lt;/a&gt; and didn’t let me filter out things I don’t like&lt;/li&gt;
-    &lt;/ol&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Flash over USB / OTA over WiFi nodes
-  &lt;img src=&quot;assets/tapestry/webui-flash.png&quot; alt=&quot;&quot; /&gt;&lt;/li&gt;
-  &lt;li&gt;Configure the displays’ layout through QR positioning
-  &lt;img src=&quot;assets/tapestry/webui-qr.png&quot; alt=&quot;&quot; /&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&quot;positioning&quot;&gt;Positioning&lt;/h3&gt;
-&lt;p&gt;I’m quite proud of this, so I think it’s worth its own section.
-The controller has a layout yaml file that looks like this:&lt;/p&gt;
-&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;devices&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-&lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;coordinates&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;185&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;141&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;detected_dimensions&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;height&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;102&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;width&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;147&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;host&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;10.42.0.166&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;rotation&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;180&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;screen_type&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;ED097TC2&lt;/span&gt;
-&lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;coordinates&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;23&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;210&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;detected_dimensions&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;height&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;102&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;width&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;149&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;host&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;10.42.0.98&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;rotation&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;180&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;For each node, you have the host (IP over which it can be contacted), its positioning in the canvas (x,y and rotation), and the size of the node’s display.
-I managed to produce early versions of this file manually, but found it tedious before taking things like complex rotation (not 90° multiples) into account.&lt;/p&gt;
-
-&lt;p&gt;Instead, I produced a more automated process:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;assets/tapestry/qr.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;Since all nodes have the WiFi credentials for the internal network, we query the DHCP records of the dnsmasq server for all current DHCP clients. From it, we extract the assigned IP address (as we sadly can’t use the hostnames, as NM won’t configure the OS to consult the dnsmasq server).&lt;br /&gt;
-We end up with a list of IP addresses of the nodes&lt;/li&gt;
-  &lt;li&gt;For each node, we query it to get the screen type it has and its resolution. We then generate a personalized QR code for that node that contains:
-    &lt;ol&gt;
-      &lt;li&gt;The node’s IP address&lt;/li&gt;
-      &lt;li&gt;Screen type&lt;/li&gt;
-      &lt;li&gt;Resolution (px height, width of screen)&lt;/li&gt;
-      &lt;li&gt;Resulting px size of the QR code (60% of the min between screen width/height, calculated at QR generation time).&lt;br /&gt;
-We stick all this in JSON as the QR payload.&lt;/li&gt;
-    &lt;/ol&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Each node then displays its QR code&lt;/li&gt;
-  &lt;li&gt;User takes a photo of the layout with all of the QR codes and uploads to the WebUI (it’s really easy from a smartphone)&lt;/li&gt;
-  &lt;li&gt;We detect all QR codes in the photo (and match our payload pattern) and extract the payload + bounding box of each of them using cv2’s &lt;a href=&quot;https://docs.opencv.org/3.4/de/dc3/classcv_1_1QRCodeDetector.html#af973ba598df7c9a7cf3c539878299d14&quot;&gt;QRCodeDetector::detectAndDecodeMulti&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;Iterating over them, we extrapolate the screen’s bounding box:
-    &lt;ol&gt;
-      &lt;li&gt;Take the QR’s bounding box&lt;/li&gt;
-      &lt;li&gt;Calculate center&lt;/li&gt;
-      &lt;li&gt;Read from QR payload the size of the screen and the size of the QR code, determining the ratio between screen and QR size&lt;/li&gt;
-      &lt;li&gt;Use the ratio to move the QR’s bounding box further away, generating the screens’ bounding box&lt;/li&gt;
-    &lt;/ol&gt;
-  &lt;/li&gt;
-  &lt;li&gt;For each screen, determine from the bounding box the size, positioning and rotation. Align them with the payload from the QR to generate an entry&lt;/li&gt;
-  &lt;li&gt;Ensure that all nodes from the IP list are present in the resulting collection. If not, warn the user that some are missing&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;We preview the layout to the user, and assuming they accept it we write to the file and redraw the image.
-&lt;img src=&quot;assets/tapestry/qr2.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;This setup took quite a bit of brainwork from me (and a lot of LLM tokens, I bet), but it works pretty impressively and the resulting composite photos are pretty great.&lt;br /&gt;
-An obvious “duh” moment was when I stopped the ridiculously long feedback loop of testing the system via the webui every time, but rather saved one of the QR-positioning photos and created a small CLI to color the bounding box (and the calculated screen one) so I can iterate much quicker.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;assets/tapestry/qr-fix-old.jpg&quot; alt=&quot;&quot; /&gt;
-&lt;img src=&quot;assets/tapestry/qr-fix-new.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;The revelation leading to the biggest improvement of the photo you see above is due to the QR size calculation being done incorrectly. The image of the QR code was indeed taking 60% of the screen, but said image contained a white border (usually needed to protect the QR code from random stuff around it), but the border was not detected in cv2’s bounding box, which made the QR box smaller than intended. The relevant code now looks like this:&lt;/p&gt;
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;qr&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;qrcode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;QRCode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;version&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;error_correction&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;qrcode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;constants&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ERROR_CORRECT_L&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;box_size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;border&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;# Entire image is white, no border needed
-&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;qr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add_data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;qr_data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;mounting&quot;&gt;Mounting&lt;/h2&gt;
-&lt;p&gt;All of the cases are mounted on an &lt;a href=&quot;https://www.ikea.com/us/en/cat/skadis-series-37813/&quot;&gt;IKEA SKÅDIS&lt;/a&gt; pegboard. Most of them using the hooks, with the cases designed with mounts for the hooks.&lt;/p&gt;
-
-&lt;h2 id=&quot;power&quot;&gt;Power&lt;/h2&gt;
-&lt;p&gt;I’m currently using a “usb charging station” from AliExpress that is rated for 5v/60a (300w), which is way overkill. All of the devices (controller + nodes) are connected via USB-C cables, which are also overkill.&lt;br /&gt;
-I’m hoping to switch to a smaller PSU (100w) and simpler electrical wiring to reduce complexity and waste.
-Since this is only 5V, I’m not as worried about electrocuting myself as I’d be with higher voltage.&lt;/p&gt;
-
-&lt;h2 id=&quot;vibe-coding&quot;&gt;Vibe Coding&lt;/h2&gt;
-&lt;p&gt;While I’m wary of people overusing LLMs for their day job (I had several encounters with “I dunno the AI put it there” explanations in code review), this project would have been stuck without the power multiplication LLMs give people who sort-of-know what they’re doing. Although clueless in 3D design, I was able to produce cases that match my use case perfectly, and even though I’m not very strong in web stuff, the WebUI for Tapestry is extremely elegant.&lt;/p&gt;
-
-&lt;p&gt;My setup started with Gemini CLI, but I moved to Claude CLI as per my friends’ recommendation. No agents or MCP servers, no memory and barely any &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;README.md&lt;/code&gt; or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CLAUDE.md&lt;/code&gt; files, which means I can probably make the experience even better once I take the time to explore the customization options.&lt;/p&gt;
-
-&lt;p&gt;While this is a single-person hobby project, it made me very optimistic about my ability to use LLM in future prototyping situations.&lt;br /&gt;
-On the negative side, I found the personality sycophantic (“yes, what a great idea!”), and sometimes plain mistaken (“now the case doesn’t have any disconnected parts”).&lt;br /&gt;
-It tended to invent some facts that fit its observations (“QR codes do not give us orientation position”), or if left to its own devices, it sometimes “solved” problems by mocking out entire procedures (leaving a “TODO” marker) or sprinkling magic constants in the code.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;assets/tapestry/llm.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;The overall conclusion is that if I was to personify the LLM, it behaves like a university graduate. It has impressive general knowledge, but not enough street smarts to always apply it in a productive way. Some problems it solved beautifully on its own, and some got it to spiral out.&lt;/p&gt;
-
-&lt;p&gt;I didn’t let it handle commits in any form. This was a sort of a safety net. It could do what it wants with the files inside the repo, but I would always commit/revert depending on the success of our work.&lt;/p&gt;
-
-&lt;h2 id=&quot;future-work&quot;&gt;Future work&lt;/h2&gt;
-&lt;p&gt;Like any hobby project, it’s not done.&lt;br /&gt;
-I’m waiting on a smaller PSU and some wiring that will allow me to replace the USB cables and hopefully make this look less cluttered.&lt;br /&gt;
-I’m also thinking about whether the SKÅDIS board is a good enough mount, or should I try doing something more bespoke and elegant.&lt;br /&gt;
-Software-wise, I’m thinking about making the displayed image depend on something, like the time of day, the weather outside, holidays etc.&lt;/p&gt;
-
-&lt;p&gt;I’ll try to post updates whenever I have any really interesting changes.&lt;/p&gt;</content><author><name>Nitzan</name></author><category term="python" /><category term="tapestry" /><category term="weekendproject" /><summary type="html"></summary></entry></feed>
+&lt;/ol&gt;</content><author><name>Nitzan</name></author><category term="homeassistant" /><category term="esp32" /><category term="weekendproject" /><category term="docker" /><category term="podman" /><summary type="html">ESPHome’s WebSerial connection didn’t work for me, and the computer running ESPHome was a bit far. Instead, I decided to run a local copy of ESPHome to flash the firmware over USB, and figured it’s an incantation worth keeping</summary></entry></feed>

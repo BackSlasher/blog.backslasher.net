@@ -312,6 +312,11 @@
   object-fit: cover;
   display: block;
 }
+.proj-card img.contain {
+  object-fit: contain;
+  padding: 0.5em;
+  box-sizing: border-box;
+}
 .proj-card .proj-body {
   padding: 0.8em 1em 1em;
   font-size: 0.85em;
@@ -384,6 +389,18 @@
     Daily puzzle-score tracker for the group chat.
     <div class="proj-links">
       <a href="https://puzzlepoints.backslasher.net/">Visit</a>
+    </div>
+  </div>
+</div>
+
+<div class="proj-card">
+  <img class="contain" src="/assets/reality-check/popup-closeup.png" alt="Reality Check popup: gcode is sliced for PLA but printer has PETG, with three suggested solutions" />
+  <div class="proj-body">
+    <h3>Reality Check</h3>
+    OctoPrint plugin that asks a Prusa printer what filament and nozzle it has, and blocks prints whose gcode disagrees. The firmware checks this itself, but only when it reads the file; over serial the gate doesn't exist.
+    <div class="proj-links">
+      <a href="/reality-check.html">The story</a>
+      <a href="https://github.com/BackSlasher/OctoPrint-Reality-Check">Source</a>
     </div>
   </div>
 </div>
