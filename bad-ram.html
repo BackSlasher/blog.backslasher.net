@@ -1,0 +1,715 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Living with bad RAM - BackSlasher</title>
+<meta name="description" content="Backstory I have a small laptop-server that runs my home. It serves as a container host (Home Assistant, WireGuard, …), an HTPC (KDE Bigscreen, Kodi, Steam), and random file storage. It works well enough. One of the long-living items on my personal backlog is capturing that laptop’s configuration somewhere. I keep tinkering with it, and I know that one day, when I break something and need to reinstall it, I won’t remember all of the tiny changes I made, and will spend several years chasing that exact PipeWire config that worked, or the filesystem layout the compose file needs. I’ve been aware of NixOS’s concept, where the OS is defined by config files - packages, settings, mounts, services, users - and it seemed like a good fit. I had a bit of free time, so I figured I’d give it a try. The process had some problems, and I couldn’t blame all of them on NixOS.">
+
+
+  <meta name="author" content="Nitzan">
+  
+  <meta property="article:author" content="Nitzan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="BackSlasher">
+<meta property="og:title" content="Living with bad RAM">
+<meta property="og:url" content="https://blog.backslasher.net/bad-ram.html">
+
+
+  <meta property="og:description" content="Backstory I have a small laptop-server that runs my home. It serves as a container host (Home Assistant, WireGuard, …), an HTPC (KDE Bigscreen, Kodi, Steam), and random file storage. It works well enough. One of the long-living items on my personal backlog is capturing that laptop’s configuration somewhere. I keep tinkering with it, and I know that one day, when I break something and need to reinstall it, I won’t remember all of the tiny changes I made, and will spend several years chasing that exact PipeWire config that worked, or the filesystem layout the compose file needs. I’ve been aware of NixOS’s concept, where the OS is defined by config files - packages, settings, mounts, services, users - and it seemed like a good fit. I had a bit of free time, so I figured I’d give it a try. The process had some problems, and I couldn’t blame all of them on NixOS.">
+
+
+
+  <meta property="og:image" content="https://blog.backslasher.net/assets/bad-ram/memtest-fail-both-modules.jpg">
+
+
+
+
+
+  <meta property="article:published_time" content="2026-09-20T00:00:00+03:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://blog.backslasher.net/bad-ram.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Nitzan",
+      "url": "https://blog.backslasher.net/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="BackSlasher Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          BackSlasher
+          <span class="site-subtitle">I fix things</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+  
+
+
+
+
+
+
+
+<div class="page__hero--overlay"
+  style=" background-image: url('/assets/bad-ram/memtest-fail-both-modules.jpg');"
+>
+  
+    <div class="wrapper">
+      <h1 id="page-title" class="page__title" itemprop="headline">
+        
+          Living with bad RAM
+
+        
+      </h1>
+      
+      
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+      
+      
+    </div>
+  
+  
+</div>
+
+
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/nitz.jpg" alt="Nitzan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Nitzan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>If this prod is rocking, don’t come a-knocking</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Israel</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://backslasher.net" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Backslasher</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Living with bad RAM">
+    <meta itemprop="description" content="BackstoryI have a small laptop-server that runs my home. It serves as a container host (Home Assistant, WireGuard, …), an HTPC (KDE Bigscreen, Kodi, Steam), and random file storage. It works well enough.One of the long-living items on my personal backlog is capturing that laptop’s configuration somewhere. I keep tinkering with it, and I know that one day, when I break something and need to reinstall it, I won’t remember all of the tiny changes I made, and will spend several years chasing that exact PipeWire config that worked, or the filesystem layout the compose file needs.I’ve been aware of NixOS’s concept, where the OS is defined by config files - packages, settings, mounts, services, users - and it seemed like a good fit. I had a bit of free time, so I figured I’d give it a try.The process had some problems, and I couldn’t blame all of them on NixOS.">
+    <meta itemprop="datePublished" content="2026-09-20T00:00:00+03:00">
+    
+
+    <div class="page__inner-wrap">
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <h2 id="backstory">Backstory</h2>
+<p>I have a small laptop-server that runs my home. It serves as a container host (Home Assistant, WireGuard, …), an HTPC (KDE Bigscreen, Kodi, Steam), and random file storage. It works well enough.<br />
+One of the long-living items on my personal backlog is capturing that laptop’s configuration somewhere. I keep tinkering with it, and I know that one day, when I break something and need to reinstall it, I won’t remember all of the tiny changes I made, and will spend several years chasing that exact PipeWire config that worked, or the filesystem layout the compose file needs.<br />
+I’ve been aware of NixOS’s concept, where the OS is defined by config files - packages, settings, mounts, services, users - and it seemed like a good fit. I had a bit of free time, so I figured I’d give it a try.<br />
+The process had some problems, and I couldn’t blame all of them on NixOS.</p>
+
+<h2 id="heisenbug">Heisenbug</h2>
+<p>While reviewing the things I needed to migrate, I noticed my Home Assistant had recently crashed with a segfault.<br />
+After a little bit of running NixOS, it panicked while doing ext4 stuff.<br />
+When adding Steam to NixOS, the build failed once, but 3 retries went just fine.<br />
+As a battle-scarred engineer, I’m used to problems that show up and go away, and familiar with the temptation to say “well, it works now, let’s go!”, but I know that’s a deal with the devil, and whatever caused this will come back.<br />
+The LLM picked up on something interesting: the kernel panicked while accessing an invalid address <code class="language-plaintext highlighter-rouge">ffffae8f...</code>, but <code class="language-plaintext highlighter-rouge">ffff8e8f...</code> was valid - the only difference being bit 45. Home Assistant, similarly, failed on <code class="language-plaintext highlighter-rouge">0x40000000008</code>, which looks like “field at offset 8 of an object at address <code class="language-plaintext highlighter-rouge">0x40000000000</code>”, and <code class="language-plaintext highlighter-rouge">0x40000000000</code> is again a single bit (42) flip away from <code class="language-plaintext highlighter-rouge">NULL</code>. Single bitflips smell like faulty RAM.</p>
+
+<h2 id="12s-to-bad">12s to bad</h2>
+<p>I remember how to diagnose suspicious RAM, on account of the process being so disruptive.<br />
+I booted into Memtest86+ and ran a scan. The scan failed (and froze) after 12 seconds, pointing at a specific cluster of addresses.</p>
+
+<p><img src="/assets/bad-ram/memtest-fail-both-modules.jpg" alt="Memtest86+ reporting 24 errors after 12 seconds, all at addresses around 10.8GB" /></p>
+
+<p>Rebooting and running it several more times (“will it help if I cool it down more?”) gave the same result.<br />
+While buying new RAM is not fun in the current economy, it’s not impossible either. I turned the laptop off and took it to my workbench to see what I was dealing with.</p>
+
+<h2 id="where-other-ram">Where other RAM</h2>
+<p>When I opened the case, I didn’t find 16GB of RAM. I only located a single 8GB module, which confused me.</p>
+
+<p><img src="/assets/bad-ram/single-sodimm.jpg" alt="A single SK hynix 8GB DDR4 SODIMM seated in the laptop's only memory slot" /></p>
+
+<p>After some research, I saw that this specific laptop comes with a motherboard-soldered 8GB module, which I can’t remove or disable. I silently begged the Powers That Be for the defect to be on the removable module.</p>
+
+<p>A test without the removable module confirmed that the problem is in the soldered one.</p>
+
+<p><img src="/assets/bad-ram/memtest-fail-soldered-only.jpg" alt="Memtest86+ with only 7.76GB of RAM installed, failing again with 38 errors" /><br />
+<em>Note - the different failing address is because of RAM interleaving</em></p>
+
+<p>This means I can’t solve it without replacing the motherboard, which I won’t. Is the laptop usable until I buy a new one?</p>
+
+<h2 id="ramaround">RAMaround</h2>
+<p>While I spotted the bad RAM thanks to a very obvious failure, the real risk is when things don’t explode. Without ECC - which this laptop, like most consumer-grade computers, doesn’t have - data can be silently corrupted. You can make a small edit to a file, and saving it adds a sneaky bitflip alongside your changes: undetectable by on-disk checksums (because the filesystem wrote exactly what it was told), but destructive.<br />
+Sounds scary enough to throw it out, but what do I do until I get a new laptop?<br />
+I complained to my favorite LLM, which suggested two solutions.<br />
+The first had the kernel run a small memtest of its own (the <code class="language-plaintext highlighter-rouge">memtest=6</code> kernel command line parameter) and cordon off the areas it found broken. It didn’t work (the kernel found nothing wrong), probably because its testing wasn’t rigorous enough.<br />
+The second had us use <code class="language-plaintext highlighter-rouge">memmap</code> to make the kernel reserve the known bad area. Supposedly it’s meant for something else to use that area, but if I never ask for it explicitly, nothing will end up using it.</p>
+
+<p>The original recommendation was, since the bad area is a couple of KiBs, to reserve a couple of MiBs extra around it. Because I’m <del>paranoid</del> generous, I instead blocked 2GiB of RAM. In NixOS it looked like this:</p>
+<div class="language-nix highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">boot</span><span class="o">.</span><span class="nv">kernelParams</span> <span class="o">=</span> <span class="p">[</span> <span class="s2">"memmap=2G$0x280000000"</span> <span class="p">];</span>
+</code></pre></div></div>
+<p>(if you’re GRUBing, make sure to escape that <code class="language-plaintext highlighter-rouge">$</code>).</p>
+
+<p>Before returning the laptop to service, I ran a few passes on the ranges that I left available. The failure was around 10.8GiB, so I scanned 0-10GiB and 12GiB-end, and made sure memtest didn’t find anything broken there.</p>
+
+<p>I am aware there could be bitflip gremlins in all of the data I had on that laptop, but luckily I had no precious data there. It was configs that I can regenerate, or state files that I can lose, or some sensor history, where if it’s lost, I can survive.</p>
+
+<h2 id="what-happens-now">What happens now?</h2>
+<p>The laptop-server is back at work, running NixOS. I’m looking to find it a replacement, and wondering what to do with this one. If I give it to a less tech-savvy friend, they’ll probably install Windows, lose the memmap protection (that is only valid with this specific hardware combo anyway), and corrupt away their data with my gift, which is not great.<br />
+I figure that if I keep it, it’ll be a read-only “media viewer”, but I’m not even sure about that.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#hardware" class="page__taxonomy-item" rel="tag">hardware</a><span class="sep">, </span>
+    
+      <a href="/tags/#linux" class="page__taxonomy-item" rel="tag">linux</a><span class="sep">, </span>
+    
+      <a href="/tags/#nixos" class="page__taxonomy-item" rel="tag">nixos</a>
+    
+    </span>
+  </p>
+
+
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2026-09-20T00:00:00+03:00">September 20, 2026</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/reality-check.html" class="pagination--pager" title="Reality Check - an OctoPrint plugin to stop me from using the wrong filament
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <!-- start custom comments snippet -->
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+    graphcomment_id: 'Backslasher-net',
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+
+</script>
+<!-- end custom comments snippet -->
+
+  
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+              style="display:block; border-bottom: initial;"
+              data-ad-client="ca-pub-7328585512091257"
+              data-ad-slot="3049671934"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+      </div>
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/reality-check.html" rel="permalink">Reality Check - an OctoPrint plugin to stop me from using the wrong filament
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          6 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/breezy.html" rel="permalink">I reverse-engineered my HVAC because I couldn’t turn it off reliably
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          18 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/tsaas-saves.html" rel="permalink">Returning to The Sims: 128 errors in a fresh lot
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          9 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">This is part of TSaaS (The Sims as a Service), my series about adding LLM-plays capability to The Sims 1. 
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/download-data-uri.html" rel="permalink">Downloading a data uri as file
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">While browsing some website, I ran into an audio player that had a source that was embedded:
+&lt;audio autoplay=""&gt;
+    &lt;source type="audio/mpeg" src="...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <div align="center" style="margin: 1em 0;">
+        <ins class="adsbygoogle"
+             style="display:block; border-bottom: initial;"
+             data-ad-client="ca-pub-7328585512091257"
+             data-ad-slot="3049671934"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2026 Nitzan. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S2WYJL3VQ7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-S2WYJL3VQ7', { 'anonymize_ip': true});
+</script>
+
+
+
+
+
+
+    <!-- start custom comments scripts -->
+
+<!-- end custom comments scripts -->
+
+
+
+
+
+    <style>
+      .google-auto-placed {
+        margin: 2em auto;
+      }
+    </style>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  </body>
+</html>

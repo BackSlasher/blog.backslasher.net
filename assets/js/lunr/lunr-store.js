@@ -1180,4 +1180,10 @@ var store = [{
         "tags": ["python","octoprint","claude"],
         "url": "/reality-check.html",
         "teaser": null
+      },{
+        "title": "Living with bad RAM",
+        "excerpt":"Backstory I have a small laptop-server that runs my home. It serves as a container host (Home Assistant, WireGuard, …), an HTPC (KDE Bigscreen, Kodi, Steam), and random file storage. It works well enough. One of the long-living items on my personal backlog is capturing that laptop’s configuration somewhere. I...","categories": [],
+        "tags": ["linux","nixos","hardware"],
+        "url": "/bad-ram.html",
+        "teaser": null
       },]
