@@ -9,7 +9,7 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Windows Event Collection - BackSlasher</title>
+<!-- begin _includes/seo.html --><title>Windows Event Collection | BackSlasher</title>
 <meta name="description" content="I’ve recently implemented an enterprise-wide solution of event collection in our organization, using Windows’ built-in mechanism called the Windows Event Collector. This mechanism allows you to collect events from computers running Windows NT5+ (XP/Server 2003 and greater) into Windows NT6+ (Vista/Server 2008 and greater) machines. The only basic rules are that the source machine should have Winrm2 installed and running on it, and the Event Collector Service should be running on the collector machine. There are two methods available to complete this challenge - collector initiated and source initiated:">
 
 

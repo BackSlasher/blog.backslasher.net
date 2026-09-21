@@ -9,7 +9,7 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Checking for conflicting oIDs - BackSlasher</title>
+<!-- begin _includes/seo.html --><title>Checking for conflicting oIDs | BackSlasher</title>
 <meta name="description" content="I got word that this script was useful for some other IT team, so it’s definitely blog-worthy! The Story I’ve inherited some AD forests with their schema extended by in-house software, using oIDs belonging to an MS pool, meaning that those numbers might be used by future schema extensions by MS and friends. A very uneasy situation, because whenever I want to extend the schema we have to anticipate oID clashes, requiring forest recovery. When we prepared the schema for a 2008R2 DC, I’ve created this nifty script to search for our schema entries and compare their oIDs to the ones in the ldf files that adPrep is using, to see if there are any conflicts. Of course, this script is no replacement to backing up the forest, and maybe extending the schema in a lab before doing the real deal - It’ll just help you see if there are obvious conflicts.">
 
 

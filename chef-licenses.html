@@ -9,7 +9,7 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Listing Chef Cookbook Licenses - BackSlasher</title>
+<!-- begin _includes/seo.html --><title>Listing Chef Cookbook Licenses | BackSlasher</title>
 <meta name="description" content="As part of a compliance check for our company, I was required to print the name/version of all FOSS proejcts I’m using. Most of it was digging around Gemfiles and setup.pys, which isn’t that interesting. The neat part was this snippet to extract license information from cookbooks installed on Chef server: require &#39;chef&#39; config_path=File.expand_path(&quot;~/.chef/knife.rb&quot;) Chef::Config.from_file(config_path) rest = Chef::REST.new(Chef::Config[:chef_server_url]) cbs = rest.get_rest(&quot;/cookbooks?num_versions=1&quot;) # Get all cookbooks, latest version cbs.reject!{|k,v|k[/^slasher-/]} # Remove my cookbooks vers = cbs.map{|k,v| # Extract details   url=v[&#39;versions&#39;].first[&#39;url&#39;]   deet = rest.get_rest(url)   lic = deet.metadata.license   {name: k,license:lic} } # Extract to CSV require &#39;csv&#39; csv_string = CSV.generate do |csv|   keys=[:name,:license]   csv &lt;&lt; keys   vers.each{|r| csv&lt;&lt;r.values_at(*keys)} end puts csv_string  Execute it using chef exec ruby The result looks something like this: name,license rvm,Apache 2.0 yum-mysql-community,Apache 2.0 deploy_wrapper,none tomcat,Apache 2.0 elasticsearch,Apache 2.0 ... graphite,Apache 2.0 curl,Apache 2.0">
 
 

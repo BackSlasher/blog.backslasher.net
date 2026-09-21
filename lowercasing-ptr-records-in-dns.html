@@ -9,7 +9,7 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Lowercasing PTR records in DNS - BackSlasher</title>
+<!-- begin _includes/seo.html --><title>Lowercasing PTR records in DNS | BackSlasher</title>
 <meta name="description" content="Recently, one of the IT crowd informed me that he can’t delete some of his PTR records through the DNS management console (dnsmgmt.msc). The record would appear to be deleted, but it’ll still show up after refreshing. After some quick Googling I found kb842127, which says that PTR records with uppercase characters in the host name can’t be deleted. The KB offers a hotfix (included with 2003sp1) that stops Windows from creating such records, but doesn’t handle existing ones. Microsoft suggests using some Middle-Ages method with exporting the records to a file, manually editing it, and scripting the deletion / recreation. I thought that their method was tiring, so I made this script. It’ll search for PTR records containing uppercase characters, delete them using dnscmd.exe (because using WMI won’t work) and create a lowercase version. Note: This script won’t take into account TTLs, timestamps and other record attributes.  [system.directoryservices.activedirectory.domaincontroller]::FindOne((new-object System.DirectoryServices.ActiveDirectory.DirectoryContext ‘Domain’)).Name,">
 
 

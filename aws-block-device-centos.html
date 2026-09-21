@@ -9,7 +9,7 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>AWS’s Block Device Mapping in CentOS - BackSlasher</title>
+<!-- begin _includes/seo.html --><title>AWS’s Block Device Mapping in CentOS | BackSlasher</title>
 <meta name="description" content="The Story I’m using Amazon’s EC2 for some of my VMs, which run CentOS.  When viewing Block Device Mappings (mapping between the virtual storage - ebs, ephemerals etc. and the block devices inside the VM) in CentOS 6.5, I ran into an annoying issue. When inspecting my instance metadata using: curl http://169.254.169.254/latest/meta-data/block-device-mapping/ephemeral0  My ephemeral drive shows up as sdb. However, when viewing my actual devices, I found it became sdf: ls -l /dev/sd*  lrwxrwxrwx. 1 root root 4 2014-12-10 13:09 /dev/sda -&gt; xvde lrwxrwxrwx. 1 root root 4 2014-12-10 13:09 /dev/sdf -&gt; xvdf lrwxrwxrwx. 1 root root 4 2014-12-10 13:09 /dev/sdg -&gt; xvdg">
 
 

@@ -9,7 +9,7 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Sending mail on coredumps - BackSlasher</title>
+<!-- begin _includes/seo.html --><title>Sending mail on coredumps | BackSlasher</title>
 <meta name="description" content="The Story I recently found out that some of our backend code suffers from memory-related ceashes, namely SIGSEGV (a program tries to access memory it doesn’t own). My initial response was to install and enable Abrt, which is a collection of utilities used in RHEL. Ubuntu has a similar tool called Apport. I like this tool because it sends the root user an email after every coredump / kernel oops / kernel panic, with the coredump attached (configurable) and helpful information about the process’s state (environment variables, open files, uid…). However, our issue was that our crashing processes are quite big (at least 2G of working memory) and might crash a lot, so taking coredumps for these processes was putting quite a strain on our servers’ I/O.">
 
 

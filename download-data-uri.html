@@ -9,7 +9,7 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Downloading a data uri as file - BackSlasher</title>
+<!-- begin _includes/seo.html --><title>Downloading a data uri as file | BackSlasher</title>
 <meta name="description" content="While browsing some website, I ran into an audio player that had a source that was embedded: &lt;audio autoplay=&quot;&quot;&gt;     &lt;source type=&quot;audio/mpeg&quot; src=&quot;data:audio/mpeg;base64,...LONG_BASE_64...&quot;&gt; &lt;/audio&gt;  I wanted to save that audio, but it wasn’t trivial (no “save as” ui, no clear resource I can save from the network tab). I ended up with a small reusable method. Start with right click the source element and choosing “use in console” to have it as temp0: fetch(temp0.src)   .then(r =&gt; r.blob())   .then(blob =&gt; {     const a = document.createElement(&quot;a&quot;);     a.href = URL.createObjectURL(blob);     a.download = &quot;audio.mp3&quot;;     a.click();   });">
 
 

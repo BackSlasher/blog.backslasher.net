@@ -9,7 +9,7 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Setting Dynamic RPC Port Ranges - BackSlasher</title>
+<!-- begin _includes/seo.html --><title>Setting Dynamic RPC Port Ranges | BackSlasher</title>
 <meta name="description" content="We recently had to manually set the dynamic RPC port range in our servers, mainly because Exchange 2010 sets the port range so wide that the firewall guys (rightfully) refused to create a rule with that range. Warning - at your own risk! When I found out about those settings, I stupidly tried applying these to my entire environment, which crippled my Hyper-V cluster, for example. So my conclusion - don’t apply it to everything without testing first! RP-Wut? For those not familiar with it, RPC (Remote Procedure Call) is an important part of Windows’ communication matchanism that is widely used with Microsoft and non-Microsoft software. A feature of RPC is called dynamic RPC port allocation, allowing server software to be allocated incoming ports dynamically, thus avoiding port conflicts. This feature has a range of ports to select from, and that is the “dynamic RPC port range”. The default ranges in Windows are:">
 
 

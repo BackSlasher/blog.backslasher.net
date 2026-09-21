@@ -9,7 +9,7 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Testing stranded group policies - BackSlasher</title>
+<!-- begin _includes/seo.html --><title>Testing stranded group policies | BackSlasher</title>
 <meta name="description" content="Ever had GPO Version differences between the AD and the Sysvol? Sure, you might have a healthy FRS/DFSR architecture, but the replication takes time. It’s annoying to check if the GP object is now OK on every server, because one would have to point the GPMC to every DC and check the version numbers… My soultion - this nifty script. It’s essentially grabbing the GP object through Get-GPO from every DC there is, and comparing its AD and Sysvol versions (for both computer and user), and pointing out if this DC’s version is mismatched. Run this script once, and you’ll know how the GP’s doing on every (accessible) DC.">
 
 

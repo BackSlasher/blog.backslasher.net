@@ -9,7 +9,7 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Google Friendly Apache Domain Migration - BackSlasher</title>
+<!-- begin _includes/seo.html --><title>Google Friendly Apache Domain Migration | BackSlasher</title>
 <meta name="description" content="I recently migrated a domain for a client, and did it like a noob (as in simply copying the db and files, making sure everything’s working, and then shutting down the old site). As a result, Google’s pageranks were lost, old links were broken and ghost pages were found on Google searches. After googling around, I found out what I should have done, and made my own action list. Note: While this list contains Apache and Google specific steps, you can certainly research and replace them with equivalent steps for your scenario. Also, Google’s change of address only works for root domains (not bla.othersite.com) 1. Prepare destination environment Copy files, dbs etc from to the new site, and make sure it’s working. Change whatever absolute (http://bla.com/file) URLs you have in your site to point to the new domain  Before you get to the next stage, make sure your new site is up to date (dbs updated etc). 2. Prepare to redirect the old site Make sure mod_rewrite is enabled on the old server. Almost all modern Apache hosts have it enabled. Rename / wipe the old site’s root directory (including deleting sub directories). Of course you should back up the files if you delete them.  3. Preform the actual redirection Create the .htaccess in the root directory, and set it to contain:">
 
 

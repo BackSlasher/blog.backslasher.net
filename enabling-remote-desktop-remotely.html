@@ -9,7 +9,7 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Enabling Remote Desktop Remotely - BackSlasher</title>
+<!-- begin _includes/seo.html --><title>Enabling Remote Desktop Remotely | BackSlasher</title>
 <meta name="description" content="According to this Technet article, to enable remote desktop remotely by using the registry you need to set the key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server:fDenyTSConnections=0  and then reboot the server. Rebooting is actually unnecessary - you can just restart the service TermService If you’d like to script it all: param([string]$computerName=&#39;.&#39;) # Set registry $base=[Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey(&#39;LocalMachine&#39;,$computerName) $key=$base.OpenSubKey(&#39;SYSTEM\CurrentControlSet\Control\Terminal Server&#39;,1) $key.SetValue(&#39;fDenyTSConnections&#39;,0) $key.close() $base.close() # Restart service Get-Service TermService -comp $computerName | Restart-Service -force">
 
 

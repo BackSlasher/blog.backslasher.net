@@ -9,7 +9,7 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Hijacking a process’s i/o streams using gdb - BackSlasher</title>
+<!-- begin _includes/seo.html --><title>Hijacking a process’s i/o streams using gdb | BackSlasher</title>
 <meta name="description" content="The Story I recently had a very annoying problem - some daemon failed, but ran fine when told to run at foreground (not daemonize). Running at foreground is the easiest way to debug processes, because that way you get their input / output / error streams in your terminal. Said daemon had no “log to file” option as well, so the only indication I had that something was wrong is that the daemon didn’t do what it’s supposed to do.  When processes daemonize, they create a sub process that isn’t attached to anything (so it won’t be affected by the terminal closing, for instance). The originating process usually exists after creating the sub process, and so you can’t easily capture the output of the sub process.  I eventually realized that I need to “hijack” the stderr stream from the sub process. I did some stupid attempts, like this (NOT WORKING):">
 
 

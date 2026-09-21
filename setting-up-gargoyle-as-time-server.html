@@ -9,7 +9,7 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Setting up Gargoyle as a Time Server - BackSlasher</title>
+<!-- begin _includes/seo.html --><title>Setting up Gargoyle as a Time Server | BackSlasher</title>
 <meta name="description" content="The Story  For reasons unknown to me, Debian’s NTP daemon only works on udp port 123, even when operating as a client. This is a problem because my network configuration does not allow incoming packets on this port, thus preventing my raspberrySeed (raspberry pi running Debian, deluge, flexget) from syncing, causing it to slowly drift away from the real world. To solve the issue, I did two things: The Solution 1. Turn Gargoyle into an NTP server Since Gargoyle is already syncing from outside, I only had to tell it to act as a server. First, ssh into your gargoyle setup. Edit the file /etc/config/system, and under timeserver, change the option enable_server to &#39;1&#39;.">
 
 

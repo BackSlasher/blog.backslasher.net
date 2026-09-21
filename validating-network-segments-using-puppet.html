@@ -9,7 +9,7 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Validating network segments using Puppet - BackSlasher</title>
+<!-- begin _includes/seo.html --><title>Validating network segments using Puppet | BackSlasher</title>
 <meta name="description" content="The Problem When configuring KeepaliveD using Puppet, sometimes an interface name has to be used. Imagine a server with 2 interfaces (eth0,eth1), where one is facing the internal network and one is facing the internet. My puppet configuration for an internet-facing virtual interface can be something like: keepalived::vrrp::instance { &#39;external_interface&#39;:     interface         =&gt; &#39;eth1&#39;,     state             =&gt; &#39;MASTER&#39;,     virtual_router_id =&gt; &#39;50&#39;,     priority          =&gt; &#39;100&#39;,     virtual_ipaddress =&gt; [ &#39;10.0.0.50&#39;, &#39;10.0.0.51&#39;, &#39;10.0.0.52&#39; ], }  However, by doing so, I’m assuming that eth1 is the external network interface. When configuring the server manually, I use ifconfig to manually check for misconfigurations (e.g. eth0 is the internet-facing interface). I’d like to do the same on Puppet.">
 
 

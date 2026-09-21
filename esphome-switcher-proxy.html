@@ -9,7 +9,7 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>ESPHome proxy for Switcher - BackSlasher</title>
+<!-- begin _includes/seo.html --><title>ESPHome proxy for Switcher | BackSlasher</title>
 <meta name="description" content="I have a Switcher at home, which is a smart water heater controller. It lives in the IoT wifi jail, where they’re not allowed to reach to the open internet, and can only reply to requests from other devices (i.e. HomeAssistant). My problem is and was that the Switcher updates state via UDP broadcasts, which don’t propagate to the HomeAssistant which lives in another subnet. For years, I’ve been solving this by having the router run a udp-relay to pass the broadcast to regular network, but I don’t like it. The router setup is a bit hacky, and I’d like it to have as little responsibility aside from doing routing properly. I yesterday had an idea. I already have some ESP32 devices in the IoT wifi, and some of them are configured with ESPHome to communicate with HomeAssistant. What if I got one of them to act as a Switcher proxy.">
 
 

@@ -9,7 +9,7 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Remotely Viewing Machine Certificates With Minimal Permissions - BackSlasher</title>
+<!-- begin _includes/seo.html --><title>Remotely Viewing Machine Certificates With Minimal Permissions | BackSlasher</title>
 <meta name="description" content="We’ve started remotely monitoring our certificate stores on critical servers, and wanted the monitoring software to be able to remotely connect to our servers’ personal certificate stores. I quickly found a script to enumerate all certificates in a specific store on a remote computer: function Get-Cert( $computer=$env:computername ){ $ro=[System.Security.Cryptography.X509Certificates.OpenFlags]&quot;ReadOnly&quot; $lm=[System.Security.Cryptography.X509Certificates.StoreLocation]&quot;LocalMachine&quot; $store=new-object System.Security.Cryptography.X509Certificates.X509Store(&quot;\\$computer\root&quot;,$lm) $store.Open($ro) $store.Certificates }">
 
 

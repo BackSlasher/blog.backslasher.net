@@ -9,7 +9,7 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Finding Accounts Trusted for Delegation - BackSlasher</title>
+<!-- begin _includes/seo.html --><title>Finding Accounts Trusted for Delegation | BackSlasher</title>
 <meta name="description" content="As part of a security audit, I was asked to help in finding all accounts marked with “Trusted for Delegation”  What is “Trust for Delegation” You can try reading the TechNet Article, but in short - delegation (also known as kerberos double-hop) is allowing a service to impersonate clients in order to access other services, e.g. allowing an ASP.NET site to pull CRM records via CRM web service, using the client’s credentials (and so showing only records relevant to the client).  The Risk Accounts that are trusted for delegation can access other services in the domain (e.g. Active Directory, Exchange, in-house software that uses kerberos authentication, external software using ADFS) without the user’s explicit action or consent (sometimes without him even accessing the system, see next paragraph) and without any limits or indication that it’s not the original user. Some configurations also allow the delegate access to any service in the domain (as opposed to specified ones) or giving the delegate access without the user actually accessing the delegate in the first place (read on). To sum it up, delegation must be used sparingly due to its dangerous nature.  Technical Implementation and Quirks Delegation is all about an application getting a kerberos TGS (Ticket Granting Service) for another resource, using the client’s identity (allowing the server to impersonate the client for that resource).">
 
 

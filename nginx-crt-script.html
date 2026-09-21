@@ -9,7 +9,7 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Preparing Certificate files for Nginx - BackSlasher</title>
+<!-- begin _includes/seo.html --><title>Preparing Certificate files for Nginx | BackSlasher</title>
 <meta name="description" content="The Story When installing SSL certificates for nginx, assuming you’re using certificate hierarchy (and not a self-signed ceritificate), you’re required to concatenate all of the certificate files (*.crt) to a single file, starting from your site’s certificate up to the root certificate. Today I got this bundle to prepare, courtesy of Comodo: AddTrustExternalCARoot.crt best_site.crt COMODORSAAddTrustCA.crt COMODORSADomainValidationSecureServerCA.crt  Which certificate should follow my site’s? Unclear, even from their documentation. I made this ruby script, which uses some certificate metadata to recognize the relationship between the provided certificates.">
 
 
