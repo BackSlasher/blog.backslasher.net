@@ -1169,7 +1169,7 @@ var store = [{
         "url": "/tsaas-saves.html",
         "teaser": null
       },{
-        "title": "I reverse-engineered my HVAC because I couldn't turn it off reliably",
+        "title": "Breezy - a reverse-engineered controller for my HVAC",
         "excerpt":"A couple of months ago, I had my HVAC controller replaced in an effort to save on electricity. I controlled the previous board with an IR blaster that I loaded with a full matrix of {mode,fan_speed, target_temp} (and a special command for “off”). The new one didn’t work like that....","categories": [],
         "tags": ["python","hardware","breezy","ramblings"],
         "url": "/breezy.html",
